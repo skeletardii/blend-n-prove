@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"C:\\Users\\X\\documents\\godot-mcp\\docs\")",
+      "mcp__godot__get_project_info",
+      "mcp__godot__create_script",
+      "mcp__godot__create_scene",
+      "mcp__godot__open_scene",
+      "mcp__godot__update_node_property",
+      "mcp__godot__list_nodes",
+      "mcp__godot__get_current_scene",
+      "mcp__godot__create_node",
+      "Bash(find:*)",
+      "mcp__godot__get_node_properties",
+      "mcp__godot__save_scene",
+      "mcp__godot__delete_node",
+      "mcp__godot__execute_editor_script",
+      "Bash(godot:*)",
+      "mcp__godot__create_resource",
+      "Bash(npm run build:*)",
+      "mcp__godot__get_script",
+      "Bash(git push:*)",
+      "Bash(git add:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "godot"
+  ]
+}

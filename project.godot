@@ -11,15 +11,48 @@ config_version=5
 [application]
 
 config/name="Godot MCP"
-run/main_scene="uid://cj6x3fv3tu00f"
+config/description="Educational game teaching boolean logic through bartender simulation"
+run/main_scene="uid://dvdwtisv5ow7b"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GameManager="*res://scripts/autoloads/GameManager.gd"
+BooleanLogicEngine="*res://scripts/autoloads/BooleanLogicEngine.gd"
+AudioManager="*res://scripts/autoloads/AudioManager.gd"
+SceneManager="*res://scripts/autoloads/SceneManager.gd"
+TutorialManager="*res://scripts/autoloads/TutorialManager.gd"
+ProgressTracker="*res://scripts/autoloads/ProgressTracker.gd"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/mode=2
+window/size/resizable=false
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[dotnet]
+
+project/assembly_name="Boolean Logic Bartender"
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
 
+[gui]
+
+theme/custom="res://themes/main_theme.tres"
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
 [rendering]
 
+textures/canvas_textures/default_texture_filter=2
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"

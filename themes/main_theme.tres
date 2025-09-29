@@ -1,0 +1,21 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://cnoq1f1rj1b7b"]
+
+[ext_resource type="FontFile" uid="uid://cacxau24rr071" path="res://fonts/friendlyscribbles.ttf" id="1_rjgu6"]
+
+[resource]
+default_font = ExtResource("1_rjgu6")
+Button/font_sizes/font_size = 40
+Button/fonts/font = ExtResource("1_rjgu6")
+CheckBox/fonts/font = ExtResource("1_rjgu6")
+CheckButton/fonts/font = ExtResource("1_rjgu6")
+ItemList/fonts/font = ExtResource("1_rjgu6")
+Label/fonts/font = ExtResource("1_rjgu6")
+LineEdit/fonts/font = ExtResource("1_rjgu6")
+MenuButton/fonts/font = ExtResource("1_rjgu6")
+OptionButton/fonts/font = ExtResource("1_rjgu6")
+PopupMenu/fonts/font = ExtResource("1_rjgu6")
+RichTextLabel/fonts/font = ExtResource("1_rjgu6")
+TabBar/fonts/font = ExtResource("1_rjgu6")
+TabContainer/fonts/font = ExtResource("1_rjgu6")
+TextEdit/fonts/font = ExtResource("1_rjgu6")
+Tree/fonts/font = ExtResource("1_rjgu6")

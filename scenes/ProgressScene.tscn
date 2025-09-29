@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://cnm685gopfxtf"]
+
+[node name="ProgressScene" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="MainScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 80.0
+offset_right = -20.0
+offset_bottom = -100.0
+
+[node name="StatsContainer" type="VBoxContainer" parent="MainScrollContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MainScrollContainer/StatsContainer"]
+layout_mode = 2
+text = "Your Progress"
+
+[node name="Separator1" type="HSeparator" parent="MainScrollContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="OverallStatsSection" type="VBoxContainer" parent="MainScrollContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection"]
+layout_mode = 2
+text = "Overall Statistics"
+
+[node name="OverallStatsGrid" type="GridContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection"]
+layout_mode = 2
+columns = 2
+
+[node name="TotalGamesLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+text = "Total Games:"
+
+[node name="TotalGamesValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+
+[node name="HighScoreLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+text = "High Score:"
+
+[node name="HighScoreValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+
+[node name="SuccessRateLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+text = "Success Rate:"
+
+[node name="SuccessRateValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+
+[node name="CurrentStreakLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+text = "Current Streak:"
+
+[node name="CurrentStreakValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+
+[node name="ButtonContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_bottom = -20.0
+
+[node name="BackButton" type="Button" parent="ButtonContainer"]
+layout_mode = 2
+text = "Back to Menu"
