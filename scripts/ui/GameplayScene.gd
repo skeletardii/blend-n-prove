@@ -4,7 +4,7 @@ extends Control
 @onready var lives_display: Label = $UI/MainContainer/TopBar/TopBarContainer/LivesContainer/LivesDisplay
 @onready var score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/ScoreDisplay
 @onready var customer_name: Label = $UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer/CustomerName
-@onready var patience_bar: ProgressBar = $UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer/PatienceBar
+@onready var patience_bar: ProgressBar = $UI/MainContainer/PatienceBar
 @onready var order_display: RichTextLabel = $UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer/OrderDisplay
 @onready var phase_container: Control = $UI/MainContainer/GameContentArea/PhaseContainer
 

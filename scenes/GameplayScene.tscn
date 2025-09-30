@@ -79,6 +79,10 @@ text = "Score:"
 layout_mode = 2
 text = "0"
 
+[node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer"]
+layout_mode = 2
+value = 100.0
+
 [node name="GameContentArea" type="HBoxContainer" parent="UI/MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -118,10 +122,6 @@ layout_mode = 2
 layout_mode = 2
 text = "Alice"
 horizontal_alignment = 1
-
-[node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer"]
-layout_mode = 2
-value = 100.0
 
 [node name="OrderDisplay" type="RichTextLabel" parent="UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer"]
 layout_mode = 2
