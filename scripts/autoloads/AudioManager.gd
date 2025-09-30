@@ -3,24 +3,24 @@ extends Node
 signal audio_settings_changed
 
 var master_volume: float = 1.0
-var music_volume: float = 0.7
+var music_volume: float = 0.1
 var sfx_volume: float = 0.8
 var is_muted: bool = false
 
 var music_player: AudioStreamPlayer
 var sfx_player: AudioStreamPlayer
 
-# Audio file paths
+# Audio file paths - Updated to use 8-bit .wav files
 var audio_paths: Dictionary = {
-	"button_click": "res://resources/audio/sfx/button_click.ogg",
-	"success": "res://resources/audio/sfx/success.ogg",
-	"error": "res://resources/audio/sfx/error.ogg",
-	"customer_arrive": "res://resources/audio/sfx/customer_arrive.ogg",
-	"customer_leave": "res://resources/audio/sfx/customer_leave.ogg",
-	"logic_success": "res://resources/audio/sfx/logic_success.ogg",
-	"premise_complete": "res://resources/audio/sfx/premise_complete.ogg",
-	"background_music": "res://resources/audio/music/background.ogg",
-	"menu_music": "res://resources/audio/music/menu.ogg"
+	"button_click": "res://resources/audio/8bit/Click.wav",
+	"success": "res://resources/audio/8bit/Confirm.wav",
+	"error": "res://resources/audio/8bit/Cancel.wav",
+	"customer_arrive": "res://resources/audio/8bit/Notso_Confirm.wav",
+	"customer_leave": "res://resources/audio/8bit/Steps.wav",
+	"logic_success": "res://resources/audio/8bit/Powerup.wav",
+	"premise_complete": "res://resources/audio/8bit/Confirm.wav",
+	"background_music": "res://resources/audio/Pinball Spring.mp3",
+	# "menu_music": "res://resources/audio/8bit/Menu_In.wav" # Commented out - no music in main menu
 }
 
 # Loaded audio streams
@@ -75,7 +75,9 @@ func play_music(music_name: String, loop: bool = true) -> void:
 	
 	if music_name in loaded_sounds:
 		music_player.stream = loaded_sounds[music_name]
-		if music_player.stream:
+		if music_player.stream and music_player.stream.has_method("set_loop_mode"):
+			music_player.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD if loop else AudioStreamWAV.LOOP_DISABLED
+		elif music_player.stream and music_player.stream.has_method("set_loop"):
 			music_player.stream.loop = loop
 		music_player.play()
 	else:
@@ -86,7 +88,9 @@ func play_music(music_name: String, loop: bool = true) -> void:
 			if audio_stream:
 				loaded_sounds[music_name] = audio_stream
 				music_player.stream = audio_stream
-				if music_player.stream:
+				if music_player.stream and music_player.stream.has_method("set_loop_mode"):
+					music_player.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD if loop else AudioStreamWAV.LOOP_DISABLED
+				elif music_player.stream and music_player.stream.has_method("set_loop"):
 					music_player.stream.loop = loop
 				music_player.play()
 

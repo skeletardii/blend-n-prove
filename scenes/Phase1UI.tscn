@@ -1,6 +1,32 @@
-[gd_scene load_steps=2 format=3 uid="uid://b0ebagu0ts5p1"]
+[gd_scene load_steps=10 format=3 uid="uid://b0ebagu0ts5p1"]
 
 [ext_resource type="Script" uid="uid://csubga53p2pr4" path="res://scripts/ui/Phase1UI.gd" id="1_phase1"]
+[ext_resource type="Texture2D" uid="uid://5s07bsbpboi0" path="res://Phase1UIMockup.png" id="2_tgfdk"]
+[ext_resource type="Texture2D" uid="uid://cxuas4sbxepc6" path="res://resources/textures/PNG/CGB01-grey_XL_rounded_btn.png" id="3_3m56v"]
+[ext_resource type="Theme" uid="uid://cnoq1f1rj1b7b" path="res://themes/main_theme.tres" id="4_cnisd"]
+[ext_resource type="Texture2D" uid="uid://cry2t8ap7ysoo" path="res://resources/textures/PNG/CGB01-yellow_L_rounded_btn.png" id="5_cnisd"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7p1cq"]
+texture = ExtResource("3_3m56v")
+texture_margin_left = 36.0
+texture_margin_top = 42.9325
+texture_margin_right = 34.3817
+texture_margin_bottom = 37.0
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_7p1cq"]
+color = Color(0.21, 0.21, 0.21, 1)
+thickness = 3
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cbvt0"]
+texture = ExtResource("5_cnisd")
+modulate_color = Color(0, 0.966667, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kyooy"]
+bg_color = Color(0.9, 0.9, 0.9, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 
 [node name="Phase1UI" type="Control"]
 layout_mode = 3
@@ -10,6 +36,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_phase1")
+metadata/_edit_lock_ = true
+
+[node name="Phase1uiMockup" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0.423529)
+position = Vector2(361, 574)
+scale = Vector2(1.36, 1.4144)
+texture = ExtResource("2_tgfdk")
 metadata/_edit_lock_ = true
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
@@ -94,27 +128,32 @@ offset_bottom = 180.0
 
 [node name="SpeechBubble" type="Panel" parent="MainContainer/CustomerArea"]
 custom_minimum_size = Vector2(0, 500)
-layout_mode = 0
-offset_left = 160.0
-offset_top = 20.0
-offset_right = 640.0
-offset_bottom = 200.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -278.0
+offset_top = 152.0
+offset_right = 277.0
+offset_bottom = 679.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_7p1cq")
 
 [node name="PremiseChecklist" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
+offset_left = 30.0
+offset_top = 35.0
+offset_right = -35.0
+offset_bottom = -49.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme = ExtResource("4_cnisd")
 text = "Premises to reconstruct:"
 
 [node name="PremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
@@ -123,6 +162,8 @@ size_flags_vertical = 3
 
 [node name="Separator" type="HSeparator" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
 layout_mode = 2
+theme_override_constants/separation = 18
+theme_override_styles/separator = SubResource("StyleBoxLine_7p1cq")
 
 [node name="TargetContainer" type="HBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
 layout_mode = 2
@@ -130,18 +171,31 @@ layout_mode = 2
 [node name="TargetLabel" type="Label" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist/TargetContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.906, 0.298, 0.235, 1)
-theme_override_font_sizes/font_size = 14
-text = "TARGET:"
+text = "TARGET:  "
 
 [node name="TargetExpression" type="Label" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist/TargetContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.906, 0.298, 0.235, 1)
-theme_override_font_sizes/font_size = 18
 text = "R"
 
 [node name="InputSystem" type="Control" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+
+[node name="Panel" type="Panel" parent="MainContainer/InputSystem"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.501
+anchor_top = 0.162
+anchor_right = 0.501
+anchor_bottom = 0.162
+offset_left = -293.608
+offset_top = -57.96
+offset_right = 293.392
+offset_bottom = 58.04
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_cbvt0")
 
 [node name="InputContainer" type="VBoxContainer" parent="MainContainer/InputSystem"]
 layout_mode = 1
@@ -149,7 +203,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 60.0
+offset_top = -24.0
 offset_right = -60.0
+offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -162,6 +218,7 @@ horizontal_alignment = 1
 [node name="InputField" type="Panel" parent="MainContainer/InputSystem/InputContainer"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_kyooy")
 
 [node name="InputDisplay" type="Label" parent="MainContainer/InputSystem/InputContainer/InputField"]
 layout_mode = 1
@@ -173,8 +230,8 @@ offset_right = -20.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.498, 0.549, 0.553, 1)
-theme_override_font_sizes/font_size = 18
 text = "Type your premise here..."
+horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="VirtualKeyboard" type="Control" parent="MainContainer"]
@@ -183,64 +240,48 @@ layout_mode = 2
 
 [node name="VariableRow" type="HBoxContainer" parent="MainContainer/VirtualKeyboard"]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -170.0
-offset_top = 20.0
-offset_right = 170.0
-offset_bottom = 70.0
+anchors_preset = -1
+anchor_left = 0.501
+anchor_right = 0.501
+offset_left = -232.68
+offset_right = 232.32
+offset_bottom = 91.0
 grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VarP" type="Button" parent="MainContainer/VirtualKeyboard/VariableRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "P"
-
-[node name="Spacer1" type="Control" parent="MainContainer/VirtualKeyboard/VariableRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="VarQ" type="Button" parent="MainContainer/VirtualKeyboard/VariableRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "Q"
-
-[node name="Spacer2" type="Control" parent="MainContainer/VirtualKeyboard/VariableRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="VarR" type="Button" parent="MainContainer/VirtualKeyboard/VariableRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "R"
-
-[node name="Spacer3" type="Control" parent="MainContainer/VirtualKeyboard/VariableRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="VarS" type="Button" parent="MainContainer/VirtualKeyboard/VariableRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "S"
-
-[node name="Spacer4" type="Control" parent="MainContainer/VirtualKeyboard/VariableRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="VarT" type="Button" parent="MainContainer/VirtualKeyboard/VariableRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "T"
 
 [node name="OperatorRow" type="HBoxContainer" parent="MainContainer/VirtualKeyboard"]
@@ -248,50 +289,38 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -135.0
-offset_top = 90.0
-offset_right = 135.0
-offset_bottom = 140.0
+offset_left = -194.0
+offset_top = 98.0
+offset_right = 188.0
+offset_bottom = 193.0
 grow_horizontal = 2
 
 [node name="AndButton" type="Button" parent="MainContainer/VirtualKeyboard/OperatorRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "∧"
-
-[node name="Spacer1" type="Control" parent="MainContainer/VirtualKeyboard/OperatorRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="XorButton" type="Button" parent="MainContainer/VirtualKeyboard/OperatorRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "⊕"
-
-[node name="Spacer2" type="Control" parent="MainContainer/VirtualKeyboard/OperatorRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="BiconditionalButton" type="Button" parent="MainContainer/VirtualKeyboard/OperatorRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "↔"
-
-[node name="Spacer3" type="Control" parent="MainContainer/VirtualKeyboard/OperatorRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="OrButton" type="Button" parent="MainContainer/VirtualKeyboard/OperatorRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "∨"
 
 [node name="MixedRow" type="HBoxContainer" parent="MainContainer/VirtualKeyboard"]
@@ -299,61 +328,45 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -170.0
-offset_top = 160.0
-offset_right = 170.0
-offset_bottom = 210.0
+offset_left = -227.0
+offset_top = 197.0
+offset_right = 228.0
+offset_bottom = 292.0
 grow_horizontal = 2
 
 [node name="ImpliesButton" type="Button" parent="MainContainer/VirtualKeyboard/MixedRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "→"
-
-[node name="Spacer1" type="Control" parent="MainContainer/VirtualKeyboard/MixedRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="OpenParenButton" type="Button" parent="MainContainer/VirtualKeyboard/MixedRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "("
-
-[node name="Spacer2" type="Control" parent="MainContainer/VirtualKeyboard/MixedRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="CloseParenButton" type="Button" parent="MainContainer/VirtualKeyboard/MixedRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = ")"
-
-[node name="Spacer3" type="Control" parent="MainContainer/VirtualKeyboard/MixedRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="NotButton" type="Button" parent="MainContainer/VirtualKeyboard/MixedRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "¬"
-
-[node name="Spacer4" type="Control" parent="MainContainer/VirtualKeyboard/MixedRow"]
-custom_minimum_size = Vector2(10, 50)
-layout_mode = 2
 
 [node name="BackspaceButton" type="Button" parent="MainContainer/VirtualKeyboard/MixedRow"]
 custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
 text = "⌫"
 
 [node name="ActionButtons" type="Control" parent="MainContainer"]
@@ -362,27 +375,25 @@ layout_mode = 2
 
 [node name="ButtonContainer" type="HBoxContainer" parent="MainContainer/ActionButtons"]
 layout_mode = 1
-anchors_preset = 5
+anchors_preset = -1
 anchor_left = 0.5
+anchor_top = 2.467
 anchor_right = 0.5
-offset_left = -190.0
-offset_top = 10.0
-offset_right = 190.0
-offset_bottom = 50.0
+anchor_bottom = 2.467
+offset_left = -351.0
+offset_top = -102.02
+offset_right = 355.0
+offset_bottom = -11.02
 grow_horizontal = 2
 
 [node name="ClearButton" type="Button" parent="MainContainer/ActionButtons/ButtonContainer"]
 custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+size_flags_horizontal = 3
 text = "CLEAR"
-
-[node name="Spacer" type="Control" parent="MainContainer/ActionButtons/ButtonContainer"]
-custom_minimum_size = Vector2(20, 40)
-layout_mode = 2
 
 [node name="SubmitButton" type="Button" parent="MainContainer/ActionButtons/ButtonContainer"]
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+size_flags_horizontal = 3
 text = "SUBMIT"

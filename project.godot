@@ -29,9 +29,7 @@ ProgressTracker="*res://scripts/autoloads/ProgressTracker.gd"
 
 window/size/viewport_width=720
 window/size/viewport_height=1280
-window/size/mode=2
-window/size/resizable=false
-window/stretch/mode="canvas_items"
+window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 window/handheld/orientation=1
 
