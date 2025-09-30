@@ -23,6 +23,7 @@ BooleanLogicEngine="*res://scripts/autoloads/BooleanLogicEngine.gd"
 AudioManager="*res://scripts/autoloads/AudioManager.gd"
 SceneManager="*res://scripts/autoloads/SceneManager.gd"
 TutorialManager="*res://scripts/autoloads/TutorialManager.gd"
+TutorialDataManager="*res://scripts/autoloads/TutorialDataManager.gd"
 ProgressTracker="*res://scripts/autoloads/ProgressTracker.gd"
 
 [display]

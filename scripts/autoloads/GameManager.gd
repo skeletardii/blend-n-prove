@@ -51,6 +51,11 @@ var orders_completed_this_session: int = 0
 var debug_mode: bool = false
 var infinite_patience: bool = false
 
+# Tutorial mode variables
+var tutorial_mode: bool = false
+var current_tutorial_key: String = ""
+var current_tutorial_problem_index: int = 0
+
 # Order Templates organized by difficulty level
 var order_templates: Dictionary = {
 	1: [
@@ -158,12 +163,30 @@ func start_new_game() -> void:
 	difficulty_level = 1
 	orders_completed_this_session = 0
 	current_phase = GamePhase.PREPARING_PREMISES
+	tutorial_mode = false
+	current_tutorial_key = ""
+	current_tutorial_problem_index = 0
 	change_state(GameState.PLAYING)
 	score_updated.emit(current_score)
 	lives_updated.emit(current_lives)
 
 	# Start progress tracking session
 	ProgressTracker.start_new_session(difficulty_level)
+
+func start_tutorial_mode(tutorial_key: String) -> void:
+	current_score = 0
+	current_lives = max_lives
+	difficulty_level = 1
+	orders_completed_this_session = 0
+	current_phase = GamePhase.PREPARING_PREMISES
+	tutorial_mode = true
+	current_tutorial_key = tutorial_key
+	current_tutorial_problem_index = 0
+	change_state(GameState.PLAYING)
+	score_updated.emit(current_score)
+	lives_updated.emit(current_lives)
+
+	print("Starting tutorial mode: ", tutorial_key)
 
 func pause_game() -> void:
 	change_state(GameState.PAUSED)
@@ -204,6 +227,44 @@ func complete_progress_session(completion_status: String) -> void:
 func complete_game_successfully() -> void:
 	complete_progress_session("win")
 	change_state(GameState.GAME_OVER)
+
+func get_current_tutorial_problem() -> TutorialDataManager.ProblemData:
+	if not tutorial_mode or current_tutorial_key.is_empty():
+		return null
+
+	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(current_tutorial_key)
+	if not tutorial:
+		return null
+
+	if current_tutorial_problem_index >= tutorial.problems.size():
+		return null
+
+	return tutorial.problems[current_tutorial_problem_index]
+
+func advance_to_next_tutorial_problem() -> bool:
+	if not tutorial_mode or current_tutorial_key.is_empty():
+		return false
+
+	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(current_tutorial_key)
+	if not tutorial:
+		return false
+
+	# Mark current problem as completed
+	ProgressTracker.complete_tutorial_problem(current_tutorial_key, current_tutorial_problem_index)
+
+	current_tutorial_problem_index += 1
+
+	# Check if there are more problems
+	if current_tutorial_problem_index >= tutorial.problems.size():
+		print("Tutorial completed!")
+		return false
+
+	return true
+
+func exit_tutorial_mode() -> void:
+	tutorial_mode = false
+	current_tutorial_key = ""
+	current_tutorial_problem_index = 0
 
 func run_integration_test() -> void:
 	print("Running Game Systems Integration Test...")

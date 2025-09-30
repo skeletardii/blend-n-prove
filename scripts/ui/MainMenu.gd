@@ -54,10 +54,20 @@ func _input(event: InputEvent) -> void:
 				# Run integration test with 'T' key
 				if debug_panel.visible:
 					GameManager.run_integration_test()
+				else:
+					# Run tutorial tests (outside debug mode)
+					run_tutorial_tests()
 			KEY_L:
 				# Test logic engine with 'L' key
 				if debug_panel.visible:
 					BooleanLogicEngine.test_logic_engine()
+
+func run_tutorial_tests() -> void:
+	# Load and instantiate test script
+	var test_script = load("res://test_tutorials.gd")
+	var test_node = Node.new()
+	test_node.set_script(test_script)
+	add_child(test_node)
 
 func _on_play_button_pressed() -> void:
 	print("Play button pressed!")

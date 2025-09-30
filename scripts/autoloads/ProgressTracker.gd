@@ -69,6 +69,11 @@ class PlayerStatistics:
 	var operation_usage_count: Dictionary = {}
 	var common_failures: Dictionary = {}
 
+	# Tutorial tracking
+	# Format: {"tutorial-key": [0, 1, 2, 3, 4, ...]} where numbers are completed problem indices
+	var tutorial_completions: Dictionary = {}
+	var tutorials_completed: int = 0
+
 	func to_dict() -> Dictionary:
 		return {
 			"total_games_played": total_games_played,
@@ -87,7 +92,9 @@ class PlayerStatistics:
 			"achievements_unlocked": achievements_unlocked,
 			"operation_proficiency": operation_proficiency,
 			"operation_usage_count": operation_usage_count,
-			"common_failures": common_failures
+			"common_failures": common_failures,
+			"tutorial_completions": tutorial_completions,
+			"tutorials_completed": tutorials_completed
 		}
 
 	func from_dict(data: Dictionary) -> void:
@@ -108,6 +115,8 @@ class PlayerStatistics:
 		operation_proficiency = data.get("operation_proficiency", {})
 		operation_usage_count = data.get("operation_usage_count", {})
 		common_failures = data.get("common_failures", {})
+		tutorial_completions = data.get("tutorial_completions", {})
+		tutorials_completed = data.get("tutorials_completed", 0)
 
 var game_sessions: Array[GameSession] = []
 var statistics: PlayerStatistics = PlayerStatistics.new()
@@ -385,7 +394,11 @@ func get_achievement_name(achievement_id: String) -> String:
 		"master_difficulty_2": "Skilled Bartender",
 		"master_difficulty_3": "Expert Bartender",
 		"master_difficulty_4": "Master Bartender",
-		"master_difficulty_5": "Legendary Bartender"
+		"master_difficulty_5": "Legendary Bartender",
+		"first_tutorial": "Tutorial Beginner",
+		"5_tutorials": "Quick Learner",
+		"10_tutorials": "Logic Scholar",
+		"all_tutorials": "Logic Master"
 	}
 	return achievement_names.get(achievement_id, achievement_id)
 
@@ -415,3 +428,78 @@ func reset_progress_data() -> void:
 		DirAccess.remove_absolute(BACKUP_FILE_PATH)
 	progress_updated.emit()
 	print("Progress data reset successfully")
+
+# Tutorial progress tracking functions
+func complete_tutorial_problem(tutorial_key: String, problem_index: int) -> void:
+	if not statistics.tutorial_completions.has(tutorial_key):
+		statistics.tutorial_completions[tutorial_key] = []
+
+	var completed_problems: Array = statistics.tutorial_completions[tutorial_key]
+	if not completed_problems.has(problem_index):
+		completed_problems.append(problem_index)
+		statistics.tutorial_completions[tutorial_key] = completed_problems
+
+		# Check if all problems for this tutorial are completed
+		check_tutorial_completion(tutorial_key)
+
+		save_progress_data()
+		progress_updated.emit()
+
+func check_tutorial_completion(tutorial_key: String) -> void:
+	# Check if this tutorial is fully completed
+	var total_problems: int = TutorialDataManager.get_problem_count(tutorial_key)
+	var completed_problems: int = get_tutorial_progress(tutorial_key)
+
+	if total_problems > 0 and completed_problems >= total_problems:
+		# Tutorial completed! Check if this is a new completion
+		var was_completed: bool = is_tutorial_fully_completed(tutorial_key)
+		if not was_completed:
+			statistics.tutorials_completed += 1
+			print("Tutorial completed: ", tutorial_key)
+
+			# Check for tutorial achievements
+			check_tutorial_achievements()
+
+func is_tutorial_fully_completed(tutorial_key: String) -> bool:
+	var total_problems: int = TutorialDataManager.get_problem_count(tutorial_key)
+	var completed_problems: int = get_tutorial_progress(tutorial_key)
+	return total_problems > 0 and completed_problems >= total_problems
+
+func get_tutorial_progress(tutorial_key: String) -> int:
+	if not statistics.tutorial_completions.has(tutorial_key):
+		return 0
+	var completed_problems: Array = statistics.tutorial_completions[tutorial_key]
+	return completed_problems.size()
+
+func is_tutorial_problem_completed(tutorial_key: String, problem_index: int) -> bool:
+	if not statistics.tutorial_completions.has(tutorial_key):
+		return false
+	var completed_problems: Array = statistics.tutorial_completions[tutorial_key]
+	return completed_problems.has(problem_index)
+
+func get_total_tutorials_completed() -> int:
+	return statistics.tutorials_completed
+
+func check_tutorial_achievements() -> void:
+	var new_achievements = []
+
+	# First tutorial completed
+	if statistics.tutorials_completed == 1 and "first_tutorial" not in statistics.achievements_unlocked:
+		new_achievements.append("first_tutorial")
+
+	# 5 tutorials completed
+	if statistics.tutorials_completed >= 5 and "5_tutorials" not in statistics.achievements_unlocked:
+		new_achievements.append("5_tutorials")
+
+	# 10 tutorials completed
+	if statistics.tutorials_completed >= 10 and "10_tutorials" not in statistics.achievements_unlocked:
+		new_achievements.append("10_tutorials")
+
+	# All tutorials completed
+	if statistics.tutorials_completed >= 18 and "all_tutorials" not in statistics.achievements_unlocked:
+		new_achievements.append("all_tutorials")
+
+	# Add new achievements and emit signals
+	for achievement in new_achievements:
+		statistics.achievements_unlocked.append(achievement)
+		achievement_unlocked.emit(achievement)

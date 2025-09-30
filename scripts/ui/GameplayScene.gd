@@ -119,18 +119,34 @@ func generate_new_customer() -> void:
 	var customer_names: Array[String] = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry"]
 	var random_name: String = customer_names[randi() % customer_names.size()]
 
-	# Get current difficulty level (clamped to available levels)
-	var current_level: int = min(GameManager.difficulty_level, 5)
+	# Check if we're in tutorial mode
+	if GameManager.tutorial_mode:
+		var problem: TutorialDataManager.ProblemData = GameManager.get_current_tutorial_problem()
+		if problem:
+			# Create customer from tutorial problem
+			var base_patience: float = 120.0  # More generous patience for tutorials
+			current_customer = GameManager.CustomerData.new(random_name, problem.premises, problem.conclusion, base_patience)
 
-	# Get random order template for this level
-	var templates_for_level = GameManager.order_templates[current_level]
-	var random_template: GameManager.OrderTemplate = templates_for_level[randi() % templates_for_level.size()]
+			print("Loaded tutorial problem ", problem.problem_number, " (", problem.difficulty, ")")
+		else:
+			# No more problems in tutorial - return to grid
+			print("Tutorial complete! Returning to tutorial selection.")
+			SceneManager.change_scene("res://scenes/GridButtonScene.tscn")
+			return
+	else:
+		# Normal game mode - use order templates
+		# Get current difficulty level (clamped to available levels)
+		var current_level: int = min(GameManager.difficulty_level, 5)
 
-	# Adjust patience based on difficulty and expected operations
-	var base_patience: float = 90.0 - (current_level * 10.0) + (random_template.expected_operations * 15.0)
-	base_patience = max(30.0, base_patience)  # Minimum 30 seconds
+		# Get random order template for this level
+		var templates_for_level = GameManager.order_templates[current_level]
+		var random_template: GameManager.OrderTemplate = templates_for_level[randi() % templates_for_level.size()]
 
-	current_customer = GameManager.CustomerData.new(random_name, random_template.premises, random_template.conclusion, base_patience)
+		# Adjust patience based on difficulty and expected operations
+		var base_patience: float = 90.0 - (current_level * 10.0) + (random_template.expected_operations * 15.0)
+		base_patience = max(30.0, base_patience)  # Minimum 30 seconds
+
+		current_customer = GameManager.CustomerData.new(random_name, random_template.premises, random_template.conclusion, base_patience)
 
 	# Update UI
 	update_customer_display()
@@ -140,7 +156,17 @@ func update_customer_display() -> void:
 	if not current_customer:
 		return
 
-	customer_name.text = current_customer.customer_name
+	# Show tutorial info if in tutorial mode
+	if GameManager.tutorial_mode:
+		var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(GameManager.current_tutorial_key)
+		if tutorial:
+			var problem_num: int = GameManager.current_tutorial_problem_index + 1
+			var total_problems: int = tutorial.problems.size()
+			customer_name.text = tutorial.rule_name + " - Problem " + str(problem_num) + "/" + str(total_problems)
+		else:
+			customer_name.text = "Tutorial"
+	else:
+		customer_name.text = current_customer.customer_name
 
 	var order_text: String = "[b]Premises:[/b]\n"
 	for premise in current_customer.required_premises:
@@ -152,15 +178,23 @@ func update_customer_display() -> void:
 
 func customer_leaves() -> void:
 	AudioManager.play_customer_leave()
-	GameManager.lose_life()
 
-	if GameManager.current_lives > 0:
-		# Generate new customer
+	# In tutorial mode, don't lose lives - just try again
+	if GameManager.tutorial_mode:
+		show_feedback_message("Time's up! Try this problem again.", Color.RED)
+		# Regenerate same problem
 		generate_new_customer()
 		switch_to_phase1()
 	else:
-		# Game over
-		SceneManager.change_scene("res://scenes/GameOverScene.tscn")
+		GameManager.lose_life()
+
+		if GameManager.current_lives > 0:
+			# Generate new customer
+			generate_new_customer()
+			switch_to_phase1()
+		else:
+			# Game over
+			SceneManager.change_scene("res://scenes/GameOverScene.tscn")
 
 func complete_order_successfully() -> void:
 	AudioManager.play_logic_success()
@@ -172,16 +206,34 @@ func complete_order_successfully() -> void:
 
 	GameManager.add_score(total_score)
 
-	# Increase difficulty level after each completed order (until level 5)
-	if GameManager.difficulty_level < 5:
-		GameManager.difficulty_level += 1
-		show_feedback_message("Level Up! Now at Level " + str(GameManager.difficulty_level), Color.GOLD)
-	else:
-		show_feedback_message("Master Level - Well done!", Color.GOLD)
+	# Handle tutorial mode completion
+	if GameManager.tutorial_mode:
+		var has_next_problem: bool = GameManager.advance_to_next_tutorial_problem()
 
-	# Generate new customer
-	generate_new_customer()
-	switch_to_phase1()
+		if has_next_problem:
+			show_feedback_message("Problem Complete! Next problem loading...", Color.CYAN)
+			# Generate next tutorial problem
+			generate_new_customer()
+			switch_to_phase1()
+		else:
+			show_feedback_message("Tutorial Complete! Well done!", Color.GOLD)
+			# Return to tutorial selection after a delay
+			get_tree().create_timer(3.0).timeout.connect(func():
+				GameManager.exit_tutorial_mode()
+				SceneManager.change_scene("res://scenes/GridButtonScene.tscn")
+			)
+	else:
+		# Normal game mode progression
+		# Increase difficulty level after each completed order (until level 5)
+		if GameManager.difficulty_level < 5:
+			GameManager.difficulty_level += 1
+			show_feedback_message("Level Up! Now at Level " + str(GameManager.difficulty_level), Color.GOLD)
+		else:
+			show_feedback_message("Master Level - Well done!", Color.GOLD)
+
+		# Generate new customer
+		generate_new_customer()
+		switch_to_phase1()
 
 # Phase 1 Signal Handlers
 func _on_premise_validated(expression: BooleanLogicEngine.BooleanExpression) -> void:
