@@ -200,7 +200,7 @@ func update_premise_checklist() -> void:
 		var label = Label.new()
 
 		label.text = premise_text
-		label.add_theme_font_size_override("font_size", 16)
+		label.add_theme_font_size_override("font_size", 48)
 		if is_completed:
 			label.add_theme_color_override("font_color", Color.GREEN)
 		else:

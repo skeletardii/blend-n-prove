@@ -62,6 +62,9 @@ func update_detailed_stats() -> void:
 	# Add difficulty breakdown
 	add_difficulty_breakdown_section(stats)
 
+	# Add operation statistics
+	add_operation_statistics_section()
+
 	# Add recent sessions
 	add_recent_sessions_section()
 
@@ -135,6 +138,81 @@ func add_difficulty_breakdown_section(stats: ProgressTracker.PlayerStatistics) -
 		avg_score_label.text = "%.0f" % avg_score if avg_score > 0 else "-"
 		difficulty_grid.add_child(avg_score_label)
 
+func add_operation_statistics_section() -> void:
+	var stats = ProgressTracker.statistics
+
+	# Skip if no operations have been used
+	if stats.operation_usage_count.is_empty():
+		return
+
+	var stats_container = $MainScrollContainer/StatsContainer
+
+	var separator = HSeparator.new()
+	separator.name = "DetailedSectionSeparator2b"
+	stats_container.add_child(separator)
+
+	var section = VBoxContainer.new()
+	section.name = "DetailedSectionOperations"
+	stats_container.add_child(section)
+
+	var title = Label.new()
+	title.text = "Operation Statistics"
+	title.add_theme_font_size_override("font_size", 20)
+	section.add_child(title)
+
+	var operations_grid = GridContainer.new()
+	operations_grid.columns = 3
+	section.add_child(operations_grid)
+
+	# Headers
+	var header1 = Label.new()
+	header1.text = "Operation"
+	header1.add_theme_font_size_override("font_size", 16)
+	operations_grid.add_child(header1)
+
+	var header2 = Label.new()
+	header2.text = "Times Used"
+	header2.add_theme_font_size_override("font_size", 16)
+	operations_grid.add_child(header2)
+
+	var header3 = Label.new()
+	header3.text = "Success Rate"
+	header3.add_theme_font_size_override("font_size", 16)
+	operations_grid.add_child(header3)
+
+	# Sort operations by usage count (most used first)
+	var sorted_operations = stats.operation_usage_count.keys()
+	sorted_operations.sort_custom(func(a, b): return stats.operation_usage_count[a] > stats.operation_usage_count[b])
+
+	# Display each operation
+	for operation_name in sorted_operations:
+		var count = stats.operation_usage_count[operation_name]
+
+		var name_label = Label.new()
+		name_label.text = operation_name
+		operations_grid.add_child(name_label)
+
+		var count_label = Label.new()
+		count_label.text = str(count)
+		operations_grid.add_child(count_label)
+
+		var rate_label = Label.new()
+		if stats.operation_proficiency.has(operation_name):
+			var proficiency = stats.operation_proficiency[operation_name]
+			var rate = proficiency.get("rate", 0.0)
+			rate_label.text = "%.1f%%" % (rate * 100.0)
+
+			# Color code success rate
+			if rate >= 0.8:
+				rate_label.modulate = Color.GREEN
+			elif rate >= 0.5:
+				rate_label.modulate = Color.YELLOW
+			else:
+				rate_label.modulate = Color.ORANGE
+		else:
+			rate_label.text = "N/A"
+		operations_grid.add_child(rate_label)
+
 func add_recent_sessions_section() -> void:
 	var stats_container = $MainScrollContainer/StatsContainer
 
@@ -158,7 +236,7 @@ func add_recent_sessions_section() -> void:
 		return
 
 	var sessions_grid = GridContainer.new()
-	sessions_grid.columns = 4
+	sessions_grid.columns = 5
 	section.add_child(sessions_grid)
 
 	# Headers
@@ -175,8 +253,12 @@ func add_recent_sessions_section() -> void:
 	sessions_grid.add_child(header3)
 
 	var header4 = Label.new()
-	header4.text = "Date"
+	header4.text = "Operations Used"
 	sessions_grid.add_child(header4)
+
+	var header5 = Label.new()
+	header5.text = "Date"
+	sessions_grid.add_child(header5)
 
 	for session in recent_sessions:
 		var score_label = Label.new()
@@ -202,6 +284,27 @@ func add_recent_sessions_section() -> void:
 				result_label.text = "? Incomplete"
 				result_label.modulate = Color.GRAY
 		sessions_grid.add_child(result_label)
+
+		var operations_label = Label.new()
+		if session.operations_used.is_empty():
+			operations_label.text = "-"
+		else:
+			var op_summary = []
+			var sorted_ops = session.operations_used.keys()
+			sorted_ops.sort_custom(func(a, b): return session.operations_used[a]["count"] > session.operations_used[b]["count"])
+
+			# Show top 3 operations
+			var max_display = min(3, sorted_ops.size())
+			for i in range(max_display):
+				var op_name = sorted_ops[i]
+				var op_count = session.operations_used[op_name]["count"]
+				op_summary.append(op_name + ":" + str(op_count))
+
+			if sorted_ops.size() > max_display:
+				op_summary.append("+%d more" % (sorted_ops.size() - max_display))
+
+			operations_label.text = ", ".join(op_summary)
+		sessions_grid.add_child(operations_label)
 
 		var date_label = Label.new()
 		# Extract just the date part from timestamp

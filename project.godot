@@ -23,14 +23,14 @@ BooleanLogicEngine="*res://scripts/autoloads/BooleanLogicEngine.gd"
 AudioManager="*res://scripts/autoloads/AudioManager.gd"
 SceneManager="*res://scripts/autoloads/SceneManager.gd"
 TutorialManager="*res://scripts/autoloads/TutorialManager.gd"
-TutorialDataManager="*res://scripts/autoloads/TutorialDataManager.gd"
 ProgressTracker="*res://scripts/autoloads/ProgressTracker.gd"
+TutorialDataManager="*res://scripts/autoloads/TutorialDataManager.gd"
 
 [display]
 
 window/size/viewport_width=720
 window/size/viewport_height=1280
-window/stretch/mode="viewport"
+window/stretch/scale=0.69
 window/handheld/orientation=1
 
 [dotnet]

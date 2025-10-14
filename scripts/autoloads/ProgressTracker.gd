@@ -111,7 +111,10 @@ class PlayerStatistics:
 		best_streak = data.get("best_streak", 0)
 		favorite_difficulty = data.get("favorite_difficulty", 1)
 		total_orders_completed = data.get("total_orders_completed", 0)
-		achievements_unlocked = data.get("achievements_unlocked", [])
+		var achievements_data = data.get("achievements_unlocked", [])
+		achievements_unlocked.clear()
+		for achievement in achievements_data:
+			achievements_unlocked.append(achievement)
 		operation_proficiency = data.get("operation_proficiency", {})
 		operation_usage_count = data.get("operation_usage_count", {})
 		common_failures = data.get("common_failures", {})

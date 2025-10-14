@@ -220,6 +220,9 @@ func apply_rule() -> void:
 		available_premises.append(result)
 		create_premise_cards()
 
+		# Track successful operation usage
+		ProgressTracker.record_operation_used(rule_def.name, true)
+
 		# Clear selections
 		clear_selections()
 

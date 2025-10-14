@@ -22,7 +22,7 @@ func _ready() -> void:
 func setup_tutorial_buttons() -> void:
 	# Setup all grid buttons with tutorial names and completion status
 	for i in range(1, 19):
-		var button = $MainContainer/ButtonGrid.get_node("Button" + str(i)) as Button
+		var button = $MainContainer/ScrollContainer/ButtonGrid.get_node("Button" + str(i)) as Button
 		if button:
 			update_button_display(button, i)
 			if not button.pressed.is_connected(_on_grid_button_pressed):
@@ -61,7 +61,7 @@ func update_button_display(button: Button, button_index: int) -> void:
 func _on_progress_updated() -> void:
 	# Refresh all button displays when progress changes
 	for i in range(1, 19):
-		var button = $MainContainer/ButtonGrid.get_node("Button" + str(i)) as Button
+		var button = $MainContainer/ScrollContainer/ButtonGrid.get_node("Button" + str(i)) as Button
 		if button:
 			update_button_display(button, i)
 

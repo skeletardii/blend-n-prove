@@ -115,11 +115,6 @@ text = "SETTINGS"
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="QuitButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(300, 60)
-layout_mode = 2
-text = "QUIT"
-
 [node name="ProgressButton" type="Button" parent="MenuContainer"]
 layout_mode = 2
 text = "Progress & Stats"
@@ -130,6 +125,11 @@ layout_mode = 2
 [node name="GridButton" type="Button" parent="MenuContainer"]
 layout_mode = 2
 text = "Grid Menu"
+
+[node name="QuitButton" type="Button" parent="MenuContainer"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+text = "QUIT"
 
 [node name="BlenderEmoji" type="Label" parent="MenuContainer"]
 visible = false
