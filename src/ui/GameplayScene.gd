@@ -7,6 +7,8 @@ extends Control
 @onready var patience_bar: ProgressBar = $UI/MainContainer/PatienceBar
 @onready var order_display: RichTextLabel = $UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer/OrderDisplay
 @onready var phase_container: Control = $UI/MainContainer/GameContentArea/PhaseContainer
+@onready var tutorial_help_panel: Panel = $UI/TutorialHelpPanel
+@onready var show_help_button: Button = $UI/MainContainer/TopBar/TopBarContainer/ShowHelpButton
 
 # Phase Scenes
 var phase1_scene: PackedScene = preload("res://src/ui/Phase1UI.tscn")
@@ -32,6 +34,15 @@ func _ready() -> void:
 	# Initialize UI
 	update_lives_display()
 	update_score_display()
+
+	# Setup tutorial help panel if in tutorial mode
+	if GameManager.tutorial_mode:
+		show_help_button.visible = true
+		show_help_button.pressed.connect(_on_show_help_button_pressed)
+		tutorial_help_panel.help_panel_closed.connect(_on_help_panel_closed)
+	else:
+		show_help_button.visible = false
+		tutorial_help_panel.visible = false
 
 	# Generate first customer
 	generate_new_customer()
@@ -171,6 +182,10 @@ func generate_new_customer() -> void:
 	# Update UI
 	update_customer_display()
 	AudioManager.play_customer_arrive()
+
+	# Show tutorial help panel automatically for new problems
+	if GameManager.tutorial_mode:
+		show_tutorial_help()
 
 func update_customer_display() -> void:
 	if not current_customer:
@@ -351,3 +366,23 @@ func show_feedback_message(message: String, color: Color = Color.WHITE) -> void:
 func _on_feedback_timer_timeout() -> void:
 	if feedback_label:
 		feedback_label.visible = false
+
+# Tutorial Help Panel Functions
+func show_tutorial_help() -> void:
+	if not GameManager.tutorial_mode or not tutorial_help_panel:
+		return
+
+	# Get current tutorial info
+	var tutorial_key: String = GameManager.current_tutorial_key
+	var problem_index: int = GameManager.current_tutorial_problem_index
+
+	# Show the help panel with current problem data
+	tutorial_help_panel.show_tutorial_help(tutorial_key, problem_index)
+
+func _on_show_help_button_pressed() -> void:
+	if tutorial_help_panel:
+		tutorial_help_panel.toggle_visibility()
+
+func _on_help_panel_closed() -> void:
+	# Optional: Add any logic when help panel is closed
+	pass

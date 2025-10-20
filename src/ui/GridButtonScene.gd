@@ -115,11 +115,16 @@ func create_explanation_dialog(tutorial: TutorialDataManager.TutorialData) -> Co
 	title.add_theme_font_size_override("font_size", 32)
 	vbox.add_child(title)
 
-	# Description
+	# Description with enhanced formatting
 	var desc: RichTextLabel = RichTextLabel.new()
 	desc.bbcode_enabled = true
-	desc.text = "[b]Description:[/b]\n" + tutorial.description + "\n\n[b]Rule Pattern:[/b]\n" + tutorial.rule_pattern
-	desc.custom_minimum_size = Vector2(0, 250)
+	desc.fit_content = true
+	desc.text = "[center][color=cyan][b]═══ HOW IT WORKS ═══[/b][/color][/center]\n\n" + \
+		tutorial.description + \
+		"\n\n[center][color=yellow][b]═══ RULE PATTERN ═══[/b][/color][/center]\n" + \
+		"[center][font_size=24][b]" + tutorial.rule_pattern + "[/b][/font_size][/center]\n\n" + \
+		"[center][color=lime][i]You'll practice this rule through 10 problems of increasing difficulty![/i][/color][/center]"
+	desc.custom_minimum_size = Vector2(0, 300)
 	desc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	desc.scroll_active = true
 	vbox.add_child(desc)

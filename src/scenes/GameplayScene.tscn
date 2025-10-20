@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bji7acucw6pe3"]
+[gd_scene load_steps=3 format=3 uid="uid://bji7acucw6pe3"]
 
 [ext_resource type="Script" uid="uid://cl7fuggwr1kue" path="res://src/ui/GameplayScene.gd" id="1_3v9zy"]
+[ext_resource type="PackedScene" uid="uid://cq3k7m5xywb8k" path="res://src/ui/TutorialHelpPanel.tscn" id="2_tutorial_help"]
 
 [node name="GameplayScene" type="Control"]
 layout_mode = 3
@@ -79,6 +80,15 @@ text = "Score:"
 layout_mode = 2
 text = "0"
 
+[node name="Spacer2" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+
+[node name="ShowHelpButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
+visible = false
+layout_mode = 2
+text = "Show Help"
+
 [node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer"]
 layout_mode = 2
 value = 100.0
@@ -132,3 +142,6 @@ P
 
 Conclusion:
 Q"
+
+[node name="TutorialHelpPanel" parent="UI" instance=ExtResource("2_tutorial_help")]
+visible = false
