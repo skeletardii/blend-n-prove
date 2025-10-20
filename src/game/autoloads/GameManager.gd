@@ -22,6 +22,11 @@ class OrderTemplate:
 	var expected_operations: int
 	var description: String
 	var solution: String
+	# Level 6 natural language fields
+	var is_natural_language: bool = false
+	var natural_language_premises: Array[String] = []
+	var natural_language_conclusion: String = ""
+	var interpretation_hints: Array[String] = []
 
 	func _init(premise_list: Array[String], target: String, ops: int, desc: String = "", sol: String = "") -> void:
 		premises = premise_list
@@ -29,18 +34,48 @@ class OrderTemplate:
 		expected_operations = ops
 		description = desc
 		solution = sol
+		is_natural_language = false
+
+	# Constructor for natural language problems (Level 6)
+	static func create_natural_language(
+		nl_premises: Array[String],
+		hidden_premises: Array[String],
+		nl_conclusion: String,
+		hidden_conclusion: String,
+		ops: int,
+		desc: String = "",
+		sol: String = "",
+		hints: Array[String] = []
+	) -> OrderTemplate:
+		var template = OrderTemplate.new(hidden_premises, hidden_conclusion, ops, desc, sol)
+		template.is_natural_language = true
+		template.natural_language_premises = nl_premises
+		template.natural_language_conclusion = nl_conclusion
+		template.interpretation_hints = hints
+		return template
 
 class CustomerData:
 	var customer_name: String
 	var required_premises: Array[String] = []
 	var target_conclusion: String
 	var patience_duration: float
+	# Level 6 natural language fields
+	var is_natural_language: bool = false
+	var natural_language_premises: Array[String] = []
+	var natural_language_conclusion: String = ""
 
 	func _init(name: String, premises: Array[String], conclusion: String, patience: float = 60.0) -> void:
 		customer_name = name
 		required_premises = premises
 		target_conclusion = conclusion
 		patience_duration = patience
+		is_natural_language = false
+
+	# Set natural language data for Level 6 problems
+	func set_natural_language_data(nl_premises: Array[String], nl_conclusion: String) -> void:
+		is_natural_language = true
+		natural_language_premises = nl_premises
+		natural_language_conclusion = nl_conclusion
 
 var current_state: GameState = GameState.MENU
 var current_phase: GamePhase = GamePhase.PREPARING_PREMISES
@@ -52,6 +87,9 @@ var orders_completed_this_session: int = 0
 
 var debug_mode: bool = false
 var infinite_patience: bool = false
+
+# Debug difficulty mode: -1 = Auto (normal scaling), 1-6 = locked difficulty level
+var debug_difficulty_mode: int = -1
 
 # Tutorial mode variables
 var tutorial_mode: bool = false
@@ -68,7 +106,7 @@ func _ready() -> void:
 func load_classic_problems() -> void:
 	print("Loading classic mode problems...")
 
-	for level in range(1, 6):  # Levels 1-5
+	for level in range(1, 7):  # Levels 1-6 (now includes Level 6)
 		var file_path: String = "res://data/classic/level-" + str(level) + ".json"
 
 		if not FileAccess.file_exists(file_path):
@@ -104,22 +142,54 @@ func load_classic_problems() -> void:
 			if not problem_dict is Dictionary:
 				continue
 
-			# Convert premises array
-			var premises: Array[String] = []
-			var premises_data: Array = problem_dict.get("premises", [])
-			for premise in premises_data:
-				premises.append(str(premise))
+			# Check if this is a natural language problem (Level 6)
+			var has_natural_language: bool = problem_dict.has("natural_language_premises")
 
-			# Create order template
-			var template: OrderTemplate = OrderTemplate.new(
-				premises,
-				problem_dict.get("conclusion", ""),
-				problem_dict.get("expected_operations", 1),
-				problem_dict.get("description", ""),
-				problem_dict.get("solution", "")
-			)
+			if has_natural_language:
+				# Level 6: Natural language problem
+				var nl_premises: Array[String] = []
+				var nl_premises_data: Array = problem_dict.get("natural_language_premises", [])
+				for nl_premise in nl_premises_data:
+					nl_premises.append(str(nl_premise))
 
-			level_templates.append(template)
+				var hidden_premises: Array[String] = []
+				var hidden_premises_data: Array = problem_dict.get("hidden_logical_premises", [])
+				for hidden_premise in hidden_premises_data:
+					hidden_premises.append(str(hidden_premise))
+
+				var hints: Array[String] = []
+				var hints_data: Array = problem_dict.get("interpretation_hints", [])
+				for hint in hints_data:
+					hints.append(str(hint))
+
+				var template: OrderTemplate = OrderTemplate.create_natural_language(
+					nl_premises,
+					hidden_premises,
+					problem_dict.get("natural_language_conclusion", ""),
+					problem_dict.get("hidden_logical_conclusion", ""),
+					problem_dict.get("expected_operations", 1),
+					problem_dict.get("description", ""),
+					problem_dict.get("solution", ""),
+					hints
+				)
+
+				level_templates.append(template)
+			else:
+				# Levels 1-5: Standard logical symbols problem
+				var premises: Array[String] = []
+				var premises_data: Array = problem_dict.get("premises", [])
+				for premise in premises_data:
+					premises.append(str(premise))
+
+				var template: OrderTemplate = OrderTemplate.new(
+					premises,
+					problem_dict.get("conclusion", ""),
+					problem_dict.get("expected_operations", 1),
+					problem_dict.get("description", ""),
+					problem_dict.get("solution", "")
+				)
+
+				level_templates.append(template)
 
 		order_templates[level] = level_templates
 		print("✓ Loaded level ", level, ": ", level_templates.size(), " problems")
@@ -158,7 +228,16 @@ func reset_game() -> void:
 func start_new_game() -> void:
 	current_score = 0
 	current_lives = max_lives
-	difficulty_level = 1
+
+	# Set initial difficulty based on debug mode
+	if debug_difficulty_mode != -1:
+		# Debug mode: start at specified difficulty (1-6)
+		difficulty_level = clamp(debug_difficulty_mode, 1, 6)
+		print("Starting game with debug difficulty: ", difficulty_level)
+	else:
+		# Normal mode: start at difficulty 1
+		difficulty_level = 1
+
 	orders_completed_this_session = 0
 	current_phase = GamePhase.PREPARING_PREMISES
 	tutorial_mode = false
@@ -204,6 +283,11 @@ func force_game_over() -> void:
 
 func set_difficulty(level: int) -> void:
 	difficulty_level = max(1, level)
+
+func set_debug_difficulty_mode(mode: int) -> void:
+	# mode: -1 = Auto, 1-6 = specific difficulty level
+	debug_difficulty_mode = mode
+	print("Debug difficulty mode set to: ", "Auto" if mode == -1 else str(mode))
 
 func record_order_completed() -> void:
 	orders_completed_this_session += 1

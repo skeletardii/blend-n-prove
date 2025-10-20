@@ -126,9 +126,30 @@ func connect_page_toggle() -> void:
 	page_toggle_button.pressed.connect(_on_page_toggle_pressed)
 
 func set_premises_and_target(premises: Array[BooleanLogicEngine.BooleanExpression], target: String) -> void:
-	available_premises = premises.duplicate()
+	# Clean all premises before adding to inventory
+	available_premises.clear()
+	for premise in premises:
+		var cleaned = clean_expression(premise)
+		available_premises.append(cleaned)
+
 	target_conclusion = target
 	target_expression.text = "Prove: " + target
+	create_premise_cards()
+
+# Extended version for Level 6 natural language problems
+func set_premises_and_target_with_display(
+	premises: Array[BooleanLogicEngine.BooleanExpression],
+	logical_target: String,
+	display_target: String
+) -> void:
+	# Clean all premises before adding to inventory
+	available_premises.clear()
+	for premise in premises:
+		var cleaned = clean_expression(premise)
+		available_premises.append(cleaned)
+
+	target_conclusion = logical_target  # Validate against this
+	target_expression.text = "Prove: " + display_target  # Display this to player
 	create_premise_cards()
 
 func create_premise_cards() -> void:
@@ -206,18 +227,54 @@ func check_rule_application() -> void:
 	if selected_premises.size() == required_count:
 		apply_rule()
 
+func clean_expression(expr: BooleanLogicEngine.BooleanExpression) -> BooleanLogicEngine.BooleanExpression:
+	# Remove unnecessary outer parentheses from expression
+	var cleaned = BooleanLogicEngine.apply_parenthesis_removal(expr)
+	if cleaned.is_valid:
+		return cleaned
+	return expr
+
 func apply_rule() -> void:
 	if selected_rule.is_empty() or selected_premises.is_empty():
 		return
 
 	var rule_def = rule_definitions[selected_rule]
 
-	# Apply the rule (simplified - you'll need to implement actual logic)
+	# Check if this is a multi-result operation
+	var multi_results = apply_logical_rule_multi(selected_rule, selected_premises)
+
+	if multi_results != null and multi_results.size() > 1:
+		# Multi-result operation - add all results to inventory (after cleaning)
+		for result in multi_results:
+			if result.is_valid:
+				var cleaned_result = clean_expression(result)
+				available_premises.append(cleaned_result)
+
+		create_premise_cards()
+		ProgressTracker.record_operation_used(rule_def.name, true)
+		clear_selections()
+
+		feedback_message.emit("✓ Applied " + rule_def.name + ": Added " + str(multi_results.size()) + " results", Color.GREEN)
+
+		# Emit signal for each result
+		for result in multi_results:
+			var cleaned_result = clean_expression(result)
+			rule_applied.emit(cleaned_result)
+			# Check if any result is the target
+			if cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
+				feedback_message.emit("✓ Target reached! Proof complete!", Color.CYAN)
+				target_reached.emit(cleaned_result)
+		return
+
+	# Single-result operation (original behavior)
 	var result = apply_logical_rule(selected_rule, selected_premises)
 
 	if result != null and result.is_valid:
+		# Clean the result before adding to inventory
+		var cleaned_result = clean_expression(result)
+
 		# Add result to inventory
-		available_premises.append(result)
+		available_premises.append(cleaned_result)
 		create_premise_cards()
 
 		# Track successful operation usage
@@ -226,17 +283,43 @@ func apply_rule() -> void:
 		# Clear selections
 		clear_selections()
 
-		feedback_message.emit("✓ Applied " + rule_def.name + ": " + result.expression_string, Color.GREEN)
-		rule_applied.emit(result)
+		feedback_message.emit("✓ Applied " + rule_def.name + ": " + cleaned_result.expression_string, Color.GREEN)
+		rule_applied.emit(cleaned_result)
 
 		# Check if target is reached
-		if result.expression_string.strip_edges() == target_conclusion.strip_edges():
+		if cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
 			feedback_message.emit("✓ Target reached! Proof complete!", Color.CYAN)
-			target_reached.emit(result)
+			target_reached.emit(cleaned_result)
 	else:
 		# Clear selections when rule fails
 		clear_selections()
 		feedback_message.emit(rule_def.name + " cannot be applied to selected premises", Color.RED)
+
+func apply_logical_rule_multi(rule: String, premises: Array[BooleanLogicEngine.BooleanExpression]) -> Array:
+	# Returns an array of results for operations that can produce multiple statements
+	# Returns empty array if this is not a multi-result operation
+	match rule:
+		"SIMP":  # Simplification: P∧Q ⊢ P and Q (both)
+			if premises.size() == 1:
+				var results = BooleanLogicEngine.apply_simplification_both(premises)
+				if results.size() == 2:
+					return results
+			return []
+		"IMP":  # Biconditional to Implications: P↔Q ⊢ [P→Q, Q→P] (both)
+			if premises.size() == 1:
+				var results = BooleanLogicEngine.apply_biconditional_to_implications_both(premises[0])
+				if results.size() == 2:
+					return results
+			return []
+		"CONV":  # Biconditional to Equivalence: P↔Q ⊢ [P∧Q, ¬P∧¬Q] (both)
+			if premises.size() == 1:
+				var results = BooleanLogicEngine.apply_biconditional_to_equivalence_both(premises[0])
+				if results.size() == 2:
+					return results
+			return []
+		_:
+			# Not a multi-result operation
+			return []
 
 func apply_logical_rule(rule: String, premises: Array[BooleanLogicEngine.BooleanExpression]) -> BooleanLogicEngine.BooleanExpression:
 	# Use actual BooleanLogicEngine functions to apply logical rules
@@ -449,5 +532,7 @@ func set_page(page: int) -> void:
 		page_toggle_button.text = "←"
 
 func add_premise_to_inventory(premise: BooleanLogicEngine.BooleanExpression) -> void:
-	available_premises.append(premise)
+	# Clean expression before adding to inventory
+	var cleaned_premise = clean_expression(premise)
+	available_premises.append(cleaned_premise)
 	create_premise_cards()

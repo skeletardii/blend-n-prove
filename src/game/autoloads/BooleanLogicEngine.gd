@@ -455,10 +455,110 @@ func apply_addition(premises: Array, additional_expr: BooleanExpression) -> Bool
 
 func apply_constructive_dilemma(premises: Array) -> BooleanExpression:
 	# (P → Q) ∧ (R → S), P ∨ R ⊢ Q ∨ S
+	if premises.size() != 2:
+		return BooleanExpression.new("")
+
+	var premise1 = premises[0] as BooleanExpression
+	var premise2 = premises[1] as BooleanExpression
+
+	if not premise1 or not premise2 or not premise1.is_valid or not premise2.is_valid:
+		return BooleanExpression.new("")
+
+	# Try both orders: premise1 might be the conjunction or the disjunction
+	for i in range(2):
+		var conj_premise = premises[i] as BooleanExpression
+		var disj_premise = premises[1-i] as BooleanExpression
+
+		# Check if one premise is a conjunction of two implications
+		if conj_premise.is_conjunction():
+			var conj_parts = conj_premise.get_conjunction_parts()
+			if conj_parts.get("valid", false):
+				var left_part = conj_parts.get("left") as BooleanExpression
+				var right_part = conj_parts.get("right") as BooleanExpression
+
+				# Check if both parts are implications
+				if left_part and right_part and left_part.is_implication() and right_part.is_implication():
+					var impl1_parts = left_part.get_implication_parts()
+					var impl2_parts = right_part.get_implication_parts()
+
+					if impl1_parts.get("valid", false) and impl2_parts.get("valid", false):
+						var p = impl1_parts.get("antecedent") as BooleanExpression
+						var q = impl1_parts.get("consequent") as BooleanExpression
+						var r = impl2_parts.get("antecedent") as BooleanExpression
+						var s = impl2_parts.get("consequent") as BooleanExpression
+
+						# Now check if the other premise is P ∨ R
+						if disj_premise.is_disjunction():
+							var disj_parts = disj_premise.get_disjunction_parts()
+							if disj_parts.get("valid", false):
+								var disj_left = disj_parts.get("left") as BooleanExpression
+								var disj_right = disj_parts.get("right") as BooleanExpression
+
+								# Check if disjunction matches P ∨ R
+								if disj_left.equals(p) and disj_right.equals(r):
+									# Apply constructive dilemma: conclude Q ∨ S
+									return create_disjunction_expression(q, s)
+								# Also check reversed order R ∨ P
+								elif disj_left.equals(r) and disj_right.equals(p):
+									# Apply constructive dilemma: conclude S ∨ Q
+									return create_disjunction_expression(s, q)
+
 	return BooleanExpression.new("")
 
 func apply_destructive_dilemma(premises: Array) -> BooleanExpression:
 	# (P → Q) ∧ (R → S), ¬Q ∨ ¬S ⊢ ¬P ∨ ¬R
+	if premises.size() != 2:
+		return BooleanExpression.new("")
+
+	var premise1 = premises[0] as BooleanExpression
+	var premise2 = premises[1] as BooleanExpression
+
+	if not premise1 or not premise2 or not premise1.is_valid or not premise2.is_valid:
+		return BooleanExpression.new("")
+
+	# Try both orders: premise1 might be the conjunction or the disjunction
+	for i in range(2):
+		var conj_premise = premises[i] as BooleanExpression
+		var disj_premise = premises[1-i] as BooleanExpression
+
+		# Check if one premise is a conjunction of two implications
+		if conj_premise.is_conjunction():
+			var conj_parts = conj_premise.get_conjunction_parts()
+			if conj_parts.get("valid", false):
+				var left_part = conj_parts.get("left") as BooleanExpression
+				var right_part = conj_parts.get("right") as BooleanExpression
+
+				# Check if both parts are implications
+				if left_part and right_part and left_part.is_implication() and right_part.is_implication():
+					var impl1_parts = left_part.get_implication_parts()
+					var impl2_parts = right_part.get_implication_parts()
+
+					if impl1_parts.get("valid", false) and impl2_parts.get("valid", false):
+						var p = impl1_parts.get("antecedent") as BooleanExpression
+						var q = impl1_parts.get("consequent") as BooleanExpression
+						var r = impl2_parts.get("antecedent") as BooleanExpression
+						var s = impl2_parts.get("consequent") as BooleanExpression
+
+						# Now check if the other premise is ¬Q ∨ ¬S
+						if disj_premise.is_disjunction():
+							var disj_parts = disj_premise.get_disjunction_parts()
+							if disj_parts.get("valid", false):
+								var disj_left = disj_parts.get("left") as BooleanExpression
+								var disj_right = disj_parts.get("right") as BooleanExpression
+
+								# Check if disjunction matches ¬Q ∨ ¬S
+								if disj_left.is_negation_of(q) and disj_right.is_negation_of(s):
+									# Apply destructive dilemma: conclude ¬P ∨ ¬R
+									var neg_p = create_negation_expression(p)
+									var neg_r = create_negation_expression(r)
+									return create_disjunction_expression(neg_p, neg_r)
+								# Also check reversed order ¬S ∨ ¬Q
+								elif disj_left.is_negation_of(s) and disj_right.is_negation_of(q):
+									# Apply destructive dilemma: conclude ¬R ∨ ¬P
+									var neg_r = create_negation_expression(r)
+									var neg_p = create_negation_expression(p)
+									return create_disjunction_expression(neg_r, neg_p)
+
 	return BooleanExpression.new("")
 
 
@@ -544,6 +644,28 @@ func apply_xor_introduction(left: BooleanExpression, right: BooleanExpression) -
 
 	return create_xor_expression(left, right)
 
+# Helper function to get both parts of XOR elimination separately
+func apply_xor_elimination_both(premise: BooleanExpression) -> Array:
+	# Returns both [(P ∨ Q), ¬(P ∧ Q)] results from P ⊕ Q
+	if not premise or not premise.is_valid or not premise.is_xor():
+		return []
+
+	var xor_parts = premise.get_xor_parts()
+	if xor_parts.get("valid", false):
+		var left = xor_parts.get("left") as BooleanExpression
+		var right = xor_parts.get("right") as BooleanExpression
+
+		# Create (P ∨ Q)
+		var disjunction = create_disjunction_expression(left, right)
+		# Create (P ∧ Q)
+		var conjunction = create_conjunction_expression(left, right)
+		# Create ¬(P ∧ Q)
+		var negated_conjunction = create_negation_expression(conjunction)
+
+		return [disjunction, negated_conjunction]
+
+	return []
+
 # Biconditional Specific Functions
 func apply_biconditional_to_implications(premise: BooleanExpression) -> BooleanExpression:
 	# Biconditional elimination: P ↔ Q ≡ (P → Q) ∧ (Q → P)
@@ -587,6 +709,49 @@ func apply_biconditional_to_equivalence(premise: BooleanExpression) -> BooleanEx
 
 		return result
 	return BooleanExpression.new("")
+
+# Helper function to get both disjuncts from biconditional equivalence separately
+func apply_biconditional_to_equivalence_both(premise: BooleanExpression) -> Array:
+	# Returns both [(P ∧ Q), (¬P ∧ ¬Q)] results from P ↔ Q
+	if not premise or not premise.is_valid or not premise.is_biconditional():
+		return []
+
+	var biconditional_parts = premise.get_biconditional_parts()
+	if biconditional_parts.get("valid", false):
+		var left = biconditional_parts.get("left") as BooleanExpression
+		var right = biconditional_parts.get("right") as BooleanExpression
+
+		# Create (P ∧ Q)
+		var both_true = create_conjunction_expression(left, right)
+		# Create ¬P and ¬Q
+		var not_left = create_negation_expression(left)
+		var not_right = create_negation_expression(right)
+		# Create (¬P ∧ ¬Q)
+		var both_false = create_conjunction_expression(not_left, not_right)
+
+		return [both_true, both_false]
+
+	return []
+
+# Helper function to get both implications from biconditional separately
+func apply_biconditional_to_implications_both(premise: BooleanExpression) -> Array:
+	# Returns both [(P → Q), (Q → P)] results from P ↔ Q
+	if not premise or not premise.is_valid or not premise.is_biconditional():
+		return []
+
+	var biconditional_parts = premise.get_biconditional_parts()
+	if biconditional_parts.get("valid", false):
+		var left = biconditional_parts.get("left") as BooleanExpression
+		var right = biconditional_parts.get("right") as BooleanExpression
+
+		# Create (P → Q)
+		var left_to_right = create_implication_expression(left, right)
+		# Create (Q → P)
+		var right_to_left = create_implication_expression(right, left)
+
+		return [left_to_right, right_to_left]
+
+	return []
 
 func apply_biconditional_introduction(left_to_right: BooleanExpression, right_to_left: BooleanExpression) -> BooleanExpression:
 	# Biconditional introduction: (P → Q) ∧ (Q → P) ≡ P ↔ Q
@@ -1375,10 +1540,118 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Equivalence test failed")
 
+	# Test 21: Constructive Dilemma
+	tests_total += 1
+	var cd_premise1 = create_expression("(P → Q) ∧ (R → S)")
+	var cd_premise2 = create_expression("P ∨ R")
+	var cd_result = apply_constructive_dilemma([cd_premise1, cd_premise2])
+	if cd_result.is_valid and cd_result.is_disjunction():
+		# Result should be Q ∨ S or S ∨ Q
+		var cd_parts = cd_result.get_disjunction_parts()
+		if cd_parts.get("valid", false):
+			var left = cd_parts.get("left") as BooleanExpression
+			var right = cd_parts.get("right") as BooleanExpression
+			if (left.normalized_string == "Q" and right.normalized_string == "S") or \
+			   (left.normalized_string == "S" and right.normalized_string == "Q"):
+				print("✓ Constructive dilemma test passed")
+				tests_passed += 1
+			else:
+				print("✗ Constructive dilemma test failed (wrong result)")
+		else:
+			print("✗ Constructive dilemma test failed (invalid disjunction)")
+	else:
+		print("✗ Constructive dilemma test failed")
+
+	# Test 22: Destructive Dilemma
+	tests_total += 1
+	var dd_premise1 = create_expression("(P → Q) ∧ (R → S)")
+	var dd_premise2 = create_expression("¬Q ∨ ¬S")
+	var dd_result = apply_destructive_dilemma([dd_premise1, dd_premise2])
+	if dd_result.is_valid and dd_result.is_disjunction():
+		# Result should be ¬P ∨ ¬R or ¬R ∨ ¬P
+		var dd_parts = dd_result.get_disjunction_parts()
+		if dd_parts.get("valid", false):
+			var left = dd_parts.get("left") as BooleanExpression
+			var right = dd_parts.get("right") as BooleanExpression
+			# Check if we have negations of P and R
+			var has_neg_p = left.normalized_string == "¬P" or right.normalized_string == "¬P"
+			var has_neg_r = left.normalized_string == "¬R" or right.normalized_string == "¬R"
+			if has_neg_p and has_neg_r:
+				print("✓ Destructive dilemma test passed")
+				tests_passed += 1
+			else:
+				print("✗ Destructive dilemma test failed (wrong result)")
+		else:
+			print("✗ Destructive dilemma test failed (invalid disjunction)")
+	else:
+		print("✗ Destructive dilemma test failed")
+
+	print("\n--- Multi-Result Helper Function Tests ---")
+
+	# Test 23: Simplification Both
+	tests_total += 1
+	var simp_both_premise = create_expression("P ∧ Q")
+	var simp_both_results = apply_simplification_both([simp_both_premise])
+	if simp_both_results.size() == 2:
+		var simp_left = simp_both_results[0] as BooleanExpression
+		var simp_right = simp_both_results[1] as BooleanExpression
+		if simp_left.normalized_string == "P" and simp_right.normalized_string == "Q":
+			print("✓ Simplification both test passed")
+			tests_passed += 1
+		else:
+			print("✗ Simplification both test failed (wrong results)")
+	else:
+		print("✗ Simplification both test failed")
+
+	# Test 24: Biconditional to Implications Both
+	tests_total += 1
+	var bicond_impl_premise = create_expression("P ↔ Q")
+	var bicond_impl_results = apply_biconditional_to_implications_both(bicond_impl_premise)
+	if bicond_impl_results.size() == 2:
+		var impl1 = bicond_impl_results[0] as BooleanExpression
+		var impl2 = bicond_impl_results[1] as BooleanExpression
+		if impl1.is_implication() and impl2.is_implication():
+			print("✓ Biconditional to implications both test passed")
+			tests_passed += 1
+		else:
+			print("✗ Biconditional to implications both test failed (not implications)")
+	else:
+		print("✗ Biconditional to implications both test failed")
+
+	# Test 25: XOR Elimination Both
+	tests_total += 1
+	var xor_both_premise = create_expression("P ⊕ Q")
+	var xor_both_results = apply_xor_elimination_both(xor_both_premise)
+	if xor_both_results.size() == 2:
+		var xor_disj = xor_both_results[0] as BooleanExpression
+		var xor_neg = xor_both_results[1] as BooleanExpression
+		if xor_disj.is_disjunction() and xor_neg.normalized_string.begins_with("¬"):
+			print("✓ XOR elimination both test passed")
+			tests_passed += 1
+		else:
+			print("✗ XOR elimination both test failed (wrong structure)")
+	else:
+		print("✗ XOR elimination both test failed")
+
+	# Test 26: Biconditional to Equivalence Both
+	tests_total += 1
+	var bicond_equiv_premise = create_expression("P ↔ Q")
+	var bicond_equiv_results = apply_biconditional_to_equivalence_both(bicond_equiv_premise)
+	if bicond_equiv_results.size() == 2:
+		var both_true = bicond_equiv_results[0] as BooleanExpression
+		var both_false = bicond_equiv_results[1] as BooleanExpression
+		if both_true.is_conjunction() and both_false.is_conjunction():
+			print("✓ Biconditional to equivalence both test passed")
+			tests_passed += 1
+		else:
+			print("✗ Biconditional to equivalence both test failed (not conjunctions)")
+	else:
+		print("✗ Biconditional to equivalence both test failed")
+
 	# Edge Case Tests
 	print("\n--- Edge Case Tests ---")
 
-	# Test 21: Invalid empty parentheses
+	# Test 27: Invalid empty parentheses
 	tests_total += 1
 	var empty_paren = create_expression("()")
 	if not empty_paren.is_valid:
@@ -1387,7 +1660,7 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Empty parentheses rejection test failed")
 
-	# Test 22: Consecutive operators
+	# Test 28: Consecutive operators
 	tests_total += 1
 	var consec_ops = create_expression("P ∧ ∨ Q")
 	if not consec_ops.is_valid:
@@ -1396,7 +1669,7 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Consecutive operators rejection test failed")
 
-	# Test 23: Operator at start
+	# Test 29: Operator at start
 	tests_total += 1
 	var op_start = create_expression("∧ P")
 	if not op_start.is_valid:
@@ -1405,7 +1678,7 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Operator at start rejection test failed")
 
-	# Test 24: Operator at end
+	# Test 30: Operator at end
 	tests_total += 1
 	var op_end = create_expression("P ∧")
 	if not op_end.is_valid:
@@ -1414,7 +1687,7 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Operator at end rejection test failed")
 
-	# Test 25: Unbalanced parentheses
+	# Test 31: Unbalanced parentheses
 	tests_total += 1
 	var unbal_paren = create_expression("((P ∧ Q)")
 	if not unbal_paren.is_valid:
@@ -1423,7 +1696,7 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Unbalanced parentheses rejection test failed")
 
-	# Test 26: Complex valid expression
+	# Test 32: Complex valid expression
 	tests_total += 1
 	var complex_expr = create_expression("((P ∧ Q) → R) ↔ (¬P ∨ (¬Q ∨ R))")
 	if complex_expr.is_valid:
@@ -1432,7 +1705,7 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Complex expression validation test failed")
 
-	# Test 27: Multi-character variables
+	# Test 33: Multi-character variables
 	tests_total += 1
 	var multi_var = create_expression("P1 ∧ Q2")
 	if multi_var.is_valid:
@@ -1441,7 +1714,7 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Multi-character variable test failed")
 
-	# Test 28: Constants handling
+	# Test 34: Constants handling
 	tests_total += 1
 	var const_expr = create_expression("TRUE ∨ FALSE")
 	if const_expr.is_valid:
@@ -1457,11 +1730,22 @@ func test_logic_engine() -> bool:
 		print("🎉 All tests passed! Boolean Logic Engine is FULLY IMPLEMENTED!")
 		print("✅ Supports ALL boolean logic operations including:")
 		print("   • Basic operations: ∧, ∨, ⊕, ¬, →, ↔")
-		print("   • Inference rules: MP, MT, HS, DS, Resolution, etc.")
+		print("   • Inference rules: MP, MT, HS, DS, CD, DD, Resolution, etc.")
 		print("   • Boolean laws: Distributivity, Commutativity, Associativity")
 		print("   • Identity laws: Idempotent, Absorption, Negation")
 		print("   • Special laws: Tautology, Contradiction, Double Negation")
-		print("   • NEW: Parenthesis removal operation for Phase 2")
+		print("   • Parenthesis removal operation for Phase 2")
+		print("✅ ALL 13 Inference Rules Implemented:")
+		print("   • Modus Ponens, Modus Tollens")
+		print("   • Hypothetical Syllogism, Disjunctive Syllogism")
+		print("   • Simplification, Conjunction, Addition")
+		print("   • Constructive Dilemma, Destructive Dilemma")
+		print("   • Resolution, De Morgan's Laws, Double Negation")
+		print("✅ Multi-Result Helper Functions:")
+		print("   • apply_simplification_both() - extracts both P and Q from P ∧ Q")
+		print("   • apply_biconditional_to_implications_both() - P ↔ Q → [P→Q, Q→P]")
+		print("   • apply_xor_elimination_both() - P⊕Q → [P∨Q, ¬(P∧Q)]")
+		print("   • apply_biconditional_to_equivalence_both() - P↔Q → [P∧Q, ¬P∧¬Q]")
 		print("✅ Enhanced edge case handling:")
 		print("   • Empty parentheses rejection")
 		print("   • Consecutive operator detection")
@@ -1471,7 +1755,7 @@ func test_logic_engine() -> bool:
 		print("✅ Robust expression parsing and normalization")
 		print("✅ ASCII conversion: ^ → ⊕, <-> → ↔, -> → →, etc.")
 		print("✅ All Phase 2 UI operations now fully connected")
-		print("✅ Comprehensive test suite with 28 test cases")
+		print("✅ Comprehensive test suite with 34 test cases")
 	else:
 		print("⚠️  Some tests failed. Engine needs further debugging.")
 

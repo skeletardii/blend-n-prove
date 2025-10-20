@@ -81,7 +81,13 @@ func set_customer_data(customer: GameManager.CustomerData) -> void:
 	current_customer = customer
 	validated_premises.clear()
 	update_premise_checklist()
-	target_expression.text = customer.target_conclusion
+
+	# Level 6: Show natural language goal, Levels 1-5: Show logical conclusion
+	if customer.is_natural_language:
+		target_expression.text = customer.natural_language_conclusion
+	else:
+		target_expression.text = customer.target_conclusion
+
 	clear_input()
 
 func _on_symbol_pressed(symbol: String) -> void:
@@ -136,7 +142,13 @@ func validate_current_input() -> void:
 				update_premise_checklist()
 				clear_input()
 				premise_validated.emit(expression)
-				feedback_message.emit("✓ Premise validated!", Color.GREEN)
+
+				# Different feedback for Level 6 vs Levels 1-5
+				if current_customer.is_natural_language:
+					feedback_message.emit("✓ Correct translation!", Color.GREEN)
+				else:
+					feedback_message.emit("✓ Premise validated!", Color.GREEN)
+
 				score += 100
 				update_status_display()
 
@@ -147,7 +159,12 @@ func validate_current_input() -> void:
 			else:
 				feedback_message.emit("This premise is already validated", Color.YELLOW)
 		else:
-			feedback_message.emit("This expression doesn't match required premises", Color.RED)
+			# Different error feedback for Level 6 vs Levels 1-5
+			if current_customer.is_natural_language:
+				feedback_message.emit("✗ That doesn't match the sentence meaning. Try again!", Color.RED)
+			else:
+				feedback_message.emit("This expression doesn't match required premises", Color.RED)
+
 			lives -= 1
 			update_status_display()
 			if lives <= 0:
@@ -190,10 +207,19 @@ func update_premise_checklist() -> void:
 		item.queue_free()
 	premise_items.clear()
 
+	# Determine which text to display based on problem type
+	var display_premises: Array[String] = []
+	if current_customer.is_natural_language:
+		# Level 6: Show natural language sentences
+		display_premises = current_customer.natural_language_premises.duplicate()
+	else:
+		# Levels 1-5: Show logical symbols
+		display_premises = current_customer.required_premises.duplicate()
+
 	# Create new items
-	for i in range(current_customer.required_premises.size()):
-		var premise_text = current_customer.required_premises[i]
-		var is_completed = is_premise_completed(premise_text)
+	for i in range(display_premises.size()):
+		var premise_text = display_premises[i]
+		var is_completed = is_premise_completed_by_index(i)
 
 		var item_container = HBoxContainer.new()
 		var checkbox = create_checkbox(is_completed)
@@ -231,6 +257,17 @@ func create_checkbox(checked: bool) -> Control:
 func is_premise_completed(premise_text: String) -> bool:
 	for validated in validated_premises:
 		if validated.expression_string.strip_edges() == premise_text.strip_edges():
+			return true
+	return false
+
+func is_premise_completed_by_index(index: int) -> bool:
+	# For Level 6, we validate against hidden logical premises by checking if the index has been validated
+	if index < 0 or index >= current_customer.required_premises.size():
+		return false
+
+	var required_premise = current_customer.required_premises[index]
+	for validated in validated_premises:
+		if validated.expression_string.strip_edges() == required_premise.strip_edges():
 			return true
 	return false
 

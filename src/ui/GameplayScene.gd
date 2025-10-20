@@ -110,7 +110,15 @@ func switch_to_phase2() -> void:
 	current_phase_instance.feedback_message.connect(_on_feedback_message)
 
 	# Pass premises and target to Phase 2
-	current_phase_instance.set_premises_and_target(validated_premises, current_customer.target_conclusion)
+	# For Level 6, also pass natural language conclusion for display
+	if current_customer.is_natural_language:
+		current_phase_instance.set_premises_and_target_with_display(
+			validated_premises,
+			current_customer.target_conclusion,
+			current_customer.natural_language_conclusion
+		)
+	else:
+		current_phase_instance.set_premises_and_target(validated_premises, current_customer.target_conclusion)
 
 	# Hide patience bar in Phase 2
 	patience_bar.visible = false
@@ -136,7 +144,11 @@ func generate_new_customer() -> void:
 	else:
 		# Normal game mode - use order templates
 		# Get current difficulty level (clamped to available levels)
-		var current_level: int = min(GameManager.difficulty_level, 5)
+		var current_level: int = min(GameManager.difficulty_level, 6)  # Now supports up to level 6
+
+		# If debug difficulty mode is active, use that instead
+		if GameManager.debug_difficulty_mode != -1:
+			current_level = clamp(GameManager.debug_difficulty_mode, 1, 6)
 
 		# Get random order template for this level
 		var templates_for_level = GameManager.order_templates[current_level]
@@ -146,7 +158,15 @@ func generate_new_customer() -> void:
 		var base_patience: float = 90.0 - (current_level * 10.0) + (random_template.expected_operations * 15.0)
 		base_patience = max(30.0, base_patience)  # Minimum 30 seconds
 
+		# Create customer with logical premises (hidden premises for Level 6)
 		current_customer = GameManager.CustomerData.new(random_name, random_template.premises, random_template.conclusion, base_patience)
+
+		# If this is a Level 6 natural language problem, set the natural language data
+		if random_template.is_natural_language:
+			current_customer.set_natural_language_data(
+				random_template.natural_language_premises,
+				random_template.natural_language_conclusion
+			)
 
 	# Update UI
 	update_customer_display()
@@ -168,11 +188,24 @@ func update_customer_display() -> void:
 	else:
 		customer_name.text = current_customer.customer_name
 
-	var order_text: String = "[b]Premises:[/b]\n"
-	for premise in current_customer.required_premises:
-		order_text += premise + "\n"
+	var order_text: String = ""
 
-	order_text += "\n[b]Conclusion:[/b]\n" + current_customer.target_conclusion
+	# Level 6: Show natural language instead of logical symbols
+	if current_customer.is_natural_language:
+		order_text = "[b]Level 6 - Translation Challenge[/b]\n\n"
+		order_text += "[b]Translate these statements:[/b]\n"
+		for premise in current_customer.natural_language_premises:
+			order_text += "• " + premise + "\n"
+
+		order_text += "\n[b]Goal:[/b]\n" + current_customer.natural_language_conclusion
+		order_text += "\n\n[i](Translate sentences to logical form)[/i]"
+	else:
+		# Levels 1-5: Show logical symbols directly
+		order_text = "[b]Premises:[/b]\n"
+		for premise in current_customer.required_premises:
+			order_text += premise + "\n"
+
+		order_text += "\n[b]Conclusion:[/b]\n" + current_customer.target_conclusion
 
 	order_display.text = order_text
 
@@ -224,12 +257,20 @@ func complete_order_successfully() -> void:
 			)
 	else:
 		# Normal game mode progression
-		# Increase difficulty level after each completed order (until level 5)
-		if GameManager.difficulty_level < 5:
-			GameManager.difficulty_level += 1
-			show_feedback_message("Level Up! Now at Level " + str(GameManager.difficulty_level), Color.GOLD)
+		# Only increase difficulty if debug mode is not locking it
+		if GameManager.debug_difficulty_mode == -1:
+			# Auto mode: increase difficulty level after each completed order (until level 6)
+			if GameManager.difficulty_level < 6:
+				GameManager.difficulty_level += 1
+				if GameManager.difficulty_level == 6:
+					show_feedback_message("Level 6 Unlocked! Translation Challenge Begins!", Color.GOLD)
+				else:
+					show_feedback_message("Level Up! Now at Level " + str(GameManager.difficulty_level), Color.GOLD)
+			else:
+				show_feedback_message("Ultimate Master Level - Incredible!", Color.GOLD)
 		else:
-			show_feedback_message("Master Level - Well done!", Color.GOLD)
+			# Debug difficulty mode locked - show completion message without level up
+			show_feedback_message("Order Complete! Score: +" + str(total_score), Color.GOLD)
 
 		# Generate new customer
 		generate_new_customer()

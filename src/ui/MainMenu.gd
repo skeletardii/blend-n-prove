@@ -4,6 +4,8 @@ extends Control
 @onready var difficulty_slider: HSlider = $DebugPanel/DebugContainer/DifficultyContainer/DifficultySlider
 @onready var difficulty_value_label: Label = $DebugPanel/DebugContainer/DifficultyContainer/DifficultyValue
 @onready var infinite_patience_check: CheckBox = $DebugPanel/DebugContainer/InfinitePatienceCheck
+@onready var settings_panel: Panel = $SettingsPanel
+@onready var difficulty_mode_option: OptionButton = $SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption
 @onready var play_button: Button = $MenuContainer/PlayButton
 @onready var progress_button: Button = $MenuContainer/ProgressButton
 @onready var grid_button: Button = $MenuContainer/GridButton
@@ -40,6 +42,9 @@ func _ready() -> void:
 	difficulty_slider.value = GameManager.difficulty_level
 	difficulty_value_label.text = str(GameManager.difficulty_level)
 	infinite_patience_check.button_pressed = GameManager.infinite_patience
+
+	# Setup settings panel
+	setup_difficulty_mode_options()
 
 	# Update quick stats display
 	update_quick_stats()
@@ -104,8 +109,7 @@ func _on_debug_button_pressed() -> void:
 
 func _on_settings_button_pressed() -> void:
 	AudioManager.play_button_click()
-	# TODO: Implement settings menu
-	print("Settings not implemented yet")
+	settings_panel.visible = !settings_panel.visible
 
 func _on_quit_button_pressed() -> void:
 	AudioManager.play_button_click()
@@ -158,3 +162,35 @@ func update_quick_stats() -> void:
 	high_score_quick.text = "High Score: " + str(stats.high_score_overall)
 	games_played_quick.text = "Games Played: " + str(stats.total_games_played)
 	streak_quick.text = "Current Streak: " + str(stats.current_streak)
+
+func setup_difficulty_mode_options() -> void:
+	# Clear existing items
+	difficulty_mode_option.clear()
+
+	# Add difficulty options
+	difficulty_mode_option.add_item("Auto (Normal Scaling)", 0)
+	difficulty_mode_option.add_item("Level 1", 1)
+	difficulty_mode_option.add_item("Level 2", 2)
+	difficulty_mode_option.add_item("Level 3", 3)
+	difficulty_mode_option.add_item("Level 4", 4)
+	difficulty_mode_option.add_item("Level 5", 5)
+	difficulty_mode_option.add_item("Level 6", 6)
+
+	# Set current selection based on GameManager setting
+	if GameManager.debug_difficulty_mode == -1:
+		difficulty_mode_option.select(0)  # Auto
+	else:
+		difficulty_mode_option.select(GameManager.debug_difficulty_mode)  # 1-6
+
+func _on_difficulty_mode_option_item_selected(index: int) -> void:
+	AudioManager.play_button_click()
+
+	# Index 0 = Auto (-1), Index 1-6 = Difficulty levels 1-6
+	if index == 0:
+		GameManager.set_debug_difficulty_mode(-1)
+	else:
+		GameManager.set_debug_difficulty_mode(index)
+
+func _on_close_settings_button_pressed() -> void:
+	AudioManager.play_button_click()
+	settings_panel.visible = false
