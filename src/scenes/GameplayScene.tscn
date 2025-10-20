@@ -1,0 +1,134 @@
+[gd_scene load_steps=2 format=3 uid="uid://bji7acucw6pe3"]
+
+[ext_resource type="Script" uid="uid://cl7fuggwr1kue" path="res://src/ui/GameplayScene.gd" id="1_3v9zy"]
+
+[node name="GameplayScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3v9zy")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.91, 0.957, 0.973, 1)
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainContainer" type="VBoxContainer" parent="UI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopBar" type="Panel" parent="UI/MainContainer"]
+modulate = Color(0.91, 0.965, 0.953, 1)
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="TopBarContainer" type="HBoxContainer" parent="UI/MainContainer/TopBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LivesContainer" type="HBoxContainer" parent="UI/MainContainer/TopBar/TopBarContainer"]
+layout_mode = 2
+
+[node name="LivesLabel" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/LivesContainer"]
+layout_mode = 2
+text = "Lives:"
+
+[node name="LivesDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/LivesContainer"]
+layout_mode = 2
+text = "♥♥♥"
+
+[node name="Spacer" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScoreContainer" type="HBoxContainer" parent="UI/MainContainer/TopBar/TopBarContainer"]
+layout_mode = 2
+
+[node name="ScoreLabel" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer"]
+layout_mode = 2
+text = "Score:"
+
+[node name="ScoreDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer"]
+layout_mode = 2
+text = "0"
+
+[node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer"]
+layout_mode = 2
+value = 100.0
+
+[node name="GameContentArea" type="HBoxContainer" parent="UI/MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PhaseContainer" type="Control" parent="UI/MainContainer/GameContentArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CustomerArea" type="Panel" parent="UI/MainContainer/GameContentArea"]
+visible = false
+modulate = Color(1, 0.949, 0.91, 1)
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="CustomerContainer" type="VBoxContainer" parent="UI/MainContainer/GameContentArea/CustomerArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CustomerTitle" type="Label" parent="UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer"]
+layout_mode = 2
+text = "Customer Order"
+horizontal_alignment = 1
+
+[node name="CharacterAssetContainer" type="Control" parent="UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+
+[node name="CustomerName" type="Label" parent="UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer"]
+layout_mode = 2
+text = "Alice"
+horizontal_alignment = 1
+
+[node name="OrderDisplay" type="RichTextLabel" parent="UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Premises:
+P → Q
+P
+
+Conclusion:
+Q"

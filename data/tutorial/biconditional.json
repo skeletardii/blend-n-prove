@@ -1,0 +1,111 @@
+{
+  "rule_name": "Biconditional (Equivalence)",
+  "description": "A biconditional states that two propositions have the same truth value. \"P if and only if Q\" means \"if P then Q\" and \"if Q then P\". We can use biconditionals to infer one side from the other.",
+  "rule_pattern": "P ↔ Q, P ⊢ Q (or P ↔ Q, Q ⊢ P)",
+  "tutorial_key": "biconditional",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ↔ Q",
+        "P"
+      ],
+      "conclusion": "Q",
+      "solution": "Apply Biconditional elimination from left to right."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R ↔ S",
+        "S"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Biconditional elimination from right to left."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A ↔ B",
+        "A"
+      ],
+      "conclusion": "B",
+      "solution": "Direct application of Biconditional."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "P ↔ Q",
+        "Q"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Biconditional in reverse direction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) ↔ R",
+        "P ∧ Q"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Biconditional where left side is a conjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "P ↔ (Q ∨ R)",
+        "P"
+      ],
+      "conclusion": "Q ∨ R",
+      "solution": "Apply Biconditional where right side is a disjunction."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P ↔ Q",
+        "Q ↔ R",
+        "P"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Biconditional twice to chain through: P gives Q, Q gives R."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P ↔ Q",
+        "P"
+      ],
+      "conclusion": "(P → Q) ∧ (Q → P)",
+      "solution": "Transform the biconditional into its implication form, then apply."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "(P → Q) ∧ (Q → P)",
+        "P"
+      ],
+      "conclusion": "Q",
+      "solution": "Recognize this as a biconditional, then apply left to right."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "P ↔ Q",
+        "Q ↔ R",
+        "R ↔ S",
+        "P"
+      ],
+      "conclusion": "S",
+      "solution": "Chain multiple biconditionals: P gives Q, Q gives R, R gives S."
+    }
+  ]
+}

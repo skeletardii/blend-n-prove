@@ -1,0 +1,98 @@
+{
+  "rule_name": "Absorption Laws",
+  "description": "Absorption laws state that certain combinations simplify naturally. \"P and (P or Q)\" simplifies to just \"P\", and \"P or (P and Q)\" also simplifies to \"P\".",
+  "rule_pattern": "P ∨ (P ∧ Q) ⊢ P",
+  "tutorial_key": "absorption",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∧ (P ∨ Q)"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Absorption law: P absorbs the disjunction."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R ∨ (R ∧ S)"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Absorption law: R absorbs the conjunction."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A ∧ (A ∨ B)"
+      ],
+      "conclusion": "A",
+      "solution": "Direct application of Absorption."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∨ (P ∧ Q ∧ R)"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Absorption with multiple conjuncts."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) ∧ ((P ∧ Q) ∨ R)"
+      ],
+      "conclusion": "P ∧ Q",
+      "solution": "Apply Absorption treating \"P ∧ Q\" as a single unit."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∧ (P ∨ (Q ∧ R))"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Absorption with complex second term."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∨ Q) ∧ ((P ∨ Q) ∨ R)"
+      ],
+      "conclusion": "P ∨ Q",
+      "solution": "Apply Absorption to complex disjunction."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∧ (P ∨ Q)"
+      ],
+      "conclusion": "P",
+      "solution": "Standard Absorption, possibly combined with other operations."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) ∨ ((P ∧ Q) ∧ R)"
+      ],
+      "conclusion": "P ∧ Q",
+      "solution": "Apply Absorption in reverse direction."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "(P ∧ (P ∨ Q)) ∧ R"
+      ],
+      "conclusion": "P ∧ R",
+      "solution": "Apply Absorption to simplify inner expression, then Simplification."
+    }
+  ]
+}

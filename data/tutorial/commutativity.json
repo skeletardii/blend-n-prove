@@ -1,0 +1,98 @@
+{
+  "rule_name": "Commutativity",
+  "description": "Commutativity states that the order of operands doesn't matter for certain operations. \"P and Q\" is the same as \"Q and P\". This applies to AND, OR, XOR, and biconditional.",
+  "rule_pattern": "P ∨ Q ⊢ Q ∨ P",
+  "tutorial_key": "commutativity",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∧ Q"
+      ],
+      "conclusion": "Q ∧ P",
+      "solution": "Apply Commutativity to swap the conjuncts."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R ∨ S"
+      ],
+      "conclusion": "S ∨ R",
+      "solution": "Apply Commutativity to swap the disjuncts."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A ∧ B"
+      ],
+      "conclusion": "B ∧ A",
+      "solution": "Direct application of Commutativity."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) ∨ R"
+      ],
+      "conclusion": "R ∨ (P ∧ Q)",
+      "solution": "Apply Commutativity to the disjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∧ (Q ∨ R)"
+      ],
+      "conclusion": "(Q ∨ R) ∧ P",
+      "solution": "Apply Commutativity to the outer conjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → Q) ∧ R"
+      ],
+      "conclusion": "R ∧ (P → Q)",
+      "solution": "Swap complex expressions using Commutativity."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) ∧ (R ∧ S)"
+      ],
+      "conclusion": "(R ∧ S) ∧ (P ∧ Q)",
+      "solution": "Apply Commutativity to swap conjunctions."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∧ Q"
+      ],
+      "conclusion": "Q",
+      "solution": "Apply Commutativity to get \"Q ∧ P\", then Simplification to extract Q."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∨ Q) ∧ R"
+      ],
+      "conclusion": "R ∧ (Q ∨ P)",
+      "solution": "Apply Commutativity twice: once for the disjunction, once for the conjunction."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "((P ∧ Q) ∨ R) ∧ S"
+      ],
+      "conclusion": "S ∧ (R ∨ (Q ∧ P))",
+      "solution": "Apply Commutativity multiple times at different levels."
+    }
+  ]
+}

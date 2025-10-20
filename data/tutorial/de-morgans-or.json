@@ -1,0 +1,99 @@
+{
+  "rule_name": "De Morgan's Law (OR)",
+  "description": "De Morgan's Law for OR states that the negation of a disjunction is equivalent to the conjunction of the negations. \"Not (P or Q)\" is the same as \"(not P) and (not Q)\".",
+  "rule_pattern": "¬(P ∨ Q) ⊢ ¬P ∧ ¬Q",
+  "tutorial_key": "de-morgans-or",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "¬(P ∨ Q)"
+      ],
+      "conclusion": "¬P ∧ ¬Q",
+      "solution": "Apply De Morgan's Law directly."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "¬(R ∨ S)"
+      ],
+      "conclusion": "¬R ∧ ¬S",
+      "solution": "Transform the negated disjunction into a conjunction of negations."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "¬(A ∨ B)"
+      ],
+      "conclusion": "¬A ∧ ¬B",
+      "solution": "Direct application of De Morgan's Law."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "¬((P ∧ Q) ∨ R)"
+      ],
+      "conclusion": "¬(P ∧ Q) ∧ ¬R",
+      "solution": "Apply De Morgan's Law where one disjunct is a conjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "¬(P ∨ (Q ∨ R))"
+      ],
+      "conclusion": "¬P ∧ ¬(Q ∨ R)",
+      "solution": "Apply De Morgan's Law to the outer disjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "¬((P → Q) ∨ R)"
+      ],
+      "conclusion": "¬(P → Q) ∧ ¬R",
+      "solution": "Apply De Morgan's Law with an implication as one disjunct."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "¬((P ∨ Q) ∨ (R ∨ S))"
+      ],
+      "conclusion": "¬(P ∨ Q) ∧ ¬(R ∨ S)",
+      "solution": "Apply De Morgan's Law to a disjunction of disjunctions."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P → Q",
+        "¬(P ∨ R)"
+      ],
+      "conclusion": "¬P ∧ ¬R",
+      "solution": "Apply De Morgan's Law to the second premise."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "¬(P ∨ Q)"
+      ],
+      "conclusion": "¬P",
+      "solution": "Apply De Morgan's Law to get \"¬P ∧ ¬Q\", then Simplification to extract ¬P."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "¬((P ∨ Q) ∨ R)"
+      ],
+      "conclusion": "¬P ∧ ¬Q ∧ ¬R",
+      "solution": "Apply De Morgan's Law twice to fully distribute the negation."
+    }
+  ]
+}

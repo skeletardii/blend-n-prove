@@ -1,0 +1,112 @@
+{
+  "rule_name": "Modus Ponens",
+  "description": "Modus Ponens is one of the most fundamental inference rules in logic. It states: if we have a conditional statement (if P then Q) and we know P is true, we can conclude Q is true.",
+  "rule_pattern": "P → Q, P ⊢ Q",
+  "tutorial_key": "modus-ponens",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P → Q",
+        "P"
+      ],
+      "conclusion": "Q",
+      "solution": "Apply Modus Ponens directly: from \"P implies Q\" and \"P\", we conclude \"Q\"."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R → S",
+        "R"
+      ],
+      "conclusion": "S",
+      "solution": "Apply Modus Ponens: from \"R implies S\" and \"R\", we conclude \"S\"."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A → B",
+        "A"
+      ],
+      "conclusion": "B",
+      "solution": "Direct application of Modus Ponens with variables A and B."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) → R",
+        "P ∧ Q"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Modus Ponens where the antecedent is a conjunction \"P ∧ Q\"."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "P → (Q ∧ R)",
+        "P"
+      ],
+      "conclusion": "Q ∧ R",
+      "solution": "Apply Modus Ponens: the consequent is a conjunction, so we get \"Q ∧ R\"."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∨ Q) → R",
+        "P ∨ Q"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Modus Ponens where the antecedent is a disjunction."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P → (Q → R)",
+        "P",
+        "Q"
+      ],
+      "conclusion": "R",
+      "solution": "First apply Modus Ponens to get \"Q → R\", then apply it again with \"Q\" to get \"R\"."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) → (R ∨ S)",
+        "P",
+        "Q"
+      ],
+      "conclusion": "R ∨ S",
+      "solution": "Use Conjunction to combine P and Q into \"P ∧ Q\", then apply Modus Ponens."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "P → Q",
+        "Q → R",
+        "P"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Hypothetical Syllogism to get \"P → R\", then use Modus Ponens with P."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "(P → Q) → R",
+        "P",
+        "¬¬P → Q"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Double Negation on P to get \"¬¬P\", then Modus Ponens to get Q, construct \"P → Q\", finally Modus Ponens to get R."
+    }
+  ]
+}

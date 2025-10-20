@@ -1,0 +1,98 @@
+{
+  "rule_name": "Negation Laws",
+  "description": "Negation laws deal with complementary propositions. \"P and not P\" is always false (contradiction), and \"P or not P\" is always true (tautology).",
+  "rule_pattern": "P ∨ ¬P ⊢ TRUE",
+  "tutorial_key": "negation-laws",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∧ ¬P"
+      ],
+      "conclusion": "FALSE",
+      "solution": "Apply Negation law: contradiction results in FALSE."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R ∨ ¬R"
+      ],
+      "conclusion": "TRUE",
+      "solution": "Apply Negation law: tautology results in TRUE."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A ∧ ¬A"
+      ],
+      "conclusion": "FALSE",
+      "solution": "Direct application of Negation law for contradiction."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) ∧ ¬(P ∧ Q)"
+      ],
+      "conclusion": "FALSE",
+      "solution": "Apply Negation law to complex proposition."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → Q) ∨ ¬(P → Q)"
+      ],
+      "conclusion": "TRUE",
+      "solution": "Apply Negation law to implication."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∨ ¬P"
+      ],
+      "conclusion": "TRUE",
+      "solution": "Law of excluded middle gives TRUE."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∧ ¬P ∧ Q"
+      ],
+      "conclusion": "FALSE",
+      "solution": "Apply Negation law to contradiction, which makes entire conjunction FALSE."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∨ ¬P) ∧ Q"
+      ],
+      "conclusion": "Q",
+      "solution": "Apply Negation law to get TRUE, then \"TRUE ∧ Q\" simplifies to Q."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∧ (Q ∨ ¬Q)"
+      ],
+      "conclusion": "P",
+      "solution": "\"Q ∨ ¬Q\" becomes TRUE, so \"P ∧ TRUE\" simplifies to P."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "(P ∧ ¬P) ∨ Q"
+      ],
+      "conclusion": "Q",
+      "solution": "\"P ∧ ¬P\" becomes FALSE, so \"FALSE ∨ Q\" simplifies to Q."
+    }
+  ]
+}

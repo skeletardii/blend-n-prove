@@ -1,0 +1,123 @@
+{
+  "level": 5,
+  "description": "Level 5: 4+ operations, 4-6 premises",
+  "problems": [
+    {
+      "premises": [
+        "P → (Q ∧ R)",
+        "Q → S",
+        "R → T",
+        "P"
+      ],
+      "conclusion": "S ∧ T",
+      "expected_operations": 5,
+      "description": "Complex branching chain",
+      "solution": "Apply Modus Ponens to get \"Q ∧ R\", extract \"Q\" and \"R\", apply Modus Ponens to each to get \"S\" and \"T\", combine via Conjunction."
+    },
+    {
+      "premises": [
+        "(P ∨ Q) → R",
+        "P",
+        "¬R"
+      ],
+      "conclusion": "⊥",
+      "expected_operations": 5,
+      "description": "Simple contradiction",
+      "solution": "Use Addition to get \"P ∨ Q\" from \"P\", apply Modus Ponens to get \"R\", which contradicts \"¬R\"."
+    },
+    {
+      "premises": [
+        "(P ∧ Q) → (R ∨ S)",
+        "(R ∨ S) → T",
+        "P",
+        "Q"
+      ],
+      "conclusion": "T",
+      "expected_operations": 5,
+      "description": "Chain of implications",
+      "solution": "Combine \"P\" and \"Q\", apply Modus Ponens to get \"R ∨ S\", then Modus Ponens again to get \"T\"."
+    },
+    {
+      "premises": [
+        "P ∨ Q",
+        "¬P ∨ R",
+        "¬Q ∨ R"
+      ],
+      "conclusion": "R",
+      "expected_operations": 5,
+      "description": "Resolution-style proof",
+      "solution": "Apply Resolution techniques: from the three disjunctions, deduce that \"R\" must be true through case analysis."
+    },
+    {
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "¬Q ∨ ¬S",
+        "P ∨ R"
+      ],
+      "conclusion": "¬P ∨ ¬R",
+      "expected_operations": 5,
+      "description": "Complex Modus Tollens",
+      "solution": "Extract the implications, use De Morgan's logic with \"¬Q ∨ ¬S\" to derive that at least one antecedent must be false."
+    },
+    {
+      "premises": [
+        "P ↔ Q",
+        "Q → (R ∧ S)",
+        "R → T",
+        "S → T",
+        "P"
+      ],
+      "conclusion": "T",
+      "expected_operations": 5,
+      "description": "Biconditional elimination + convergence",
+      "solution": "Use Biconditional to get \"Q\", apply Modus Ponens to get \"R ∧ S\", extract either \"R\" or \"S\", then Modus Ponens to get \"T\"."
+    },
+    {
+      "premises": [
+        "¬¬(P ∧ Q)",
+        "P → R",
+        "Q → S"
+      ],
+      "conclusion": "R ∧ S",
+      "expected_operations": 5,
+      "description": "Double negation + parallel inference",
+      "solution": "Apply Double Negation to get \"P ∧ Q\", extract \"P\" and \"Q\", apply Modus Ponens to each to get \"R\" and \"S\", combine via Conjunction."
+    },
+    {
+      "premises": [
+        "P → Q",
+        "R → S",
+        "(Q ∧ S) → T",
+        "P",
+        "R"
+      ],
+      "conclusion": "T",
+      "expected_operations": 5,
+      "description": "Convergent proof",
+      "solution": "Apply Modus Ponens twice to get \"Q\" and \"S\", combine via Conjunction, then Modus Ponens to get \"T\"."
+    },
+    {
+      "premises": [
+        "(P ∨ Q) → (R ∧ S)",
+        "P",
+        "¬R → T",
+        "¬T"
+      ],
+      "conclusion": "R ∧ S",
+      "expected_operations": 5,
+      "description": "Proof by contradiction",
+      "solution": "Use Addition to get \"P ∨ Q\", apply Modus Ponens to get \"R ∧ S\". The premises about \"T\" help verify \"R\" must be true."
+    },
+    {
+      "premises": [
+        "P ⊕ Q",
+        "P → R",
+        "Q → R"
+      ],
+      "conclusion": "R",
+      "expected_operations": 5,
+      "description": "XOR elimination to common conclusion",
+      "solution": "XOR means exactly one of \"P\" or \"Q\" is true. Either way, both lead to \"R\" via Modus Ponens, so \"R\" must be true."
+    }
+  ]
+}

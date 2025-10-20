@@ -1,0 +1,111 @@
+{
+  "rule_name": "Disjunctive Syllogism",
+  "description": "Disjunctive Syllogism states that if we have \"P or Q\" and we know \"not P\", then Q must be true. It's the process of elimination in logic.",
+  "rule_pattern": "P ∨ Q, ¬P ⊢ Q",
+  "tutorial_key": "disjunctive-syllogism",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∨ Q",
+        "¬P"
+      ],
+      "conclusion": "Q",
+      "solution": "Apply Disjunctive Syllogism: eliminate P, leaving Q."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R ∨ S",
+        "¬R"
+      ],
+      "conclusion": "S",
+      "solution": "Eliminate R from the disjunction, concluding S."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A ∨ B",
+        "¬B"
+      ],
+      "conclusion": "A",
+      "solution": "Eliminate B from the disjunction, concluding A."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) ∨ R",
+        "¬(P ∧ Q)"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Disjunctive Syllogism where one disjunct is a conjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∨ (Q ∧ R)",
+        "¬P"
+      ],
+      "conclusion": "Q ∧ R",
+      "solution": "Eliminate P, leaving the conjunction \"Q ∧ R\"."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → Q) ∨ R",
+        "¬(P → Q)"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Disjunctive Syllogism where one disjunct is an implication."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∨ Q",
+        "¬P",
+        "Q → R"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Disjunctive Syllogism to get Q, then Modus Ponens to get R."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) ∨ (R ∧ S)",
+        "¬(P ∧ Q)"
+      ],
+      "conclusion": "R ∧ S",
+      "solution": "Eliminate the first conjunction, leaving the second."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∨ Q",
+        "P → R",
+        "¬P"
+      ],
+      "conclusion": "Q",
+      "solution": "Apply Disjunctive Syllogism to eliminate P and conclude Q."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "(P → Q) ∨ (R → S)",
+        "¬(P → Q)",
+        "R"
+      ],
+      "conclusion": "S",
+      "solution": "Apply Disjunctive Syllogism to get \"R → S\", then Modus Ponens with R to get S."
+    }
+  ]
+}

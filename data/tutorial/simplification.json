@@ -1,0 +1,98 @@
+{
+  "rule_name": "Simplification",
+  "description": "Simplification allows us to extract one part of a conjunction. If we know \"P and Q\" is true, we can conclude either P or Q individually.",
+  "rule_pattern": "P ∧ Q ⊢ P (or P ∧ Q ⊢ Q)",
+  "tutorial_key": "simplification",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∧ Q"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Simplification to extract the left conjunct."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R ∧ S"
+      ],
+      "conclusion": "S",
+      "solution": "Apply Simplification to extract the right conjunct."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A ∧ B"
+      ],
+      "conclusion": "A",
+      "solution": "Direct simplification to get A."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∨ Q) ∧ R"
+      ],
+      "conclusion": "P ∨ Q",
+      "solution": "Apply Simplification to extract the disjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∧ (Q ∧ R)"
+      ],
+      "conclusion": "Q ∧ R",
+      "solution": "Extract the nested conjunction from the right side."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → Q) ∧ R"
+      ],
+      "conclusion": "P → Q",
+      "solution": "Apply Simplification to extract the implication."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) ∧ (R ∧ S)"
+      ],
+      "conclusion": "R ∧ S",
+      "solution": "Apply Simplification to extract the right conjunction."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∧ (Q ∧ R)"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Simplification twice: first to get \"Q ∧ R\", then again to get R."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "((P ∧ Q) ∧ R) ∧ S"
+      ],
+      "conclusion": "R",
+      "solution": "Apply nested Simplification to extract R from the complex conjunction."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "(P ∧ Q) ∧ (R ∧ S)"
+      ],
+      "conclusion": "Q",
+      "solution": "Apply Simplification to get \"P ∧ Q\", then Simplification again to get Q."
+    }
+  ]
+}

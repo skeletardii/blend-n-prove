@@ -1,0 +1,113 @@
+{
+  "rule_name": "Hypothetical Syllogism",
+  "description": "Hypothetical Syllogism allows us to chain implications together. If P implies Q and Q implies R, then P implies R.",
+  "rule_pattern": "P → Q, Q → R ⊢ P → R",
+  "tutorial_key": "hypothetical-syllogism",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P → Q",
+        "Q → R"
+      ],
+      "conclusion": "P → R",
+      "solution": "Apply Hypothetical Syllogism directly to chain the implications."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "A → B",
+        "B → C"
+      ],
+      "conclusion": "A → C",
+      "solution": "Chain the implications using Hypothetical Syllogism."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "R → S",
+        "S → T"
+      ],
+      "conclusion": "R → T",
+      "solution": "Direct application of Hypothetical Syllogism."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "P → Q",
+        "Q → R",
+        "R → S"
+      ],
+      "conclusion": "P → S",
+      "solution": "Apply Hypothetical Syllogism twice: first to get \"P → R\", then again to get \"P → S\"."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) → R",
+        "R → S"
+      ],
+      "conclusion": "(P ∧ Q) → S",
+      "solution": "Apply Hypothetical Syllogism where the antecedent is a conjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "P → (Q ∨ R)",
+        "(Q ∨ R) → S"
+      ],
+      "conclusion": "P → S",
+      "solution": "Apply Hypothetical Syllogism where the middle term is a disjunction."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P → Q",
+        "Q → R",
+        "R → S",
+        "S → T"
+      ],
+      "conclusion": "P → T",
+      "solution": "Apply Hypothetical Syllogism three times to chain all implications."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P → Q",
+        "Q → (R ∧ S)",
+        "(R ∧ S) → T"
+      ],
+      "conclusion": "P → T",
+      "solution": "Apply Hypothetical Syllogism twice, treating \"R ∧ S\" as a single unit."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∨ Q) → R",
+        "R → (S ∧ T)"
+      ],
+      "conclusion": "(P ∨ Q) → (S ∧ T)",
+      "solution": "Apply Hypothetical Syllogism with complex antecedent and consequent."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "P → (Q → R)",
+        "(Q → R) → S",
+        "S → T"
+      ],
+      "conclusion": "P → T",
+      "solution": "Apply Hypothetical Syllogism twice to chain the nested implications."
+    }
+  ]
+}

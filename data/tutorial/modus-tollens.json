@@ -1,0 +1,110 @@
+{
+  "rule_name": "Modus Tollens",
+  "description": "Modus Tollens is an inference rule that allows us to conclude the negation of the antecedent from a conditional and the negation of its consequent.",
+  "rule_pattern": "P → Q, ¬Q ⊢ ¬P",
+  "tutorial_key": "modus-tollens",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P → Q",
+        "¬Q"
+      ],
+      "conclusion": "¬P",
+      "solution": "Apply Modus Tollens directly: from \"P implies Q\" and \"not Q\", we conclude \"not P\"."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R → S",
+        "¬S"
+      ],
+      "conclusion": "¬R",
+      "solution": "Apply Modus Tollens with variables R and S."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A → B",
+        "¬B"
+      ],
+      "conclusion": "¬A",
+      "solution": "Direct application of Modus Tollens."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "P → (Q ∧ R)",
+        "¬(Q ∧ R)"
+      ],
+      "conclusion": "¬P",
+      "solution": "Apply Modus Tollens where the consequent is a conjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∨ Q) → R",
+        "¬R"
+      ],
+      "conclusion": "¬(P ∨ Q)",
+      "solution": "Apply Modus Tollens to get the negation of the disjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "P → Q",
+        "¬Q"
+      ],
+      "conclusion": "¬P",
+      "solution": "Standard Modus Tollens application."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) → R",
+        "¬R"
+      ],
+      "conclusion": "¬(P ∧ Q)",
+      "solution": "Apply Modus Tollens, then optionally De Morgan's to get \"¬P ∨ ¬Q\"."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P → Q",
+        "Q → R",
+        "¬R"
+      ],
+      "conclusion": "¬P",
+      "solution": "Apply Hypothetical Syllogism to get \"P → R\", then Modus Tollens with ¬R."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "(P → Q) → R",
+        "¬R"
+      ],
+      "conclusion": "¬(P → Q)",
+      "solution": "Apply Modus Tollens to the complex implication."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "P → (Q → R)",
+        "P",
+        "¬R"
+      ],
+      "conclusion": "¬Q",
+      "solution": "Apply Modus Ponens to get \"Q → R\", then Modus Tollens with ¬R to get ¬Q."
+    }
+  ]
+}

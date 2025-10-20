@@ -1,0 +1,101 @@
+{
+  "rule_name": "Double Negation",
+  "description": "Double Negation states that a double negative is equivalent to the original positive. \"Not not P\" is the same as \"P\".",
+  "rule_pattern": "¬¬P ⊢ P",
+  "tutorial_key": "double-negation",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "¬¬P"
+      ],
+      "conclusion": "P",
+      "solution": "Remove the double negation to get P."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "¬¬R"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Double Negation elimination."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "¬¬A"
+      ],
+      "conclusion": "A",
+      "solution": "Direct removal of double negation."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "¬¬(P ∧ Q)"
+      ],
+      "conclusion": "P ∧ Q",
+      "solution": "Remove double negation from a conjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "¬¬(P → Q)"
+      ],
+      "conclusion": "P → Q",
+      "solution": "Remove double negation from an implication."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "¬¬(P ∨ Q)"
+      ],
+      "conclusion": "P ∨ Q",
+      "solution": "Remove double negation from a disjunction."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "¬¬P",
+        "P → Q"
+      ],
+      "conclusion": "Q",
+      "solution": "Apply Double Negation to get P, then Modus Ponens to get Q."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "¬¬(P ∧ Q)"
+      ],
+      "conclusion": "P",
+      "solution": "Remove double negation to get \"P ∧ Q\", then Simplification to get P."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "¬¬P ∨ Q",
+        "¬¬P → R"
+      ],
+      "conclusion": "R",
+      "solution": "Remove double negation to get P, use Disjunctive Syllogism or Modus Ponens as needed."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "¬¬(P → Q)",
+        "¬¬P"
+      ],
+      "conclusion": "Q",
+      "solution": "Remove both double negations to get \"P → Q\" and P, then Modus Ponens."
+    }
+  ]
+}

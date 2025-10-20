@@ -1,0 +1,109 @@
+{
+  "level": 2,
+  "description": "Level 2: 2 operations, 2-3 premises",
+  "problems": [
+    {
+      "premises": [
+        "P → Q",
+        "Q → R",
+        "P"
+      ],
+      "conclusion": "R",
+      "expected_operations": 2,
+      "description": "Hypothetical Syllogism + MP",
+      "solution": "Apply Hypothetical Syllogism to get \"P → R\" from the first two premises, then Modus Ponens with \"P\" to get \"R\"."
+    },
+    {
+      "premises": [
+        "P ∧ Q",
+        "R"
+      ],
+      "conclusion": "P ∧ R",
+      "expected_operations": 2,
+      "description": "Simplification + Conjunction",
+      "solution": "Apply Simplification to extract \"P\" from \"P ∧ Q\", then Conjunction to combine \"P\" and \"R\"."
+    },
+    {
+      "premises": [
+        "¬¬P",
+        "P → Q"
+      ],
+      "conclusion": "Q",
+      "expected_operations": 2,
+      "description": "Double Negation + Modus Ponens",
+      "solution": "Apply Double Negation to get \"P\" from \"¬¬P\", then Modus Ponens with \"P → Q\" to get \"Q\"."
+    },
+    {
+      "premises": [
+        "P ∨ Q",
+        "¬P",
+        "Q → R"
+      ],
+      "conclusion": "R",
+      "expected_operations": 2,
+      "description": "Disjunctive Syllogism + MP",
+      "solution": "Apply Disjunctive Syllogism to get \"Q\" from \"P ∨ Q\" and \"¬P\", then Modus Ponens with \"Q → R\" to get \"R\"."
+    },
+    {
+      "premises": [
+        "P ∧ (Q ∧ R)"
+      ],
+      "conclusion": "Q ∧ R",
+      "expected_operations": 2,
+      "description": "Simplification + Simplification",
+      "solution": "Apply Simplification twice: first to extract \"Q ∧ R\" from the outer conjunction, then you already have the result."
+    },
+    {
+      "premises": [
+        "¬(P ∨ Q)",
+        "R → S"
+      ],
+      "conclusion": "¬P ∧ ¬Q",
+      "expected_operations": 2,
+      "description": "De Morgan's + ignore unused premise",
+      "solution": "Apply De Morgan's Law to \"¬(P ∨ Q)\" to get \"¬P ∧ ¬Q\". The premise \"R → S\" is not needed."
+    },
+    {
+      "premises": [
+        "P",
+        "Q",
+        "R"
+      ],
+      "conclusion": "(P ∧ Q) ∧ R",
+      "expected_operations": 2,
+      "description": "Conjunction + Conjunction",
+      "solution": "Apply Conjunction to combine \"P\" and \"Q\" into \"P ∧ Q\", then apply Conjunction again with \"R\"."
+    },
+    {
+      "premises": [
+        "P → (Q ∧ R)",
+        "P"
+      ],
+      "conclusion": "Q",
+      "expected_operations": 2,
+      "description": "Modus Ponens + Simplification",
+      "solution": "Apply Modus Ponens to get \"Q ∧ R\", then Simplification to extract \"Q\"."
+    },
+    {
+      "premises": [
+        "(P ∧ Q) → R",
+        "P",
+        "Q"
+      ],
+      "conclusion": "R",
+      "expected_operations": 2,
+      "description": "Conjunction + Modus Ponens",
+      "solution": "Apply Conjunction to combine \"P\" and \"Q\" into \"P ∧ Q\", then Modus Ponens to get \"R\"."
+    },
+    {
+      "premises": [
+        "P ∨ (Q ∧ R)",
+        "¬P"
+      ],
+      "conclusion": "Q ∧ R",
+      "expected_operations": 2,
+      "description": "Disjunctive Syllogism + identity",
+      "solution": "Apply Disjunctive Syllogism: from \"P ∨ (Q ∧ R)\" and \"¬P\", conclude \"Q ∧ R\"."
+    }
+  ]
+}

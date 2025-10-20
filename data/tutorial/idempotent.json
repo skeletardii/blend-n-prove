@@ -1,0 +1,98 @@
+{
+  "rule_name": "Idempotent Laws",
+  "description": "Idempotent laws state that repeating the same operation with the same operand doesn't change the result. \"P and P\" is just \"P\". \"P or P\" is just \"P\".",
+  "rule_pattern": "P ∨ P ⊢ P",
+  "tutorial_key": "idempotent",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∧ P"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Idempotent law for conjunction."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R ∨ R"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Idempotent law for disjunction."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A ∧ A"
+      ],
+      "conclusion": "A",
+      "solution": "Direct application of Idempotent law."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) ∧ (P ∧ Q)"
+      ],
+      "conclusion": "P ∧ Q",
+      "solution": "Apply Idempotent law to complex conjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∨ Q) ∨ (P ∨ Q)"
+      ],
+      "conclusion": "P ∨ Q",
+      "solution": "Apply Idempotent law to complex disjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∧ P ∧ P"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Idempotent law multiple times."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ P) ∧ Q"
+      ],
+      "conclusion": "P ∧ Q",
+      "solution": "Apply Idempotent law to simplify, then recognize the conjunction."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∨ P"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Idempotent law, possibly combined with other operations."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) ∨ (P ∧ Q)"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Idempotent law to get \"P ∧ Q\", then Simplification to extract P."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "((P ∧ P) ∧ Q) ∨ ((P ∧ P) ∧ Q)"
+      ],
+      "conclusion": "P ∧ Q",
+      "solution": "Apply Idempotent law multiple times to simplify the expression."
+    }
+  ]
+}

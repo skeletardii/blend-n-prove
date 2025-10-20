@@ -18,13 +18,13 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GameManager="*res://scripts/autoloads/GameManager.gd"
-BooleanLogicEngine="*res://scripts/autoloads/BooleanLogicEngine.gd"
-AudioManager="*res://scripts/autoloads/AudioManager.gd"
-SceneManager="*res://scripts/autoloads/SceneManager.gd"
-TutorialManager="*res://scripts/autoloads/TutorialManager.gd"
-ProgressTracker="*res://scripts/autoloads/ProgressTracker.gd"
-TutorialDataManager="*res://scripts/autoloads/TutorialDataManager.gd"
+GameManager="*res://src/game/autoloads/GameManager.gd"
+BooleanLogicEngine="*res://src/game/autoloads/BooleanLogicEngine.gd"
+AudioManager="*res://src/game/autoloads/AudioManager.gd"
+SceneManager="*res://src/game/autoloads/SceneManager.gd"
+TutorialManager="*res://src/game/autoloads/TutorialManager.gd"
+ProgressTracker="*res://src/game/autoloads/ProgressTracker.gd"
+TutorialDataManager="*res://src/game/autoloads/TutorialDataManager.gd"
 
 [display]
 
@@ -41,9 +41,21 @@ project/assembly_name="Boolean Logic Bartender"
 
 enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
 
+[file_customization]
+
+folder_colors={
+"res://assets/": "yellow",
+"res://data/": "pink",
+"res://devtools/": "red",
+"res://docs/": "gray",
+"res://src/": "blue",
+"res://src/shaders/": "purple",
+"res://src/ui/": "green"
+}
+
 [gui]
 
-theme/custom="res://themes/main_theme.tres"
+theme/custom="res://assets/themes/main_theme.tres"
 
 [input_devices]
 

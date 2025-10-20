@@ -77,8 +77,8 @@ The MCP server bridges Claude and Godot:
 {
   "type": "command_type",
   "params": {
-    "param1": "value1",
-    "param2": "value2"
+	"param1": "value1",
+	"param2": "value2"
   },
   "commandId": "cmd_123"
 }
@@ -89,8 +89,8 @@ The MCP server bridges Claude and Godot:
 {
   "status": "success",
   "result": {
-    "key1": "value1",
-    "key2": "value2"
+	"key1": "value1",
+	"key2": "value2"
   },
   "commandId": "cmd_123"
 }

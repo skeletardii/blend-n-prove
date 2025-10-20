@@ -1,0 +1,101 @@
+{
+  "level": 1,
+  "description": "Level 1: 1 operation, max 2 premises",
+  "problems": [
+	{
+	  "premises": [
+		"P → Q",
+		"P"
+	  ],
+	  "conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Modus Ponens",
+	  "solution": "Apply Modus Ponens: from \"P → Q\" and \"P\", conclude \"Q\"."
+	},
+	{
+	  "premises": [
+		"P ∧ Q"
+	  ],
+	  "conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Simplification (left)",
+	  "solution": "Apply Simplification to extract the left conjunct \"P\" from \"P ∧ Q\"."
+	},
+	{
+	  "premises": [
+		"P → Q",
+		"¬Q"
+	  ],
+	  "conclusion": "¬P",
+	  "expected_operations": 1,
+	  "description": "Modus Tollens",
+	  "solution": "Apply Modus Tollens: from \"P → Q\" and \"¬Q\", conclude \"¬P\"."
+	},
+	{
+	  "premises": [
+		"P ∨ Q",
+		"¬P"
+	  ],
+	  "conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Disjunctive Syllogism",
+	  "solution": "Apply Disjunctive Syllogism: from \"P ∨ Q\" and \"¬P\", conclude \"Q\"."
+	},
+	{
+	  "premises": [
+		"¬¬P"
+	  ],
+	  "conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Double Negation",
+	  "solution": "Apply Double Negation elimination to remove \"¬¬\" and get \"P\"."
+	},
+	{
+	  "premises": [
+		"P",
+		"Q"
+	  ],
+	  "conclusion": "P ∧ Q",
+	  "expected_operations": 1,
+	  "description": "Conjunction",
+	  "solution": "Apply Conjunction to combine \"P\" and \"Q\" into \"P ∧ Q\"."
+	},
+	{
+	  "premises": [
+		"R ∧ S"
+	  ],
+	  "conclusion": "S",
+	  "expected_operations": 1,
+	  "description": "Simplification (right)",
+	  "solution": "Apply Simplification to extract the right conjunct \"S\" from \"R ∧ S\"."
+	},
+	{
+	  "premises": [
+		"¬(P ∧ Q)"
+	  ],
+	  "conclusion": "¬P ∨ ¬Q",
+	  "expected_operations": 1,
+	  "description": "De Morgan's Law (AND)",
+	  "solution": "Apply De Morgan's Law to transform \"¬(P ∧ Q)\" into \"¬P ∨ ¬Q\"."
+	},
+	{
+	  "premises": [
+		"¬(P ∨ Q)"
+	  ],
+	  "conclusion": "¬P ∧ ¬Q",
+	  "expected_operations": 1,
+	  "description": "De Morgan's Law (OR)",
+	  "solution": "Apply De Morgan's Law to transform \"¬(P ∨ Q)\" into \"¬P ∧ ¬Q\"."
+	},
+	{
+	  "premises": [
+		"Q ∨ R",
+		"¬Q"
+	  ],
+	  "conclusion": "R",
+	  "expected_operations": 1,
+	  "description": "Disjunctive Syllogism (variant)",
+	  "solution": "Apply Disjunctive Syllogism: from \"Q ∨ R\" and \"¬Q\", conclude \"R\"."
+	}
+  ]
+}

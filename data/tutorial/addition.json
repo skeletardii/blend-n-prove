@@ -1,0 +1,102 @@
+{
+  "rule_name": "Addition",
+  "description": "Addition allows us to introduce a disjunction. If we know P is true, we can conclude \"P or Q\" for any Q (since at least P is true).",
+  "rule_pattern": "P ⊢ P ∨ Q",
+  "tutorial_key": "addition",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P"
+      ],
+      "conclusion": "P ∨ Q",
+      "solution": "Apply Addition to introduce Q as a disjunct."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R"
+      ],
+      "conclusion": "R ∨ S",
+      "solution": "Add S as a disjunct using Addition."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A"
+      ],
+      "conclusion": "A ∨ B",
+      "solution": "Direct application of Addition."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∧ Q"
+      ],
+      "conclusion": "(P ∧ Q) ∨ R",
+      "solution": "Apply Addition to a conjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "P → Q"
+      ],
+      "conclusion": "(P → Q) ∨ R",
+      "solution": "Add R as a disjunct to the implication."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "P"
+      ],
+      "conclusion": "P ∨ (Q ∧ R)",
+      "solution": "Apply Addition with a complex second disjunct."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P → Q",
+        "P"
+      ],
+      "conclusion": "Q ∨ R",
+      "solution": "Apply Modus Ponens to get Q, then Addition to introduce R."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∧ Q"
+      ],
+      "conclusion": "P ∨ S",
+      "solution": "Apply Simplification to get P, then Addition to add S."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) → R",
+        "P ∧ Q"
+      ],
+      "conclusion": "R ∨ S",
+      "solution": "Apply Modus Ponens to get R, then Addition to introduce S."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "P → Q",
+        "Q → R",
+        "P"
+      ],
+      "conclusion": "R ∨ S",
+      "solution": "Apply Hypothetical Syllogism, then Modus Ponens to get R, finally Addition."
+    }
+  ]
+}

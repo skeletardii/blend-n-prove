@@ -1,0 +1,112 @@
+{
+  "rule_name": "Resolution",
+  "description": "Resolution is a powerful inference rule that combines two disjunctions containing complementary literals. If we have \"P or Q\" and \"not P or R\", we can conclude \"Q or R\".",
+  "rule_pattern": "P ∨ Q, ¬P ∨ R ⊢ Q ∨ R",
+  "tutorial_key": "resolution",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∨ Q",
+        "¬P ∨ R"
+      ],
+      "conclusion": "Q ∨ R",
+      "solution": "Apply Resolution to eliminate P and ¬P."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "A ∨ B",
+        "¬A ∨ C"
+      ],
+      "conclusion": "B ∨ C",
+      "solution": "Resolve on A to get \"B ∨ C\"."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "R ∨ S",
+        "¬R ∨ T"
+      ],
+      "conclusion": "S ∨ T",
+      "solution": "Direct application of Resolution."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∨ (Q ∧ R)",
+        "¬P ∨ S"
+      ],
+      "conclusion": "(Q ∧ R) ∨ S",
+      "solution": "Apply Resolution where one disjunct is complex."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → Q) ∨ R",
+        "¬(P → Q) ∨ S"
+      ],
+      "conclusion": "R ∨ S",
+      "solution": "Resolve on the implication."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∨ Q",
+        "¬P ∨ Q"
+      ],
+      "conclusion": "Q",
+      "solution": "Apply Resolution to get \"Q ∨ Q\", then Idempotent to simplify to Q."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∨ Q",
+        "¬P ∨ R",
+        "¬Q ∨ S"
+      ],
+      "conclusion": "R ∨ S",
+      "solution": "Apply Resolution twice: first to get \"Q ∨ R\", then again with the third premise."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) ∨ R",
+        "¬(P ∧ Q) ∨ S"
+      ],
+      "conclusion": "R ∨ S",
+      "solution": "Resolve on the conjunction \"P ∧ Q\"."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∨ Q",
+        "¬P ∨ R",
+        "¬R ∨ S"
+      ],
+      "conclusion": "Q ∨ S",
+      "solution": "Apply Resolution twice to chain through the literals."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "P ∨ Q",
+        "¬P ∨ R",
+        "¬Q ∨ S",
+        "¬R ∨ T"
+      ],
+      "conclusion": "S ∨ T",
+      "solution": "Apply Resolution multiple times to build the conclusion."
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "rule_name": "Conjunction",
+  "description": "Conjunction allows us to combine two separate statements into a single conjunction. If we know P is true and Q is true, we can conclude \"P and Q\".",
+  "rule_pattern": "P, Q ⊢ P ∧ Q",
+  "tutorial_key": "conjunction",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P",
+        "Q"
+      ],
+      "conclusion": "P ∧ Q",
+      "solution": "Apply Conjunction to combine the two premises."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R",
+        "S"
+      ],
+      "conclusion": "R ∧ S",
+      "solution": "Combine R and S using Conjunction."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A",
+        "B"
+      ],
+      "conclusion": "A ∧ B",
+      "solution": "Direct application of Conjunction."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∨ Q",
+        "R"
+      ],
+      "conclusion": "(P ∨ Q) ∧ R",
+      "solution": "Apply Conjunction with a disjunction and a simple statement."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "P → Q",
+        "R → S"
+      ],
+      "conclusion": "(P → Q) ∧ (R → S)",
+      "solution": "Combine two implications using Conjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∧ Q",
+        "R ∧ S"
+      ],
+      "conclusion": "(P ∧ Q) ∧ (R ∧ S)",
+      "solution": "Combine two conjunctions into a larger conjunction."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P → Q",
+        "P",
+        "R"
+      ],
+      "conclusion": "Q ∧ R",
+      "solution": "Apply Modus Ponens to get Q, then Conjunction with R."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∧ Q",
+        "R ∧ S"
+      ],
+      "conclusion": "P ∧ R",
+      "solution": "Apply Simplification twice to extract P and R, then Conjunction."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "P",
+        "Q",
+        "R"
+      ],
+      "conclusion": "(P ∧ Q) ∧ R",
+      "solution": "Apply Conjunction twice: first combine P and Q, then combine with R."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "P → Q",
+        "R → S",
+        "P",
+        "R"
+      ],
+      "conclusion": "Q ∧ S",
+      "solution": "Apply Modus Ponens twice to get Q and S, then Conjunction."
+    }
+  ]
+}

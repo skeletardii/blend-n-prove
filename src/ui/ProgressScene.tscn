@@ -1,0 +1,116 @@
+[gd_scene load_steps=2 format=3 uid="uid://cnm685gopfxtf"]
+
+[ext_resource type="Script" uid="uid://485fcvl6hdf" path="res://src/ui/ProgressScene.gd" id="1_progress_script"]
+
+[node name="ProgressScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_progress_script")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="MainScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatsContainer" type="VBoxContainer" parent="MainScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TitleLabel" type="Label" parent="MainScrollContainer/StatsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Your Progress"
+horizontal_alignment = 1
+
+[node name="Separator1" type="HSeparator" parent="MainScrollContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="OverallStatsSection" type="VBoxContainer" parent="MainScrollContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Overall Statistics"
+
+[node name="OverallStatsGrid" type="GridContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection"]
+layout_mode = 2
+columns = 2
+
+[node name="TotalGamesLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Total Games:"
+
+[node name="TotalGamesValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "0"
+
+[node name="HighScoreLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "High Score:"
+
+[node name="HighScoreValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "0"
+
+[node name="SuccessRateLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Success Rate:"
+
+[node name="SuccessRateValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "0.0%"
+
+[node name="CurrentStreakLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Current Streak:"
+
+[node name="CurrentStreakValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "0"
+
+[node name="ButtonContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+
+[node name="BackButton" type="Button" parent="ButtonContainer"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Back to Menu"

@@ -1,0 +1,98 @@
+{
+  "rule_name": "Associativity",
+  "description": "Associativity allows us to regroup operations. \"(P and Q) and R\" is the same as \"P and (Q and R)\". This applies to AND and OR operations.",
+  "rule_pattern": "(P ∨ Q) ∨ R ⊢ P ∨ (Q ∨ R)",
+  "tutorial_key": "associativity",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "(P ∧ Q) ∧ R"
+      ],
+      "conclusion": "P ∧ (Q ∧ R)",
+      "solution": "Apply Associativity to regroup the conjunction."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "(A ∨ B) ∨ C"
+      ],
+      "conclusion": "A ∨ (B ∨ C)",
+      "solution": "Apply Associativity to regroup the disjunction."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "R ∧ (S ∧ T)"
+      ],
+      "conclusion": "(R ∧ S) ∧ T",
+      "solution": "Apply reverse Associativity."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "((P ∧ Q) ∧ R) ∧ S"
+      ],
+      "conclusion": "P ∧ (Q ∧ (R ∧ S))",
+      "solution": "Apply Associativity multiple times to regroup."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∨ Q) ∨ (R ∨ S)"
+      ],
+      "conclusion": "P ∨ (Q ∨ (R ∨ S))",
+      "solution": "Apply Associativity to flatten the disjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "P ∧ (Q ∧ R)"
+      ],
+      "conclusion": "(P ∧ Q) ∧ R",
+      "solution": "Apply reverse Associativity to change grouping."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) ∧ R"
+      ],
+      "conclusion": "Q ∧ R",
+      "solution": "Apply Associativity to get \"P ∧ (Q ∧ R)\", then Simplification."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "((P ∧ Q) ∧ R) ∧ S"
+      ],
+      "conclusion": "R ∧ S",
+      "solution": "Apply Associativity and Simplification to extract inner terms."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "P ∨ ((Q ∨ R) ∨ S)"
+      ],
+      "conclusion": "(P ∨ Q) ∨ (R ∨ S)",
+      "solution": "Apply Associativity multiple times to rebalance."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "(((P ∧ Q) ∧ R) ∧ S) ∧ T"
+      ],
+      "conclusion": "P ∧ (Q ∧ (R ∧ (S ∧ T)))",
+      "solution": "Apply Associativity repeatedly to fully right-associate."
+    }
+  ]
+}
