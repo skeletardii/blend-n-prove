@@ -119,12 +119,18 @@ layout_mode = 2
 layout_mode = 2
 text = "Progress & Stats"
 
-[node name="Spacer5" type="Control" parent="MenuContainer"]
+[node name="Spacer7" type="Control" parent="MenuContainer"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="GridButton" type="Button" parent="MenuContainer"]
 layout_mode = 2
-text = "Grid Menu"
+text = "Tutorials
+"
+
+[node name="Spacer8" type="Control" parent="MenuContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
 
 [node name="QuitButton" type="Button" parent="MenuContainer"]
 custom_minimum_size = Vector2(300, 60)
@@ -280,10 +286,10 @@ text = "CLOSE"
 
 [node name="QuickStatsPanel" type="VBoxContainer" parent="."]
 layout_mode = 0
-offset_left = -200.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = 200.0
+offset_left = 14.0
+offset_top = 14.0
+offset_right = 202.0
+offset_bottom = 194.0
 
 [node name="QuickStatsTitle" type="Label" parent="QuickStatsPanel"]
 layout_mode = 2

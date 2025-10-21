@@ -1,10 +1,10 @@
 [gd_scene load_steps=10 format=3 uid="uid://b0ebagu0ts5p1"]
 
 [ext_resource type="Script" uid="uid://csubga53p2pr4" path="res://src/ui/Phase1UI.gd" id="1_phase1"]
-[ext_resource type="Texture2D" uid="uid://5s07bsbpboi0" path="res://Phase1UIMockup.png" id="2_tgfdk"]
-[ext_resource type="Texture2D" uid="uid://cxuas4sbxepc6" path="res://resources/textures/PNG/CGB01-grey_XL_rounded_btn.png" id="3_3m56v"]
-[ext_resource type="Theme" uid="uid://cnoq1f1rj1b7b" path="res://themes/main_theme.tres" id="4_cnisd"]
-[ext_resource type="Texture2D" uid="uid://cry2t8ap7ysoo" path="res://resources/textures/PNG/CGB01-yellow_L_rounded_btn.png" id="5_cnisd"]
+[ext_resource type="Texture2D" uid="uid://5s07bsbpboi0" path="res://assets/sprites/Phase1UIMockup.png" id="2_tgfdk"]
+[ext_resource type="Texture2D" uid="uid://cxuas4sbxepc6" path="res://assets/sprites/PNG/CGB01-grey_XL_rounded_btn.png" id="3_3m56v"]
+[ext_resource type="Theme" uid="uid://cnoq1f1rj1b7b" path="res://assets/themes/main_theme.tres" id="4_cnisd"]
+[ext_resource type="Texture2D" uid="uid://cry2t8ap7ysoo" path="res://assets/sprites/PNG/CGB01-yellow_L_rounded_btn.png" id="5_cnisd"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7p1cq"]
 texture = ExtResource("3_3m56v")

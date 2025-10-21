@@ -226,7 +226,14 @@ func update_premise_checklist() -> void:
 		var label = Label.new()
 
 		label.text = premise_text
-		label.add_theme_font_size_override("font_size", 48)
+		var font_size = 24 if current_customer.is_natural_language else 48
+		label.add_theme_font_size_override("font_size", font_size)
+
+		# For natural language text, enable word wrapping and set width constraint
+		if current_customer.is_natural_language:
+			label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			label.custom_minimum_size.x = 350
+
 		if is_completed:
 			label.add_theme_color_override("font_color", Color.GREEN)
 		else:

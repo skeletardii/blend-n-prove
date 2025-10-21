@@ -135,21 +135,21 @@
 	},
 	{
 	  "premises": [
-		"P ∧ TRUE"
+		"P"
 	  ],
-	  "conclusion": "P",
+	  "conclusion": "P ∨ Q",
 	  "expected_operations": 1,
-	  "description": "Identity Law (AND with TRUE)",
-	  "solution": "Apply Identity law: \"P ∧ TRUE\" is equivalent to \"P\" since TRUE doesn't change the value."
+	  "description": "Addition (OR introduction)",
+	  "solution": "Apply Addition: from \"P\", you can conclude \"P ∨ Q\" since P being true makes the disjunction true."
 	},
 	{
 	  "premises": [
-		"Q ∨ FALSE"
+		"R"
 	  ],
-	  "conclusion": "Q",
+	  "conclusion": "R ∨ S",
 	  "expected_operations": 1,
-	  "description": "Identity Law (OR with FALSE)",
-	  "solution": "Apply Identity law: \"Q ∨ FALSE\" is equivalent to \"Q\" since FALSE doesn't add information."
+	  "description": "Addition (OR introduction, variant)",
+	  "solution": "Apply Addition: from \"R\", you can conclude \"R ∨ S\" since R being true makes the disjunction true."
 	},
 	{
 	  "premises": [
