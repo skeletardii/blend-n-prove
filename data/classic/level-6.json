@@ -69,15 +69,14 @@
         "If you pass the exam (Q), then you graduate (R).",
         "If you graduate (R), then you get a job (S).",
         "If you get a job (S), then you can afford an apartment (T).",
-        "You study (P).",
-        "You have a good resume (U)."
+        "You study (P)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "S → T", "P", "U"],
+      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "S → T", "P"],
       "natural_language_conclusion": "You can afford an apartment (T).",
       "hidden_logical_conclusion": "T",
       "expected_operations": 4,
       "description": "Long chain of implications",
-      "solution": "Translate: P = 'You study', Q = 'You pass', R = 'You graduate', S = 'You get a job', T = 'You afford apartment', U = 'Good resume'. Chain all conditionals using Hypothetical Syllogism three times to get P → T, then apply Modus Ponens with P to conclude T.",
+      "solution": "Translate: P = 'You study', Q = 'You pass', R = 'You graduate', S = 'You get a job', T = 'You afford apartment'. Chain all conditionals using Hypothetical Syllogism three times to get P → T, then apply Modus Ponens with P to conclude T.",
       "interpretation_hints": ["Build the entire chain step by step", "Multiple conditional statements leading to final conclusion"]
     },
     {
@@ -131,37 +130,189 @@
         "If it is sunny (P), then we go to the beach (Q).",
         "If we go to the beach (Q), then we swim (R).",
         "If we swim (R), then we are happy (S).",
-        "If we are happy (S), then we feel relaxed (V).",
-        "It is sunny (P).",
-        "We have sunscreen (T).",
-        "The weather is warm (U)."
+        "If we are happy (S), then we feel relaxed (T).",
+        "It is sunny (P)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "S → V", "P", "T", "U"],
-      "natural_language_conclusion": "We feel relaxed (V).",
-      "hidden_logical_conclusion": "V",
+      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "S → T", "P"],
+      "natural_language_conclusion": "We feel relaxed (T).",
+      "hidden_logical_conclusion": "T",
       "expected_operations": 4,
       "description": "Extended chain of implications",
-      "solution": "Translate: P = 'Sunny', Q = 'Go to beach', R = 'Swim', S = 'Happy', T = 'Have sunscreen', U = 'Weather is warm', V = 'Feel relaxed'. Chain implications using Hypothetical Syllogism three times to get P → V, then apply Modus Ponens with P to conclude V.",
+      "solution": "Translate: P = 'Sunny', Q = 'Go to beach', R = 'Swim', S = 'Happy', T = 'Feel relaxed'. Chain implications using Hypothetical Syllogism three times to get P → T, then apply Modus Ponens with P to conclude T.",
       "interpretation_hints": ["Build the complete chain through all steps", "Apply the starting fact through the entire chain"]
     },
     {
       "natural_language_premises": [
-        "Either John is at home (P) or John is at work (Q).",
-        "If John is at home (P), then the lights are on (R).",
-        "If the lights are on (R), then the electricity bill increases (V).",
-        "If John is at work (Q), then his car is in the parking lot (S).",
-        "The lights are not on (¬R).",
-        "His car is not in the parking lot (¬S).",
-        "John's phone is off (T).",
-        "It is a weekday (U)."
+        "If the temperature drops below freezing (P), then the water freezes (Q).",
+        "If the water freezes (Q), then the pipes may burst (R).",
+        "If the pipes burst (R), then there will be water damage (S).",
+        "If there is water damage (S), then repairs are needed (T).",
+        "The temperature drops below freezing (P)."
       ],
-      "hidden_logical_premises": ["P ∨ Q", "P → R", "R → V", "Q → S", "¬R", "¬S", "T", "U"],
-      "natural_language_conclusion": "This leads to a contradiction (impossible situation).",
-      "hidden_logical_conclusion": "⊥",
-      "expected_operations": 5,
-      "description": "Complex proof by contradiction",
-      "solution": "Translate: P = 'John at home', Q = 'John at work', R = 'Lights on', S = 'Car in parking', T = 'Phone is off', U = 'Weekday', V = 'Bill increases'. Use Modus Tollens on P → R with ¬R to get ¬P. Use Modus Tollens on Q → S with ¬S to get ¬Q. Both ¬P and ¬Q contradict P ∨ Q, proving impossibility.",
-      "interpretation_hints": ["Eliminate each possibility in the disjunction", "Show the contradiction when both are false"]
+      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "S → T", "P"],
+      "natural_language_conclusion": "Repairs are needed (T).",
+      "hidden_logical_conclusion": "T",
+      "expected_operations": 4,
+      "description": "Long chain of natural language implications",
+      "solution": "Translate: P = 'Temperature drops below freezing', Q = 'Water freezes', R = 'Pipes burst', S = 'Water damage', T = 'Repairs needed'. Chain all conditionals: apply Hypothetical Syllogism three times to build P → Q → R → S → T into P → T, then apply Modus Ponens with P to conclude T.",
+      "interpretation_hints": ["Build the entire causal chain step by step", "Some premises may be red herrings"]
+    },
+    {
+      "natural_language_premises": [
+        "Either the movie is a comedy (P) or a drama (Q), but not both.",
+        "If the movie is a comedy (P), then it has a happy ending (R).",
+        "If the movie is a drama (Q), then it has a sad ending (S).",
+        "The movie does not have a sad ending (¬S).",
+        "The movie is popular (T)."
+      ],
+      "hidden_logical_premises": ["P ⊕ Q", "P → R", "Q → S", "¬S", "T"],
+      "natural_language_conclusion": "The movie has a happy ending (R).",
+      "hidden_logical_conclusion": "R",
+      "expected_operations": 4,
+      "description": "XOR with conditional elimination",
+      "solution": "Translate: P = 'Movie is comedy', Q = 'Movie is drama', R = 'Happy ending', S = 'Sad ending', T = 'Movie is popular'. Use Modus Tollens on Q → S with ¬S to get ¬Q. From XOR P ⊕ Q and ¬Q, deduce P. Apply Modus Ponens on P → R to get R.",
+      "interpretation_hints": ["Use the exclusive or to narrow down options", "Eliminate impossible cases with negation"]
+    },
+    {
+      "natural_language_premises": [
+        "The train arrives on time (P) if and only if there are no delays (Q).",
+        "If there are no delays (Q), then passengers are happy (R).",
+        "The train arrives on time (P).",
+        "The weather is clear (S).",
+        "The station is crowded (T)."
+      ],
+      "hidden_logical_premises": ["P ↔ Q", "Q → R", "P", "S", "T"],
+      "natural_language_conclusion": "Passengers are happy (R).",
+      "hidden_logical_conclusion": "R",
+      "expected_operations": 2,
+      "description": "Biconditional with continuation and red herrings",
+      "solution": "Translate: P = 'Train on time', Q = 'No delays', R = 'Passengers happy', S = 'Weather clear', T = 'Station crowded'. Extract P → Q from P ↔ Q, apply Modus Ponens with P to get Q, then Modus Ponens with Q → R to get R. (S and T are irrelevant.)",
+      "interpretation_hints": ["Extract the needed implication from the biconditional", "Some facts may not be needed for the conclusion"]
+    },
+    {
+      "natural_language_premises": [
+        "Neither the bus is running (P) nor is the subway operating (Q).",
+        "If the bus is not running (¬P), then people walk (R).",
+        "If people walk (R), then they arrive late (S).",
+        "The office is open (T)."
+      ],
+      "hidden_logical_premises": ["¬P ∧ ¬Q", "¬P → R", "R → S", "T"],
+      "natural_language_conclusion": "People arrive late (S).",
+      "hidden_logical_conclusion": "S",
+      "expected_operations": 3,
+      "description": "Neither/nor with chained implications",
+      "solution": "Translate: P = 'Bus running', Q = 'Subway operating', R = 'People walk', S = 'Arrive late', T = 'Office open'. Extract ¬P from ¬P ∧ ¬Q, apply Modus Ponens on ¬P → R to get R, then Modus Ponens on R → S to get S.",
+      "interpretation_hints": ["'Neither...nor' means both are false", "Chain the implications from the negation"]
+    },
+    {
+      "natural_language_premises": [
+        "If the store is open (P), then both the lights are on (Q) and the door is unlocked (R).",
+        "If the lights are on (Q), then customers can see products (S).",
+        "If the door is unlocked (R), then customers can enter (T).",
+        "The store is open (P)."
+      ],
+      "hidden_logical_premises": ["P → (Q ∧ R)", "Q → S", "R → T", "P"],
+      "natural_language_conclusion": "Customers can enter (T).",
+      "hidden_logical_conclusion": "T",
+      "expected_operations": 3,
+      "description": "Complex consequent with multiple paths",
+      "solution": "Translate: P = 'Store open', Q = 'Lights on', R = 'Door unlocked', S = 'Can see products', T = 'Can enter'. Apply Modus Ponens to get Q ∧ R, extract R, then Modus Ponens on R → T to get T.",
+      "interpretation_hints": ["Extract the needed component from the compound result", "Follow the specific path to the conclusion"]
+    },
+    {
+      "natural_language_premises": [
+        "If it is not the case that both Alice studies (P) and Bob studies (Q), then Carol studies (R).",
+        "Alice studies (P).",
+        "Bob does not study (¬Q).",
+        "Diana is in class (S)."
+      ],
+      "hidden_logical_premises": ["¬(P ∧ Q) → R", "P", "¬Q", "S"],
+      "natural_language_conclusion": "Carol studies (R).",
+      "hidden_logical_conclusion": "R",
+      "expected_operations": 3,
+      "description": "Negated conjunction with Modus Ponens",
+      "solution": "Translate: P = 'Alice studies', Q = 'Bob studies', R = 'Carol studies', S = 'Diana in class'. Combine P and ¬Q: since ¬Q, then ¬(P ∧ Q) is true. Apply Modus Ponens on ¬(P ∧ Q) → R to get R.",
+      "interpretation_hints": ["Not both means at least one is false", "If the condition holds, the consequence follows"]
+    },
+    {
+      "natural_language_premises": [
+        "Either the package is delivered today (P) or tomorrow (Q).",
+        "If the package is delivered today (P), then we can start the project immediately (R).",
+        "If the package is delivered tomorrow (Q), then we must wait another day (S).",
+        "We cannot both start immediately and wait another day (¬(R ∧ S)).",
+        "We can start the project immediately (R).",
+        "The courier is reliable (T)."
+      ],
+      "hidden_logical_premises": ["P ∨ Q", "P → R", "Q → S", "¬(R ∧ S)", "R", "T"],
+      "natural_language_conclusion": "The package is delivered today (P).",
+      "hidden_logical_conclusion": "P",
+      "expected_operations": 4,
+      "description": "Disjunction with backward reasoning using mutual exclusivity",
+      "solution": "Translate: P = 'Delivered today', Q = 'Delivered tomorrow', R = 'Start immediately', S = 'Wait a day', T = 'Courier reliable'. From ¬(R ∧ S), use De Morgan's to get ¬R ∨ ¬S. Apply Disjunctive Syllogism with R to get ¬S. Use contrapositive of Q → S to get ¬S → ¬Q, then Modus Ponens with ¬S to get ¬Q. Finally, apply Disjunctive Syllogism to P ∨ Q with ¬Q to get P.",
+      "interpretation_hints": ["Use mutual exclusivity to eliminate one option", "Work backwards from the known conclusion"]
+    },
+    {
+      "natural_language_premises": [
+        "The concert starts (P) if and only if the band arrives (Q).",
+        "The band arrives (Q) if and only if the tour bus is working (R).",
+        "The tour bus is working (R).",
+        "The venue is prepared (S).",
+        "Tickets are sold out (T)."
+      ],
+      "hidden_logical_premises": ["P ↔ Q", "Q ↔ R", "R", "S", "T"],
+      "natural_language_conclusion": "The concert starts (P).",
+      "hidden_logical_conclusion": "P",
+      "expected_operations": 4,
+      "description": "Chained biconditionals",
+      "solution": "Translate: P = 'Concert starts', Q = 'Band arrives', R = 'Tour bus working', S = 'Venue prepared', T = 'Tickets sold out'. Extract R → Q from Q ↔ R, apply Modus Ponens to get Q. Extract Q → P from P ↔ Q, apply Modus Ponens to get P.",
+      "interpretation_hints": ["Chain the biconditionals by extracting implications", "Work forward from the known fact"]
+    },
+    {
+      "natural_language_premises": [
+        "If the alarm sounds (P), then either there is a fire (Q) or it is a drill (R).",
+        "If there is a fire (Q), then the building must be evacuated (S).",
+        "The alarm sounds (P).",
+        "It is not a drill (¬R).",
+        "The security guard is present (T)."
+      ],
+      "hidden_logical_premises": ["P → (Q ∨ R)", "Q → S", "P", "¬R", "T"],
+      "natural_language_conclusion": "The building must be evacuated (S).",
+      "hidden_logical_conclusion": "S",
+      "expected_operations": 3,
+      "description": "Disjunctive consequent with elimination",
+      "solution": "Translate: P = 'Alarm sounds', Q = 'Fire', R = 'Drill', S = 'Evacuate building', T = 'Guard present'. Apply Modus Ponens on P → (Q ∨ R) to get Q ∨ R. Use Disjunctive Syllogism with ¬R to get Q. Apply Modus Ponens on Q → S to get S.",
+      "interpretation_hints": ["Extract the disjunction from the implication", "Eliminate the false option"]
+    },
+    {
+      "natural_language_premises": [
+        "If the experiment succeeds (P), then both the hypothesis is correct (Q) and the data is reliable (R).",
+        "If the hypothesis is correct (Q), then the theory is supported (S).",
+        "If the data is reliable (R), then the results can be published (T).",
+        "The experiment succeeds (P)."
+      ],
+      "hidden_logical_premises": ["P → (Q ∧ R)", "Q → S", "R → T", "P"],
+      "natural_language_conclusion": "The theory is supported (S).",
+      "hidden_logical_conclusion": "S",
+      "expected_operations": 3,
+      "description": "Branching with specific path selection",
+      "solution": "Translate: P = 'Experiment succeeds', Q = 'Hypothesis correct', R = 'Data reliable', S = 'Theory supported', T = 'Results published'. Apply Modus Ponens to get Q ∧ R, extract Q, apply Modus Ponens on Q → S to get S.",
+      "interpretation_hints": ["Focus on the path to the specific conclusion", "Not all given information is needed"]
+    },
+    {
+      "natural_language_premises": [
+        "Either the proposal is accepted (P) or it is rejected (Q), but not both.",
+        "If the proposal is accepted (P), then the project begins (R).",
+        "If the proposal is rejected (Q), then we start planning a new proposal (S).",
+        "If the project begins (R), then we need funding (T).",
+        "We need funding (T)."
+      ],
+      "hidden_logical_premises": ["P ⊕ Q", "P → R", "Q → S", "R → T", "T"],
+      "natural_language_conclusion": "The proposal is accepted (P).",
+      "hidden_logical_conclusion": "P",
+      "expected_operations": 4,
+      "description": "XOR with backward chaining",
+      "solution": "Translate: P = 'Proposal accepted', Q = 'Proposal rejected', R = 'Project begins', S = 'Plan new proposal', T = 'Need funding'. Given T and R → T, use backward reasoning to infer R. Given R and P → R, infer P. Verify with XOR: if P then ¬Q, which is consistent.",
+      "interpretation_hints": ["Work backwards from the known conclusion", "Use XOR to verify the result"]
     }
   ]
 }

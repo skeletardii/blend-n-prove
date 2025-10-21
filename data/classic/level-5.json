@@ -16,14 +16,15 @@
     },
     {
       "premises": [
-        "(P ∨ Q) → R",
-        "P",
-        "¬R"
+        "P → (Q ∧ R)",
+        "Q → S",
+        "R → T",
+        "P"
       ],
-      "conclusion": "⊥",
-      "expected_operations": 5,
-      "description": "Simple contradiction",
-      "solution": "Use Addition to get \"P ∨ Q\" from \"P\", apply Modus Ponens to get \"R\", which contradicts \"¬R\"."
+      "conclusion": "S ∧ T",
+      "expected_operations": 4,
+      "description": "Multi-branch convergence",
+      "solution": "Apply Modus Ponens on \"P → (Q ∧ R)\" with \"P\" to get \"Q ∧ R\". Extract \"Q\" and \"R\" via Simplification. Apply Modus Ponens on \"Q → S\" to get \"S\" and on \"R → T\" to get \"T\". Finally, combine \"S\" and \"T\" via Conjunction."
     },
     {
       "premises": [
@@ -118,6 +119,122 @@
       "expected_operations": 5,
       "description": "XOR elimination to common conclusion",
       "solution": "XOR means exactly one of \"P\" or \"Q\" is true. Either way, both lead to \"R\" via Modus Ponens, so \"R\" must be true."
+    },
+    {
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "P ∨ R",
+        "¬Q ∨ ¬S",
+        "T"
+      ],
+      "conclusion": "T ∧ (¬P ∨ ¬R)",
+      "expected_operations": 5,
+      "description": "Constructive + Destructive Dilemma",
+      "solution": "Extract implications, apply Constructive Dilemma to get \"Q ∨ S\", then Destructive Dilemma with \"¬Q ∨ ¬S\" to get \"¬P ∨ ¬R\", combine with \"T\"."
+    },
+    {
+      "premises": [
+        "(P ∧ Q) ∨ (P ∧ R)",
+        "Q → S",
+        "R → T"
+      ],
+      "conclusion": "P ∧ (S ∨ T)",
+      "expected_operations": 5,
+      "description": "Reverse Distributivity + Case Analysis",
+      "solution": "Factor to get \"P ∧ (Q ∨ R)\", extract \"P\" and \"Q ∨ R\". Use case analysis: if Q then S, if R then T, so \"S ∨ T\". Combine with P."
+    },
+    {
+      "premises": [
+        "P ∨ Q",
+        "¬P ∨ R",
+        "¬Q ∨ S",
+        "¬R ∨ T"
+      ],
+      "conclusion": "S ∨ T",
+      "expected_operations": 5,
+      "description": "Advanced Resolution Chain",
+      "solution": "Resolve \"P ∨ Q\" with \"¬P ∨ R\" to get \"Q ∨ R\", then with \"¬Q ∨ S\" to get \"R ∨ S\", finally with \"¬R ∨ T\" to get \"S ∨ T\"."
+    },
+    {
+      "premises": [
+        "P ⊕ Q",
+        "Q ⊕ R",
+        "P → S",
+        "R → S"
+      ],
+      "conclusion": "S",
+      "expected_operations": 5,
+      "description": "Multiple XOR Analysis",
+      "solution": "From XORs, analyze cases: if P then ¬Q (from first XOR), if ¬Q then R (from second XOR), so P → R. But we also have P → S and R → S, so S holds in all cases."
+    },
+    {
+      "premises": [
+        "P → (Q ∧ R)",
+        "Q → S",
+        "R → S",
+        "P"
+      ],
+      "conclusion": "S",
+      "expected_operations": 4,
+      "description": "Multi-branch Convergent Proof",
+      "solution": "Apply Modus Ponens to get \"Q ∧ R\", extract both \"Q\" and \"R\" via Simplification. Apply Modus Ponens on \"Q → S\" to get \"S\" (or alternatively use \"R → S\"). Either path leads to \"S\"."
+    },
+    {
+      "premises": [
+        "(P ∨ Q) → (R ∧ S)",
+        "(¬P ∧ ¬Q) → (R ∧ S)"
+      ],
+      "conclusion": "R ∧ S",
+      "expected_operations": 5,
+      "description": "Proof by Exhaustive Cases",
+      "solution": "Either \"P ∨ Q\" is true or \"¬P ∧ ¬Q\" is true (by law of excluded middle). In both cases, we get \"R ∧ S\", so \"R ∧ S\" must be true."
+    },
+    {
+      "premises": [
+        "¬((P → Q) ∧ (R → S))",
+        "P",
+        "R"
+      ],
+      "conclusion": "¬Q ∨ ¬S",
+      "expected_operations": 5,
+      "description": "Complex Negation with Implications",
+      "solution": "Apply De Morgan's to get \"¬(P → Q) ∨ ¬(R → S)\". Convert each negated implication: \"(P ∧ ¬Q) ∨ (R ∧ ¬S)\". Given P and R, we can derive \"¬Q ∨ ¬S\"."
+    },
+    {
+      "premises": [
+        "P ∧ (Q ∨ (R ∧ S))",
+        "¬Q",
+        "R → T"
+      ],
+      "conclusion": "P ∧ S ∧ T",
+      "expected_operations": 5,
+      "description": "Complex Nested Distributivity",
+      "solution": "Extract \"P\" and \"Q ∨ (R ∧ S)\". Use Disjunctive Syllogism with \"¬Q\" to get \"R ∧ S\". Extract \"R\" and \"S\", apply Modus Ponens to get \"T\", combine all."
+    },
+    {
+      "premises": [
+        "P ↔ Q",
+        "Q ↔ R",
+        "R → S",
+        "¬P"
+      ],
+      "conclusion": "¬S",
+      "expected_operations": 5,
+      "description": "Chained Biconditionals with Negation",
+      "solution": "Use biconditionals to establish P ↔ R through transitivity. Since ¬P, we get ¬R via Modus Tollens on the extracted implication. Then apply Modus Tollens on R → S to get ¬S."
+    },
+    {
+      "premises": [
+        "(P ∧ Q) → R",
+        "(R ∧ S) → T",
+        "P",
+        "Q",
+        "S"
+      ],
+      "conclusion": "T",
+      "expected_operations": 4,
+      "description": "Nested conjunctive antecedents",
+      "solution": "Combine \"P\" and \"Q\" via Conjunction to get \"P ∧ Q\", apply Modus Ponens with \"(P ∧ Q) → R\" to get \"R\". Combine \"R\" and \"S\" via Conjunction to get \"R ∧ S\", apply Modus Ponens with \"(R ∧ S) → T\" to get \"T\"."
     }
   ]
 }

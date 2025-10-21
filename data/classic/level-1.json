@@ -96,6 +96,98 @@
 	  "expected_operations": 1,
 	  "description": "Disjunctive Syllogism (variant)",
 	  "solution": "Apply Disjunctive Syllogism: from \"Q ∨ R\" and \"¬Q\", conclude \"R\"."
+	},
+	{
+	  "premises": [
+		"P ∧ Q"
+	  ],
+	  "conclusion": "Q ∧ P",
+	  "expected_operations": 1,
+	  "description": "Commutativity (AND)",
+	  "solution": "Apply Commutativity to reorder the conjuncts: \"P ∧ Q\" is equivalent to \"Q ∧ P\"."
+	},
+	{
+	  "premises": [
+		"P ∨ Q"
+	  ],
+	  "conclusion": "Q ∨ P",
+	  "expected_operations": 1,
+	  "description": "Commutativity (OR)",
+	  "solution": "Apply Commutativity to reorder the disjuncts: \"P ∨ Q\" is equivalent to \"Q ∨ P\"."
+	},
+	{
+	  "premises": [
+		"P ∧ P"
+	  ],
+	  "conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Idempotent (AND)",
+	  "solution": "Apply Idempotent law: \"P ∧ P\" simplifies to just \"P\"."
+	},
+	{
+	  "premises": [
+		"R ∨ R"
+	  ],
+	  "conclusion": "R",
+	  "expected_operations": 1,
+	  "description": "Idempotent (OR)",
+	  "solution": "Apply Idempotent law: \"R ∨ R\" simplifies to just \"R\"."
+	},
+	{
+	  "premises": [
+		"P ∧ TRUE"
+	  ],
+	  "conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Identity Law (AND with TRUE)",
+	  "solution": "Apply Identity law: \"P ∧ TRUE\" is equivalent to \"P\" since TRUE doesn't change the value."
+	},
+	{
+	  "premises": [
+		"Q ∨ FALSE"
+	  ],
+	  "conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Identity Law (OR with FALSE)",
+	  "solution": "Apply Identity law: \"Q ∨ FALSE\" is equivalent to \"Q\" since FALSE doesn't add information."
+	},
+	{
+	  "premises": [
+		"P ∨ (P ∧ Q)"
+	  ],
+	  "conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Absorption Law (OR absorbing AND)",
+	  "solution": "Apply Absorption law: \"P ∨ (P ∧ Q)\" simplifies to \"P\" since if P is true, the whole expression is true regardless of Q."
+	},
+	{
+	  "premises": [
+		"R ∧ (R ∨ S)"
+	  ],
+	  "conclusion": "R",
+	  "expected_operations": 1,
+	  "description": "Absorption Law (AND absorbing OR)",
+	  "solution": "Apply Absorption law: \"R ∧ (R ∨ S)\" simplifies to \"R\" since R must be true for the whole expression to be true."
+	},
+	{
+	  "premises": [
+		"S → T",
+		"S"
+	  ],
+	  "conclusion": "T",
+	  "expected_operations": 1,
+	  "description": "Modus Ponens (variant)",
+	  "solution": "Apply Modus Ponens: from \"S → T\" and \"S\", conclude \"T\"."
+	},
+	{
+	  "premises": [
+		"R → S",
+		"¬S"
+	  ],
+	  "conclusion": "¬R",
+	  "expected_operations": 1,
+	  "description": "Modus Tollens (variant)",
+	  "solution": "Apply Modus Tollens: from \"R → S\" and \"¬S\", conclude \"¬R\"."
 	}
   ]
 }

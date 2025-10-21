@@ -95,9 +95,9 @@
         "¬¬P ∧ ¬¬Q"
       ],
       "conclusion": "P ∧ Q",
-      "expected_operations": 3,
-      "description": "Simplification + Double Neg + Conjunction",
-      "solution": "Apply Simplification to get \"¬¬P\" and \"¬¬Q\", then Double Negation on each to get \"P\" and \"Q\", finally Conjunction."
+      "expected_operations": 5,
+      "description": "Simplifications + Double Negations + Conjunction",
+      "solution": "Apply Simplification to extract \"¬¬P\", then Simplification again to extract \"¬¬Q\", then Double Negation on each to get \"P\" and \"Q\", finally Conjunction to combine them."
     },
     {
       "premises": [
@@ -108,6 +108,101 @@
       "expected_operations": 3,
       "description": "Simplification + Disj Syll + Conjunction",
       "solution": "Apply Simplification to get \"P ∨ Q\" and \"R\", then Disjunctive Syllogism to get \"Q\", finally Conjunction with \"R\"."
+    },
+    {
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "P ∨ R"
+      ],
+      "conclusion": "Q ∨ S",
+      "expected_operations": 3,
+      "description": "Constructive Dilemma",
+      "solution": "Extract \"P → Q\" and \"R → S\" via Simplification, then apply Constructive Dilemma with \"P ∨ R\" to get \"Q ∨ S\"."
+    },
+    {
+      "premises": [
+        "P ∧ (Q ∨ R)"
+      ],
+      "conclusion": "(P ∧ Q) ∨ (P ∧ R)",
+      "expected_operations": 3,
+      "description": "Distributivity (AND over OR)",
+      "solution": "Apply Distributivity to expand \"P ∧ (Q ∨ R)\" into \"(P ∧ Q) ∨ (P ∧ R)\"."
+    },
+    {
+      "premises": [
+        "(P ∧ Q) ∨ (P ∧ R)"
+      ],
+      "conclusion": "P ∧ (Q ∨ R)",
+      "expected_operations": 3,
+      "description": "Reverse Distributivity (Factoring)",
+      "solution": "Apply Reverse Distributivity to factor out \"P\": \"(P ∧ Q) ∨ (P ∧ R)\" becomes \"P ∧ (Q ∨ R)\"."
+    },
+    {
+      "premises": [
+        "P ⊕ Q"
+      ],
+      "conclusion": "(P ∨ Q) ∧ ¬(P ∧ Q)",
+      "expected_operations": 3,
+      "description": "XOR Elimination",
+      "solution": "Apply XOR Elimination: \"P ⊕ Q\" is equivalent to \"(P ∨ Q) ∧ ¬(P ∧ Q)\", meaning exactly one is true."
+    },
+    {
+      "premises": [
+        "P ↔ Q"
+      ],
+      "conclusion": "(P → Q) ∧ (Q → P)",
+      "expected_operations": 3,
+      "description": "Biconditional to Implications",
+      "solution": "Apply Biconditional conversion: \"P ↔ Q\" is equivalent to \"(P → Q) ∧ (Q → P)\"."
+    },
+    {
+      "premises": [
+        "¬(P → Q)",
+        "R"
+      ],
+      "conclusion": "P ∧ R",
+      "expected_operations": 3,
+      "description": "Negated Implication + Simplification + Conjunction",
+      "solution": "Convert \"¬(P → Q)\" to \"P ∧ ¬Q\", extract \"P\" via Simplification, then Conjunction with \"R\"."
+    },
+    {
+      "premises": [
+        "¬((P ∧ Q) ∨ (R ∧ S))"
+      ],
+      "conclusion": "¬P ∨ ¬Q",
+      "expected_operations": 3,
+      "description": "Complex De Morgan's",
+      "solution": "Apply De Morgan's to get \"¬(P ∧ Q) ∧ ¬(R ∧ S)\", then Simplification to extract \"¬(P ∧ Q)\", then De Morgan's again to get \"¬P ∨ ¬Q\"."
+    },
+    {
+      "premises": [
+        "P → Q",
+        "¬Q ∨ R",
+        "¬R"
+      ],
+      "conclusion": "¬P",
+      "expected_operations": 3,
+      "description": "Disjunctive Syllogism + Modus Tollens",
+      "solution": "Apply Disjunctive Syllogism to \"¬Q ∨ R\" and \"¬R\" to get \"¬Q\", then Modus Tollens with \"P → Q\" to get \"¬P\"."
+    },
+    {
+      "premises": [
+        "(P ∨ Q) ∧ (P ∨ R)"
+      ],
+      "conclusion": "P ∨ (Q ∧ R)",
+      "expected_operations": 3,
+      "description": "Reverse Distributivity (OR case)",
+      "solution": "Apply Reverse Distributivity to factor out \"P\": \"(P ∨ Q) ∧ (P ∨ R)\" becomes \"P ∨ (Q ∧ R)\"."
+    },
+    {
+      "premises": [
+        "P ↔ Q",
+        "¬Q"
+      ],
+      "conclusion": "¬P",
+      "expected_operations": 3,
+      "description": "Biconditional + Modus Tollens",
+      "solution": "Extract \"P → Q\" from \"P ↔ Q\" using Biconditional Elimination, then apply Modus Tollens with \"¬Q\" to get \"¬P\"."
     }
   ]
 }

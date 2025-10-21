@@ -76,13 +76,12 @@
       "premises": [
         "P → Q",
         "Q → R",
-        "¬R",
-        "P"
+        "¬R"
       ],
-      "conclusion": "⊥",
-      "expected_operations": 4,
-      "description": "Contradiction via MT",
-      "solution": "Chain the implications to get \"P → R\", use Modus Tollens with \"¬R\" to get \"¬P\", which contradicts \"P\"."
+      "conclusion": "¬P",
+      "expected_operations": 3,
+      "description": "Chained Modus Tollens",
+      "solution": "Apply Hypothetical Syllogism to chain \"P → Q\" and \"Q → R\" to get \"P → R\", then use Modus Tollens with \"¬R\" to get \"¬P\"."
     },
     {
       "premises": [
@@ -115,6 +114,112 @@
       "expected_operations": 4,
       "description": "Complex De Morgan's + Simplifications",
       "solution": "Apply Simplification to separate conjuncts, then De Morgan's on each to get \"¬P ∧ ¬Q\" and \"¬R ∧ ¬S\", extract \"¬P\" and \"¬R\", combine via Conjunction."
+    },
+    {
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "¬Q ∨ ¬S"
+      ],
+      "conclusion": "¬P ∨ ¬R",
+      "expected_operations": 4,
+      "description": "Destructive Dilemma",
+      "solution": "Extract \"P → Q\" and \"R → S\" via Simplification, then apply Destructive Dilemma with \"¬Q ∨ ¬S\" to get \"¬P ∨ ¬R\"."
+    },
+    {
+      "premises": [
+        "P ↔ Q"
+      ],
+      "conclusion": "(P ∧ Q) ∨ (¬P ∧ ¬Q)",
+      "expected_operations": 4,
+      "description": "Biconditional to Equivalence",
+      "solution": "Convert \"P ↔ Q\" to its equivalence form: both true or both false. This gives \"(P ∧ Q) ∨ (¬P ∧ ¬Q)\"."
+    },
+    {
+      "premises": [
+        "P ⊕ Q",
+        "P → R",
+        "Q → R"
+      ],
+      "conclusion": "R",
+      "expected_operations": 4,
+      "description": "XOR Elimination + Case Analysis",
+      "solution": "Expand \"P ⊕ Q\" to \"(P ∨ Q) ∧ ¬(P ∧ Q)\", extract \"P ∨ Q\", then use case analysis: both P and Q lead to R, so R must be true."
+    },
+    {
+      "premises": [
+        "P → Q",
+        "¬Q → ¬R",
+        "R"
+      ],
+      "conclusion": "Q",
+      "expected_operations": 4,
+      "description": "Contrapositive + Modus Tollens + Modus Ponens",
+      "solution": "Convert \"¬Q → ¬R\" to contrapositive \"R → Q\", then apply Modus Ponens with \"R\" to get \"Q\"."
+    },
+    {
+      "premises": [
+        "P ∨ Q",
+        "¬P ∨ R",
+        "¬Q ∨ S"
+      ],
+      "conclusion": "R ∨ S",
+      "expected_operations": 4,
+      "description": "Multiple Resolution",
+      "solution": "Apply Resolution on \"P ∨ Q\" and \"¬P ∨ R\" to get \"Q ∨ R\", then Resolution with \"¬Q ∨ S\" to get \"R ∨ S\"."
+    },
+    {
+      "premises": [
+        "P ∧ (Q ∨ R)",
+        "¬Q",
+        "R → S"
+      ],
+      "conclusion": "P ∧ S",
+      "expected_operations": 4,
+      "description": "Distributivity + Disjunctive Syllogism + Modus Ponens",
+      "solution": "Use Distributivity or extract components: get \"P\" and \"Q ∨ R\", apply Disjunctive Syllogism to get \"R\", Modus Ponens to get \"S\", then Conjunction."
+    },
+    {
+      "premises": [
+        "(P ∧ Q) ∨ (R ∧ S)",
+        "¬P",
+        "R → T"
+      ],
+      "conclusion": "T",
+      "expected_operations": 4,
+      "description": "Complex Disjunction Resolution",
+      "solution": "Use De Morgan's logic: if \"¬P\" then \"¬(P ∧ Q)\" is likely, so \"R ∧ S\" must hold. Extract \"R\", apply Modus Ponens to get \"T\"."
+    },
+    {
+      "premises": [
+        "¬(P → Q)",
+        "R → P",
+        "R"
+      ],
+      "conclusion": "¬Q",
+      "expected_operations": 4,
+      "description": "Negated Implication + Modus Ponens + Extraction",
+      "solution": "Convert \"¬(P → Q)\" to \"P ∧ ¬Q\", extract \"¬Q\". (The other premises confirm P is true via Modus Ponens, which is consistent.)"
+    },
+    {
+      "premises": [
+        "(P ∨ Q) → R",
+        "P",
+        "R → (S ∧ T)"
+      ],
+      "conclusion": "S",
+      "expected_operations": 4,
+      "description": "Addition + Modus Ponens Chain + Simplification",
+      "solution": "Use Addition to get \"P ∨ Q\" from \"P\", apply Modus Ponens to get \"R\", then Modus Ponens again to get \"S ∧ T\", extract \"S\"."
+    },
+    {
+      "premises": [
+        "P ⊕ Q",
+        "¬P"
+      ],
+      "conclusion": "Q ∧ ¬P",
+      "expected_operations": 4,
+      "description": "XOR with Negation",
+      "solution": "Expand \"P ⊕ Q\" to \"(P ∨ Q) ∧ ¬(P ∧ Q)\", use \"¬P\" with Disjunctive Syllogism to get \"Q\", then Conjunction with \"¬P\"."
     }
   ]
 }
