@@ -1,0 +1,180 @@
+{
+  "category": "basic_operators",
+  "description": "Tests for basic operator parsing and validation",
+  "test_count": 10,
+  "tests": [
+    {
+      "test_id": "BO-001",
+      "name": "Simple AND operator",
+      "description": "Parse and validate simple conjunction",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ∧ Q",
+          "expected_valid": true,
+          "expected_normalized": "P ∧ Q",
+          "verify_is_conjunction": true
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": ["∧"],
+      "tests_features": ["parsing", "validation", "conjunction"]
+    },
+    {
+      "test_id": "BO-002",
+      "name": "Simple OR operator",
+      "description": "Parse and validate simple disjunction",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ∨ Q",
+          "expected_valid": true,
+          "expected_normalized": "P ∨ Q",
+          "verify_is_disjunction": true
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": ["∨"],
+      "tests_features": ["parsing", "validation", "disjunction"]
+    },
+    {
+      "test_id": "BO-003",
+      "name": "Simple XOR operator",
+      "description": "Parse and validate XOR with ASCII conversion",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ^ Q",
+          "expected_valid": true,
+          "expected_normalized": "P ⊕ Q",
+          "verify_is_xor": true
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": ["⊕"],
+      "tests_features": ["parsing", "xor", "ascii_conversion"]
+    },
+    {
+      "test_id": "BO-004",
+      "name": "Simple NOT operator",
+      "description": "Parse and validate negation",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "¬P",
+          "expected_valid": true,
+          "expected_normalized": "¬P"
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": ["¬"],
+      "tests_features": ["parsing", "negation"]
+    },
+    {
+      "test_id": "BO-005",
+      "name": "Simple IMPLIES operator",
+      "description": "Parse and validate implication with ASCII conversion",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P -> Q",
+          "expected_valid": true,
+          "expected_normalized": "P → Q",
+          "verify_is_implication": true
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": ["→"],
+      "tests_features": ["parsing", "implication", "ascii_conversion"]
+    },
+    {
+      "test_id": "BO-006",
+      "name": "Simple BICONDITIONAL operator",
+      "description": "Parse and validate biconditional with ASCII conversion",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P <-> Q",
+          "expected_valid": true,
+          "expected_normalized": "P ↔ Q",
+          "verify_is_biconditional": true
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": ["↔"],
+      "tests_features": ["parsing", "biconditional", "ascii_conversion"]
+    },
+    {
+      "test_id": "BO-007",
+      "name": "TRUE constant",
+      "description": "Parse and validate TRUE constant in expression",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "TRUE ∨ P",
+          "expected_valid": true,
+          "expected_normalized": "TRUE ∨ P"
+        },
+        {
+          "type": "apply_tautology_laws",
+          "expected_result": "TRUE"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∨"],
+      "tests_features": ["constants", "tautology_law"]
+    },
+    {
+      "test_id": "BO-008",
+      "name": "FALSE constant",
+      "description": "Parse and validate FALSE constant in expression",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "FALSE ∨ P",
+          "expected_valid": true,
+          "expected_normalized": "FALSE ∨ P"
+        },
+        {
+          "type": "apply_contradiction_laws",
+          "expected_result": "P"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∨"],
+      "tests_features": ["constants", "contradiction_law"]
+    },
+    {
+      "test_id": "BO-009",
+      "name": "Multi-character variables",
+      "description": "Parse expressions with multi-character variable names",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "isRaining ∧ isCold",
+          "expected_valid": true,
+          "expected_normalized": "isRaining ∧ isCold"
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": ["∧"],
+      "tests_features": ["parsing", "multi_char_variables"]
+    },
+    {
+      "test_id": "BO-010",
+      "name": "All operators combined",
+      "description": "Complex expression with all six operators",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "((P ∧ Q) ∨ ¬R) → (S ⊕ T) ↔ U",
+          "expected_valid": true,
+          "expected_normalized": "((P ∧ Q) ∨ ¬R) → (S ⊕ T) ↔ U"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["∧", "∨", "¬", "→", "⊕", "↔"],
+      "tests_features": ["parsing", "complex_expression", "all_operators"]
+    }
+  ]
+}

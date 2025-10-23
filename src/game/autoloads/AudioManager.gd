@@ -19,6 +19,7 @@ var audio_paths: Dictionary = {
 	"customer_leave": "res://assets/sound/Steps.wav",
 	"logic_success": "res://assets/sound/Powerup.wav",
 	"premise_complete": "res://assets/sound/Confirm.wav",
+	"score_popup": "res://assets/sound/Powerup.wav",  # Reusing powerup sound with pitch variation
 	"background_music": "res://assets/music/Pinball Spring.mp3",
 	# "menu_music": "res://assets/sound/Menu_In.wav" # Commented out - no music in main menu
 }
@@ -144,6 +145,23 @@ func play_logic_success() -> void:
 
 func play_premise_complete() -> void:
 	play_sfx("premise_complete")
+
+func play_score_popup(multiplier: float) -> void:
+	if is_muted:
+		return
+
+	if "score_popup" in loaded_sounds:
+		sfx_player.stream = loaded_sounds["score_popup"]
+		# Adjust pitch based on multiplier (1.0x = normal, 2.5x+ = higher pitch)
+		# Pitch range: 1.0 to 1.5
+		var pitch: float = 1.0 + (clamp(multiplier - 1.0, 0.0, 1.5) * 0.33)
+		sfx_player.pitch_scale = pitch
+		sfx_player.play()
+		# Reset pitch after playing
+		await get_tree().create_timer(0.1).timeout
+		sfx_player.pitch_scale = 1.0
+	else:
+		play_sfx("score_popup")
 
 func start_background_music() -> void:
 	play_music("background_music", true)

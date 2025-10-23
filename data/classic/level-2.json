@@ -18,7 +18,7 @@
         "P ∧ Q",
         "R"
       ],
-      "conclusion": "P ∧ R",
+      "conclusion": "(P ∧ R)",
       "expected_operations": 2,
       "description": "Simplification + Conjunction",
       "solution": "Apply Simplification to extract \"P\" from \"P ∧ Q\", then Conjunction to combine \"P\" and \"R\"."
@@ -48,20 +48,20 @@
       "premises": [
         "P ∧ (Q ∧ R)"
       ],
-      "conclusion": "Q ∧ R",
-      "expected_operations": 2,
-      "description": "Simplification + Simplification",
-      "solution": "Apply Simplification twice: first to extract \"Q ∧ R\" from the outer conjunction, then you already have the result."
+      "conclusion": "(Q ∧ R)",
+      "expected_operations": 1,
+      "description": "Simplification (right)",
+      "solution": "Apply Simplification to extract the right conjunct \"(Q ∧ R)\" from \"P ∧ (Q ∧ R)\"."
     },
     {
       "premises": [
         "¬(P ∨ Q)",
         "R → S"
       ],
-      "conclusion": "¬P ∧ ¬Q",
+      "conclusion": "(¬P ∧ ¬Q)",
       "expected_operations": 1,
       "description": "De Morgan's Law with unused premise",
-      "solution": "Apply De Morgan's Law to \"¬(P ∨ Q)\" to get \"¬P ∧ ¬Q\". The premise \"R → S\" is not needed."
+      "solution": "Apply De Morgan's Law to \"¬(P ∨ Q)\" to get \"(¬P ∧ ¬Q)\". The premise \"R → S\" is not needed."
     },
     {
       "premises": [
@@ -100,17 +100,17 @@
         "P ∨ (Q ∧ R)",
         "¬P"
       ],
-      "conclusion": "Q ∧ R",
-      "expected_operations": 2,
-      "description": "Disjunctive Syllogism + identity",
-      "solution": "Apply Disjunctive Syllogism: from \"P ∨ (Q ∧ R)\" and \"¬P\", conclude \"Q ∧ R\"."
+      "conclusion": "(Q ∧ R)",
+      "expected_operations": 1,
+      "description": "Disjunctive Syllogism",
+      "solution": "Apply Disjunctive Syllogism: from \"P ∨ (Q ∧ R)\" and \"¬P\", conclude \"(Q ∧ R)\"."
     },
     {
       "premises": [
         "(P ∧ Q) ∧ R"
       ],
       "conclusion": "P ∧ (Q ∧ R)",
-      "expected_operations": 2,
+      "expected_operations": 1,
       "description": "Associativity (AND)",
       "solution": "Apply Associativity to regroup the conjuncts: \"(P ∧ Q) ∧ R\" is equivalent to \"P ∧ (Q ∧ R)\"."
     },
@@ -119,7 +119,7 @@
         "(P ∨ Q) ∨ R"
       ],
       "conclusion": "P ∨ (Q ∨ R)",
-      "expected_operations": 2,
+      "expected_operations": 1,
       "description": "Associativity (OR)",
       "solution": "Apply Associativity to regroup the disjuncts: \"(P ∨ Q) ∨ R\" is equivalent to \"P ∨ (Q ∨ R)\"."
     },
@@ -127,46 +127,46 @@
       "premises": [
         "P → Q"
       ],
-      "conclusion": "¬P ∨ Q",
-      "expected_operations": 2,
-      "description": "Implication Elimination",
-      "solution": "Apply Implication Elimination to convert \"P → Q\" into its equivalent disjunctive form \"¬P ∨ Q\"."
+      "conclusion": "(¬P ∨ Q)",
+      "expected_operations": 1,
+      "description": "Implication Conversion",
+      "solution": "Apply Implication Conversion (IMP) to convert \"P → Q\" into its equivalent disjunctive form \"(¬P ∨ Q)\"."
     },
     {
       "premises": [
         "P → Q"
       ],
-      "conclusion": "¬Q → ¬P",
-      "expected_operations": 2,
+      "conclusion": "(¬Q → ¬P)",
+      "expected_operations": 1,
       "description": "Contrapositive",
-      "solution": "Apply Contrapositive transformation: \"P → Q\" is logically equivalent to \"¬Q → ¬P\"."
+      "solution": "Apply Contrapositive transformation (CONV): \"P → Q\" is logically equivalent to \"(¬Q → ¬P)\"."
     },
     {
       "premises": [
         "P ∨ Q",
         "¬P ∨ R"
       ],
-      "conclusion": "Q ∨ R",
+      "conclusion": "(Q ∨ R)",
       "expected_operations": 2,
       "description": "Resolution",
-      "solution": "Apply Resolution: from \"P ∨ Q\" and \"¬P ∨ R\", resolve on P to get \"Q ∨ R\"."
+      "solution": "Apply Resolution: from \"P ∨ Q\" and \"¬P ∨ R\", resolve on P to get \"(Q ∨ R)\"."
     },
     {
       "premises": [
         "P ∨ (P ∧ Q)",
         "R"
       ],
-      "conclusion": "P ∧ R",
+      "conclusion": "(P ∧ R)",
       "expected_operations": 2,
       "description": "Absorption + Conjunction",
-      "solution": "Apply Absorption to simplify \"P ∨ (P ∧ Q)\" to \"P\", then Conjunction with \"R\" to get \"P ∧ R\"."
+      "solution": "Apply Absorption to simplify \"P ∨ (P ∧ Q)\" to \"P\", then Conjunction with \"R\" to get \"(P ∧ R)\"."
     },
     {
       "premises": [
         "P ∧ (Q ∨ R)",
         "¬Q"
       ],
-      "conclusion": "P ∧ R",
+      "conclusion": "(P ∧ R)",
       "expected_operations": 2,
       "description": "Simplification + Disjunctive Syllogism + Conjunction",
       "solution": "Apply Simplification to extract \"P\" and \"Q ∨ R\", then Disjunctive Syllogism with \"¬Q\" to get \"R\", finally Conjunction to combine \"P\" and \"R\"."
@@ -183,19 +183,21 @@
     },
     {
       "premises": [
-        "¬(P → Q)"
+        "P ∨ Q",
+        "P → R",
+        "Q → R"
       ],
-      "conclusion": "P ∧ ¬Q",
+      "conclusion": "R",
       "expected_operations": 2,
-      "description": "Negated Implication",
-      "solution": "Use equivalence law: \"¬(P → Q)\" is equivalent to \"P ∧ ¬Q\". First convert P → Q to ¬P ∨ Q, then apply De Morgan's to ¬(¬P ∨ Q)."
+      "description": "Proof by Cases",
+      "solution": "Since we have P ∨ Q, we know either P or Q is true. If P is true, then R follows from P → R. If Q is true, then R follows from Q → R. Either way, R must be true. Apply Constructive Dilemma or case-by-case analysis."
     },
     {
       "premises": [
         "R ∧ (R ∨ S)",
         "T"
       ],
-      "conclusion": "R ∧ T",
+      "conclusion": "(R ∧ T)",
       "expected_operations": 2,
       "description": "Absorption + Conjunction",
       "solution": "Apply Absorption to simplify \"R ∧ (R ∨ S)\" to \"R\", then Conjunction with \"T\" to get \"R ∧ T\"."

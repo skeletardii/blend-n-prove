@@ -9,10 +9,17 @@ extends Control
 @onready var phase_container: Control = $UI/MainContainer/GameContentArea/PhaseContainer
 @onready var tutorial_help_panel: Panel = $UI/TutorialHelpPanel
 @onready var show_help_button: Button = $UI/MainContainer/TopBar/TopBarContainer/ShowHelpButton
+@onready var hint_button: Button = $UI/MainContainer/TopBar/TopBarContainer/HintButton
+@onready var hint_popup: Panel = $UI/HintPopup
+@onready var pause_button: Button = $UI/MainContainer/TopBar/TopBarContainer/PauseButton
+@onready var pause_overlay: CanvasLayer = $PauseOverlay
+@onready var resume_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ResumeButton
+@onready var quit_button: Button = $PauseOverlay/PauseMenu/MenuContainer/QuitButton
 
 # Phase Scenes
 var phase1_scene: PackedScene = preload("res://src/ui/Phase1UI.tscn")
 var phase2_scene: PackedScene = preload("res://src/ui/Phase2UI.tscn")
+var score_popup_scene: PackedScene = preload("res://src/ui/ScorePopup.tscn")
 var current_phase_instance: Control = null
 
 # Game State
@@ -22,6 +29,7 @@ var patience_timer: float = 0.0
 var max_patience: float = 60.0
 var feedback_label: Label = null
 var feedback_timer: Timer = null
+var is_paused: bool = false
 
 func _ready() -> void:
 	# Connect to GameManager signals
@@ -44,6 +52,15 @@ func _ready() -> void:
 		show_help_button.visible = false
 		tutorial_help_panel.visible = false
 
+	# Setup hint button (available in all modes)
+	hint_button.pressed.connect(_on_hint_button_pressed)
+	hint_popup.popup_closed.connect(_on_hint_popup_closed)
+
+	# Setup pause button
+	pause_button.pressed.connect(_on_pause_button_pressed)
+	resume_button.pressed.connect(_on_resume_button_pressed)
+	quit_button.pressed.connect(_on_quit_button_pressed)
+
 	# Generate first customer
 	generate_new_customer()
 
@@ -55,7 +72,7 @@ func _process(delta: float) -> void:
 		update_patience_timer(delta)
 
 func update_patience_timer(delta: float) -> void:
-	if GameManager.infinite_patience or GameManager.current_phase != GameManager.GamePhase.PREPARING_PREMISES:
+	if GameManager.infinite_patience:
 		return
 
 	patience_timer -= delta
@@ -102,6 +119,7 @@ func switch_to_phase1() -> void:
 	# Start patience timer for Phase 1
 	patience_timer = current_customer.patience_duration
 	max_patience = current_customer.patience_duration
+	patience_bar.visible = true
 
 func switch_to_phase2() -> void:
 	GameManager.change_phase(GameManager.GamePhase.TRANSFORMING_PREMISES)
@@ -131,9 +149,6 @@ func switch_to_phase2() -> void:
 	else:
 		current_phase_instance.set_premises_and_target(validated_premises, current_customer.target_conclusion)
 
-	# Hide patience bar in Phase 2
-	patience_bar.visible = false
-
 func generate_new_customer() -> void:
 	var customer_names: Array[String] = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry"]
 	var random_name: String = customer_names[randi() % customer_names.size()]
@@ -144,7 +159,7 @@ func generate_new_customer() -> void:
 		if problem:
 			# Create customer from tutorial problem
 			var base_patience: float = 120.0  # More generous patience for tutorials
-			current_customer = GameManager.CustomerData.new(random_name, problem.premises, problem.conclusion, base_patience)
+			current_customer = GameManager.CustomerData.new(random_name, problem.premises, problem.conclusion, base_patience, problem.solution)
 
 			print("Loaded tutorial problem ", problem.problem_number, " (", problem.difficulty, ")")
 		else:
@@ -170,7 +185,7 @@ func generate_new_customer() -> void:
 		base_patience = max(30.0, base_patience)  # Minimum 30 seconds
 
 		# Create customer with logical premises (hidden premises for Level 6)
-		current_customer = GameManager.CustomerData.new(random_name, random_template.premises, random_template.conclusion, base_patience)
+		current_customer = GameManager.CustomerData.new(random_name, random_template.premises, random_template.conclusion, base_patience, random_template.solution)
 
 		# If this is a Level 6 natural language problem, set the natural language data
 		if random_template.is_natural_language:
@@ -251,6 +266,11 @@ func complete_order_successfully() -> void:
 	var time_bonus: int = int(patience_timer)
 	var base_score: int = 100 + (GameManager.difficulty_level * 50)
 	var total_score: int = base_score + time_bonus
+
+	# Show score popup animation
+	var popup: CanvasLayer = score_popup_scene.instantiate()
+	add_child(popup)
+	popup.show_score_popup(base_score, time_bonus)
 
 	GameManager.add_score(total_score)
 
@@ -386,3 +406,53 @@ func _on_show_help_button_pressed() -> void:
 func _on_help_panel_closed() -> void:
 	# Optional: Add any logic when help panel is closed
 	pass
+
+# Hint Popup Functions
+func _on_hint_button_pressed() -> void:
+	if not current_customer:
+		return
+
+	# Show the hint popup with the current problem's solution
+	var solution_text: String = current_customer.solution
+	if solution_text.is_empty():
+		solution_text = "No hint available for this problem."
+
+	hint_popup.show_hint(solution_text)
+
+func _on_hint_popup_closed() -> void:
+	# Optional: Add any logic when hint popup is closed
+	pass
+
+# Pause Menu Functions
+func _on_pause_button_pressed() -> void:
+	pause_game()
+
+func pause_game() -> void:
+	is_paused = true
+	pause_overlay.visible = true
+	# Block input to the phase container (game area)
+	phase_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Note: Timer continues counting as requested by user
+
+func _on_resume_button_pressed() -> void:
+	resume_game()
+
+func resume_game() -> void:
+	is_paused = false
+	pause_overlay.visible = false
+	# Re-enable input to the phase container
+	phase_container.mouse_filter = Control.MOUSE_FILTER_PASS
+
+func _on_quit_button_pressed() -> void:
+	# Play error/cancel sound when quitting
+	AudioManager.play_error()
+
+	# Exit tutorial mode if active
+	if GameManager.tutorial_mode:
+		GameManager.exit_tutorial_mode()
+
+	# Stop background music
+	AudioManager.stop_music()
+
+	# Return to main menu
+	SceneManager.change_scene("res://src/ui/MainMenu.tscn")

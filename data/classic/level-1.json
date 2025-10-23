@@ -55,10 +55,10 @@
 		"P",
 		"Q"
 	  ],
-	  "conclusion": "P ∧ Q",
+	  "conclusion": "(P ∧ Q)",
 	  "expected_operations": 1,
 	  "description": "Conjunction",
-	  "solution": "Apply Conjunction to combine \"P\" and \"Q\" into \"P ∧ Q\"."
+	  "solution": "Apply Conjunction to combine \"P\" and \"Q\" into \"(P ∧ Q)\"."
 	},
 	{
 	  "premises": [
@@ -73,19 +73,19 @@
 	  "premises": [
 		"¬(P ∧ Q)"
 	  ],
-	  "conclusion": "¬P ∨ ¬Q",
+	  "conclusion": "(¬P ∨ ¬Q)",
 	  "expected_operations": 1,
 	  "description": "De Morgan's Law (AND)",
-	  "solution": "Apply De Morgan's Law to transform \"¬(P ∧ Q)\" into \"¬P ∨ ¬Q\"."
+	  "solution": "Apply De Morgan's Law to transform \"¬(P ∧ Q)\" into \"(¬P ∨ ¬Q)\"."
 	},
 	{
 	  "premises": [
 		"¬(P ∨ Q)"
 	  ],
-	  "conclusion": "¬P ∧ ¬Q",
+	  "conclusion": "(¬P ∧ ¬Q)",
 	  "expected_operations": 1,
 	  "description": "De Morgan's Law (OR)",
-	  "solution": "Apply De Morgan's Law to transform \"¬(P ∨ Q)\" into \"¬P ∧ ¬Q\"."
+	  "solution": "Apply De Morgan's Law to transform \"¬(P ∨ Q)\" into \"(¬P ∧ ¬Q)\"."
 	},
 	{
 	  "premises": [
@@ -101,16 +101,16 @@
 	  "premises": [
 		"P ∧ Q"
 	  ],
-	  "conclusion": "Q ∧ P",
+	  "conclusion": "(Q ∧ P)",
 	  "expected_operations": 1,
 	  "description": "Commutativity (AND)",
-	  "solution": "Apply Commutativity to reorder the conjuncts: \"P ∧ Q\" is equivalent to \"Q ∧ P\"."
+	  "solution": "Apply Commutativity to reorder the conjuncts: \"P ∧ Q\" is equivalent to \"(Q ∧ P)\"."
 	},
 	{
 	  "premises": [
 		"P ∨ Q"
 	  ],
-	  "conclusion": "Q ∨ P",
+	  "conclusion": "(Q ∨ P)",
 	  "expected_operations": 1,
 	  "description": "Commutativity (OR)",
 	  "solution": "Apply Commutativity to reorder the disjuncts: \"P ∨ Q\" is equivalent to \"Q ∨ P\"."
@@ -137,16 +137,16 @@
 	  "premises": [
 		"P"
 	  ],
-	  "conclusion": "P ∨ Q",
+	  "conclusion": "(P ∨ Q)",
 	  "expected_operations": 1,
 	  "description": "Addition (OR introduction)",
-	  "solution": "Apply Addition: from \"P\", you can conclude \"P ∨ Q\" since P being true makes the disjunction true."
+	  "solution": "Apply Addition: from \"P\", you can conclude \"(P ∨ Q)\" since P being true makes the disjunction true."
 	},
 	{
 	  "premises": [
 		"R"
 	  ],
-	  "conclusion": "R ∨ S",
+	  "conclusion": "(R ∨ S)",
 	  "expected_operations": 1,
 	  "description": "Addition (OR introduction, variant)",
 	  "solution": "Apply Addition: from \"R\", you can conclude \"R ∨ S\" since R being true makes the disjunction true."

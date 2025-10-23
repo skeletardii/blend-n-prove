@@ -1,0 +1,324 @@
+{
+  "category": "operator_combinations",
+  "description": "Tests for all operator pair and triple combinations - stress testing",
+  "test_count": 15,
+  "tests": [
+    {
+      "test_id": "OC-001",
+      "name": "AND + OR combination",
+      "description": "(P∧Q)∨(R∧S) with multiple operations",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(P ∧ Q) ∨ (R ∧ S)",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_commutativity",
+          "expected_result": "((R ∧ S) ∨ (P ∧ Q))"
+        },
+        {
+          "type": "apply_reverse_distributivity",
+          "expected_result": "((R ∨ P) ∧ (S ∨ Q))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["commutativity", "reverse_distributivity"]
+    },
+    {
+      "test_id": "OC-002",
+      "name": "AND + NOT combination",
+      "description": "¬(P∧¬Q)∧R with De Morgan",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "¬(P ∧ ¬Q) ∧ R",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_simplification",
+          "extract_right": false,
+          "expected_result": "¬(P ∧ ¬Q)"
+        },
+        {
+          "type": "apply_de_morgan_and",
+          "expected_result": "(¬P ∨ ¬¬Q)"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "¬"],
+      "tests_features": ["de_morgan", "negation"]
+    },
+    {
+      "test_id": "OC-003",
+      "name": "OR + XOR combination",
+      "description": "(P∨Q)⊕(R∨S) stress test",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(P ∨ Q) ⊕ (R ∨ S)",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_xor_elimination",
+          "expected_result": "(((P ∨ Q) ∨ (R ∨ S)) ∧ ¬((P ∨ Q) ∧ (R ∨ S)))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["∨", "⊕", "∧", "¬"],
+      "tests_features": ["xor_elimination", "complex_nesting"]
+    },
+    {
+      "test_id": "OC-004",
+      "name": "IMPLIES + AND combination",
+      "description": "(P∧Q)→(R∧S) with transformations",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(P ∧ Q) → (R ∧ S)",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_implication_conversion",
+          "expected_result": "(¬(P ∧ Q) ∨ (R ∧ S))"
+        },
+        {
+          "type": "apply_distributivity",
+          "expected_result": "((¬(P ∧ Q) ∨ R) ∧ (¬(P ∧ Q) ∨ S))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["→", "∧", "∨", "¬"],
+      "tests_features": ["implication", "distributivity"]
+    },
+    {
+      "test_id": "OC-005",
+      "name": "IMPLIES + OR combination",
+      "description": "(P∨Q)→R with Modus Ponens variation",
+      "operations": [
+        {
+          "type": "apply_modus_ponens",
+          "premises": ["(P ∨ Q) → R", "P ∨ Q"],
+          "expected_result": "R"
+        },
+        {
+          "type": "apply_addition",
+          "additional": "S",
+          "expected_result": "(R ∨ S)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["→", "∨"],
+      "tests_features": ["modus_ponens", "addition"]
+    },
+    {
+      "test_id": "OC-006",
+      "name": "BICONDITIONAL + XOR combination",
+      "description": "(P↔Q)⊕(R↔S) - maximum operator diversity",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(P ↔ Q) ⊕ (R ↔ S)",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_xor_elimination_both",
+          "expected_results": ["((P ↔ Q) ∨ (R ↔ S))", "¬((P ↔ Q) ∧ (R ↔ S))"]
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["↔", "⊕", "∨", "∧", "¬"],
+      "tests_features": ["biconditional", "xor", "multi_result"]
+    },
+    {
+      "test_id": "OC-007",
+      "name": "NOT + XOR + AND combination",
+      "description": "¬(P⊕Q)∧R with multiple transformations",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "¬(P ⊕ Q) ∧ R",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_simplification",
+          "extract_right": false,
+          "expected_result": "¬(P ⊕ Q)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["¬", "⊕", "∧"],
+      "tests_features": ["negation", "xor"]
+    },
+    {
+      "test_id": "OC-008",
+      "name": "All six operators - Part 1",
+      "description": "Complex expression using ∧,∨,¬,→,⊕,↔",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "((P ∧ Q) ∨ ¬R) → ((S ⊕ T) ↔ U)",
+          "expected_valid": true,
+          "expected_normalized": "((P ∧ Q) ∨ ¬R) → ((S ⊕ T) ↔ U)"
+        },
+        {
+          "type": "apply_implication_conversion",
+          "expected_result": "(¬((P ∧ Q) ∨ ¬R) ∨ ((S ⊕ T) ↔ U))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["∧", "∨", "¬", "→", "⊕", "↔"],
+      "tests_features": ["all_operators", "implication_conversion"]
+    },
+    {
+      "test_id": "OC-009",
+      "name": "All six operators - Part 2",
+      "description": "Different arrangement of all operators",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(P ↔ ¬Q) ∧ ((R → S) ⊕ (T ∨ U))",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_simplification",
+          "extract_right": false,
+          "expected_result": "(P ↔ ¬Q)"
+        },
+        {
+          "type": "apply_biconditional_to_implications",
+          "expected_result": "((P → ¬Q) ∧ (¬Q → P))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["∧", "∨", "¬", "→", "⊕", "↔"],
+      "tests_features": ["all_operators", "biconditional"]
+    },
+    {
+      "test_id": "OC-010",
+      "name": "Nested implications chain",
+      "description": "(P→Q)→(R→S) with multiple applications",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(P → Q) → (R → S)",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_implication_conversion",
+          "expected_result": "(¬(P → Q) ∨ (R → S))"
+        },
+        {
+          "type": "apply_distributivity",
+          "expected_result": "((¬(P → Q) ∨ R) ∧ (¬(P → Q) ∨ S))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["→", "∨", "¬", "∧"],
+      "tests_features": ["nested_implications", "distributivity"]
+    },
+    {
+      "test_id": "OC-011",
+      "name": "XOR + BICONDITIONAL + NOT",
+      "description": "¬((P⊕Q)↔R) transformation sequence",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "¬((P ⊕ Q) ↔ R)",
+          "expected_valid": true
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["¬", "⊕", "↔"],
+      "tests_features": ["negation", "xor", "biconditional"]
+    },
+    {
+      "test_id": "OC-012",
+      "name": "Alternating AND/OR chain",
+      "description": "(P∧Q)∨(R∧S)∨(T∧U)",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "((P ∧ Q) ∨ (R ∧ S)) ∨ (T ∧ U)",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_associativity",
+          "expected_result": "((P ∧ Q) ∨ ((R ∧ S) ∨ (T ∧ U)))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["alternating", "associativity"]
+    },
+    {
+      "test_id": "OC-013",
+      "name": "Multiple XOR operations",
+      "description": "P⊕Q⊕R chained XOR",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(P ⊕ Q) ⊕ R",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_xor_elimination",
+          "expected_result": "(((P ⊕ Q) ∨ R) ∧ ¬((P ⊕ Q) ∧ R))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["⊕", "∨", "∧", "¬"],
+      "tests_features": ["chained_xor", "xor_elimination"]
+    },
+    {
+      "test_id": "OC-014",
+      "name": "Mixed negations",
+      "description": "¬¬P∧¬Q∨¬¬R with double negation removal",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(¬¬P ∧ ¬Q) ∨ ¬¬R",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_simplification",
+          "extract_right": false,
+          "expected_result": "(¬¬P ∧ ¬Q)"
+        },
+        {
+          "type": "apply_simplification",
+          "extract_right": false,
+          "expected_result": "¬¬P"
+        },
+        {
+          "type": "apply_double_negation",
+          "expected_result": "P"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["¬", "∧", "∨"],
+      "tests_features": ["double_negation", "mixed_negations"]
+    },
+    {
+      "test_id": "OC-015",
+      "name": "Ultimate stress test",
+      "description": "Maximum complexity - all operators, deep nesting, 10+ variables",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "((((A ∧ B) ⊕ (C ∨ D)) → ((E ↔ F) ∧ ¬G)) ∨ ((H → I) ∧ (J ⊕ K)))",
+          "expected_valid": true,
+          "expected_normalized": "((((A ∧ B) ⊕ (C ∨ D)) → ((E ↔ F) ∧ ¬G)) ∨ ((H → I) ∧ (J ⊕ K)))"
+        },
+        {
+          "type": "apply_commutativity",
+          "expected_result": "(((H → I) ∧ (J ⊕ K)) ∨ (((A ∧ B) ⊕ (C ∨ D)) → ((E ↔ F) ∧ ¬G)))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["∧", "∨", "¬", "→", "⊕", "↔"],
+      "tests_features": ["all_operators", "stress_test", "maximum_complexity", "deep_nesting"]
+    }
+  ]
+}

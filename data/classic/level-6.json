@@ -236,20 +236,19 @@
     },
     {
       "natural_language_premises": [
-        "Either the package is delivered today (P) or tomorrow (Q).",
-        "If the package is delivered today (P), then we can start the project immediately (R).",
-        "If the package is delivered tomorrow (Q), then we must wait another day (S).",
-        "We cannot both start immediately and wait another day (¬(R ∧ S)).",
-        "We can start the project immediately (R).",
-        "The courier is reliable (T)."
+        "If it snows (P), then the roads are icy (Q).",
+        "If the roads are icy (Q), then schools are closed (R).",
+        "If schools are closed (R), then children stay home (S).",
+        "If children stay home (S), then parents need childcare (T).",
+        "It snows (P)."
       ],
-      "hidden_logical_premises": ["P ∨ Q", "P → R", "Q → S", "¬(R ∧ S)", "R", "T"],
-      "natural_language_conclusion": "The package is delivered today (P).",
-      "hidden_logical_conclusion": "P",
+      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "S → T", "P"],
+      "natural_language_conclusion": "Parents need childcare (T).",
+      "hidden_logical_conclusion": "T",
       "expected_operations": 4,
-      "description": "Disjunction with backward reasoning using mutual exclusivity",
-      "solution": "Translate: P = 'Delivered today', Q = 'Delivered tomorrow', R = 'Start immediately', S = 'Wait a day', T = 'Courier reliable'. From ¬(R ∧ S), use De Morgan's to get ¬R ∨ ¬S. Apply Disjunctive Syllogism with R to get ¬S. Use contrapositive of Q → S to get ¬S → ¬Q, then Modus Ponens with ¬S to get ¬Q. Finally, apply Disjunctive Syllogism to P ∨ Q with ¬Q to get P.",
-      "interpretation_hints": ["Use mutual exclusivity to eliminate one option", "Work backwards from the known conclusion"]
+      "description": "Long chain of natural language implications",
+      "solution": "Translate: P = 'It snows', Q = 'Roads are icy', R = 'Schools closed', S = 'Children stay home', T = 'Parents need childcare'. Chain all implications using Hypothetical Syllogism three times to build P → T, then apply Modus Ponens with P to conclude T.",
+      "interpretation_hints": ["Build the complete chain through all steps", "Apply the starting fact through the entire chain"]
     },
     {
       "natural_language_premises": [

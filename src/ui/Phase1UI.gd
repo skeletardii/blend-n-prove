@@ -91,6 +91,7 @@ func set_customer_data(customer: GameManager.CustomerData) -> void:
 	clear_input()
 
 func _on_symbol_pressed(symbol: String) -> void:
+	AudioManager.play_button_click()
 	# Handle special symbols with spacing
 	if symbol in ["∧", "∨", "⊕", "↔", "→"]:
 		current_input += " " + symbol + " "
@@ -99,14 +100,20 @@ func _on_symbol_pressed(symbol: String) -> void:
 	update_input_display()
 
 func _on_backspace_pressed() -> void:
+	AudioManager.play_button_click()
 	if current_input.length() > 0:
 		current_input = current_input.substr(0, current_input.length() - 1)
+		# If we just deleted a character and the input now ends with a space, remove that space too
+		if current_input.length() > 0 and current_input[current_input.length() - 1] == " ":
+			current_input = current_input.substr(0, current_input.length() - 1)
 		update_input_display()
 
 func _on_clear_pressed() -> void:
+	AudioManager.play_button_click()
 	clear_input()
 
 func _on_submit_pressed() -> void:
+	AudioManager.play_button_click()
 	validate_current_input()
 
 func validate_current_input() -> void:
@@ -165,12 +172,14 @@ func validate_current_input() -> void:
 			else:
 				feedback_message.emit("This expression doesn't match required premises", Color.RED)
 
+			clear_input()
 			lives -= 1
 			update_status_display()
 			if lives <= 0:
 				life_lost.emit()
 	else:
 		feedback_message.emit("Invalid premise syntax", Color.RED)
+		clear_input()
 		lives -= 1
 		update_status_display()
 		if lives <= 0:

@@ -1,0 +1,113 @@
+{
+  "rule_name": "Constructive Dilemma",
+  "description": "Constructive Dilemma is a powerful inference rule that combines conditionals with a disjunction. If we know \"if P then Q\" AND \"if R then S\", and we also know \"P or R\" is true, then we can conclude \"Q or S\" must be true. This is a double-operation rule requiring two premises.",
+  "rule_pattern": "(P → Q) ∧ (R → S), P ∨ R ⊢ Q ∨ S",
+  "tutorial_key": "constructive-dilemma",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "P ∨ R"
+      ],
+      "conclusion": "(Q ∨ S)",
+      "solution": "Apply Constructive Dilemma directly: since either P or R is true, and we have conditionals for both, we get Q or S."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "(A → B) ∧ (C → D)",
+        "A ∨ C"
+      ],
+      "conclusion": "(B ∨ D)",
+      "solution": "Apply Constructive Dilemma with different variables."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "(X → Y) ∧ (Z → W)",
+        "X ∨ Z"
+      ],
+      "conclusion": "(Y ∨ W)",
+      "solution": "Direct application of Constructive Dilemma."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "R ∨ P"
+      ],
+      "conclusion": "(S ∨ Q)",
+      "solution": "Apply Constructive Dilemma - order of disjunction doesn't matter, result may be reversed."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "((P ∧ Q) → R) ∧ (S → T)",
+        "(P ∧ Q) ∨ S"
+      ],
+      "conclusion": "(R ∨ T)",
+      "solution": "Apply Constructive Dilemma where one antecedent is a conjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → (Q ∧ R)) ∧ (S → (T ∧ U))",
+        "P ∨ S"
+      ],
+      "conclusion": "((Q ∧ R) ∨ (T ∧ U))",
+      "solution": "Apply Constructive Dilemma where consequents are conjunctions."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P → Q",
+        "R → S",
+        "P ∨ R"
+      ],
+      "conclusion": "(Q ∨ S)",
+      "solution": "First apply Conjunction to combine the two implications, then Constructive Dilemma."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "P ∨ R",
+        "Q → T",
+        "S → T"
+      ],
+      "conclusion": "T",
+      "solution": "Apply Constructive Dilemma to get Q ∨ S, then use the additional conditionals to derive T."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "((P ∨ Q) → R) ∧ ((S ∨ T) → U)",
+        "(P ∨ Q) ∨ (S ∨ T)"
+      ],
+      "conclusion": "(R ∨ U)",
+      "solution": "Apply Constructive Dilemma with complex disjunctions as antecedents."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "P → Q",
+        "R → S",
+        "P",
+        "¬Q → R"
+      ],
+      "conclusion": "S",
+      "solution": "Complex multi-step: use Modus Ponens on P → Q to try getting Q. If ¬Q, then use ¬Q → R and Modus Ponens to get R, then R → S to get S. Use Constructive Dilemma strategically."
+    }
+  ]
+}

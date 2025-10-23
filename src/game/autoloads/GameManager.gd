@@ -59,16 +59,18 @@ class CustomerData:
 	var required_premises: Array[String] = []
 	var target_conclusion: String
 	var patience_duration: float
+	var solution: String = ""
 	# Level 6 natural language fields
 	var is_natural_language: bool = false
 	var natural_language_premises: Array[String] = []
 	var natural_language_conclusion: String = ""
 
-	func _init(name: String, premises: Array[String], conclusion: String, patience: float = 60.0) -> void:
+	func _init(name: String, premises: Array[String], conclusion: String, patience: float = 60.0, sol: String = "") -> void:
 		customer_name = name
 		required_premises = premises
 		target_conclusion = conclusion
 		patience_duration = patience
+		solution = sol
 		is_natural_language = false
 
 	# Set natural language data for Level 6 problems

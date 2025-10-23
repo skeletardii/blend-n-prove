@@ -1,0 +1,113 @@
+{
+  "rule_name": "Destructive Dilemma",
+  "description": "Destructive Dilemma is the contrapositive form of Constructive Dilemma. If we know \"if P then Q\" AND \"if R then S\", and we also know \"not Q or not S\" is true, then we can conclude \"not P or not R\" must be true. This works by denying the consequents to deny the antecedents. This is a double-operation rule requiring two premises.",
+  "rule_pattern": "(P → Q) ∧ (R → S), ¬Q ∨ ¬S ⊢ ¬P ∨ ¬R",
+  "tutorial_key": "destructive-dilemma",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "¬Q ∨ ¬S"
+      ],
+      "conclusion": "(¬P ∨ ¬R)",
+      "solution": "Apply Destructive Dilemma directly: since either ¬Q or ¬S is true, we can conclude ¬P or ¬R."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "(A → B) ∧ (C → D)",
+        "¬B ∨ ¬D"
+      ],
+      "conclusion": "(¬A ∨ ¬C)",
+      "solution": "Apply Destructive Dilemma with different variables."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "(X → Y) ∧ (Z → W)",
+        "¬Y ∨ ¬W"
+      ],
+      "conclusion": "(¬X ∨ ¬Z)",
+      "solution": "Direct application of Destructive Dilemma."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "¬S ∨ ¬Q"
+      ],
+      "conclusion": "(¬R ∨ ¬P)",
+      "solution": "Apply Destructive Dilemma - order of negated disjunction doesn't matter, result may be reversed."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "((P ∧ Q) → R) ∧ (S → T)",
+        "¬R ∨ ¬T"
+      ],
+      "conclusion": "(¬(P ∧ Q) ∨ ¬S)",
+      "solution": "Apply Destructive Dilemma where one antecedent is a conjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → (Q ∧ R)) ∧ (S → (T ∧ U))",
+        "¬(Q ∧ R) ∨ ¬(T ∧ U)"
+      ],
+      "conclusion": "(¬P ∨ ¬S)",
+      "solution": "Apply Destructive Dilemma where consequents are conjunctions."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P → Q",
+        "R → S",
+        "¬Q ∨ ¬S"
+      ],
+      "conclusion": "(¬P ∨ ¬R)",
+      "solution": "First apply Conjunction to combine the two implications, then Destructive Dilemma."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "¬Q ∨ ¬S",
+        "P"
+      ],
+      "conclusion": "¬R",
+      "solution": "Apply Destructive Dilemma to get ¬P ∨ ¬R, then use Disjunctive Syllogism with P to derive ¬R."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "((P ∨ Q) → R) ∧ ((S ∨ T) → U)",
+        "¬R ∨ ¬U"
+      ],
+      "conclusion": "(¬(P ∨ Q) ∨ ¬(S ∨ T))",
+      "solution": "Apply Destructive Dilemma with complex disjunctions as antecedents."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "P → Q",
+        "R → S",
+        "T → U",
+        "¬Q ∨ ¬S",
+        "P ∨ R"
+      ],
+      "conclusion": "¬P → ¬R",
+      "solution": "Complex multi-step: use Destructive Dilemma strategically with the available conditionals and negations to derive the conditional conclusion."
+    }
+  ]
+}

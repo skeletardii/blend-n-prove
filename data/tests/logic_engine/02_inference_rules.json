@@ -1,0 +1,239 @@
+{
+  "category": "inference_rules",
+  "description": "Tests for all 13 inference rules with complex expressions",
+  "test_count": 15,
+  "tests": [
+    {
+      "test_id": "IR-001",
+      "name": "Modus Ponens - basic",
+      "description": "Basic modus ponens: P→Q, P ⊢ Q",
+      "operations": [
+        {
+          "type": "apply_modus_ponens",
+          "premises": ["P → Q", "P"],
+          "expected_result": "Q"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["→"],
+      "tests_features": ["modus_ponens", "inference"]
+    },
+    {
+      "test_id": "IR-002",
+      "name": "Modus Ponens - nested antecedent",
+      "description": "Modus ponens with complex nested expressions",
+      "operations": [
+        {
+          "type": "apply_modus_ponens",
+          "premises": ["(P ∧ Q) → R", "P ∧ Q"],
+          "expected_result": "R"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["∧", "→"],
+      "tests_features": ["modus_ponens", "nested_expression"]
+    },
+    {
+      "test_id": "IR-003",
+      "name": "Modus Tollens - basic",
+      "description": "Basic modus tollens: P→Q, ¬Q ⊢ ¬P",
+      "operations": [
+        {
+          "type": "apply_modus_tollens",
+          "premises": ["P → Q", "¬Q"],
+          "expected_result": "¬P"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["→", "¬"],
+      "tests_features": ["modus_tollens", "negation"]
+    },
+    {
+      "test_id": "IR-004",
+      "name": "Modus Tollens - complex",
+      "description": "Modus tollens with nested consequent",
+      "operations": [
+        {
+          "type": "apply_modus_tollens",
+          "premises": ["P → (Q ∨ R)", "¬(Q ∨ R)"],
+          "expected_result": "¬P"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["→", "∨", "¬"],
+      "tests_features": ["modus_tollens", "nested_expression"]
+    },
+    {
+      "test_id": "IR-005",
+      "name": "Hypothetical Syllogism",
+      "description": "Chain implications: P→Q, Q→R ⊢ P→R",
+      "operations": [
+        {
+          "type": "apply_hypothetical_syllogism",
+          "premises": ["P → Q", "Q → R"],
+          "expected_result": "(P → R)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["→"],
+      "tests_features": ["hypothetical_syllogism", "chaining"]
+    },
+    {
+      "test_id": "IR-006",
+      "name": "Hypothetical Syllogism - nested",
+      "description": "Chain implications with complex expressions",
+      "operations": [
+        {
+          "type": "apply_hypothetical_syllogism",
+          "premises": ["(P ∧ Q) → R", "R → (S ∨ T)"],
+          "expected_result": "((P ∧ Q) → (S ∨ T))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["→", "∧", "∨"],
+      "tests_features": ["hypothetical_syllogism", "nested_expression"]
+    },
+    {
+      "test_id": "IR-007",
+      "name": "Disjunctive Syllogism",
+      "description": "P∨Q, ¬P ⊢ Q",
+      "operations": [
+        {
+          "type": "apply_disjunctive_syllogism",
+          "premises": ["P ∨ Q", "¬P"],
+          "expected_result": "Q"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∨", "¬"],
+      "tests_features": ["disjunctive_syllogism"]
+    },
+    {
+      "test_id": "IR-008",
+      "name": "Simplification - left",
+      "description": "Extract left from conjunction: P∧Q ⊢ P",
+      "operations": [
+        {
+          "type": "apply_simplification",
+          "premises": ["P ∧ Q"],
+          "extract_right": false,
+          "expected_result": "P"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∧"],
+      "tests_features": ["simplification"]
+    },
+    {
+      "test_id": "IR-009",
+      "name": "Simplification - both",
+      "description": "Extract both parts from conjunction",
+      "operations": [
+        {
+          "type": "apply_simplification_both",
+          "premises": ["(P ∨ Q) ∧ (R → S)"],
+          "expected_results": ["(P ∨ Q)", "(R → S)"]
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["∧", "∨", "→"],
+      "tests_features": ["simplification", "multi_result"]
+    },
+    {
+      "test_id": "IR-010",
+      "name": "Conjunction",
+      "description": "Combine two statements: P, Q ⊢ P∧Q",
+      "operations": [
+        {
+          "type": "apply_conjunction",
+          "premises": ["P", "Q"],
+          "expected_result": "(P ∧ Q)"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∧"],
+      "tests_features": ["conjunction", "parentheses"]
+    },
+    {
+      "test_id": "IR-011",
+      "name": "Addition",
+      "description": "Add disjunct: P ⊢ P∨Q",
+      "operations": [
+        {
+          "type": "apply_addition",
+          "premises": ["P"],
+          "additional": "Q",
+          "expected_result": "(P ∨ Q)"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∨"],
+      "tests_features": ["addition"]
+    },
+    {
+      "test_id": "IR-012",
+      "name": "Constructive Dilemma",
+      "description": "(P→Q)∧(R→S), P∨R ⊢ Q∨S",
+      "operations": [
+        {
+          "type": "apply_constructive_dilemma",
+          "premises": ["(P → Q) ∧ (R → S)", "P ∨ R"],
+          "expected_result": "(Q ∨ S)"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["→", "∧", "∨"],
+      "tests_features": ["constructive_dilemma", "complex"]
+    },
+    {
+      "test_id": "IR-013",
+      "name": "Destructive Dilemma",
+      "description": "(P→Q)∧(R→S), ¬Q∨¬S ⊢ ¬P∨¬R",
+      "operations": [
+        {
+          "type": "apply_destructive_dilemma",
+          "premises": ["(P → Q) ∧ (R → S)", "¬Q ∨ ¬S"],
+          "expected_result": "(¬P ∨ ¬R)"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["→", "∧", "∨", "¬"],
+      "tests_features": ["destructive_dilemma", "complex", "negation"]
+    },
+    {
+      "test_id": "IR-014",
+      "name": "Resolution",
+      "description": "P∨Q, ¬P∨R ⊢ Q∨R",
+      "operations": [
+        {
+          "type": "apply_resolution",
+          "premises": ["P ∨ Q", "¬P ∨ R"],
+          "expected_result": "(Q ∨ R)"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∨", "¬"],
+      "tests_features": ["resolution"]
+    },
+    {
+      "test_id": "IR-015",
+      "name": "Double Negation",
+      "description": "¬¬P ⊢ P",
+      "operations": [
+        {
+          "type": "apply_double_negation",
+          "input": "¬¬P",
+          "expected_result": "P"
+        },
+        {
+          "type": "apply_double_negation",
+          "input": "¬¬(P ∧ Q)",
+          "expected_result": "(P ∧ Q)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["¬", "∧"],
+      "tests_features": ["double_negation", "nested"]
+    }
+  ]
+}

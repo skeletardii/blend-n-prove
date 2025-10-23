@@ -1,6 +1,6 @@
 {
-  "rule_name": "Biconditional (Equivalence)",
-  "description": "A biconditional states that two propositions have the same truth value. \"P if and only if Q\" means \"if P then Q\" and \"if Q then P\". We can use biconditionals to infer one side from the other.",
+  "rule_name": "Equivalence (Biconditional Elimination)",
+  "description": "Equivalence is a double-operation rule that uses a biconditional to infer one side from the other. \"P if and only if Q\" means they have the same truth value. If we have P ↔ Q and we know P, we can conclude Q (and vice versa). Note: This differs from the Implication rule (IMP) and Conversion rule (CONV), which expand biconditionals into other forms.",
   "rule_pattern": "P ↔ Q, P ⊢ Q (or P ↔ Q, Q ⊢ P)",
   "tutorial_key": "biconditional",
   "problems": [

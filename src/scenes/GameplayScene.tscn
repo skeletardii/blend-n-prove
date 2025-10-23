@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bji7acucw6pe3"]
+[gd_scene load_steps=4 format=3 uid="uid://bji7acucw6pe3"]
 
 [ext_resource type="Script" uid="uid://cl7fuggwr1kue" path="res://src/ui/GameplayScene.gd" id="1_3v9zy"]
 [ext_resource type="PackedScene" uid="uid://cq3k7m5xywb8k" path="res://src/ui/TutorialHelpPanel.tscn" id="2_tutorial_help"]
+[ext_resource type="PackedScene" uid="uid://dpjc3t8yqr5h1" path="res://src/ui/HintPopup.tscn" id="3_hint_popup"]
 
 [node name="GameplayScene" type="Control"]
 layout_mode = 3
@@ -65,6 +66,11 @@ text = "Lives:"
 layout_mode = 2
 text = "♥♥♥"
 
+[node name="PauseButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
+custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
+text = "⏸"
+
 [node name="Spacer" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -88,6 +94,10 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 text = "Show Help"
+
+[node name="HintButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
+layout_mode = 2
+text = "Hint"
 
 [node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer"]
 layout_mode = 2
@@ -145,3 +155,64 @@ Q"
 
 [node name="TutorialHelpPanel" parent="UI" instance=ExtResource("2_tutorial_help")]
 visible = false
+
+[node name="HintPopup" parent="UI" instance=ExtResource("3_hint_popup")]
+visible = false
+
+[node name="PauseOverlay" type="CanvasLayer" parent="."]
+visible = false
+layer = 100
+
+[node name="DarkenBackground" type="ColorRect" parent="PauseOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="PauseMenu" type="Panel" parent="PauseOverlay"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -120.0
+offset_right = 150.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuContainer" type="VBoxContainer" parent="PauseOverlay/PauseMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="PausedLabel" type="Label" parent="PauseOverlay/PauseMenu/MenuContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="PauseOverlay/PauseMenu/MenuContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ResumeButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "Resume"
+
+[node name="QuitButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "Quit to Menu"

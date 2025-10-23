@@ -1,6 +1,6 @@
 {
   "rule_name": "Conjunction",
-  "description": "Conjunction allows us to combine two separate statements into a single conjunction. If we know P is true and Q is true, we can conclude \"P and Q\".",
+  "description": "Conjunction is a double-operation rule that combines TWO separate premises into a single conjunction. Select premise P, then select premise Q, to create \"P and Q\". This requires exactly two distinct premises from your inventory.",
   "rule_pattern": "P, Q ⊢ P ∧ Q",
   "tutorial_key": "conjunction",
   "problems": [
@@ -11,7 +11,7 @@
         "P",
         "Q"
       ],
-      "conclusion": "P ∧ Q",
+      "conclusion": "(P ∧ Q)",
       "solution": "Apply Conjunction to combine the two premises."
     },
     {
@@ -21,7 +21,7 @@
         "R",
         "S"
       ],
-      "conclusion": "R ∧ S",
+      "conclusion": "(R ∧ S)",
       "solution": "Combine R and S using Conjunction."
     },
     {
@@ -31,7 +31,7 @@
         "A",
         "B"
       ],
-      "conclusion": "A ∧ B",
+      "conclusion": "(A ∧ B)",
       "solution": "Direct application of Conjunction."
     },
     {
@@ -41,7 +41,7 @@
         "P ∨ Q",
         "R"
       ],
-      "conclusion": "(P ∨ Q) ∧ R",
+      "conclusion": "((P ∨ Q) ∧ R)",
       "solution": "Apply Conjunction with a disjunction and a simple statement."
     },
     {
@@ -51,7 +51,7 @@
         "P → Q",
         "R → S"
       ],
-      "conclusion": "(P → Q) ∧ (R → S)",
+      "conclusion": "((P → Q) ∧ (R → S))",
       "solution": "Combine two implications using Conjunction."
     },
     {
@@ -61,7 +61,7 @@
         "P ∧ Q",
         "R ∧ S"
       ],
-      "conclusion": "(P ∧ Q) ∧ (R ∧ S)",
+      "conclusion": "((P ∧ Q) ∧ (R ∧ S))",
       "solution": "Combine two conjunctions into a larger conjunction."
     },
     {
@@ -72,7 +72,7 @@
         "P",
         "R"
       ],
-      "conclusion": "Q ∧ R",
+      "conclusion": "(Q ∧ R)",
       "solution": "Apply Modus Ponens to get Q, then Conjunction with R."
     },
     {
@@ -82,7 +82,7 @@
         "P ∧ Q",
         "R ∧ S"
       ],
-      "conclusion": "P ∧ R",
+      "conclusion": "(P ∧ R)",
       "solution": "Apply Simplification twice to extract P and R, then Conjunction."
     },
     {
@@ -93,7 +93,7 @@
         "Q",
         "R"
       ],
-      "conclusion": "(P ∧ Q) ∧ R",
+      "conclusion": "((P ∨ Q) ∧ R)",
       "solution": "Apply Conjunction twice: first combine P and Q, then combine with R."
     },
     {
@@ -105,7 +105,7 @@
         "P",
         "R"
       ],
-      "conclusion": "Q ∧ S",
+      "conclusion": "(Q ∧ S)",
       "solution": "Apply Modus Ponens twice to get Q and S, then Conjunction."
     }
   ]

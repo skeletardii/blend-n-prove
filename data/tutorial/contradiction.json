@@ -1,0 +1,98 @@
+{
+  "rule_name": "Contradiction Laws",
+  "description": "Contradiction laws deal with expressions involving FALSE. A contradiction is always false regardless of other values. \"P and FALSE\" always equals FALSE (since FALSE makes the entire conjunction false). \"P or FALSE\" simplifies to just P (since FALSE doesn't add anything). These laws help simplify expressions with constant falsehood.",
+  "rule_pattern": "P ∧ FALSE ⊢ FALSE, P ∨ FALSE ⊢ P",
+  "tutorial_key": "contradiction",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∧ FALSE"
+      ],
+      "conclusion": "FALSE",
+      "solution": "Apply Contradiction law: P and FALSE is always FALSE since FALSE makes the conjunction false."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∨ FALSE"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Contradiction law: P or FALSE simplifies to just P."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "Q ∨ FALSE"
+      ],
+      "conclusion": "Q",
+      "solution": "Direct application of Contradiction law for disjunction."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "FALSE ∨ R"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Contradiction law - order doesn't matter in disjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) ∧ FALSE"
+      ],
+      "conclusion": "FALSE",
+      "solution": "Apply Contradiction law where left side is a conjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∨ Q) ∨ FALSE"
+      ],
+      "conclusion": "(P ∨ Q)",
+      "solution": "Apply Contradiction law to simplify disjunction with FALSE."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∨ FALSE) ∨ Q"
+      ],
+      "conclusion": "(P ∨ Q)",
+      "solution": "Apply Contradiction law to simplify P ∨ FALSE to P, then combine with Q."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "FALSE ∧ (P ∨ Q)"
+      ],
+      "conclusion": "FALSE",
+      "solution": "Apply Contradiction law - anything AND FALSE is FALSE."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "((P ∨ FALSE) ∧ (Q ∨ FALSE))"
+      ],
+      "conclusion": "(P ∧ Q)",
+      "solution": "Apply Contradiction law twice to simplify both sides, then combine."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "(P ∧ FALSE) ∨ (Q ∧ R)"
+      ],
+      "conclusion": "(Q ∧ R)",
+      "solution": "Apply Contradiction law to simplify P ∧ FALSE to FALSE, then FALSE ∨ (Q ∧ R) simplifies to (Q ∧ R)."
+    }
+  ]
+}

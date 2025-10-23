@@ -1,7 +1,7 @@
 {
   "rule_name": "Simplification",
-  "description": "Simplification allows us to extract one part of a conjunction. If we know \"P and Q\" is true, we can conclude either P or Q individually.",
-  "rule_pattern": "P ∧ Q ⊢ P (or P ∧ Q ⊢ Q)",
+  "description": "Simplification allows us to extract parts of a conjunction. If we know \"P and Q\" is true, we can conclude either P or Q individually. In Phase 2, Simplification automatically extracts BOTH parts at once, adding both P and Q to your inventory in a single operation.",
+  "rule_pattern": "P ∧ Q ⊢ P and Q (both extracted)",
   "tutorial_key": "simplification",
   "problems": [
     {

@@ -1,0 +1,98 @@
+{
+  "rule_name": "Tautology Laws",
+  "description": "Tautology laws deal with expressions involving TRUE. A tautology is always true regardless of other values. \"P or TRUE\" always equals TRUE (since at least TRUE is true). \"P and TRUE\" simplifies to just P (since TRUE doesn't restrict P). These laws help simplify expressions with constant truth values.",
+  "rule_pattern": "P ∨ TRUE ⊢ TRUE, P ∧ TRUE ⊢ P",
+  "tutorial_key": "tautology",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∨ TRUE"
+      ],
+      "conclusion": "TRUE",
+      "solution": "Apply Tautology law: P or TRUE is always TRUE since TRUE is always true."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "P ∧ TRUE"
+      ],
+      "conclusion": "P",
+      "solution": "Apply Tautology law: P and TRUE simplifies to just P."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "Q ∧ TRUE"
+      ],
+      "conclusion": "Q",
+      "solution": "Direct application of Tautology law for conjunction."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "TRUE ∧ R"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Tautology law - order doesn't matter in conjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) ∨ TRUE"
+      ],
+      "conclusion": "TRUE",
+      "solution": "Apply Tautology law where left side is a conjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∨ Q) ∧ TRUE"
+      ],
+      "conclusion": "(P ∨ Q)",
+      "solution": "Apply Tautology law to simplify conjunction with TRUE."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ TRUE) ∧ Q"
+      ],
+      "conclusion": "(P ∧ Q)",
+      "solution": "Apply Tautology law to simplify P ∧ TRUE to P, then combine with Q."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "TRUE ∨ (P ∧ Q)"
+      ],
+      "conclusion": "TRUE",
+      "solution": "Apply Tautology law - anything OR TRUE is TRUE."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "((P ∧ TRUE) ∨ (Q ∧ TRUE))"
+      ],
+      "conclusion": "(P ∨ Q)",
+      "solution": "Apply Tautology law twice to simplify both sides, then combine."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "(P ∨ TRUE) ∧ (Q ∨ R)"
+      ],
+      "conclusion": "(Q ∨ R)",
+      "solution": "Apply Tautology law to simplify P ∨ TRUE to TRUE, then TRUE ∧ (Q ∨ R) simplifies to (Q ∨ R)."
+    }
+  ]
+}

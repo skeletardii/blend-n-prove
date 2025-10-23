@@ -1,0 +1,246 @@
+{
+  "category": "complex_nested",
+  "description": "Tests for complex nested expressions with deep parenthesis structures",
+  "test_count": 15,
+  "tests": [
+    {
+      "test_id": "CN-001",
+      "name": "Triple nested conjunction",
+      "description": "Test parenthesis preservation in triple nesting",
+      "operations": [
+        {
+          "type": "create_conjunction",
+          "left": "P",
+          "right": "Q",
+          "expected_result": "(P ∧ Q)"
+        },
+        {
+          "type": "create_conjunction",
+          "left": "(P ∧ Q)",
+          "right": "R",
+          "expected_result": "((P ∧ Q) ∧ R)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["∧"],
+      "tests_features": ["triple_nesting", "parentheses"]
+    },
+    {
+      "test_id": "CN-002",
+      "name": "XOR elimination with nested result",
+      "description": "P⊕Q → (P∨Q)∧¬(P∧Q) - Complex nesting",
+      "operations": [
+        {
+          "type": "apply_xor_elimination",
+          "input": "P ⊕ Q",
+          "expected_result": "((P ∨ Q) ∧ ¬(P ∧ Q))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["⊕", "∨", "∧", "¬"],
+      "tests_features": ["xor_elimination", "complex_nesting"]
+    },
+    {
+      "test_id": "CN-003",
+      "name": "XOR elimination both parts",
+      "description": "Extract both components of XOR elimination",
+      "operations": [
+        {
+          "type": "apply_xor_elimination_both",
+          "input": "P ⊕ Q",
+          "expected_results": ["(P ∨ Q)", "¬(P ∧ Q)"]
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["⊕", "∨", "∧", "¬"],
+      "tests_features": ["xor", "multi_result"]
+    },
+    {
+      "test_id": "CN-004",
+      "name": "Biconditional to equivalence",
+      "description": "P↔Q → (P∧Q)∨(¬P∧¬Q) - Quadruple nesting",
+      "operations": [
+        {
+          "type": "apply_biconditional_to_equivalence",
+          "input": "P ↔ Q",
+          "expected_result": "((P ∧ Q) ∨ (¬P ∧ ¬Q))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["↔", "∧", "∨", "¬"],
+      "tests_features": ["biconditional", "quadruple_nesting"]
+    },
+    {
+      "test_id": "CN-005",
+      "name": "Biconditional to implications",
+      "description": "P↔Q → (P→Q)∧(Q→P)",
+      "operations": [
+        {
+          "type": "apply_biconditional_to_implications",
+          "input": "P ↔ Q",
+          "expected_result": "((P → Q) ∧ (Q → P))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["↔", "→", "∧"],
+      "tests_features": ["biconditional", "implications"]
+    },
+    {
+      "test_id": "CN-006",
+      "name": "Distributivity creating triple nesting",
+      "description": "A∧(B∨C) → (A∧B)∨(A∧C) with parenthesis preservation",
+      "operations": [
+        {
+          "type": "apply_distributivity",
+          "input": "A ∧ (B ∨ C)",
+          "expected_result": "((A ∧ B) ∨ (A ∧ C))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["distributivity", "triple_nesting"]
+    },
+    {
+      "test_id": "CN-007",
+      "name": "Reverse distributivity",
+      "description": "(A∧B)∨(A∧C) → A∧(B∨C)",
+      "operations": [
+        {
+          "type": "apply_reverse_distributivity",
+          "input": "(A ∧ B) ∨ (A ∧ C)",
+          "expected_result": "(A ∧ (B ∨ C))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["reverse_distributivity", "factoring"]
+    },
+    {
+      "test_id": "CN-008",
+      "name": "Deeply nested implication",
+      "description": "Nested implications with complex structures",
+      "operations": [
+        {
+          "type": "create_implication",
+          "antecedent": "(P ∧ Q) ∨ R",
+          "consequent": "(S → T) ∧ U",
+          "expected_result": "(((P ∧ Q) ∨ R) → ((S → T) ∧ U))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["→", "∧", "∨"],
+      "tests_features": ["nested_implication", "complex"]
+    },
+    {
+      "test_id": "CN-009",
+      "name": "De Morgan with nested operands",
+      "description": "¬((P∨Q)∧(R∨S)) → ¬(P∨Q)∨¬(R∨S)",
+      "operations": [
+        {
+          "type": "apply_de_morgan_and",
+          "input": "¬((P ∨ Q) ∧ (R ∨ S))",
+          "expected_result": "(¬(P ∨ Q) ∨ ¬(R ∨ S))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["¬", "∧", "∨"],
+      "tests_features": ["de_morgan", "deep_nesting"]
+    },
+    {
+      "test_id": "CN-010",
+      "name": "Constructive Dilemma nested",
+      "description": "Complex constructive dilemma with nested implications",
+      "operations": [
+        {
+          "type": "apply_constructive_dilemma",
+          "premises": ["((P ∧ Q) → R) ∧ ((S ∨ T) → U)", "(P ∧ Q) ∨ (S ∨ T)"],
+          "expected_result": "(R ∨ U)"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["→", "∧", "∨"],
+      "tests_features": ["constructive_dilemma", "deep_nesting"]
+    },
+    {
+      "test_id": "CN-011",
+      "name": "Nested XOR and biconditional",
+      "description": "Combination of XOR and biconditional",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(P ⊕ Q) ↔ (R ∨ S)",
+          "expected_valid": true
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["⊕", "↔", "∨"],
+      "tests_features": ["xor", "biconditional", "nesting"]
+    },
+    {
+      "test_id": "CN-012",
+      "name": "Quintuple nesting",
+      "description": "Five levels of nested parentheses",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "((((P ∧ Q) ∨ R) → S) ⊕ T)",
+          "expected_valid": true,
+          "expected_normalized": "((((P ∧ Q) ∨ R) → S) ⊕ T)"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["∧", "∨", "→", "⊕"],
+      "tests_features": ["quintuple_nesting", "parsing"]
+    },
+    {
+      "test_id": "CN-013",
+      "name": "Nested negations",
+      "description": "Multiple levels of negation with complex expressions",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "¬(¬(P ∧ Q) ∨ ¬(R → S))",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_de_morgan_or",
+          "expected_result": "(¬¬(P ∧ Q) ∧ ¬¬(R → S))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["¬", "∧", "∨", "→"],
+      "tests_features": ["nested_negation", "de_morgan"]
+    },
+    {
+      "test_id": "CN-014",
+      "name": "Complex absorption",
+      "description": "Absorption with nested sub-expressions",
+      "operations": [
+        {
+          "type": "apply_absorption",
+          "input": "(P ∧ Q) ∧ ((P ∧ Q) ∨ R)",
+          "expected_result": "(P ∧ Q)"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["absorption", "nesting"]
+    },
+    {
+      "test_id": "CN-015",
+      "name": "All operators deeply nested",
+      "description": "Maximum complexity with all 6 operators",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(((P ∧ Q) ∨ (¬R ⊕ S)) → (T ↔ U))",
+          "expected_valid": true,
+          "expected_normalized": "(((P ∧ Q) ∨ (¬R ⊕ S)) → (T ↔ U))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["∧", "∨", "¬", "⊕", "→", "↔"],
+      "tests_features": ["all_operators", "deep_nesting", "parsing"]
+    }
+  ]
+}

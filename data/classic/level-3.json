@@ -19,7 +19,7 @@
         "P ∧ Q",
         "R ∧ S"
       ],
-      "conclusion": "P ∧ R",
+      "conclusion": "(P ∧ R)",
       "expected_operations": 3,
       "description": "Multiple Simplifications + Conjunction",
       "solution": "Apply Simplification to extract \"P\" from \"P ∧ Q\" and \"R\" from \"R ∧ S\", then Conjunction to combine them."
@@ -94,7 +94,7 @@
       "premises": [
         "¬¬P ∧ ¬¬Q"
       ],
-      "conclusion": "P ∧ Q",
+      "conclusion": "(P ∧ Q)",
       "expected_operations": 5,
       "description": "Simplifications + Double Negations + Conjunction",
       "solution": "Apply Simplification to extract \"¬¬P\", then Simplification again to extract \"¬¬Q\", then Double Negation on each to get \"P\" and \"Q\", finally Conjunction to combine them."
@@ -104,36 +104,36 @@
         "(P ∨ Q) ∧ R",
         "¬P"
       ],
-      "conclusion": "Q ∧ R",
-      "expected_operations": 3,
-      "description": "Simplification + Disj Syll + Conjunction",
-      "solution": "Apply Simplification to get \"P ∨ Q\" and \"R\", then Disjunctive Syllogism to get \"Q\", finally Conjunction with \"R\"."
+      "conclusion": "(Q ∧ R)",
+      "expected_operations": 4,
+      "description": "Double Simplification + Disj Syll + Conjunction",
+      "solution": "Apply Simplification twice: first to extract \"P ∨ Q\", then to extract \"R\". Apply Disjunctive Syllogism with \"¬P\" to get \"Q\", then Conjunction to combine \"Q\" and \"R\"."
     },
     {
       "premises": [
         "(P → Q) ∧ (R → S)",
         "P ∨ R"
       ],
-      "conclusion": "Q ∨ S",
-      "expected_operations": 3,
+      "conclusion": "(Q ∨ S)",
+      "expected_operations": 1,
       "description": "Constructive Dilemma",
-      "solution": "Extract \"P → Q\" and \"R → S\" via Simplification, then apply Constructive Dilemma with \"P ∨ R\" to get \"Q ∨ S\"."
+      "solution": "Apply Constructive Dilemma (CD) with premises \"(P → Q) ∧ (R → S)\" and \"P ∨ R\" to directly conclude \"Q ∨ S\"."
     },
     {
       "premises": [
         "P ∧ (Q ∨ R)"
       ],
       "conclusion": "(P ∧ Q) ∨ (P ∧ R)",
-      "expected_operations": 3,
+      "expected_operations": 1,
       "description": "Distributivity (AND over OR)",
-      "solution": "Apply Distributivity to expand \"P ∧ (Q ∨ R)\" into \"(P ∧ Q) ∨ (P ∧ R)\"."
+      "solution": "Apply Distributivity (DIST) to expand \"P ∧ (Q ∨ R)\" into \"(P ∧ Q) ∨ (P ∧ R)\"."
     },
     {
       "premises": [
         "(P ∧ Q) ∨ (P ∧ R)"
       ],
       "conclusion": "P ∧ (Q ∨ R)",
-      "expected_operations": 3,
+      "expected_operations": 1,
       "description": "Reverse Distributivity (Factoring)",
       "solution": "Apply Reverse Distributivity to factor out \"P\": \"(P ∧ Q) ∨ (P ∧ R)\" becomes \"P ∧ (Q ∨ R)\"."
     },
@@ -142,7 +142,7 @@
         "P ⊕ Q"
       ],
       "conclusion": "(P ∨ Q) ∧ ¬(P ∧ Q)",
-      "expected_operations": 3,
+      "expected_operations": 1,
       "description": "XOR Elimination",
       "solution": "Apply XOR Elimination: \"P ⊕ Q\" is equivalent to \"(P ∨ Q) ∧ ¬(P ∧ Q)\", meaning exactly one is true."
     },
@@ -151,25 +151,26 @@
         "P ↔ Q"
       ],
       "conclusion": "(P → Q) ∧ (Q → P)",
-      "expected_operations": 3,
+      "expected_operations": 1,
       "description": "Biconditional to Implications",
-      "solution": "Apply Biconditional conversion: \"P ↔ Q\" is equivalent to \"(P → Q) ∧ (Q → P)\"."
+      "solution": "Apply Biconditional to Implications conversion: \"P ↔ Q\" is equivalent to \"(P → Q) ∧ (Q → P)\"."
     },
     {
       "premises": [
-        "¬(P → Q)",
-        "R"
+        "P → Q",
+        "Q → (R ∧ S)",
+        "P"
       ],
-      "conclusion": "P ∧ R",
+      "conclusion": "R",
       "expected_operations": 3,
-      "description": "Negated Implication + Simplification + Conjunction",
-      "solution": "Convert \"¬(P → Q)\" to \"P ∧ ¬Q\", extract \"P\" via Simplification, then Conjunction with \"R\"."
+      "description": "Chained Modus Ponens + Simplification",
+      "solution": "Apply Modus Ponens on \"P → Q\" with \"P\" to get \"Q\". Apply Modus Ponens on \"Q → (R ∧ S)\" with \"Q\" to get \"R ∧ S\". Apply Simplification to extract \"R\" from \"R ∧ S\"."
     },
     {
       "premises": [
         "¬((P ∧ Q) ∨ (R ∧ S))"
       ],
-      "conclusion": "¬P ∨ ¬Q",
+      "conclusion": "(¬P ∨ ¬Q)",
       "expected_operations": 3,
       "description": "Complex De Morgan's",
       "solution": "Apply De Morgan's to get \"¬(P ∧ Q) ∧ ¬(R ∧ S)\", then Simplification to extract \"¬(P ∧ Q)\", then De Morgan's again to get \"¬P ∨ ¬Q\"."
@@ -190,7 +191,7 @@
         "(P ∨ Q) ∧ (P ∨ R)"
       ],
       "conclusion": "P ∨ (Q ∧ R)",
-      "expected_operations": 3,
+      "expected_operations": 1,
       "description": "Reverse Distributivity (OR case)",
       "solution": "Apply Reverse Distributivity to factor out \"P\": \"(P ∨ Q) ∧ (P ∨ R)\" becomes \"P ∨ (Q ∧ R)\"."
     },

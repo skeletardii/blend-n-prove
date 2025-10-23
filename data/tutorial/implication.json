@@ -1,0 +1,101 @@
+{
+  "rule_name": "Implication (Biconditional Conversion)",
+  "description": "The Implication rule converts a biconditional into its two directional implications. \"P if and only if Q\" expands to \"if P then Q\" AND \"if Q then P\". This is a single-operation rule that automatically generates BOTH implications at once.",
+  "rule_pattern": "P ↔ Q ⊢ (P → Q) ∧ (Q → P)",
+  "tutorial_key": "implication",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ↔ Q"
+      ],
+      "conclusion": "(P → Q) ∧ (Q → P)",
+      "solution": "Apply Implication to expand the biconditional into both directional implications."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R ↔ S"
+      ],
+      "conclusion": "(R → S) ∧ (S → R)",
+      "solution": "Apply Implication to get both R implies S and S implies R."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A ↔ B"
+      ],
+      "conclusion": "(A → B) ∧ (B → A)",
+      "solution": "Direct application of Implication rule."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∧ Q) ↔ R"
+      ],
+      "conclusion": "((P ∧ Q) → R) ∧ (R → (P ∧ Q))",
+      "solution": "Apply Implication where the left side is a conjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "P ↔ (Q ∨ R)"
+      ],
+      "conclusion": "(P → (Q ∨ R)) ∧ ((Q ∨ R) → P)",
+      "solution": "Apply Implication where the right side is a disjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → Q) ↔ (R → S)"
+      ],
+      "conclusion": "((P → Q) → (R → S)) ∧ ((R → S) → (P → Q))",
+      "solution": "Apply Implication to a biconditional between two implications."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P ↔ Q"
+      ],
+      "conclusion": "(P → Q)",
+      "solution": "Apply Implication to get both implications, then Simplification to extract just the left-to-right implication."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P ↔ Q",
+        "P"
+      ],
+      "conclusion": "Q",
+      "solution": "Apply Implication to get (P → Q) ∧ (Q → P), then Simplification to get P → Q, finally Modus Ponens with P."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) ↔ R"
+      ],
+      "conclusion": "R → (P ∧ Q)",
+      "solution": "Apply Implication to expand the biconditional, then Simplification to extract the right-to-left implication."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "P ↔ Q",
+        "Q ↔ R",
+        "P"
+      ],
+      "conclusion": "R",
+      "solution": "Apply Implication to both biconditionals, use Simplification to extract needed implications, then chain with Hypothetical Syllogism and Modus Ponens."
+    }
+  ]
+}

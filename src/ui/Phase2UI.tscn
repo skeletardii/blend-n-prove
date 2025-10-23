@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c5oyjk8p0w8x4"]
+[gd_scene load_steps=3 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
+[ext_resource type="PackedScene" uid="uid://c8x4k5m9n2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
 
 [node name="Phase2UI" type="Control"]
 layout_mode = 3
@@ -127,13 +128,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -225.0
-offset_top = -100.0
-offset_right = 225.0
-offset_bottom = 100.0
+offset_left = -150.0
+offset_top = -150.0
+offset_right = 150.0
+offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
-columns = 5
+columns = 3
 
 [node name="MPButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
@@ -165,15 +166,10 @@ custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "DN"
 
-[node name="IMPButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+[node name="CONJButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
-text = "IMP"
-
-[node name="CONVButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
-custom_minimum_size = Vector2(90, 90)
-layout_mode = 2
-text = "CONV"
+text = "CONJ"
 
 [node name="EQButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
@@ -200,10 +196,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -225.0
-offset_top = -135.0
-offset_right = 225.0
-offset_bottom = 135.0
+offset_left = -150.0
+offset_top = -225.0
+offset_right = 150.0
+offset_bottom = 225.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -215,80 +211,87 @@ custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "SIMP"
 
-[node name="CONJButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
+[node name="IMPButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
-text = "CONJ"
+text = "IMP"
 
-[node name="ADDButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
+[node name="CONVButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
-text = "ADD"
-
-[node name="DMButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
-custom_minimum_size = Vector2(90, 90)
-layout_mode = 2
-text = "DM"
-
-[node name="Spacer1" type="Control" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
-custom_minimum_size = Vector2(90, 90)
-layout_mode = 2
+text = "CONV"
 
 [node name="Row2" type="HBoxContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
 layout_mode = 2
 
-[node name="DISTButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
+[node name="ADDButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
-text = "DIST"
+text = "ADD"
 
-[node name="COMMButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
+[node name="DMButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
-text = "COMM"
+text = "DM"
 
-[node name="ASSOCButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
+[node name="DNEGButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
-text = "ASSOC"
-
-[node name="IDEMPButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
-custom_minimum_size = Vector2(90, 90)
-layout_mode = 2
-text = "IDEMP"
-
-[node name="PAREN_REMOVEButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
-custom_minimum_size = Vector2(90, 90)
-layout_mode = 2
-text = "( )"
+text = "DNEG"
 
 [node name="Row3" type="HBoxContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
 layout_mode = 2
 
-[node name="ABSButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
+[node name="DISTButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "DIST"
+
+[node name="COMMButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "COMM"
+
+[node name="ASSOCButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "ASSOC"
+
+[node name="Row4" type="HBoxContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
+layout_mode = 2
+
+[node name="IDEMPButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "IDEMP"
+
+[node name="ABSButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "ABS"
 
-[node name="NEGButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
+[node name="PAREN_REMOVEButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "( )"
+
+[node name="Row5" type="HBoxContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
+layout_mode = 2
+
+[node name="NEGButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "NEG"
 
-[node name="TAUTButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
+[node name="TAUTButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "TAUT"
 
-[node name="CONTRButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
+[node name="CONTRButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "CONTR"
-
-[node name="DNEGButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
-custom_minimum_size = Vector2(90, 90)
-layout_mode = 2
-text = "DNEG"
 
 [node name="Footer" type="Panel" parent="WorkContainer"]
 custom_minimum_size = Vector2(0, 60)
@@ -319,3 +322,7 @@ size_flags_horizontal = 3
 custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
 text = "→"
+
+[node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]
+visible = false
+z_index = 100

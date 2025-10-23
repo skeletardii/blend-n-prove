@@ -1,7 +1,7 @@
 {
   "rule_name": "Addition",
-  "description": "Addition allows us to introduce a disjunction. If we know P is true, we can conclude \"P or Q\" for any Q (since at least P is true).",
-  "rule_pattern": "P ⊢ P ∨ Q",
+  "description": "Addition allows us to introduce a disjunction. If we know P is true, we can conclude \"P or Q\" for any Q (since at least P is true). When using Addition, you'll be prompted with a dialog to enter the expression Q that you want to add to the disjunction. This is an interactive single-operation rule.",
+  "rule_pattern": "P ⊢ P ∨ Q (Q provided via dialog)",
   "tutorial_key": "addition",
   "problems": [
     {
@@ -10,7 +10,7 @@
       "premises": [
         "P"
       ],
-      "conclusion": "P ∨ Q",
+      "conclusion": "(P ∨ Q)",
       "solution": "Apply Addition to introduce Q as a disjunct."
     },
     {
@@ -19,7 +19,7 @@
       "premises": [
         "R"
       ],
-      "conclusion": "R ∨ S",
+      "conclusion": "(R ∨ S)",
       "solution": "Add S as a disjunct using Addition."
     },
     {
@@ -28,7 +28,7 @@
       "premises": [
         "A"
       ],
-      "conclusion": "A ∨ B",
+      "conclusion": "(A ∨ B)",
       "solution": "Direct application of Addition."
     },
     {
@@ -37,7 +37,7 @@
       "premises": [
         "P ∧ Q"
       ],
-      "conclusion": "(P ∧ Q) ∨ R",
+      "conclusion": "((P ∧ Q) ∨ R)",
       "solution": "Apply Addition to a conjunction."
     },
     {
@@ -46,7 +46,7 @@
       "premises": [
         "P → Q"
       ],
-      "conclusion": "(P → Q) ∨ R",
+      "conclusion": "((P → Q) ∨ R)",
       "solution": "Add R as a disjunct to the implication."
     },
     {
@@ -55,7 +55,7 @@
       "premises": [
         "P"
       ],
-      "conclusion": "P ∨ (Q ∧ R)",
+      "conclusion": "(P ∨ (Q ∧ R))",
       "solution": "Apply Addition with a complex second disjunct."
     },
     {
@@ -65,7 +65,7 @@
         "P → Q",
         "P"
       ],
-      "conclusion": "Q ∨ R",
+      "conclusion": "(Q ∨ R)",
       "solution": "Apply Modus Ponens to get Q, then Addition to introduce R."
     },
     {
@@ -74,7 +74,7 @@
       "premises": [
         "P ∧ Q"
       ],
-      "conclusion": "P ∨ S",
+      "conclusion": "(P ∨ S)",
       "solution": "Apply Simplification to get P, then Addition to add S."
     },
     {
@@ -84,7 +84,7 @@
         "(P ∧ Q) → R",
         "P ∧ Q"
       ],
-      "conclusion": "R ∨ S",
+      "conclusion": "(R ∨ S)",
       "solution": "Apply Modus Ponens to get R, then Addition to introduce S."
     },
     {
@@ -95,7 +95,7 @@
         "Q → R",
         "P"
       ],
-      "conclusion": "R ∨ S",
+      "conclusion": "(R ∨ S)",
       "solution": "Apply Hypothetical Syllogism, then Modus Ponens to get R, finally Addition."
     }
   ]

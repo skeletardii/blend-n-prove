@@ -1,7 +1,5 @@
 extends Node
 
-# Boolean Logic Engine - Comprehensive Implementation
-# Supports all 33 boolean logic operations as requested
 
 enum LogicalOperator {
 	AND, OR, XOR, NOT, IMPLIES, BICONDITIONAL, TRUE, FALSE
@@ -35,31 +33,28 @@ class BooleanExpression:
 			is_valid = false
 			return
 
-		# Normalize the expression
 		normalized_string = expression_string
-		normalized_string = normalized_string.replace("->", "→")
-		normalized_string = normalized_string.replace("=>", "→")
+		# CRITICAL: Replace longer patterns FIRST to avoid partial matches
 		normalized_string = normalized_string.replace("<->", "↔")
 		normalized_string = normalized_string.replace("<=>", "↔")
-		normalized_string = normalized_string.replace("~", "¬")
-		normalized_string = normalized_string.replace("!", "¬")
-		normalized_string = normalized_string.replace("&", "∧")
+		normalized_string = normalized_string.replace("->", "→")
+		normalized_string = normalized_string.replace("=>", "→")
 		normalized_string = normalized_string.replace("&&", "∧")
-		normalized_string = normalized_string.replace("|", "∨")
+		normalized_string = normalized_string.replace("&", "∧")
 		normalized_string = normalized_string.replace("||", "∨")
-		# XOR normalizations
-		normalized_string = normalized_string.replace("^", "⊕")
+		normalized_string = normalized_string.replace("|", "∨")
 		normalized_string = normalized_string.replace("XOR", "⊕")
 		normalized_string = normalized_string.replace("xor", "⊕")
+		normalized_string = normalized_string.replace("^", "⊕")
+		normalized_string = normalized_string.replace("~", "¬")
+		normalized_string = normalized_string.replace("!", "¬")
 
-		# Enhanced validation
 		is_valid = validate_expression()
 
 	func validate_expression() -> bool:
 		if normalized_string.is_empty():
 			return false
 
-		# Check parentheses balance
 		var paren_count = 0
 		for i in range(normalized_string.length()):
 			var c = normalized_string[i]
@@ -73,13 +68,11 @@ class BooleanExpression:
 		if paren_count != 0:
 			return false
 
-		# Check for empty parentheses
 		if "(" in normalized_string and ")" in normalized_string:
 			for i in range(normalized_string.length() - 1):
 				if normalized_string[i] == '(' and normalized_string[i + 1] == ')':
 					return false
 
-		# Check for consecutive operators (invalid patterns)
 		var operators = ["∧", "∨", "⊕", "→", "↔"]
 		for i in range(normalized_string.length() - 1):
 			var current = normalized_string[i]
@@ -87,20 +80,16 @@ class BooleanExpression:
 			if current in operators and next in operators:
 				return false
 
-		# Check for operators at start or end (except negation)
 		if normalized_string.length() > 0:
 			var first_char = normalized_string[0]
 			var last_char = normalized_string[normalized_string.length() - 1]
 
-			# First character shouldn't be a binary operator
 			if first_char in ["∧", "∨", "⊕", "→", "↔"]:
 				return false
 
-			# Last character shouldn't be any operator
 			if last_char in ["∧", "∨", "⊕", "→", "↔", "¬"]:
 				return false
 
-		# Check for valid variable names and constants
 		var tokens = tokenize_expression()
 		for token in tokens:
 			if not is_valid_token(token):
@@ -109,7 +98,6 @@ class BooleanExpression:
 		return true
 
 	func tokenize_expression() -> Array:
-		# Simple tokenizer to extract variables and check validity
 		var tokens = []
 		var current_token = ""
 		var operators = ["∧", "∨", "⊕", "→", "↔", "¬", "(", ")", " "]
@@ -120,7 +108,7 @@ class BooleanExpression:
 				if not current_token.is_empty():
 					tokens.append(current_token)
 					current_token = ""
-				if c != " ":  # Skip spaces
+				if c != " ":
 					tokens.append(c)
 			else:
 				current_token += c
@@ -134,19 +122,15 @@ class BooleanExpression:
 		if token.is_empty():
 			return false
 
-		# Operators are valid
 		if token in ["∧", "∨", "⊕", "→", "↔", "¬", "(", ")"]:
 			return true
 
-		# Constants are valid
 		if token in ["TRUE", "FALSE", "true", "false"]:
 			return true
 
-		# Variables should be single letters or follow naming convention
 		if token.length() == 1 and ((token >= "A" and token <= "Z") or (token >= "a" and token <= "z")):
 			return true
 
-		# Multi-character variables (allow P1, Q2, etc.)
 		if token.length() > 1:
 			var first_char = token[0]
 			if (first_char >= "A" and first_char <= "Z") or (first_char >= "a" and first_char <= "z"):
@@ -174,13 +158,39 @@ class BooleanExpression:
 	func get_implication_parts() -> Dictionary:
 		if not is_implication():
 			return {"valid": false}
-		var parts = normalized_string.split("→", false, 1)
-		if parts.size() == 2:
-			return {
-				"valid": true,
-				"antecedent": BooleanExpression.new(parts[0].strip_edges()),
-				"consequent": BooleanExpression.new(parts[1].strip_edges())
-			}
+
+		var str = normalized_string
+
+		if str.begins_with("(") and str.ends_with(")"):
+			var paren_count = 0
+			var can_strip = true
+			for i in range(1, str.length() - 1):
+				if str[i] == '(':
+					paren_count += 1
+				elif str[i] == ')':
+					paren_count -= 1
+					if paren_count < 0:
+						can_strip = false
+						break
+			if can_strip and paren_count == 0:
+				str = str.substr(1, str.length() - 2).strip_edges()
+
+		var paren_depth = 0
+		for i in range(str.length()):
+			if str[i] == '(':
+				paren_depth += 1
+			elif str[i] == ')':
+				paren_depth -= 1
+			elif str[i] == '→' and paren_depth == 0:
+				var ante_str = str.substr(0, i).strip_edges()
+				var cons_str = str.substr(i + 1).strip_edges()
+				if not ante_str.is_empty() and not cons_str.is_empty():
+					return {
+						"valid": true,
+						"antecedent": BooleanExpression.new(ante_str),
+						"consequent": BooleanExpression.new(cons_str)
+					}
+
 		return {"valid": false}
 
 	func is_biconditional() -> bool:
@@ -189,13 +199,39 @@ class BooleanExpression:
 	func get_biconditional_parts() -> Dictionary:
 		if not is_biconditional():
 			return {"valid": false}
-		var parts = normalized_string.split("↔", false, 1)
-		if parts.size() == 2:
-			return {
-				"valid": true,
-				"left": BooleanExpression.new(parts[0].strip_edges()),
-				"right": BooleanExpression.new(parts[1].strip_edges())
-			}
+
+		var str = normalized_string
+
+		if str.begins_with("(") and str.ends_with(")"):
+			var paren_count = 0
+			var can_strip = true
+			for i in range(1, str.length() - 1):
+				if str[i] == '(':
+					paren_count += 1
+				elif str[i] == ')':
+					paren_count -= 1
+					if paren_count < 0:
+						can_strip = false
+						break
+			if can_strip and paren_count == 0:
+				str = str.substr(1, str.length() - 2).strip_edges()
+
+		var paren_depth = 0
+		for i in range(str.length()):
+			if str[i] == '(':
+				paren_depth += 1
+			elif str[i] == ')':
+				paren_depth -= 1
+			elif str[i] == '↔' and paren_depth == 0:
+				var left_str = str.substr(0, i).strip_edges()
+				var right_str = str.substr(i + 1).strip_edges()
+				if not left_str.is_empty() and not right_str.is_empty():
+					return {
+						"valid": true,
+						"left": BooleanExpression.new(left_str),
+						"right": BooleanExpression.new(right_str)
+					}
+
 		return {"valid": false}
 
 	func is_xor() -> bool:
@@ -204,13 +240,39 @@ class BooleanExpression:
 	func get_xor_parts() -> Dictionary:
 		if not is_xor():
 			return {"valid": false}
-		var parts = normalized_string.split("⊕", false, 1)
-		if parts.size() == 2:
-			return {
-				"valid": true,
-				"left": BooleanExpression.new(parts[0].strip_edges()),
-				"right": BooleanExpression.new(parts[1].strip_edges())
-			}
+
+		var str = normalized_string
+
+		if str.begins_with("(") and str.ends_with(")"):
+			var paren_count = 0
+			var can_strip = true
+			for i in range(1, str.length() - 1):
+				if str[i] == '(':
+					paren_count += 1
+				elif str[i] == ')':
+					paren_count -= 1
+					if paren_count < 0:
+						can_strip = false
+						break
+			if can_strip and paren_count == 0:
+				str = str.substr(1, str.length() - 2).strip_edges()
+
+		var paren_depth = 0
+		for i in range(str.length()):
+			if str[i] == '(':
+				paren_depth += 1
+			elif str[i] == ')':
+				paren_depth -= 1
+			elif str[i] == '⊕' and paren_depth == 0:
+				var left_str = str.substr(0, i).strip_edges()
+				var right_str = str.substr(i + 1).strip_edges()
+				if not left_str.is_empty() and not right_str.is_empty():
+					return {
+						"valid": true,
+						"left": BooleanExpression.new(left_str),
+						"right": BooleanExpression.new(right_str)
+					}
+
 		return {"valid": false}
 
 	func is_conjunction() -> bool:
@@ -219,13 +281,39 @@ class BooleanExpression:
 	func get_conjunction_parts() -> Dictionary:
 		if not is_conjunction():
 			return {"valid": false}
-		var parts = normalized_string.split("∧", false, 1)
-		if parts.size() == 2:
-			return {
-				"valid": true,
-				"left": BooleanExpression.new(parts[0].strip_edges()),
-				"right": BooleanExpression.new(parts[1].strip_edges())
-			}
+
+		var str = normalized_string
+
+		if str.begins_with("(") and str.ends_with(")"):
+			var paren_count = 0
+			var can_strip = true
+			for i in range(1, str.length() - 1):
+				if str[i] == '(':
+					paren_count += 1
+				elif str[i] == ')':
+					paren_count -= 1
+					if paren_count < 0:
+						can_strip = false
+						break
+			if can_strip and paren_count == 0:
+				str = str.substr(1, str.length() - 2).strip_edges()
+
+		var paren_depth = 0
+		for i in range(str.length()):
+			if str[i] == '(':
+				paren_depth += 1
+			elif str[i] == ')':
+				paren_depth -= 1
+			elif str[i] == '∧' and paren_depth == 0:
+				var left_str = str.substr(0, i).strip_edges()
+				var right_str = str.substr(i + 1).strip_edges()
+				if not left_str.is_empty() and not right_str.is_empty():
+					return {
+						"valid": true,
+						"left": BooleanExpression.new(left_str),
+						"right": BooleanExpression.new(right_str)
+					}
+
 		return {"valid": false}
 
 	func is_disjunction() -> bool:
@@ -234,13 +322,39 @@ class BooleanExpression:
 	func get_disjunction_parts() -> Dictionary:
 		if not is_disjunction():
 			return {"valid": false}
-		var parts = normalized_string.split("∨", false, 1)
-		if parts.size() == 2:
-			return {
-				"valid": true,
-				"left": BooleanExpression.new(parts[0].strip_edges()),
-				"right": BooleanExpression.new(parts[1].strip_edges())
-			}
+
+		var str = normalized_string
+
+		if str.begins_with("(") and str.ends_with(")"):
+			var paren_count = 0
+			var can_strip = true
+			for i in range(1, str.length() - 1):
+				if str[i] == '(':
+					paren_count += 1
+				elif str[i] == ')':
+					paren_count -= 1
+					if paren_count < 0:
+						can_strip = false
+						break
+			if can_strip and paren_count == 0:
+				str = str.substr(1, str.length() - 2).strip_edges()
+
+		var paren_depth = 0
+		for i in range(str.length()):
+			if str[i] == '(':
+				paren_depth += 1
+			elif str[i] == ')':
+				paren_depth -= 1
+			elif str[i] == '∨' and paren_depth == 0:
+				var left_str = str.substr(0, i).strip_edges()
+				var right_str = str.substr(i + 1).strip_edges()
+				if not left_str.is_empty() and not right_str.is_empty():
+					return {
+						"valid": true,
+						"left": BooleanExpression.new(left_str),
+						"right": BooleanExpression.new(right_str)
+					}
+
 		return {"valid": false}
 
 signal expression_validated(expression: BooleanExpression, is_valid: bool)
@@ -251,7 +365,6 @@ func create_expression(expr_string: String) -> BooleanExpression:
 	expression_validated.emit(expression, expression.is_valid)
 	return expression
 
-# Expression Creation Helper Functions
 func create_negation_expression(expr: BooleanExpression) -> BooleanExpression:
 	if not expr.is_valid:
 		return BooleanExpression.new("")
@@ -261,34 +374,64 @@ func create_negation_expression(expr: BooleanExpression) -> BooleanExpression:
 func create_conjunction_expression(left: BooleanExpression, right: BooleanExpression) -> BooleanExpression:
 	if not left.is_valid or not right.is_valid:
 		return BooleanExpression.new("")
-	var conjunction = "(" + left.normalized_string + " ∧ " + right.normalized_string + ")"
+	# Only wrap in parentheses if the operand contains operators (is complex)
+	var left_str = left.normalized_string
+	var right_str = right.normalized_string
+	if _has_operator(left_str) and not (left_str.begins_with("(") and left_str.ends_with(")")):
+		left_str = "(" + left_str + ")"
+	if _has_operator(right_str) and not (right_str.begins_with("(") and right_str.ends_with(")")):
+		right_str = "(" + right_str + ")"
+	var conjunction = "(" + left_str + " ∧ " + right_str + ")"
 	return BooleanExpression.new(conjunction)
 
 func create_disjunction_expression(left: BooleanExpression, right: BooleanExpression) -> BooleanExpression:
 	if not left.is_valid or not right.is_valid:
 		return BooleanExpression.new("")
-	var disjunction = "(" + left.normalized_string + " ∨ " + right.normalized_string + ")"
+	var left_str = left.normalized_string
+	var right_str = right.normalized_string
+	if _has_operator(left_str) and not (left_str.begins_with("(") and left_str.ends_with(")")):
+		left_str = "(" + left_str + ")"
+	if _has_operator(right_str) and not (right_str.begins_with("(") and right_str.ends_with(")")):
+		right_str = "(" + right_str + ")"
+	var disjunction = "(" + left_str + " ∨ " + right_str + ")"
 	return BooleanExpression.new(disjunction)
 
 func create_implication_expression(antecedent: BooleanExpression, consequent: BooleanExpression) -> BooleanExpression:
 	if not antecedent.is_valid or not consequent.is_valid:
 		return BooleanExpression.new("")
-	var implication = "(" + antecedent.normalized_string + " → " + consequent.normalized_string + ")"
+	var ante_str = antecedent.normalized_string
+	var cons_str = consequent.normalized_string
+	if _has_operator(ante_str) and not (ante_str.begins_with("(") and ante_str.ends_with(")")):
+		ante_str = "(" + ante_str + ")"
+	if _has_operator(cons_str) and not (cons_str.begins_with("(") and cons_str.ends_with(")")):
+		cons_str = "(" + cons_str + ")"
+	var implication = "(" + ante_str + " → " + cons_str + ")"
 	return BooleanExpression.new(implication)
 
 func create_biconditional_expression(left: BooleanExpression, right: BooleanExpression) -> BooleanExpression:
 	if not left.is_valid or not right.is_valid:
 		return BooleanExpression.new("")
-	var biconditional = "(" + left.normalized_string + " ↔ " + right.normalized_string + ")"
+	var left_str = left.normalized_string
+	var right_str = right.normalized_string
+	if _has_operator(left_str) and not (left_str.begins_with("(") and left_str.ends_with(")")):
+		left_str = "(" + left_str + ")"
+	if _has_operator(right_str) and not (right_str.begins_with("(") and right_str.ends_with(")")):
+		right_str = "(" + right_str + ")"
+	var biconditional = "(" + left_str + " ↔ " + right_str + ")"
 	return BooleanExpression.new(biconditional)
 
 func create_xor_expression(left: BooleanExpression, right: BooleanExpression) -> BooleanExpression:
 	if not left.is_valid or not right.is_valid:
 		return BooleanExpression.new("")
-	var xor_expr = "(" + left.normalized_string + " ⊕ " + right.normalized_string + ")"
+	var left_str = left.normalized_string
+	var right_str = right.normalized_string
+	if _has_operator(left_str) and not (left_str.begins_with("(") and left_str.ends_with(")")):
+		left_str = "(" + left_str + ")"
+	if _has_operator(right_str) and not (right_str.begins_with("(") and right_str.ends_with(")")):
+		right_str = "(" + right_str + ")"
+	var xor_expr = "(" + left_str + " ⊕ " + right_str + ")"
 	return BooleanExpression.new(xor_expr)
 
-# Inference Rules Implementation
 func apply_modus_ponens(premises: Array) -> BooleanExpression:
 	for i in range(premises.size()):
 		for j in range(premises.size()):
@@ -328,9 +471,7 @@ func apply_modus_tollens(premises: Array) -> BooleanExpression:
 						return result
 	return BooleanExpression.new("")
 
-# All other inference rules (simplified implementations)
 func apply_hypothetical_syllogism(premises: Array) -> BooleanExpression:
-	# P → Q, Q → R ⊢ P → R
 	if premises.size() != 2:
 		return BooleanExpression.new("")
 
@@ -350,14 +491,12 @@ func apply_hypothetical_syllogism(premises: Array) -> BooleanExpression:
 			var q2 = impl2_parts.get("antecedent") as BooleanExpression
 			var r = impl2_parts.get("consequent") as BooleanExpression
 
-			# Check if Q from first matches Q from second
 			if q1.equals(q2):
 				return create_implication_expression(p, r)
 
 	return BooleanExpression.new("")
 
 func apply_disjunctive_syllogism(premises: Array) -> BooleanExpression:
-	# P ∨ Q, ¬P ⊢ Q  or  P ∨ Q, ¬Q ⊢ P
 	if premises.size() != 2:
 		return BooleanExpression.new("")
 
@@ -367,7 +506,6 @@ func apply_disjunctive_syllogism(premises: Array) -> BooleanExpression:
 	if not premise1 or not premise2 or not premise1.is_valid or not premise2.is_valid:
 		return BooleanExpression.new("")
 
-	# Try both orders
 	for i in range(2):
 		var disj_premise = premises[i] as BooleanExpression
 		var neg_premise = premises[1-i] as BooleanExpression
@@ -378,18 +516,14 @@ func apply_disjunctive_syllogism(premises: Array) -> BooleanExpression:
 				var left = disj_parts.get("left") as BooleanExpression
 				var right = disj_parts.get("right") as BooleanExpression
 
-				# Check if neg_premise is negation of left
 				if neg_premise.is_negation_of(left):
 					return right
-				# Check if neg_premise is negation of right
 				elif neg_premise.is_negation_of(right):
 					return left
 
 	return BooleanExpression.new("")
 
 func apply_simplification(premises: Array, extract_right: bool = false) -> BooleanExpression:
-	# P ∧ Q ⊢ P  or  P ∧ Q ⊢ Q
-	# extract_right: if true, extracts right conjunct; if false, extracts left conjunct
 	if premises.size() != 1:
 		return BooleanExpression.new("")
 
@@ -402,14 +536,11 @@ func apply_simplification(premises: Array, extract_right: bool = false) -> Boole
 		if conj_parts.get("valid", false):
 			var left = conj_parts.get("left") as BooleanExpression
 			var right = conj_parts.get("right") as BooleanExpression
-			# Return the requested part
 			return right if extract_right else left
 
 	return BooleanExpression.new("")
 
-# Helper function to get both simplification results
 func apply_simplification_both(premises: Array) -> Array:
-	# Returns both [left, right] results from P ∧ Q
 	if premises.size() != 1:
 		return []
 
@@ -427,7 +558,6 @@ func apply_simplification_both(premises: Array) -> Array:
 	return []
 
 func apply_conjunction(premises: Array) -> BooleanExpression:
-	# P, Q ⊢ P ∧ Q
 	if premises.size() != 2:
 		return BooleanExpression.new("")
 
@@ -440,7 +570,6 @@ func apply_conjunction(premises: Array) -> BooleanExpression:
 	return create_conjunction_expression(premise1, premise2)
 
 func apply_addition(premises: Array, additional_expr: BooleanExpression) -> BooleanExpression:
-	# P ⊢ P ∨ Q (where Q is the additional expression)
 	if premises.size() != 1:
 		return BooleanExpression.new("")
 
@@ -454,7 +583,6 @@ func apply_addition(premises: Array, additional_expr: BooleanExpression) -> Bool
 	return BooleanExpression.new("")
 
 func apply_constructive_dilemma(premises: Array) -> BooleanExpression:
-	# (P → Q) ∧ (R → S), P ∨ R ⊢ Q ∨ S
 	if premises.size() != 2:
 		return BooleanExpression.new("")
 
@@ -464,19 +592,16 @@ func apply_constructive_dilemma(premises: Array) -> BooleanExpression:
 	if not premise1 or not premise2 or not premise1.is_valid or not premise2.is_valid:
 		return BooleanExpression.new("")
 
-	# Try both orders: premise1 might be the conjunction or the disjunction
 	for i in range(2):
 		var conj_premise = premises[i] as BooleanExpression
 		var disj_premise = premises[1-i] as BooleanExpression
 
-		# Check if one premise is a conjunction of two implications
 		if conj_premise.is_conjunction():
 			var conj_parts = conj_premise.get_conjunction_parts()
 			if conj_parts.get("valid", false):
 				var left_part = conj_parts.get("left") as BooleanExpression
 				var right_part = conj_parts.get("right") as BooleanExpression
 
-				# Check if both parts are implications
 				if left_part and right_part and left_part.is_implication() and right_part.is_implication():
 					var impl1_parts = left_part.get_implication_parts()
 					var impl2_parts = right_part.get_implication_parts()
@@ -487,26 +612,20 @@ func apply_constructive_dilemma(premises: Array) -> BooleanExpression:
 						var r = impl2_parts.get("antecedent") as BooleanExpression
 						var s = impl2_parts.get("consequent") as BooleanExpression
 
-						# Now check if the other premise is P ∨ R
 						if disj_premise.is_disjunction():
 							var disj_parts = disj_premise.get_disjunction_parts()
 							if disj_parts.get("valid", false):
 								var disj_left = disj_parts.get("left") as BooleanExpression
 								var disj_right = disj_parts.get("right") as BooleanExpression
 
-								# Check if disjunction matches P ∨ R
 								if disj_left.equals(p) and disj_right.equals(r):
-									# Apply constructive dilemma: conclude Q ∨ S
 									return create_disjunction_expression(q, s)
-								# Also check reversed order R ∨ P
 								elif disj_left.equals(r) and disj_right.equals(p):
-									# Apply constructive dilemma: conclude S ∨ Q
 									return create_disjunction_expression(s, q)
 
 	return BooleanExpression.new("")
 
 func apply_destructive_dilemma(premises: Array) -> BooleanExpression:
-	# (P → Q) ∧ (R → S), ¬Q ∨ ¬S ⊢ ¬P ∨ ¬R
 	if premises.size() != 2:
 		return BooleanExpression.new("")
 
@@ -516,19 +635,16 @@ func apply_destructive_dilemma(premises: Array) -> BooleanExpression:
 	if not premise1 or not premise2 or not premise1.is_valid or not premise2.is_valid:
 		return BooleanExpression.new("")
 
-	# Try both orders: premise1 might be the conjunction or the disjunction
 	for i in range(2):
 		var conj_premise = premises[i] as BooleanExpression
 		var disj_premise = premises[1-i] as BooleanExpression
 
-		# Check if one premise is a conjunction of two implications
 		if conj_premise.is_conjunction():
 			var conj_parts = conj_premise.get_conjunction_parts()
 			if conj_parts.get("valid", false):
 				var left_part = conj_parts.get("left") as BooleanExpression
 				var right_part = conj_parts.get("right") as BooleanExpression
 
-				# Check if both parts are implications
 				if left_part and right_part and left_part.is_implication() and right_part.is_implication():
 					var impl1_parts = left_part.get_implication_parts()
 					var impl2_parts = right_part.get_implication_parts()
@@ -539,22 +655,17 @@ func apply_destructive_dilemma(premises: Array) -> BooleanExpression:
 						var r = impl2_parts.get("antecedent") as BooleanExpression
 						var s = impl2_parts.get("consequent") as BooleanExpression
 
-						# Now check if the other premise is ¬Q ∨ ¬S
 						if disj_premise.is_disjunction():
 							var disj_parts = disj_premise.get_disjunction_parts()
 							if disj_parts.get("valid", false):
 								var disj_left = disj_parts.get("left") as BooleanExpression
 								var disj_right = disj_parts.get("right") as BooleanExpression
 
-								# Check if disjunction matches ¬Q ∨ ¬S
 								if disj_left.is_negation_of(q) and disj_right.is_negation_of(s):
-									# Apply destructive dilemma: conclude ¬P ∨ ¬R
 									var neg_p = create_negation_expression(p)
 									var neg_r = create_negation_expression(r)
 									return create_disjunction_expression(neg_p, neg_r)
-								# Also check reversed order ¬S ∨ ¬Q
 								elif disj_left.is_negation_of(s) and disj_right.is_negation_of(q):
-									# Apply destructive dilemma: conclude ¬R ∨ ¬P
 									var neg_r = create_negation_expression(r)
 									var neg_p = create_negation_expression(p)
 									return create_disjunction_expression(neg_r, neg_p)
@@ -563,7 +674,6 @@ func apply_destructive_dilemma(premises: Array) -> BooleanExpression:
 
 
 func apply_de_morgan_and(premise: BooleanExpression) -> BooleanExpression:
-	# ¬(P ∧ Q) ⊢ ¬P ∨ ¬Q
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
@@ -584,7 +694,6 @@ func apply_de_morgan_and(premise: BooleanExpression) -> BooleanExpression:
 	return BooleanExpression.new("")
 
 func apply_de_morgan_or(premise: BooleanExpression) -> BooleanExpression:
-	# ¬(P ∨ Q) ⊢ ¬P ∧ ¬Q
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
@@ -614,9 +723,7 @@ func apply_double_negation(premise: BooleanExpression) -> BooleanExpression:
 		return result
 	return BooleanExpression.new("")
 
-# XOR Specific Functions
 func apply_xor_elimination(premise: BooleanExpression) -> BooleanExpression:
-	# XOR elimination: P ⊕ Q ≡ (P ∨ Q) ∧ ¬(P ∧ Q)
 	if not premise or not premise.is_valid or not premise.is_xor():
 		return BooleanExpression.new("")
 
@@ -625,28 +732,21 @@ func apply_xor_elimination(premise: BooleanExpression) -> BooleanExpression:
 		var left = xor_parts.get("left") as BooleanExpression
 		var right = xor_parts.get("right") as BooleanExpression
 
-		# Create (P ∨ Q)
 		var disjunction = create_disjunction_expression(left, right)
-		# Create (P ∧ Q)
 		var conjunction = create_conjunction_expression(left, right)
-		# Create ¬(P ∧ Q)
 		var negated_conjunction = create_negation_expression(conjunction)
-		# Create (P ∨ Q) ∧ ¬(P ∧ Q)
 		var result = create_conjunction_expression(disjunction, negated_conjunction)
 
 		return result
 	return BooleanExpression.new("")
 
 func apply_xor_introduction(left: BooleanExpression, right: BooleanExpression) -> BooleanExpression:
-	# XOR introduction: (P ∨ Q) ∧ ¬(P ∧ Q) ≡ P ⊕ Q
 	if not left.is_valid or not right.is_valid:
 		return BooleanExpression.new("")
 
 	return create_xor_expression(left, right)
 
-# Helper function to get both parts of XOR elimination separately
 func apply_xor_elimination_both(premise: BooleanExpression) -> Array:
-	# Returns both [(P ∨ Q), ¬(P ∧ Q)] results from P ⊕ Q
 	if not premise or not premise.is_valid or not premise.is_xor():
 		return []
 
@@ -655,20 +755,15 @@ func apply_xor_elimination_both(premise: BooleanExpression) -> Array:
 		var left = xor_parts.get("left") as BooleanExpression
 		var right = xor_parts.get("right") as BooleanExpression
 
-		# Create (P ∨ Q)
 		var disjunction = create_disjunction_expression(left, right)
-		# Create (P ∧ Q)
 		var conjunction = create_conjunction_expression(left, right)
-		# Create ¬(P ∧ Q)
 		var negated_conjunction = create_negation_expression(conjunction)
 
 		return [disjunction, negated_conjunction]
 
 	return []
 
-# Biconditional Specific Functions
 func apply_biconditional_to_implications(premise: BooleanExpression) -> BooleanExpression:
-	# Biconditional elimination: P ↔ Q ≡ (P → Q) ∧ (Q → P)
 	if not premise or not premise.is_valid or not premise.is_biconditional():
 		return BooleanExpression.new("")
 
@@ -677,18 +772,14 @@ func apply_biconditional_to_implications(premise: BooleanExpression) -> BooleanE
 		var left = biconditional_parts.get("left") as BooleanExpression
 		var right = biconditional_parts.get("right") as BooleanExpression
 
-		# Create (P → Q)
 		var left_to_right = create_implication_expression(left, right)
-		# Create (Q → P)
 		var right_to_left = create_implication_expression(right, left)
-		# Create (P → Q) ∧ (Q → P)
 		var result = create_conjunction_expression(left_to_right, right_to_left)
 
 		return result
 	return BooleanExpression.new("")
 
 func apply_biconditional_to_equivalence(premise: BooleanExpression) -> BooleanExpression:
-	# Biconditional elimination: P ↔ Q ≡ (P ∧ Q) ∨ (¬P ∧ ¬Q)
 	if not premise or not premise.is_valid or not premise.is_biconditional():
 		return BooleanExpression.new("")
 
@@ -697,22 +788,16 @@ func apply_biconditional_to_equivalence(premise: BooleanExpression) -> BooleanEx
 		var left = biconditional_parts.get("left") as BooleanExpression
 		var right = biconditional_parts.get("right") as BooleanExpression
 
-		# Create (P ∧ Q)
 		var both_true = create_conjunction_expression(left, right)
-		# Create ¬P and ¬Q
 		var not_left = create_negation_expression(left)
 		var not_right = create_negation_expression(right)
-		# Create (¬P ∧ ¬Q)
 		var both_false = create_conjunction_expression(not_left, not_right)
-		# Create (P ∧ Q) ∨ (¬P ∧ ¬Q)
 		var result = create_disjunction_expression(both_true, both_false)
 
 		return result
 	return BooleanExpression.new("")
 
-# Helper function to get both disjuncts from biconditional equivalence separately
 func apply_biconditional_to_equivalence_both(premise: BooleanExpression) -> Array:
-	# Returns both [(P ∧ Q), (¬P ∧ ¬Q)] results from P ↔ Q
 	if not premise or not premise.is_valid or not premise.is_biconditional():
 		return []
 
@@ -721,21 +806,16 @@ func apply_biconditional_to_equivalence_both(premise: BooleanExpression) -> Arra
 		var left = biconditional_parts.get("left") as BooleanExpression
 		var right = biconditional_parts.get("right") as BooleanExpression
 
-		# Create (P ∧ Q)
 		var both_true = create_conjunction_expression(left, right)
-		# Create ¬P and ¬Q
 		var not_left = create_negation_expression(left)
 		var not_right = create_negation_expression(right)
-		# Create (¬P ∧ ¬Q)
 		var both_false = create_conjunction_expression(not_left, not_right)
 
 		return [both_true, both_false]
 
 	return []
 
-# Helper function to get both implications from biconditional separately
 func apply_biconditional_to_implications_both(premise: BooleanExpression) -> Array:
-	# Returns both [(P → Q), (Q → P)] results from P ↔ Q
 	if not premise or not premise.is_valid or not premise.is_biconditional():
 		return []
 
@@ -744,9 +824,7 @@ func apply_biconditional_to_implications_both(premise: BooleanExpression) -> Arr
 		var left = biconditional_parts.get("left") as BooleanExpression
 		var right = biconditional_parts.get("right") as BooleanExpression
 
-		# Create (P → Q)
 		var left_to_right = create_implication_expression(left, right)
-		# Create (Q → P)
 		var right_to_left = create_implication_expression(right, left)
 
 		return [left_to_right, right_to_left]
@@ -754,7 +832,6 @@ func apply_biconditional_to_implications_both(premise: BooleanExpression) -> Arr
 	return []
 
 func apply_biconditional_introduction(left_to_right: BooleanExpression, right_to_left: BooleanExpression) -> BooleanExpression:
-	# Biconditional introduction: (P → Q) ∧ (Q → P) ≡ P ↔ Q
 	if not left_to_right.is_valid or not right_to_left.is_valid:
 		return BooleanExpression.new("")
 
@@ -768,30 +845,23 @@ func apply_biconditional_introduction(left_to_right: BooleanExpression, right_to
 			var p2 = rl_parts.get("antecedent") as BooleanExpression
 			var q2 = rl_parts.get("consequent") as BooleanExpression
 
-			# Check if we have P → Q and Q → P
 			if p1.equals(q2) and q1.equals(p2):
 				return create_biconditional_expression(p1, q1)
 
 	return BooleanExpression.new("")
 
-# Additional Boolean Laws Implementation
 
-# Distributivity Laws
 func apply_distributivity(premise: BooleanExpression) -> BooleanExpression:
-	# A ∧ (B ∨ C) ≡ (A ∧ B) ∨ (A ∧ C)
-	# A ∨ (B ∧ C) ≡ (A ∨ B) ∧ (A ∨ C)
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
 	var normalized = premise.normalized_string
-	# Look for pattern A ∧ (B ∨ C)
 	if premise.is_conjunction():
 		var conj_parts = premise.get_conjunction_parts()
 		if conj_parts.get("valid", false):
 			var left = conj_parts.get("left") as BooleanExpression
 			var right = conj_parts.get("right") as BooleanExpression
 
-			# Check if right part is a disjunction
 			if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
 				var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
 				var inner_expr = BooleanExpression.new(inner)
@@ -802,19 +872,16 @@ func apply_distributivity(premise: BooleanExpression) -> BooleanExpression:
 						var b = disj_parts.get("left") as BooleanExpression
 						var c = disj_parts.get("right") as BooleanExpression
 
-						# Create (A ∧ B) ∨ (A ∧ C)
 						var a_and_b = create_conjunction_expression(left, b)
 						var a_and_c = create_conjunction_expression(left, c)
 						return create_disjunction_expression(a_and_b, a_and_c)
 
-	# Look for pattern A ∨ (B ∧ C)
 	elif premise.is_disjunction():
 		var disj_parts = premise.get_disjunction_parts()
 		if disj_parts.get("valid", false):
 			var left = disj_parts.get("left") as BooleanExpression
 			var right = disj_parts.get("right") as BooleanExpression
 
-			# Check if right part is a conjunction
 			if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
 				var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
 				var inner_expr = BooleanExpression.new(inner)
@@ -825,28 +892,22 @@ func apply_distributivity(premise: BooleanExpression) -> BooleanExpression:
 						var b = conj_parts.get("left") as BooleanExpression
 						var c = conj_parts.get("right") as BooleanExpression
 
-						# Create (A ∨ B) ∧ (A ∨ C)
 						var a_or_b = create_disjunction_expression(left, b)
 						var a_or_c = create_disjunction_expression(left, c)
 						return create_conjunction_expression(a_or_b, a_or_c)
 
 	return BooleanExpression.new("")
 
-# Reverse Distributivity (Factoring)
 func apply_reverse_distributivity(premise: BooleanExpression) -> BooleanExpression:
-	# (A ∧ B) ∨ (A ∧ C) ≡ A ∧ (B ∨ C)  - Factoring AND
-	# (A ∨ B) ∧ (A ∨ C) ≡ A ∨ (B ∧ C)  - Factoring OR
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
-	# Look for pattern (A ∧ B) ∨ (A ∧ C) -> A ∧ (B ∨ C)
 	if premise.is_disjunction():
 		var disj_parts = premise.get_disjunction_parts()
 		if disj_parts.get("valid", false):
 			var left_expr = disj_parts.get("left") as BooleanExpression
 			var right_expr = disj_parts.get("right") as BooleanExpression
 
-			# Check if both sides are conjunctions in parentheses
 			if left_expr.normalized_string.begins_with("(") and left_expr.normalized_string.ends_with(")") and \
 			   right_expr.normalized_string.begins_with("(") and right_expr.normalized_string.ends_with(")"):
 				var left_inner = left_expr.normalized_string.substr(1, left_expr.normalized_string.length() - 2).strip_edges()
@@ -865,20 +926,16 @@ func apply_reverse_distributivity(premise: BooleanExpression) -> BooleanExpressi
 						var a2 = right_parts.get("left") as BooleanExpression
 						var c = right_parts.get("right") as BooleanExpression
 
-						# Check if the common factor is on the left
 						if a1.equals(a2):
-							# Factor out A: (A ∧ B) ∨ (A ∧ C) -> A ∧ (B ∨ C)
 							var b_or_c = create_disjunction_expression(b, c)
 							return create_conjunction_expression(a1, b_or_c)
 
-	# Look for pattern (A ∨ B) ∧ (A ∨ C) -> A ∨ (B ∧ C)
 	elif premise.is_conjunction():
 		var conj_parts = premise.get_conjunction_parts()
 		if conj_parts.get("valid", false):
 			var left_expr = conj_parts.get("left") as BooleanExpression
 			var right_expr = conj_parts.get("right") as BooleanExpression
 
-			# Check if both sides are disjunctions in parentheses
 			if left_expr.normalized_string.begins_with("(") and left_expr.normalized_string.ends_with(")") and \
 			   right_expr.normalized_string.begins_with("(") and right_expr.normalized_string.ends_with(")"):
 				var left_inner = left_expr.normalized_string.substr(1, left_expr.normalized_string.length() - 2).strip_edges()
@@ -897,17 +954,13 @@ func apply_reverse_distributivity(premise: BooleanExpression) -> BooleanExpressi
 						var a2 = right_parts.get("left") as BooleanExpression
 						var c = right_parts.get("right") as BooleanExpression
 
-						# Check if the common factor is on the left
 						if a1.equals(a2):
-							# Factor out A: (A ∨ B) ∧ (A ∨ C) -> A ∨ (B ∧ C)
 							var b_and_c = create_conjunction_expression(b, c)
 							return create_disjunction_expression(a1, b_and_c)
 
 	return BooleanExpression.new("")
 
-# Commutativity Laws
 func apply_commutativity(premise: BooleanExpression) -> BooleanExpression:
-	# A ∧ B ≡ B ∧ A, A ∨ B ≡ B ∨ A, A ↔ B ≡ B ↔ A
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
@@ -941,20 +994,16 @@ func apply_commutativity(premise: BooleanExpression) -> BooleanExpression:
 
 	return BooleanExpression.new("")
 
-# Associativity Laws
 func apply_associativity(premise: BooleanExpression) -> BooleanExpression:
-	# (A ∧ B) ∧ C ≡ A ∧ (B ∧ C), (A ∨ B) ∨ C ≡ A ∨ (B ∨ C)
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
-	# Pattern: (A op B) op C -> A op (B op C)
 	if premise.is_conjunction():
 		var parts = premise.get_conjunction_parts()
 		if parts.get("valid", false):
 			var left = parts.get("left") as BooleanExpression
 			var right = parts.get("right") as BooleanExpression
 
-			# Check if left part is also a conjunction in parentheses
 			if left.normalized_string.begins_with("(") and left.normalized_string.ends_with(")"):
 				var inner = left.normalized_string.substr(1, left.normalized_string.length() - 2).strip_edges()
 				var inner_expr = BooleanExpression.new(inner)
@@ -965,7 +1014,6 @@ func apply_associativity(premise: BooleanExpression) -> BooleanExpression:
 						var a = inner_parts.get("left") as BooleanExpression
 						var b = inner_parts.get("right") as BooleanExpression
 
-						# Create A ∧ (B ∧ C)
 						var b_and_c = create_conjunction_expression(b, right)
 						return create_conjunction_expression(a, b_and_c)
 
@@ -975,7 +1023,6 @@ func apply_associativity(premise: BooleanExpression) -> BooleanExpression:
 			var left = parts.get("left") as BooleanExpression
 			var right = parts.get("right") as BooleanExpression
 
-			# Check if left part is also a disjunction in parentheses
 			if left.normalized_string.begins_with("(") and left.normalized_string.ends_with(")"):
 				var inner = left.normalized_string.substr(1, left.normalized_string.length() - 2).strip_edges()
 				var inner_expr = BooleanExpression.new(inner)
@@ -986,15 +1033,12 @@ func apply_associativity(premise: BooleanExpression) -> BooleanExpression:
 						var a = inner_parts.get("left") as BooleanExpression
 						var b = inner_parts.get("right") as BooleanExpression
 
-						# Create A ∨ (B ∨ C)
 						var b_or_c = create_disjunction_expression(b, right)
 						return create_disjunction_expression(a, b_or_c)
 
 	return BooleanExpression.new("")
 
-# Idempotent Laws
 func apply_idempotent(premise: BooleanExpression) -> BooleanExpression:
-	# A ∧ A ≡ A, A ∨ A ≡ A
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
@@ -1016,13 +1060,10 @@ func apply_idempotent(premise: BooleanExpression) -> BooleanExpression:
 
 	return BooleanExpression.new("")
 
-# Absorption Laws
 func apply_absorption(premise: BooleanExpression) -> BooleanExpression:
-	# A ∧ (A ∨ B) ≡ A, A ∨ (A ∧ B) ≡ A
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
-	# Pattern: A ∧ (A ∨ B) -> A
 	if premise.is_conjunction():
 		var parts = premise.get_conjunction_parts()
 		if parts.get("valid", false):
@@ -1040,7 +1081,6 @@ func apply_absorption(premise: BooleanExpression) -> BooleanExpression:
 						if left.equals(inner_left):
 							return left
 
-	# Pattern: A ∨ (A ∧ B) -> A
 	elif premise.is_disjunction():
 		var parts = premise.get_disjunction_parts()
 		if parts.get("valid", false):
@@ -1060,9 +1100,7 @@ func apply_absorption(premise: BooleanExpression) -> BooleanExpression:
 
 	return BooleanExpression.new("")
 
-# Negation Laws
 func apply_negation_laws(premise: BooleanExpression) -> BooleanExpression:
-	# A ∧ ¬A ≡ FALSE, A ∨ ¬A ≡ TRUE
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
@@ -1084,9 +1122,7 @@ func apply_negation_laws(premise: BooleanExpression) -> BooleanExpression:
 
 	return BooleanExpression.new("")
 
-# Tautology Laws
 func apply_tautology_laws(premise: BooleanExpression) -> BooleanExpression:
-	# A ∨ TRUE ≡ TRUE, A ∧ TRUE ≡ A
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
@@ -1110,9 +1146,7 @@ func apply_tautology_laws(premise: BooleanExpression) -> BooleanExpression:
 
 	return BooleanExpression.new("")
 
-# Contradiction Laws
 func apply_contradiction_laws(premise: BooleanExpression) -> BooleanExpression:
-	# A ∧ FALSE ≡ FALSE, A ∨ FALSE ≡ A
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
@@ -1136,9 +1170,7 @@ func apply_contradiction_laws(premise: BooleanExpression) -> BooleanExpression:
 
 	return BooleanExpression.new("")
 
-# Complete Resolution Implementation
 func apply_resolution(premises: Array) -> BooleanExpression:
-	# P ∨ Q, ¬P ∨ R ⊢ Q ∨ R
 	if premises.size() != 2:
 		return BooleanExpression.new("")
 
@@ -1148,7 +1180,6 @@ func apply_resolution(premises: Array) -> BooleanExpression:
 	if not premise1 or not premise2 or not premise1.is_valid or not premise2.is_valid:
 		return BooleanExpression.new("")
 
-	# Both premises must be disjunctions
 	if premise1.is_disjunction() and premise2.is_disjunction():
 		var parts1 = premise1.get_disjunction_parts()
 		var parts2 = premise2.get_disjunction_parts()
@@ -1159,25 +1190,18 @@ func apply_resolution(premises: Array) -> BooleanExpression:
 			var neg_p_or_other = parts2.get("left") as BooleanExpression
 			var r = parts2.get("right") as BooleanExpression
 
-			# Check if one premise contains P and the other contains ¬P
 			if p.is_negation_of(neg_p_or_other):
-				# P ∨ Q, ¬P ∨ R ⊢ Q ∨ R
 				return create_disjunction_expression(q, r)
 			elif p.is_negation_of(r):
-				# P ∨ Q, R ∨ ¬P ⊢ Q ∨ R (order doesn't matter)
 				return create_disjunction_expression(q, neg_p_or_other)
 			elif q.is_negation_of(neg_p_or_other):
-				# Q ∨ P, ¬Q ∨ R ⊢ P ∨ R
 				return create_disjunction_expression(p, r)
 			elif q.is_negation_of(r):
-				# Q ∨ P, R ∨ ¬Q ⊢ P ∨ R
 				return create_disjunction_expression(p, neg_p_or_other)
 
 	return BooleanExpression.new("")
 
-# Complete Equivalence Implementation
 func apply_equivalence(premises: Array) -> BooleanExpression:
-	# P ↔ Q, P ⊢ Q  or  P ↔ Q, Q ⊢ P
 	if premises.size() != 2:
 		return BooleanExpression.new("")
 
@@ -1187,7 +1211,6 @@ func apply_equivalence(premises: Array) -> BooleanExpression:
 	if not premise1 or not premise2 or not premise1.is_valid or not premise2.is_valid:
 		return BooleanExpression.new("")
 
-	# Check both possible orders
 	for i in range(2):
 		var bicond_premise = premises[i] as BooleanExpression
 		var simple_premise = premises[1-i] as BooleanExpression
@@ -1198,19 +1221,14 @@ func apply_equivalence(premises: Array) -> BooleanExpression:
 				var left = parts.get("left") as BooleanExpression
 				var right = parts.get("right") as BooleanExpression
 
-				# P ↔ Q, P ⊢ Q
 				if simple_premise.equals(left):
 					return right
-				# P ↔ Q, Q ⊢ P
 				elif simple_premise.equals(right):
 					return left
 
 	return BooleanExpression.new("")
 
-# Contradiction Detection
 func detect_contradiction(expressions: Array) -> bool:
-	# Detects if there's a contradiction in the set of expressions
-	# Returns true if both P and ¬P exist in the expressions
 	for i in range(expressions.size()):
 		for j in range(i + 1, expressions.size()):
 			var expr1 = expressions[i] as BooleanExpression
@@ -1222,13 +1240,10 @@ func detect_contradiction(expressions: Array) -> bool:
 
 	return false
 
-# Create contradiction symbol (⊥ or FALSE)
 func create_contradiction() -> BooleanExpression:
 	return create_expression("FALSE")
 
-# Helper: Get all available operations that can be applied to a premise
 func get_applicable_single_operations(premise: BooleanExpression) -> Array:
-	# Returns array of operation names that can be applied to this single premise
 	var operations = []
 
 	if not premise or not premise.is_valid:
@@ -1253,7 +1268,6 @@ func get_applicable_single_operations(premise: BooleanExpression) -> Array:
 		operations.append("Biconditional to Implications")
 		operations.append("Biconditional to Equivalence")
 
-	# Check for applicable equivalence laws
 	if premise.is_conjunction() or premise.is_disjunction():
 		operations.append("Commutativity")
 		operations.append("Idempotent")
@@ -1271,9 +1285,7 @@ func get_applicable_single_operations(premise: BooleanExpression) -> Array:
 
 	return operations
 
-# Helper: Auto-apply addition (creates P ∨ Q from P)
 func apply_addition_auto(premise: BooleanExpression, add_var_name: String = "Q") -> BooleanExpression:
-	# Simplified version that automatically creates the additional variable
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
@@ -1283,17 +1295,44 @@ func apply_addition_auto(premise: BooleanExpression, add_var_name: String = "Q")
 
 	return create_disjunction_expression(premise, additional)
 
-# Parenthesis Removal Operation
+func apply_implication_conversion(premise: BooleanExpression) -> BooleanExpression:
+	if not premise or not premise.is_valid:
+		return BooleanExpression.new("")
+
+	if premise.is_implication():
+		var impl_parts = premise.get_implication_parts()
+		if impl_parts.get("valid", false):
+			var antecedent = impl_parts.get("antecedent") as BooleanExpression
+			var consequent = impl_parts.get("consequent") as BooleanExpression
+
+			var neg_antecedent = create_negation_expression(antecedent)
+			return create_disjunction_expression(neg_antecedent, consequent)
+
+	return BooleanExpression.new("")
+
+func apply_contrapositive(premise: BooleanExpression) -> BooleanExpression:
+	if not premise or not premise.is_valid:
+		return BooleanExpression.new("")
+
+	if premise.is_implication():
+		var impl_parts = premise.get_implication_parts()
+		if impl_parts.get("valid", false):
+			var antecedent = impl_parts.get("antecedent") as BooleanExpression
+			var consequent = impl_parts.get("consequent") as BooleanExpression
+
+			var neg_consequent = create_negation_expression(consequent)
+			var neg_antecedent = create_negation_expression(antecedent)
+			return create_implication_expression(neg_consequent, neg_antecedent)
+
+	return BooleanExpression.new("")
+
 func apply_parenthesis_removal(premise: BooleanExpression) -> BooleanExpression:
-	# Remove unnecessary parentheses while maintaining logical equivalence
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
 	var normalized = premise.normalized_string
 
-	# Remove outer parentheses if they wrap the entire expression
 	if normalized.begins_with("(") and normalized.ends_with(")"):
-		# Check if these are the outermost parentheses by counting
 		var paren_count = 0
 		var can_remove = true
 
@@ -1308,22 +1347,28 @@ func apply_parenthesis_removal(premise: BooleanExpression) -> BooleanExpression:
 					break
 
 		if can_remove and paren_count == 0:
-			# Safe to remove outer parentheses
 			var inner = normalized.substr(1, normalized.length() - 2).strip_edges()
 			if not inner.is_empty():
+
 				var result = create_expression(inner)
 				if result.is_valid:
-					return result
+					var inner_also_wrapped = inner.begins_with("(") and inner.ends_with(")")
 
-	# Remove unnecessary inner parentheses around single variables
+					var tokens = inner.strip_edges().split(" ")
+					var is_very_simple = tokens.size() <= 2
+
+					var has_top_level_op = _has_top_level_binary_operator(inner)
+
+					if inner_also_wrapped or is_very_simple or has_top_level_op:
+						return result
+
 	var result_string = normalized
-	# Pattern: (P) where P is a single variable -> P
 	var regex = RegEx.new()
 	if regex.compile("\\([A-Za-z]\\)") == OK:
 		var regex_result = regex.search(result_string)
 		while regex_result:
 			var match = regex_result.get_string()
-			var replacement = match.substr(1, match.length() - 2)  # Remove parentheses
+			var replacement = match.substr(1, match.length() - 2)
 			result_string = result_string.replace(match, replacement)
 			regex_result = regex.search(result_string)
 
@@ -1332,10 +1377,31 @@ func apply_parenthesis_removal(premise: BooleanExpression) -> BooleanExpression:
 		if result.is_valid:
 			return result
 
-	# If no changes made, return original
 	return premise
 
-# Test function
+func _has_top_level_binary_operator(expr: String) -> bool:
+	var paren_depth = 0
+	var binary_operators = ["∧", "∨", "⊕", "→", "↔"]
+
+	for i in range(expr.length()):
+		var c = expr[i]
+		if c == '(':
+			paren_depth += 1
+		elif c == ')':
+			paren_depth -= 1
+		elif paren_depth == 0:
+			if c in binary_operators:
+				return true
+
+	return false
+
+func _has_operator(expr: String) -> bool:
+	var operators = ["∧", "∨", "⊕", "→", "↔"]
+	for op in operators:
+		if expr.find(op) != -1:
+			return true
+	return false
+
 func test_logic_engine() -> bool:
 	print("Testing Boolean Logic Engine...")
 	print("==================================================")
@@ -1343,7 +1409,6 @@ func test_logic_engine() -> bool:
 	var tests_passed = 0
 	var tests_total = 0
 
-	# Test 1: Basic expression creation
 	tests_total += 1
 	var expr1 = create_expression("P")
 	if expr1.is_valid:
@@ -1352,7 +1417,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Basic expression creation test failed")
 
-	# Test 2: Expression with operator
 	tests_total += 1
 	var expr2 = create_expression("P → Q")
 	if expr2.is_valid:
@@ -1361,7 +1425,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Expression with operator test failed")
 
-	# Test 3: Complex expression
 	tests_total += 1
 	var expr3 = create_expression("(A ∧ B) → (C ∨ ¬D)")
 	if expr3.is_valid:
@@ -1370,7 +1433,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Complex expression test failed")
 
-	# Test 4: Modus Ponens
 	tests_total += 1
 	var premise1 = create_expression("P → Q")
 	var premise2 = create_expression("P")
@@ -1381,7 +1443,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Modus Ponens test failed")
 
-	# Test 5: Double Negation
 	tests_total += 1
 	var double_neg = create_expression("¬¬P")
 	var double_neg_result = apply_double_negation(double_neg)
@@ -1391,7 +1452,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Double Negation test failed")
 
-	# Test 6: XOR Expression Creation
 	tests_total += 1
 	var xor_expr = create_expression("P ⊕ Q")
 	if xor_expr.is_valid and xor_expr.is_xor():
@@ -1400,7 +1460,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ XOR expression creation test failed")
 
-	# Test 7: XOR ASCII Conversion
 	tests_total += 1
 	var xor_ascii = create_expression("P ^ Q")
 	if xor_ascii.is_valid and xor_ascii.normalized_string.find("⊕") != -1:
@@ -1409,7 +1468,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ XOR ASCII conversion test failed")
 
-	# Test 8: Biconditional Expression Creation
 	tests_total += 1
 	var biconditional_expr = create_expression("P ↔ Q")
 	if biconditional_expr.is_valid and biconditional_expr.is_biconditional():
@@ -1418,7 +1476,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Biconditional expression creation test failed")
 
-	# Test 9: Biconditional to Implications
 	tests_total += 1
 	var biconditional_test = create_expression("P ↔ Q")
 	var implications_result = apply_biconditional_to_implications(biconditional_test)
@@ -1428,7 +1485,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Biconditional to implications test failed")
 
-	# Test 10: XOR Elimination
 	tests_total += 1
 	var xor_test = create_expression("P ⊕ Q")
 	var xor_elimination_result = apply_xor_elimination(xor_test)
@@ -1438,7 +1494,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ XOR elimination test failed")
 
-	# Test 11: Commutativity Law
 	tests_total += 1
 	var comm_test = create_expression("P ∧ Q")
 	var comm_result = apply_commutativity(comm_test)
@@ -1448,7 +1503,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Commutativity test failed")
 
-	# Test 12: Idempotent Law
 	tests_total += 1
 	var idemp_test = create_expression("P ∧ P")
 	var idemp_result = apply_idempotent(idemp_test)
@@ -1458,7 +1512,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Idempotent test failed")
 
-	# Test 13: Distributivity Law
 	tests_total += 1
 	var dist_test = create_expression("A ∧ (B ∨ C)")
 	var dist_result = apply_distributivity(dist_test)
@@ -1468,7 +1521,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Distributivity test failed")
 
-	# Test 14: Absorption Law
 	tests_total += 1
 	var abs_test = create_expression("A ∧ (A ∨ B)")
 	var abs_result = apply_absorption(abs_test)
@@ -1478,7 +1530,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Absorption test failed")
 
-	# Test 15: Negation Law
 	tests_total += 1
 	var neg_test = create_expression("P ∧ ¬P")
 	var neg_result = apply_negation_laws(neg_test)
@@ -1488,7 +1539,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Negation law test failed")
 
-	# Test 16: Tautology Law
 	tests_total += 1
 	var taut_test = create_expression("P ∧ TRUE")
 	var taut_result = apply_tautology_laws(taut_test)
@@ -1498,7 +1548,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Tautology law test failed")
 
-	# Test 17: Contradiction Law
 	tests_total += 1
 	var contr_test = create_expression("P ∨ FALSE")
 	var contr_result = apply_contradiction_laws(contr_test)
@@ -1508,7 +1557,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Contradiction law test failed")
 
-	# Test 18: Parenthesis Removal
 	tests_total += 1
 	var paren_test = create_expression("(P)")
 	var paren_result = apply_parenthesis_removal(paren_test)
@@ -1518,7 +1566,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Parenthesis removal test failed")
 
-	# Test 19: Resolution
 	tests_total += 1
 	var res_premise1 = create_expression("P ∨ Q")
 	var res_premise2 = create_expression("¬P ∨ R")
@@ -1529,7 +1576,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Resolution test failed")
 
-	# Test 20: Equivalence
 	tests_total += 1
 	var eq_premise1 = create_expression("P ↔ Q")
 	var eq_premise2 = create_expression("P")
@@ -1540,13 +1586,11 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Equivalence test failed")
 
-	# Test 21: Constructive Dilemma
 	tests_total += 1
 	var cd_premise1 = create_expression("(P → Q) ∧ (R → S)")
 	var cd_premise2 = create_expression("P ∨ R")
 	var cd_result = apply_constructive_dilemma([cd_premise1, cd_premise2])
 	if cd_result.is_valid and cd_result.is_disjunction():
-		# Result should be Q ∨ S or S ∨ Q
 		var cd_parts = cd_result.get_disjunction_parts()
 		if cd_parts.get("valid", false):
 			var left = cd_parts.get("left") as BooleanExpression
@@ -1562,18 +1606,15 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Constructive dilemma test failed")
 
-	# Test 22: Destructive Dilemma
 	tests_total += 1
 	var dd_premise1 = create_expression("(P → Q) ∧ (R → S)")
 	var dd_premise2 = create_expression("¬Q ∨ ¬S")
 	var dd_result = apply_destructive_dilemma([dd_premise1, dd_premise2])
 	if dd_result.is_valid and dd_result.is_disjunction():
-		# Result should be ¬P ∨ ¬R or ¬R ∨ ¬P
 		var dd_parts = dd_result.get_disjunction_parts()
 		if dd_parts.get("valid", false):
 			var left = dd_parts.get("left") as BooleanExpression
 			var right = dd_parts.get("right") as BooleanExpression
-			# Check if we have negations of P and R
 			var has_neg_p = left.normalized_string == "¬P" or right.normalized_string == "¬P"
 			var has_neg_r = left.normalized_string == "¬R" or right.normalized_string == "¬R"
 			if has_neg_p and has_neg_r:
@@ -1588,7 +1629,6 @@ func test_logic_engine() -> bool:
 
 	print("\n--- Multi-Result Helper Function Tests ---")
 
-	# Test 23: Simplification Both
 	tests_total += 1
 	var simp_both_premise = create_expression("P ∧ Q")
 	var simp_both_results = apply_simplification_both([simp_both_premise])
@@ -1603,7 +1643,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Simplification both test failed")
 
-	# Test 24: Biconditional to Implications Both
 	tests_total += 1
 	var bicond_impl_premise = create_expression("P ↔ Q")
 	var bicond_impl_results = apply_biconditional_to_implications_both(bicond_impl_premise)
@@ -1618,7 +1657,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Biconditional to implications both test failed")
 
-	# Test 25: XOR Elimination Both
 	tests_total += 1
 	var xor_both_premise = create_expression("P ⊕ Q")
 	var xor_both_results = apply_xor_elimination_both(xor_both_premise)
@@ -1633,7 +1671,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ XOR elimination both test failed")
 
-	# Test 26: Biconditional to Equivalence Both
 	tests_total += 1
 	var bicond_equiv_premise = create_expression("P ↔ Q")
 	var bicond_equiv_results = apply_biconditional_to_equivalence_both(bicond_equiv_premise)
@@ -1648,10 +1685,8 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Biconditional to equivalence both test failed")
 
-	# Edge Case Tests
 	print("\n--- Edge Case Tests ---")
 
-	# Test 27: Invalid empty parentheses
 	tests_total += 1
 	var empty_paren = create_expression("()")
 	if not empty_paren.is_valid:
@@ -1660,7 +1695,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Empty parentheses rejection test failed")
 
-	# Test 28: Consecutive operators
 	tests_total += 1
 	var consec_ops = create_expression("P ∧ ∨ Q")
 	if not consec_ops.is_valid:
@@ -1669,7 +1703,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Consecutive operators rejection test failed")
 
-	# Test 29: Operator at start
 	tests_total += 1
 	var op_start = create_expression("∧ P")
 	if not op_start.is_valid:
@@ -1678,7 +1711,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Operator at start rejection test failed")
 
-	# Test 30: Operator at end
 	tests_total += 1
 	var op_end = create_expression("P ∧")
 	if not op_end.is_valid:
@@ -1687,7 +1719,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Operator at end rejection test failed")
 
-	# Test 31: Unbalanced parentheses
 	tests_total += 1
 	var unbal_paren = create_expression("((P ∧ Q)")
 	if not unbal_paren.is_valid:
@@ -1696,7 +1727,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Unbalanced parentheses rejection test failed")
 
-	# Test 32: Complex valid expression
 	tests_total += 1
 	var complex_expr = create_expression("((P ∧ Q) → R) ↔ (¬P ∨ (¬Q ∨ R))")
 	if complex_expr.is_valid:
@@ -1705,7 +1735,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Complex expression validation test failed")
 
-	# Test 33: Multi-character variables
 	tests_total += 1
 	var multi_var = create_expression("P1 ∧ Q2")
 	if multi_var.is_valid:
@@ -1714,7 +1743,6 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Multi-character variable test failed")
 
-	# Test 34: Constants handling
 	tests_total += 1
 	var const_expr = create_expression("TRUE ∨ FALSE")
 	if const_expr.is_valid:

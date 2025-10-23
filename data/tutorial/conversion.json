@@ -1,0 +1,102 @@
+{
+  "rule_name": "Conversion (Biconditional to Equivalence)",
+  "description": "The Conversion rule transforms a biconditional into its equivalence form. \"P if and only if Q\" means either both are true OR both are false: (P ∧ Q) ∨ (¬P ∧ ¬Q). This is a single-operation rule that generates BOTH disjuncts at once.",
+  "rule_pattern": "P ↔ Q ⊢ (P ∧ Q) ∨ (¬P ∧ ¬Q)",
+  "tutorial_key": "conversion",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "P ↔ Q"
+      ],
+      "conclusion": "(P ∧ Q) ∨ (¬P ∧ ¬Q)",
+      "solution": "Apply Conversion to expand the biconditional into its equivalence form: both true or both false."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "R ↔ S"
+      ],
+      "conclusion": "(R ∧ S) ∨ (¬R ∧ ¬S)",
+      "solution": "Apply Conversion to show R and S have the same truth value."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "A ↔ B"
+      ],
+      "conclusion": "(A ∧ B) ∨ (¬A ∧ ¬B)",
+      "solution": "Direct application of Conversion rule."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "(P ∨ Q) ↔ R"
+      ],
+      "conclusion": "((P ∨ Q) ∧ R) ∨ (¬(P ∨ Q) ∧ ¬R)",
+      "solution": "Apply Conversion where the left side is a disjunction."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "P ↔ (Q ∧ R)"
+      ],
+      "conclusion": "(P ∧ (Q ∧ R)) ∨ (¬P ∧ ¬(Q ∧ R))",
+      "solution": "Apply Conversion where the right side is a conjunction."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(P → Q) ↔ (R → S)"
+      ],
+      "conclusion": "((P → Q) ∧ (R → S)) ∨ (¬(P → Q) ∧ ¬(R → S))",
+      "solution": "Apply Conversion to a biconditional between two implications."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "P ↔ Q"
+      ],
+      "conclusion": "P ∧ Q",
+      "solution": "Apply Conversion to get (P ∧ Q) ∨ (¬P ∧ ¬Q), then extract the first disjunct with Simplification."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "P ↔ Q",
+        "P",
+        "Q"
+      ],
+      "conclusion": "(P ∧ Q) ∨ (¬P ∧ ¬Q)",
+      "solution": "Apply Conversion to the biconditional, showing that since both P and Q are true, the equivalence form holds."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "(P ∧ Q) ↔ R",
+        "¬(P ∧ Q)"
+      ],
+      "conclusion": "¬R",
+      "solution": "Apply Conversion, use Disjunctive Syllogism with the negated conjunction to derive ¬R."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "P ↔ Q",
+        "Q ↔ R"
+      ],
+      "conclusion": "(P ∧ R) ∨ (¬P ∧ ¬R)",
+      "solution": "Apply Conversion to both biconditionals, use logical reasoning to derive that P and R must also have the same truth value."
+    }
+  ]
+}

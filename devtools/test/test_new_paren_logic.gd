@@ -1,0 +1,88 @@
+extends SceneTree
+
+# Test the new parenthesis removal logic
+
+func _init():
+	print("=== Testing NEW Parenthesis Removal Logic ===")
+	print()
+
+	var engine = load("res://src/game/autoloads/BooleanLogicEngine.gd").new()
+
+	print("Test 1: Single variable in parens - SHOULD remove")
+	var test1 = engine.create_expression("(P)")
+	var clean1 = engine.apply_parenthesis_removal(test1)
+	print("  Input:  ", test1.expression_string)
+	print("  Output: ", clean1.expression_string)
+	print("  Expected: P")
+	print("  ✓ Pass" if clean1.expression_string == "P" else "  ✗ FAIL")
+	print()
+
+	print("Test 2: Simple conjunction - SHOULD keep parens")
+	var test2 = engine.create_expression("(P ∧ Q)")
+	var clean2 = engine.apply_parenthesis_removal(test2)
+	print("  Input:  ", test2.expression_string)
+	print("  Output: ", clean2.expression_string)
+	print("  Expected: (P ∧ Q)")
+	print("  ✓ Pass" if clean2.expression_string == "(P ∧ Q)" else "  ✗ FAIL")
+	print()
+
+	print("Test 3: Build (P ∧ Q) from P and Q")
+	var p = engine.create_expression("P")
+	var q = engine.create_expression("Q")
+	var p_and_q = engine.apply_conjunction([p, q])
+	var cleaned_pq = engine.apply_parenthesis_removal(p_and_q)
+	print("  Raw result: ", p_and_q.expression_string)
+	print("  After clean: ", cleaned_pq.expression_string)
+	print("  Expected: (P ∧ Q)")
+	print("  ✓ Pass" if cleaned_pq.expression_string == "(P ∧ Q)" else "  ✗ FAIL")
+	print()
+
+	print("Test 4: Build ((P ∧ Q) ∧ R) from (P ∧ Q) and R")
+	var r = engine.create_expression("R")
+	var nested = engine.apply_conjunction([cleaned_pq, r])
+	var cleaned_nested = engine.apply_parenthesis_removal(nested)
+	print("  Raw result: ", nested.expression_string)
+	print("  After clean: ", cleaned_nested.expression_string)
+	print("  Expected: (P ∧ Q) ∧ R")
+	print("  ✓ Pass" if cleaned_nested.expression_string == "(P ∧ Q) ∧ R" else "  ✗ FAIL")
+	print()
+
+	print("Test 5: Negation in parens - SHOULD remove")
+	var test5 = engine.create_expression("(¬P)")
+	var clean5 = engine.apply_parenthesis_removal(test5)
+	print("  Input:  ", test5.expression_string)
+	print("  Output: ", clean5.expression_string)
+	print("  Expected: ¬P")
+	print("  ✓ Pass" if clean5.expression_string == "¬P" else "  ✗ FAIL")
+	print()
+
+	print("Test 6: Disjunction - SHOULD keep parens")
+	var test6 = engine.create_expression("(P ∨ Q)")
+	var clean6 = engine.apply_parenthesis_removal(test6)
+	print("  Input:  ", test6.expression_string)
+	print("  Output: ", clean6.expression_string)
+	print("  Expected: (P ∨ Q)")
+	print("  ✓ Pass" if clean6.expression_string == "(P ∨ Q)" else "  ✗ FAIL")
+	print()
+
+	print("Test 7: Implication - SHOULD keep parens")
+	var test7 = engine.create_expression("(P → Q)")
+	var clean7 = engine.apply_parenthesis_removal(test7)
+	print("  Input:  ", test7.expression_string)
+	print("  Output: ", clean7.expression_string)
+	print("  Expected: (P → Q)")
+	print("  ✓ Pass" if clean7.expression_string == "(P → Q)" else "  ✗ FAIL")
+	print()
+
+	print("Test 8: Double outer parens on binary op - SHOULD remove ONE layer")
+	var test8 = engine.create_expression("((P ∧ Q))")
+	var clean8 = engine.apply_parenthesis_removal(test8)
+	print("  Input:  ", test8.expression_string)
+	print("  Output: ", clean8.expression_string)
+	print("  Expected: (P ∧ Q)")
+	print("  ✓ Pass" if clean8.expression_string == "(P ∧ Q)" else "  ✗ FAIL")
+	print()
+
+	print("=== Test Complete ===")
+
+	quit()

@@ -1,0 +1,237 @@
+{
+  "category": "equivalence_laws",
+  "description": "Tests for equivalence transformations and boolean laws",
+  "test_count": 15,
+  "tests": [
+    {
+      "test_id": "EL-001",
+      "name": "Commutativity - AND",
+      "description": "P∧Q ≡ Q∧P",
+      "operations": [
+        {
+          "type": "apply_commutativity",
+          "input": "P ∧ Q",
+          "expected_result": "(Q ∧ P)"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∧"],
+      "tests_features": ["commutativity"]
+    },
+    {
+      "test_id": "EL-002",
+      "name": "Commutativity - OR",
+      "description": "P∨Q ≡ Q∨P",
+      "operations": [
+        {
+          "type": "apply_commutativity",
+          "input": "P ∨ Q",
+          "expected_result": "(Q ∨ P)"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∨"],
+      "tests_features": ["commutativity"]
+    },
+    {
+      "test_id": "EL-003",
+      "name": "Commutativity - XOR",
+      "description": "P⊕Q ≡ Q⊕P",
+      "operations": [
+        {
+          "type": "apply_commutativity",
+          "input": "P ⊕ Q",
+          "expected_result": "(Q ⊕ P)"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["⊕"],
+      "tests_features": ["commutativity", "xor"]
+    },
+    {
+      "test_id": "EL-004",
+      "name": "Associativity - AND",
+      "description": "(P∧Q)∧R ≡ P∧(Q∧R)",
+      "operations": [
+        {
+          "type": "apply_associativity",
+          "input": "(P ∧ Q) ∧ R",
+          "expected_result": "(P ∧ (Q ∧ R))"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["∧"],
+      "tests_features": ["associativity", "nesting"]
+    },
+    {
+      "test_id": "EL-005",
+      "name": "Associativity - OR",
+      "description": "(P∨Q)∨R ≡ P∨(Q∨R)",
+      "operations": [
+        {
+          "type": "apply_associativity",
+          "input": "(P ∨ Q) ∨ R",
+          "expected_result": "(P ∨ (Q ∨ R))"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["∨"],
+      "tests_features": ["associativity", "nesting"]
+    },
+    {
+      "test_id": "EL-006",
+      "name": "Distributivity - AND over OR",
+      "description": "P∧(Q∨R) ≡ (P∧Q)∨(P∧R)",
+      "operations": [
+        {
+          "type": "apply_distributivity",
+          "input": "P ∧ (Q ∨ R)",
+          "expected_result": "((P ∧ Q) ∨ (P ∧ R))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["distributivity", "triple_nesting"]
+    },
+    {
+      "test_id": "EL-007",
+      "name": "Distributivity - OR over AND",
+      "description": "P∨(Q∧R) ≡ (P∨Q)∧(P∨R)",
+      "operations": [
+        {
+          "type": "apply_distributivity",
+          "input": "P ∨ (Q ∧ R)",
+          "expected_result": "((P ∨ Q) ∧ (P ∨ R))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["distributivity", "triple_nesting"]
+    },
+    {
+      "test_id": "EL-008",
+      "name": "De Morgan's - AND",
+      "description": "¬(P∧Q) ≡ ¬P∨¬Q",
+      "operations": [
+        {
+          "type": "apply_de_morgan_and",
+          "input": "¬(P ∧ Q)",
+          "expected_result": "(¬P ∨ ¬Q)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["¬", "∧", "∨"],
+      "tests_features": ["de_morgan"]
+    },
+    {
+      "test_id": "EL-009",
+      "name": "De Morgan's - OR",
+      "description": "¬(P∨Q) ≡ ¬P∧¬Q",
+      "operations": [
+        {
+          "type": "apply_de_morgan_or",
+          "input": "¬(P ∨ Q)",
+          "expected_result": "(¬P ∧ ¬Q)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["¬", "∧", "∨"],
+      "tests_features": ["de_morgan"]
+    },
+    {
+      "test_id": "EL-010",
+      "name": "Idempotent - AND",
+      "description": "P∧P ≡ P",
+      "operations": [
+        {
+          "type": "apply_idempotent",
+          "input": "P ∧ P",
+          "expected_result": "P"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∧"],
+      "tests_features": ["idempotent"]
+    },
+    {
+      "test_id": "EL-011",
+      "name": "Idempotent - OR",
+      "description": "P∨P ≡ P",
+      "operations": [
+        {
+          "type": "apply_idempotent",
+          "input": "P ∨ P",
+          "expected_result": "P"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∨"],
+      "tests_features": ["idempotent"]
+    },
+    {
+      "test_id": "EL-012",
+      "name": "Absorption - AND",
+      "description": "P∧(P∨Q) ≡ P",
+      "operations": [
+        {
+          "type": "apply_absorption",
+          "input": "P ∧ (P ∨ Q)",
+          "expected_result": "P"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["absorption"]
+    },
+    {
+      "test_id": "EL-013",
+      "name": "Negation Law - AND",
+      "description": "P∧¬P ≡ FALSE",
+      "operations": [
+        {
+          "type": "apply_negation_laws",
+          "input": "P ∧ ¬P",
+          "expected_result": "FALSE"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∧", "¬"],
+      "tests_features": ["negation_law", "contradiction"]
+    },
+    {
+      "test_id": "EL-014",
+      "name": "Negation Law - OR",
+      "description": "P∨¬P ≡ TRUE",
+      "operations": [
+        {
+          "type": "apply_negation_laws",
+          "input": "P ∨ ¬P",
+          "expected_result": "TRUE"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∨", "¬"],
+      "tests_features": ["negation_law", "tautology"]
+    },
+    {
+      "test_id": "EL-015",
+      "name": "Implication Conversion",
+      "description": "P→Q ≡ ¬P∨Q",
+      "operations": [
+        {
+          "type": "apply_implication_conversion",
+          "input": "P → Q",
+          "expected_result": "(¬P ∨ Q)"
+        },
+        {
+          "type": "apply_contrapositive",
+          "input": "P → Q",
+          "expected_result": "(¬Q → ¬P)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["→", "¬", "∨"],
+      "tests_features": ["implication", "contrapositive"]
+    }
+  ]
+}

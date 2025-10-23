@@ -1,0 +1,514 @@
+{
+  "category": "multi_step",
+  "description": "Tests for multi-step operation sequences (3-5 operations per test)",
+  "test_count": 20,
+  "tests": [
+    {
+      "test_id": "MS-001",
+      "name": "Double negation then simplification",
+      "description": "¬¬(P∧Q) → P∧Q → P",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "¬¬(P ∧ Q)"
+        },
+        {
+          "type": "apply_double_negation",
+          "expected_result": "(P ∧ Q)"
+        },
+        {
+          "type": "apply_simplification",
+          "extract_right": false,
+          "expected_result": "P"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["¬", "∧"],
+      "tests_features": ["double_negation", "simplification", "chaining"]
+    },
+    {
+      "test_id": "MS-002",
+      "name": "De Morgan then simplification",
+      "description": "¬(P∧Q) → (¬P∨¬Q) → ¬P",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "¬(P ∧ Q)"
+        },
+        {
+          "type": "apply_de_morgan_and",
+          "expected_result": "(¬P ∨ ¬Q)"
+        },
+        {
+          "type": "apply_addition",
+          "additional": "R",
+          "expected_result": "((¬P ∨ ¬Q) ∨ R)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["¬", "∧", "∨"],
+      "tests_features": ["de_morgan", "addition"]
+    },
+    {
+      "test_id": "MS-003",
+      "name": "Implication conversion chain",
+      "description": "P→Q → ¬P∨Q, then distribute",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P → Q"
+        },
+        {
+          "type": "apply_implication_conversion",
+          "expected_result": "(¬P ∨ Q)"
+        },
+        {
+          "type": "apply_addition",
+          "additional": "R",
+          "expected_result": "((¬P ∨ Q) ∨ R)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["→", "¬", "∨"],
+      "tests_features": ["implication", "conversion", "addition"]
+    },
+    {
+      "test_id": "MS-004",
+      "name": "XOR elimination then simplification",
+      "description": "P⊕Q → (P∨Q)∧¬(P∧Q) → (P∨Q)",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ⊕ Q"
+        },
+        {
+          "type": "apply_xor_elimination",
+          "expected_result": "((P ∨ Q) ∧ ¬(P ∧ Q))"
+        },
+        {
+          "type": "apply_simplification",
+          "extract_right": false,
+          "expected_result": "(P ∨ Q)"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["⊕", "∨", "∧", "¬"],
+      "tests_features": ["xor", "simplification"]
+    },
+    {
+      "test_id": "MS-005",
+      "name": "Biconditional to implications then MP",
+      "description": "P↔Q → (P→Q)∧(Q→P), extract P→Q, apply MP with P",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ↔ Q"
+        },
+        {
+          "type": "apply_biconditional_to_implications",
+          "expected_result": "((P → Q) ∧ (Q → P))"
+        },
+        {
+          "type": "apply_simplification",
+          "extract_right": false,
+          "expected_result": "(P → Q)"
+        },
+        {
+          "type": "apply_modus_ponens",
+          "additional_premise": "P",
+          "expected_result": "Q"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["↔", "→", "∧"],
+      "tests_features": ["biconditional", "modus_ponens", "multi_step"]
+    },
+    {
+      "test_id": "MS-006",
+      "name": "Distributivity then commutativity",
+      "description": "A∧(B∨C) → (A∧B)∨(A∧C) → (A∧C)∨(A∧B)",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "A ∧ (B ∨ C)"
+        },
+        {
+          "type": "apply_distributivity",
+          "expected_result": "((A ∧ B) ∨ (A ∧ C))"
+        },
+        {
+          "type": "apply_commutativity",
+          "expected_result": "((A ∧ C) ∨ (A ∧ B))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["distributivity", "commutativity"]
+    },
+    {
+      "test_id": "MS-007",
+      "name": "Conjunction then De Morgan sequence",
+      "description": "P, Q → P∧Q, negate, apply De Morgan",
+      "operations": [
+        {
+          "type": "apply_conjunction",
+          "premises": ["P", "Q"],
+          "expected_result": "(P ∧ Q)"
+        },
+        {
+          "type": "create_negation",
+          "expected_result": "¬(P ∧ Q)"
+        },
+        {
+          "type": "apply_de_morgan_and",
+          "expected_result": "(¬P ∨ ¬Q)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["∧", "¬", "∨"],
+      "tests_features": ["conjunction", "negation", "de_morgan"]
+    },
+    {
+      "test_id": "MS-008",
+      "name": "Hypothetical syllogism chain",
+      "description": "P→Q, Q→R → P→R, then convert to ¬P∨R",
+      "operations": [
+        {
+          "type": "apply_hypothetical_syllogism",
+          "premises": ["P → Q", "Q → R"],
+          "expected_result": "(P → R)"
+        },
+        {
+          "type": "apply_implication_conversion",
+          "expected_result": "(¬P ∨ R)"
+        },
+        {
+          "type": "apply_commutativity",
+          "expected_result": "(R ∨ ¬P)"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["→", "¬", "∨"],
+      "tests_features": ["hypothetical_syllogism", "implication", "commutativity"]
+    },
+    {
+      "test_id": "MS-009",
+      "name": "Resolution then disjunctive syllogism",
+      "description": "P∨Q, ¬P∨R → Q∨R, ¬Q → R",
+      "operations": [
+        {
+          "type": "apply_resolution",
+          "premises": ["P ∨ Q", "¬P ∨ R"],
+          "expected_result": "(Q ∨ R)"
+        },
+        {
+          "type": "apply_disjunctive_syllogism",
+          "additional_premise": "¬Q",
+          "expected_result": "R"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∨", "¬"],
+      "tests_features": ["resolution", "disjunctive_syllogism"]
+    },
+    {
+      "test_id": "MS-010",
+      "name": "Absorption then negation law",
+      "description": "P∧(P∨Q) → P, combine with ¬P → FALSE",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ∧ (P ∨ Q)"
+        },
+        {
+          "type": "apply_absorption",
+          "expected_result": "P"
+        },
+        {
+          "type": "apply_conjunction",
+          "additional_premise": "¬P",
+          "expected_result": "(P ∧ ¬P)"
+        },
+        {
+          "type": "apply_negation_laws",
+          "expected_result": "FALSE"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨", "¬"],
+      "tests_features": ["absorption", "negation_law", "contradiction"]
+    },
+    {
+      "test_id": "MS-011",
+      "name": "Idempotent then addition then distributivity",
+      "description": "P∨P → P → P∨Q → R∧(P∨Q)",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ∨ P"
+        },
+        {
+          "type": "apply_idempotent",
+          "expected_result": "P"
+        },
+        {
+          "type": "apply_addition",
+          "additional": "Q",
+          "expected_result": "(P ∨ Q)"
+        },
+        {
+          "type": "apply_conjunction",
+          "additional_premise": "R",
+          "expected_result": "(R ∧ (P ∨ Q))"
+        },
+        {
+          "type": "apply_distributivity",
+          "expected_result": "((R ∧ P) ∨ (R ∧ Q))"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["∨", "∧"],
+      "tests_features": ["idempotent", "addition", "conjunction", "distributivity"]
+    },
+    {
+      "test_id": "MS-012",
+      "name": "Double De Morgan application",
+      "description": "¬(P∧Q) → ¬P∨¬Q, negate, apply De Morgan OR",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "¬(P ∧ Q)"
+        },
+        {
+          "type": "apply_de_morgan_and",
+          "expected_result": "(¬P ∨ ¬Q)"
+        },
+        {
+          "type": "create_negation",
+          "expected_result": "¬(¬P ∨ ¬Q)"
+        },
+        {
+          "type": "apply_de_morgan_or",
+          "expected_result": "(¬¬P ∧ ¬¬Q)"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["¬", "∧", "∨"],
+      "tests_features": ["de_morgan", "double_application"]
+    },
+    {
+      "test_id": "MS-013",
+      "name": "Contrapositive then modus tollens",
+      "description": "P→Q → ¬Q→¬P, apply MT with ¬¬P",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P → Q"
+        },
+        {
+          "type": "apply_contrapositive",
+          "expected_result": "(¬Q → ¬P)"
+        },
+        {
+          "type": "apply_modus_tollens",
+          "additional_premise": "¬¬P",
+          "expected_result": "¬¬Q"
+        },
+        {
+          "type": "apply_double_negation",
+          "expected_result": "Q"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["→", "¬"],
+      "tests_features": ["contrapositive", "modus_tollens", "double_negation"]
+    },
+    {
+      "test_id": "MS-014",
+      "name": "Constructive dilemma chain",
+      "description": "Build and apply constructive dilemma in steps",
+      "operations": [
+        {
+          "type": "apply_conjunction",
+          "premises": ["P → Q", "R → S"],
+          "expected_result": "((P → Q) ∧ (R → S))"
+        },
+        {
+          "type": "apply_addition",
+          "premises": ["P"],
+          "additional": "R",
+          "expected_result": "(P ∨ R)"
+        },
+        {
+          "type": "apply_constructive_dilemma",
+          "premises": ["((P → Q) ∧ (R → S))", "(P ∨ R)"],
+          "expected_result": "(Q ∨ S)"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["→", "∧", "∨"],
+      "tests_features": ["constructive_dilemma", "multi_step"]
+    },
+    {
+      "test_id": "MS-015",
+      "name": "Simplification both then conjunction",
+      "description": "Extract both parts then recombine differently",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ∧ Q"
+        },
+        {
+          "type": "apply_simplification_both",
+          "expected_results": ["P", "Q"]
+        },
+        {
+          "type": "apply_addition",
+          "premises": ["P"],
+          "additional": "R",
+          "expected_result": "(P ∨ R)"
+        },
+        {
+          "type": "apply_conjunction",
+          "premises": ["Q", "(P ∨ R)"],
+          "expected_result": "(Q ∧ (P ∨ R))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["simplification", "addition", "conjunction"]
+    },
+    {
+      "test_id": "MS-016",
+      "name": "Reverse distributivity then idempotent",
+      "description": "(P∧Q)∨(P∧R) → P∧(Q∨R), test with Q=R → P∧Q",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(P ∧ Q) ∨ (P ∧ Q)"
+        },
+        {
+          "type": "apply_reverse_distributivity",
+          "expected_result": "(P ∧ (Q ∨ Q))"
+        },
+        {
+          "type": "apply_simplification",
+          "extract_right": true,
+          "expected_result": "(Q ∨ Q)"
+        },
+        {
+          "type": "apply_idempotent",
+          "expected_result": "Q"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["reverse_distributivity", "idempotent"]
+    },
+    {
+      "test_id": "MS-017",
+      "name": "Parenthesis removal cascade",
+      "description": "Remove unnecessary parentheses in multiple steps",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "((P))"
+        },
+        {
+          "type": "apply_parenthesis_removal",
+          "expected_result": "(P)"
+        },
+        {
+          "type": "apply_parenthesis_removal",
+          "expected_result": "P"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": [],
+      "tests_features": ["parenthesis_removal", "parsing"]
+    },
+    {
+      "test_id": "MS-018",
+      "name": "Equivalence application sequence",
+      "description": "P↔Q, P ⊢ Q, then build Q∧R",
+      "operations": [
+        {
+          "type": "apply_equivalence",
+          "premises": ["P ↔ Q", "P"],
+          "expected_result": "Q"
+        },
+        {
+          "type": "apply_conjunction",
+          "premises": ["Q", "R"],
+          "expected_result": "(Q ∧ R)"
+        },
+        {
+          "type": "apply_commutativity",
+          "expected_result": "(R ∧ Q)"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["↔", "∧"],
+      "tests_features": ["equivalence", "conjunction", "commutativity"]
+    },
+    {
+      "test_id": "MS-019",
+      "name": "Complex proof sequence",
+      "description": "¬¬(P→Q), P ⊢ Q with multiple steps",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "¬¬(P → Q)"
+        },
+        {
+          "type": "apply_double_negation",
+          "expected_result": "(P → Q)"
+        },
+        {
+          "type": "apply_parenthesis_removal",
+          "expected_result": "P → Q"
+        },
+        {
+          "type": "apply_modus_ponens",
+          "additional_premise": "P",
+          "expected_result": "Q"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": ["¬", "→"],
+      "tests_features": ["double_negation", "parenthesis", "modus_ponens"]
+    },
+    {
+      "test_id": "MS-020",
+      "name": "All transformations chain",
+      "description": "Apply 5 different transformations in sequence",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ⊕ Q"
+        },
+        {
+          "type": "apply_xor_elimination",
+          "expected_result": "((P ∨ Q) ∧ ¬(P ∧ Q))"
+        },
+        {
+          "type": "apply_simplification",
+          "extract_right": false,
+          "expected_result": "(P ∨ Q)"
+        },
+        {
+          "type": "apply_commutativity",
+          "expected_result": "(Q ∨ P)"
+        },
+        {
+          "type": "apply_addition",
+          "additional": "R",
+          "expected_result": "((Q ∨ P) ∨ R)"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["⊕", "∨", "∧", "¬"],
+      "tests_features": ["xor", "simplification", "commutativity", "addition", "multi_step"]
+    }
+  ]
+}

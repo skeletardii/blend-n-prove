@@ -1,0 +1,195 @@
+{
+  "category": "edge_cases",
+  "description": "Tests for boundary conditions and error cases",
+  "test_count": 10,
+  "tests": [
+    {
+      "test_id": "EC-001",
+      "name": "Empty parentheses rejection",
+      "description": "Should reject expressions with empty parentheses",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "()",
+          "expected_valid": false
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": [],
+      "tests_features": ["validation", "error_handling"]
+    },
+    {
+      "test_id": "EC-002",
+      "name": "Consecutive operators rejection",
+      "description": "Should reject expressions with consecutive binary operators",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ∧ ∨ Q",
+          "expected_valid": false
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": ["∧", "∨"],
+      "tests_features": ["validation", "error_handling"]
+    },
+    {
+      "test_id": "EC-003",
+      "name": "Operator at start rejection",
+      "description": "Should reject expressions starting with binary operator",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "∧ P",
+          "expected_valid": false
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": ["∧"],
+      "tests_features": ["validation", "error_handling"]
+    },
+    {
+      "test_id": "EC-004",
+      "name": "Operator at end rejection",
+      "description": "Should reject expressions ending with any operator",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ∧",
+          "expected_valid": false
+        },
+        {
+          "type": "create_expression",
+          "input": "P ¬",
+          "expected_valid": false
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∧", "¬"],
+      "tests_features": ["validation", "error_handling"]
+    },
+    {
+      "test_id": "EC-005",
+      "name": "Unbalanced parentheses rejection",
+      "description": "Should reject expressions with unbalanced parentheses",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "((P ∧ Q)",
+          "expected_valid": false
+        },
+        {
+          "type": "create_expression",
+          "input": "(P ∧ Q))",
+          "expected_valid": false
+        },
+        {
+          "type": "create_expression",
+          "input": ")P ∧ Q(",
+          "expected_valid": false
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["∧"],
+      "tests_features": ["validation", "parentheses", "error_handling"]
+    },
+    {
+      "test_id": "EC-006",
+      "name": "Very long expression",
+      "description": "Handle expressions with 10+ variables and operators",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(((A ∧ B) ∨ (C ∧ D)) → ((E ⊕ F) ∧ (G ∨ H))) ↔ (I → J)",
+          "expected_valid": true,
+          "expected_normalized": "(((A ∧ B) ∨ (C ∧ D)) → ((E ⊕ F) ∧ (G ∨ H))) ↔ (I → J)"
+        }
+      ],
+      "complexity_score": 5,
+      "tests_operators": ["∧", "∨", "→", "⊕", "↔"],
+      "tests_features": ["parsing", "complex", "stress_test"]
+    },
+    {
+      "test_id": "EC-007",
+      "name": "Single vs multi-character variables",
+      "description": "Mix single and multi-character variable names",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "P ∧ isTrue ∧ Q2 ∧ x",
+          "expected_valid": true,
+          "expected_normalized": "P ∧ isTrue ∧ Q2 ∧ x"
+        }
+      ],
+      "complexity_score": 2,
+      "tests_operators": ["∧"],
+      "tests_features": ["parsing", "multi_char_variables"]
+    },
+    {
+      "test_id": "EC-008",
+      "name": "Constants with operators",
+      "description": "Test TRUE/FALSE constants in complex expressions",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "(TRUE ∧ P) ∨ (FALSE → Q)",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_tautology_laws",
+          "expected_result": "(P ∨ (FALSE → Q))"
+        }
+      ],
+      "complexity_score": 3,
+      "tests_operators": ["∧", "∨", "→"],
+      "tests_features": ["constants", "tautology"]
+    },
+    {
+      "test_id": "EC-009",
+      "name": "Empty expression rejection",
+      "description": "Should reject empty or whitespace-only expressions",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "",
+          "expected_valid": false
+        },
+        {
+          "type": "create_expression",
+          "input": "   ",
+          "expected_valid": false
+        }
+      ],
+      "complexity_score": 1,
+      "tests_operators": [],
+      "tests_features": ["validation", "error_handling"]
+    },
+    {
+      "test_id": "EC-010",
+      "name": "Maximum nesting depth",
+      "description": "Test expressions with 6+ levels of nesting",
+      "operations": [
+        {
+          "type": "create_expression",
+          "input": "((((((P))))))",
+          "expected_valid": true
+        },
+        {
+          "type": "apply_parenthesis_removal",
+          "expected_result": "(((((P)))))"
+        },
+        {
+          "type": "apply_parenthesis_removal",
+          "expected_result": "((((P))))"
+        },
+        {
+          "type": "apply_parenthesis_removal",
+          "expected_result": "(((P)))"
+        }
+      ],
+      "complexity_score": 4,
+      "tests_operators": [],
+      "tests_features": ["parenthesis_removal", "deep_nesting", "stress_test"]
+    }
+  ]
+}

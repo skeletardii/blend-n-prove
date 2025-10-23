@@ -20,7 +20,17 @@
       "Bash(npm run build:*)",
       "mcp__godot__get_script",
       "Bash(git push:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Read(//c/Portable/Godot/program//**)",
+      "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --script test_final_flow.gd)",
+      "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --script test_all_operations_parens.gd)",
+      "Read(//c/Portable/Godot/program/**)",
+      "Bash(./Godot_v4.4.1-stable_mono_win64_console.exe --headless --path \"C:/Users/X/documents/godot-mcp\" --script test_comprehensive_logic_engine.gd)",
+      "Bash(cat:*)",
+      "Bash(for level in 3 4 5 6)",
+      "Bash(do echo \"Level $level:\")",
+      "Bash(done)",
+      "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --path \"C:/Users/X/documents/godot-mcp\" --script test_pause_feature.gd)"
     ]
   },
   "enableAllProjectMcpServers": true,

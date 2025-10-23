@@ -1,0 +1,98 @@
+{
+  "rule_name": "Parenthesis Removal",
+  "description": "Parenthesis Removal simplifies expressions by removing unnecessary outer parentheses. When parentheses don't change the meaning or structure of an expression, they can be safely removed. For example, (P) becomes P, and ((P ∧ Q)) becomes (P ∧ Q). This helps clean up complex expressions built through multiple operations.",
+  "rule_pattern": "(P) ⊢ P, ((P ∧ Q)) ⊢ (P ∧ Q)",
+  "tutorial_key": "parenthesis-removal",
+  "problems": [
+    {
+      "problem_number": 1,
+      "difficulty": "Easy",
+      "premises": [
+        "(P)"
+      ],
+      "conclusion": "P",
+      "solution": "Remove the unnecessary parentheses around the single variable."
+    },
+    {
+      "problem_number": 2,
+      "difficulty": "Easy",
+      "premises": [
+        "(Q)"
+      ],
+      "conclusion": "Q",
+      "solution": "Single variables don't need parentheses - remove them."
+    },
+    {
+      "problem_number": 3,
+      "difficulty": "Easy",
+      "premises": [
+        "(R)"
+      ],
+      "conclusion": "R",
+      "solution": "Direct application of parenthesis removal."
+    },
+    {
+      "problem_number": 4,
+      "difficulty": "Medium",
+      "premises": [
+        "((P ∧ Q))"
+      ],
+      "conclusion": "(P ∧ Q)",
+      "solution": "Remove one layer of redundant outer parentheses."
+    },
+    {
+      "problem_number": 5,
+      "difficulty": "Medium",
+      "premises": [
+        "((P ∨ Q))"
+      ],
+      "conclusion": "(P ∨ Q)",
+      "solution": "Remove the unnecessary outer parentheses while keeping the inner ones."
+    },
+    {
+      "problem_number": 6,
+      "difficulty": "Medium",
+      "premises": [
+        "(((P)))"
+      ],
+      "conclusion": "((P))",
+      "solution": "Remove one layer of parentheses at a time - apply multiple times to fully simplify."
+    },
+    {
+      "problem_number": 7,
+      "difficulty": "Hard",
+      "premises": [
+        "(((P ∧ Q)))"
+      ],
+      "conclusion": "((P ∧ Q))",
+      "solution": "Remove the outermost unnecessary parentheses."
+    },
+    {
+      "problem_number": 8,
+      "difficulty": "Hard",
+      "premises": [
+        "((P → Q))"
+      ],
+      "conclusion": "(P → Q)",
+      "solution": "Simplify complex implications by removing redundant parentheses."
+    },
+    {
+      "problem_number": 9,
+      "difficulty": "Hard",
+      "premises": [
+        "(((((P)))))"
+      ],
+      "conclusion": "((((P))))",
+      "solution": "Apply parenthesis removal multiple times to deeply nested expressions."
+    },
+    {
+      "problem_number": 10,
+      "difficulty": "Very Hard",
+      "premises": [
+        "((P ∧ Q) ∨ (R ∧ S))"
+      ],
+      "conclusion": "(P ∧ Q) ∨ (R ∧ S)",
+      "solution": "Remove outer parentheses while preserving inner structure that defines operator precedence."
+    }
+  ]
+}

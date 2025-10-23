@@ -11,7 +11,7 @@
         "P → Q",
         "Q → R"
       ],
-      "conclusion": "P → R",
+      "conclusion": "(P → R)",
       "solution": "Apply Hypothetical Syllogism directly to chain the implications."
     },
     {
@@ -21,7 +21,7 @@
         "A → B",
         "B → C"
       ],
-      "conclusion": "A → C",
+      "conclusion": "(A → C)",
       "solution": "Chain the implications using Hypothetical Syllogism."
     },
     {
@@ -31,7 +31,7 @@
         "R → S",
         "S → T"
       ],
-      "conclusion": "R → T",
+      "conclusion": "(R → T)",
       "solution": "Direct application of Hypothetical Syllogism."
     },
     {
@@ -42,8 +42,8 @@
         "Q → R",
         "R → S"
       ],
-      "conclusion": "P → S",
-      "solution": "Apply Hypothetical Syllogism twice: first to get \"P → R\", then again to get \"P → S\"."
+      "conclusion": "(P → S)",
+      "solution": "Apply Hypothetical Syllogism twice: first to get \"(P → R)\", then again to get \"(P → S)\"."
     },
     {
       "problem_number": 5,
@@ -52,7 +52,7 @@
         "(P ∧ Q) → R",
         "R → S"
       ],
-      "conclusion": "(P ∧ Q) → S",
+      "conclusion": "((P ∧ Q) → S)",
       "solution": "Apply Hypothetical Syllogism where the antecedent is a conjunction."
     },
     {
@@ -62,7 +62,7 @@
         "P → (Q ∨ R)",
         "(Q ∨ R) → S"
       ],
-      "conclusion": "P → S",
+      "conclusion": "(P → S)",
       "solution": "Apply Hypothetical Syllogism where the middle term is a disjunction."
     },
     {
@@ -74,7 +74,7 @@
         "R → S",
         "S → T"
       ],
-      "conclusion": "P → T",
+      "conclusion": "(P → T)",
       "solution": "Apply Hypothetical Syllogism three times to chain all implications."
     },
     {
@@ -85,7 +85,7 @@
         "Q → (R ∧ S)",
         "(R ∧ S) → T"
       ],
-      "conclusion": "P → T",
+      "conclusion": "(P → T)",
       "solution": "Apply Hypothetical Syllogism twice, treating \"R ∧ S\" as a single unit."
     },
     {
@@ -95,7 +95,7 @@
         "(P ∨ Q) → R",
         "R → (S ∧ T)"
       ],
-      "conclusion": "(P ∨ Q) → (S ∧ T)",
+      "conclusion": "((P ∨ Q) → (S ∧ T))",
       "solution": "Apply Hypothetical Syllogism with complex antecedent and consequent."
     },
     {
@@ -106,7 +106,7 @@
         "(Q → R) → S",
         "S → T"
       ],
-      "conclusion": "P → T",
+      "conclusion": "(P → T)",
       "solution": "Apply Hypothetical Syllogism twice to chain the nested implications."
     }
   ]

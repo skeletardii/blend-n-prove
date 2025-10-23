@@ -6,6 +6,7 @@ extends Control
 @onready var target_expression: Label = $WorkContainer/TargetArea/TargetContainer/TargetExpression
 @onready var operation_mode_label: Label = $WorkContainer/Footer/FooterContainer/OperationModeLabel
 @onready var page_toggle_button: Button = $WorkContainer/Footer/FooterContainer/PageToggleButton
+@onready var addition_dialog: Panel = $AdditionDialog
 
 # Button Pages
 @onready var double_operations_page: Control = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage
@@ -18,26 +19,26 @@ extends Control
 @onready var ds_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/DSButton
 @onready var cd_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/CDButton
 @onready var dn_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/DNButton
-@onready var imp_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/IMPButton
-@onready var conv_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/CONVButton
+@onready var conj_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/CONJButton
 @onready var eq_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/EQButton
 @onready var res_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/RESButton
 
 # Single Operation Buttons
 @onready var simp_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1/SIMPButton
-@onready var conj_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1/CONJButton
-@onready var add_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1/ADDButton
-@onready var dm_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1/DMButton
-@onready var dist_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/DISTButton
-@onready var comm_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/COMMButton
-@onready var assoc_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/ASSOCButton
-@onready var idemp_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/IDEMPButton
-@onready var abs_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/ABSButton
-@onready var neg_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/NEGButton
-@onready var taut_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/TAUTButton
-@onready var contr_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/CONTRButton
-@onready var dneg_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/DNEGButton
-@onready var paren_remove_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/PAREN_REMOVEButton
+@onready var imp_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1/IMPButton
+@onready var conv_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1/CONVButton
+@onready var add_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/ADDButton
+@onready var dm_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/DMButton
+@onready var dneg_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/DNEGButton
+@onready var dist_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/DISTButton
+@onready var comm_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/COMMButton
+@onready var assoc_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/ASSOCButton
+@onready var idemp_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4/IDEMPButton
+@onready var abs_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4/ABSButton
+@onready var paren_remove_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4/PAREN_REMOVEButton
+@onready var neg_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5/NEGButton
+@onready var taut_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5/TAUTButton
+@onready var contr_button: Button = $WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5/CONTRButton
 
 # Game State
 var available_premises: Array[BooleanLogicEngine.BooleanExpression] = []
@@ -66,14 +67,14 @@ var rule_definitions = {
 	"DS": {"type": RuleType.DOUBLE, "name": "Disjunctive Syllogism"},
 	"CD": {"type": RuleType.DOUBLE, "name": "Constructive Dilemma"},
 	"DN": {"type": RuleType.DOUBLE, "name": "Destructive Dilemma"},
-	"IMP": {"type": RuleType.DOUBLE, "name": "Implication"},
-	"CONV": {"type": RuleType.DOUBLE, "name": "Conversion"},
+	"CONJ": {"type": RuleType.DOUBLE, "name": "Conjunction"},
 	"EQ": {"type": RuleType.DOUBLE, "name": "Equivalence"},
 	"RES": {"type": RuleType.DOUBLE, "name": "Resolution"},
 
 	# Single operations (1-input rules)
 	"SIMP": {"type": RuleType.SINGLE, "name": "Simplification"},
-	"CONJ": {"type": RuleType.SINGLE, "name": "Conjunction"},
+	"IMP": {"type": RuleType.SINGLE, "name": "Implication"},
+	"CONV": {"type": RuleType.SINGLE, "name": "Conversion"},
 	"ADD": {"type": RuleType.SINGLE, "name": "Addition"},
 	"DM": {"type": RuleType.SINGLE, "name": "De Morgan's Laws"},
 	"DIST": {"type": RuleType.SINGLE, "name": "Distributivity"},
@@ -91,6 +92,7 @@ var rule_definitions = {
 func _ready() -> void:
 	connect_rule_buttons()
 	connect_page_toggle()
+	connect_addition_dialog()
 	set_page(1)  # Start with double operations
 
 func connect_rule_buttons() -> void:
@@ -124,6 +126,10 @@ func connect_rule_buttons() -> void:
 
 func connect_page_toggle() -> void:
 	page_toggle_button.pressed.connect(_on_page_toggle_pressed)
+
+func connect_addition_dialog() -> void:
+	addition_dialog.expression_confirmed.connect(_on_addition_dialog_confirmed)
+	addition_dialog.dialog_cancelled.connect(_on_addition_dialog_cancelled)
 
 func set_premises_and_target(premises: Array[BooleanLogicEngine.BooleanExpression], target: String) -> void:
 	# Clean all premises before adding to inventory
@@ -195,6 +201,15 @@ func _on_premise_card_pressed(premise: BooleanLogicEngine.BooleanExpression, car
 	check_rule_application()
 
 func _on_rule_button_pressed(rule: String) -> void:
+	# Special handling for Addition rule - needs user input
+	if rule == "ADD":
+		if selected_premises.size() != 1:
+			feedback_message.emit("Select exactly 1 premise for Addition", Color.ORANGE)
+			return
+		# Show dialog for user to input the expression to add
+		addition_dialog.show_dialog(selected_premises[0])
+		return
+
 	# If clicking the same rule that's already selected, deselect everything
 	if selected_rule == rule:
 		clear_selections()
@@ -228,11 +243,16 @@ func check_rule_application() -> void:
 		apply_rule()
 
 func clean_expression(expr: BooleanLogicEngine.BooleanExpression) -> BooleanLogicEngine.BooleanExpression:
-	# Remove unnecessary outer parentheses from expression
-	var cleaned = BooleanLogicEngine.apply_parenthesis_removal(expr)
-	if cleaned.is_valid:
-		return cleaned
+	# DON'T auto-clean! Preserve structure so users can see what they built
+	# Users can explicitly use PAREN_REMOVE button if they want to clean up
+	# This preserves expressions like (P ∧ Q) instead of converting to P ∧ Q
 	return expr
+
+	# OLD AUTO-CLEAN CODE (disabled to preserve structure):
+	# var cleaned = BooleanLogicEngine.apply_parenthesis_removal(expr)
+	# if cleaned.is_valid:
+	#	return cleaned
+	# return expr
 
 func apply_rule() -> void:
 	if selected_rule.is_empty() or selected_premises.is_empty():
@@ -244,26 +264,33 @@ func apply_rule() -> void:
 	var multi_results = apply_logical_rule_multi(selected_rule, selected_premises)
 
 	if multi_results != null and multi_results.size() > 1:
-		# Multi-result operation - add all results to inventory (after cleaning)
+		# Multi-result operation - add valid results to inventory (after cleaning)
+		var added_results: Array = []
 		for result in multi_results:
 			if result.is_valid:
 				var cleaned_result = clean_expression(result)
 				available_premises.append(cleaned_result)
+				added_results.append(cleaned_result)
 
-		create_premise_cards()
-		ProgressTracker.record_operation_used(rule_def.name, true)
-		clear_selections()
+		# Only proceed if at least one result was added
+		if added_results.size() > 0:
+			create_premise_cards()
+			ProgressTracker.record_operation_used(rule_def.name, true)
+			clear_selections()
 
-		feedback_message.emit("✓ Applied " + rule_def.name + ": Added " + str(multi_results.size()) + " results", Color.GREEN)
+			feedback_message.emit("✓ Applied " + rule_def.name + ": Added " + str(added_results.size()) + " result" + ("s" if added_results.size() > 1 else ""), Color.GREEN)
 
-		# Emit signal for each result
-		for result in multi_results:
-			var cleaned_result = clean_expression(result)
-			rule_applied.emit(cleaned_result)
-			# Check if any result is the target
-			if cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
-				feedback_message.emit("✓ Target reached! Proof complete!", Color.CYAN)
-				target_reached.emit(cleaned_result)
+			# Emit signal for each valid result
+			for cleaned_result in added_results:
+				rule_applied.emit(cleaned_result)
+				# Check if any result is the target
+				if cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
+					feedback_message.emit("✓ Target reached! Proof complete!", Color.CYAN)
+					target_reached.emit(cleaned_result)
+		else:
+			# No valid results - show error
+			clear_selections()
+			feedback_message.emit(rule_def.name + " produced no valid results", Color.RED)
 		return
 
 	# Single-result operation (original behavior)
@@ -536,3 +563,50 @@ func add_premise_to_inventory(premise: BooleanLogicEngine.BooleanExpression) -> 
 	var cleaned_premise = clean_expression(premise)
 	available_premises.append(cleaned_premise)
 	create_premise_cards()
+
+func _on_addition_dialog_confirmed(expr_text: String) -> void:
+	# User confirmed the Addition dialog with an expression
+	if selected_premises.size() != 1:
+		feedback_message.emit("Error: No premise selected", Color.RED)
+		clear_selections()
+		return
+
+	# Create expression from user input
+	var additional_expr = BooleanLogicEngine.create_expression(expr_text)
+
+	if not additional_expr.is_valid:
+		feedback_message.emit("Invalid expression: " + expr_text, Color.RED)
+		return
+
+	# Apply addition rule: P ⊢ P ∨ Q
+	var result = BooleanLogicEngine.apply_addition([selected_premises[0]], additional_expr)
+
+	if result.is_valid:
+		# Clean the result before adding to inventory
+		var cleaned_result = clean_expression(result)
+
+		# Add result to inventory
+		available_premises.append(cleaned_result)
+		create_premise_cards()
+
+		# Track successful operation usage
+		ProgressTracker.record_operation_used("Addition", true)
+
+		# Clear selections
+		clear_selections()
+
+		feedback_message.emit("✓ Applied Addition: " + cleaned_result.expression_string, Color.GREEN)
+		rule_applied.emit(cleaned_result)
+
+		# Check if target is reached
+		if cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
+			feedback_message.emit("✓ Target reached! Proof complete!", Color.CYAN)
+			target_reached.emit(cleaned_result)
+	else:
+		clear_selections()
+		feedback_message.emit("Addition failed to produce valid result", Color.RED)
+
+func _on_addition_dialog_cancelled() -> void:
+	# User cancelled the Addition dialog
+	clear_selections()
+	feedback_message.emit("Addition cancelled", Color.WHITE)
