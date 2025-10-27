@@ -2,6 +2,15 @@
 class_name MCPCommandHandler
 extends Node
 
+# Preload all command processor classes
+const MCPBaseCommandProcessor = preload("res://addons/godot_mcp/commands/base_command_processor.gd")
+const MCPNodeCommands = preload("res://addons/godot_mcp/commands/node_commands.gd")
+const MCPScriptCommands = preload("res://addons/godot_mcp/commands/script_commands.gd")
+const MCPSceneCommands = preload("res://addons/godot_mcp/commands/scene_commands.gd")
+const MCPProjectCommands = preload("res://addons/godot_mcp/commands/project_commands.gd")
+const MCPEditorCommands = preload("res://addons/godot_mcp/commands/editor_commands.gd")
+const MCPEditorScriptCommands = preload("res://addons/godot_mcp/commands/editor_script_commands.gd")
+
 var _websocket_server
 var _command_processors = []
 
