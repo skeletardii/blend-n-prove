@@ -27,21 +27,21 @@ extends Control
 @onready var res_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/RESButton
 
 # Single Operation Buttons
-@onready var simp_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1/SIMPButton
-@onready var imp_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1/IMPButton
-@onready var conv_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1/CONVButton
-@onready var add_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/ADDButton
-@onready var dm_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/DMButton
-@onready var dneg_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2/DNEGButton
-@onready var dist_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/DISTButton
-@onready var comm_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/COMMButton
-@onready var assoc_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3/ASSOCButton
-@onready var idemp_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4/IDEMPButton
-@onready var abs_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4/ABSButton
-@onready var paren_remove_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4/PAREN_REMOVEButton
-@onready var neg_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5/NEGButton
-@onready var taut_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5/TAUTButton
-@onready var contr_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5/CONTRButton
+@onready var simp_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/SIMPButton
+@onready var imp_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/IMPButton
+@onready var conv_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/CONVButton
+@onready var add_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/ADDButton
+@onready var dm_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/DMButton
+@onready var dneg_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/DNEGButton
+@onready var dist_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/DISTButton
+@onready var comm_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/COMMButton
+@onready var assoc_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/ASSOCButton
+@onready var idemp_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/IDEMPButton
+@onready var abs_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/ABSButton
+@onready var paren_remove_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/PAREN_REMOVEButton
+@onready var neg_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/NEGButton
+@onready var taut_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/TAUTButton
+@onready var contr_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/CONTRButton
 
 # Game State
 var available_premises: Array[BooleanLogicEngine.BooleanExpression] = []
@@ -266,6 +266,9 @@ func create_premise_card(premise: BooleanLogicEngine.BooleanExpression, index: i
 	card.text = str(index + 1) + ". " + premise.expression_string
 	card.custom_minimum_size = Vector2(200, 60)
 	card.toggle_mode = true
+	# Center the text horizontally and vertically
+	card.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	card.vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER
 	card.pressed.connect(_on_premise_card_pressed.bind(premise, card))
 	return card
 
@@ -618,10 +621,10 @@ func animate_target_reached(result: BooleanLogicEngine.BooleanExpression) -> voi
 	# Scale down as it flies
 	tween.parallel().tween_property(animated_card, "scale", Vector2(0.3, 0.3), duration)
 
-	# When animation completes, create flash at the card's final position and clean up
+	# When animation completes, create flash at the collision position (target) and clean up
 	tween.finished.connect(func():
-		# Flash spawns where the card disappears (at end_pos)
-		create_target_flash(animated_card.global_position + animated_card.size / 2)
+		# Flash spawns where the card collides with target (at end_pos)
+		create_target_flash(end_pos)
 		animated_card.queue_free()
 		# Play success sound
 		AudioManager.play_logic_success()
