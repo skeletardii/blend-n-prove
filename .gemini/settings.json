@@ -1,9 +1,9 @@
 {
   "mcpServers": {
-    "godot-mcp": {
+    "my-godot-mcp": {
       "command": "node",
       "args": [
-        "C:\\Users\\Admin\\Documents\\blend and prove repo\\blend-n-prove\\server\\dist\\index.js"
+        "C:\\Users\\X\\Documents\\Godot-MCP\\server\\dist\\index.js"
       ],
       "env": {
         "MCP_TRANSPORT": "stdio"

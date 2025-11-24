@@ -38,5 +38,16 @@
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "godot"
-  ]
+  ],
+  "mcpServers": {
+    "godot-mcp": {
+ 	 "command": "node",
+ 	 "args": [
+ 	   "C:/Users/X/Documents/godot-mcp/server/dist/index.js"
+ 	 ],
+ 	 "env": {
+ 	   "MCP_TRANSPORT": "stdio"
+ 	 }
+    }
+  }
 }
