@@ -17,6 +17,7 @@ extends Control
 @onready var pause_overlay: CanvasLayer = $PauseOverlay
 @onready var resume_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ResumeButton
 @onready var quit_button: Button = $PauseOverlay/PauseMenu/MenuContainer/QuitButton
+@onready var background_texture: TextureRect = $TextureRect
 
 # Phase Scenes
 var phase1_scene: PackedScene = preload("res://src/ui/Phase1UI.tscn")
@@ -25,6 +26,10 @@ var score_popup_scene: PackedScene = preload("res://src/ui/ScorePopup.tscn")
 var tutorial_overlay_scene: PackedScene = preload("res://src/ui/TutorialOverlay.tscn")
 var tutorial_completion_scene: PackedScene = preload("res://src/ui/TutorialCompletionScreen.tscn")
 var current_phase_instance: Control = null
+
+# Background Textures
+var phase1_background: Texture2D = preload("res://assets/sprites/phase1bg.jpg")
+var phase2_background: Texture2D = preload("res://assets/sprites/spiralbg.jpg")
 
 # Game State
 var current_customer: GameManager.CustomerData
@@ -132,8 +137,22 @@ func update_patience_timer(delta: float) -> void:
 	if patience_timer <= 0.0:
 		customer_leaves()
 
+func change_background(phase: GameManager.GamePhase) -> void:
+	"""Change the background based on the current game phase"""
+	if not background_texture:
+		return
+
+	match phase:
+		GameManager.GamePhase.PREPARING_PREMISES:
+			background_texture.texture = phase1_background
+		GameManager.GamePhase.TRANSFORMING_PREMISES:
+			background_texture.texture = phase2_background
+
 func switch_to_phase1() -> void:
 	GameManager.change_phase(GameManager.GamePhase.PREPARING_PREMISES)
+
+	# Change background to Phase 1
+	change_background(GameManager.GamePhase.PREPARING_PREMISES)
 
 	# Clear current phase
 	if current_phase_instance:
@@ -162,6 +181,9 @@ func switch_to_phase1() -> void:
 
 func switch_to_phase2() -> void:
 	GameManager.change_phase(GameManager.GamePhase.TRANSFORMING_PREMISES)
+
+	# Change background to Phase 2
+	change_background(GameManager.GamePhase.TRANSFORMING_PREMISES)
 
 	# Clear current phase
 	if current_phase_instance:
