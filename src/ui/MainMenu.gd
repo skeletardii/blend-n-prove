@@ -12,6 +12,8 @@ extends Control
 @onready var high_score_quick: Label = $QuickStatsPanel/HighScoreQuick
 @onready var games_played_quick: Label = $QuickStatsPanel/GamesPlayedQuick
 @onready var streak_quick: Label = $QuickStatsPanel/StreakQuick
+@onready var reset_confirmation_dialog: ConfirmationDialog = $ResetConfirmationDialog
+@onready var feedback_label: Label = $FeedbackLabel
 
 func _ready() -> void:
 	AudioManager.start_menu_music()
@@ -204,3 +206,124 @@ func _on_difficulty_mode_option_item_selected(index: int) -> void:
 func _on_close_settings_button_pressed() -> void:
 	AudioManager.play_button_click()
 	settings_panel.visible = false
+
+# ===== SAVE SYSTEM HANDLERS =====
+
+func _on_save_progress_button_pressed() -> void:
+	AudioManager.play_button_click()
+	ProgressTracker.save_progress_data()
+	show_feedback("Progress saved successfully!", Color(0.2, 0.8, 0.2))
+
+func _on_load_progress_button_pressed() -> void:
+	AudioManager.play_button_click()
+	ProgressTracker.load_progress_data()
+	show_feedback("Progress loaded successfully!", Color(0.2, 0.8, 0.2))
+	update_quick_stats()
+
+func _on_export_progress_button_pressed() -> void:
+	AudioManager.play_button_click()
+
+	# Get the JSON string from ProgressTracker
+	var json_string = ProgressTracker.export_progress_data()
+
+	# Save to export file
+	var export_path = "user://game_progress_export.json"
+	var file = FileAccess.open(export_path, FileAccess.WRITE)
+
+	if file:
+		file.store_string(json_string)
+		file.close()
+
+		# Get the actual filesystem path
+		var actual_path = ProjectSettings.globalize_path(export_path)
+		show_feedback("Progress exported to: " + actual_path, Color(0.2, 0.8, 0.2))
+		print("Progress exported to: " + actual_path)
+	else:
+		show_feedback("Failed to export progress!", Color(0.9, 0.3, 0.3))
+
+func _on_import_progress_button_pressed() -> void:
+	AudioManager.play_button_click()
+
+	var import_path = "user://game_progress_export.json"
+
+	# Check if export file exists
+	if not FileAccess.file_exists(import_path):
+		show_feedback("No export file found!", Color(0.9, 0.3, 0.3))
+		return
+
+	# Read the export file
+	var file = FileAccess.open(import_path, FileAccess.READ)
+	if not file:
+		show_feedback("Failed to read export file!", Color(0.9, 0.3, 0.3))
+		return
+
+	var json_string = file.get_as_text()
+	file.close()
+
+	# Parse JSON
+	var json = JSON.new()
+	var parse_result = json.parse(json_string)
+
+	if parse_result != OK:
+		show_feedback("Invalid JSON in export file!", Color(0.9, 0.3, 0.3))
+		return
+
+	var data = json.data
+
+	# Save as current progress
+	var save_path = "user://game_progress.json"
+	var save_file = FileAccess.open(save_path, FileAccess.WRITE)
+
+	if save_file:
+		save_file.store_string(json_string)
+		save_file.close()
+
+		# Reload progress
+		ProgressTracker.load_progress_data()
+		update_quick_stats()
+
+		show_feedback("Progress imported successfully!", Color(0.2, 0.8, 0.2))
+	else:
+		show_feedback("Failed to import progress!", Color(0.9, 0.3, 0.3))
+
+func _on_reset_progress_button_pressed() -> void:
+	AudioManager.play_button_click()
+	# Show confirmation dialog
+	reset_confirmation_dialog.popup_centered()
+
+func _on_reset_progress_confirmed() -> void:
+	# Reset all progress
+	ProgressTracker.reset_progress_data()
+
+	# Update UI
+	update_quick_stats()
+
+	# Close settings panel and show feedback
+	settings_panel.visible = false
+	show_feedback("All progress has been reset!", Color(0.9, 0.3, 0.3))
+
+# ===== FEEDBACK SYSTEM =====
+
+var feedback_timer: Timer = null
+
+func show_feedback(message: String, color: Color) -> void:
+	feedback_label.text = message
+	feedback_label.modulate = color
+
+	# Clear existing timer if any
+	if feedback_timer:
+		feedback_timer.queue_free()
+
+	# Create new timer to hide feedback after 3 seconds
+	feedback_timer = Timer.new()
+	feedback_timer.wait_time = 3.0
+	feedback_timer.one_shot = true
+	feedback_timer.timeout.connect(hide_feedback)
+	add_child(feedback_timer)
+	feedback_timer.start()
+
+func hide_feedback() -> void:
+	feedback_label.text = ""
+	if feedback_timer:
+		feedback_timer.queue_free()
+		feedback_timer = null

@@ -204,6 +204,151 @@
       "expected_operations": 3,
       "description": "Biconditional + Modus Tollens",
       "solution": "Extract \"P → Q\" from \"P ↔ Q\" using Biconditional Elimination, then apply Modus Tollens with \"¬Q\" to get \"¬P\"."
+    },
+    {
+      "natural_language_premises": [
+        "If the coffee is hot (P), then it is freshly brewed (Q).",
+        "If it is freshly brewed (Q), then it tastes good (R).",
+        "If it tastes good (R), then customers return (S).",
+        "The coffee is hot (P).",
+        "The shop is crowded (T)."
+      ],
+      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "P", "T"],
+      "natural_language_conclusion": "Customers return (S).",
+      "hidden_logical_conclusion": "S",
+      "expected_operations": 3,
+      "description": "Chain of three implications with Modus Ponens",
+      "solution": "Translate: P = 'Coffee is hot', Q = 'Freshly brewed', R = 'Tastes good', S = 'Customers return', T = 'Shop crowded'. Chain conditionals using Hypothetical Syllogism twice to get P → S, then apply Modus Ponens with P to conclude S.",
+      "interpretation_hints": ["Build a complete chain through three steps", "Apply the known fact through the entire chain", "T is not needed for the conclusion"]
+    },
+    {
+      "natural_language_premises": [
+        "Either the package arrived (P) or it is lost (Q), but not both.",
+        "If the package arrived (P), then we can start assembly (R).",
+        "If we can start assembly (R), then the project is on schedule (S).",
+        "The package is not lost (¬Q).",
+        "The budget is approved (T)."
+      ],
+      "hidden_logical_premises": ["P ⊕ Q", "P → R", "R → S", "¬Q", "T"],
+      "natural_language_conclusion": "The project is on schedule (S).",
+      "hidden_logical_conclusion": "S",
+      "expected_operations": 3,
+      "description": "XOR with two-step implication chain",
+      "solution": "Translate: P = 'Package arrived', Q = 'Package lost', R = 'Start assembly', S = 'Project on schedule', T = 'Budget approved'. From XOR P ⊕ Q and ¬Q, deduce P. Chain P → R and R → S to get P → S, then apply Modus Ponens to conclude S.",
+      "interpretation_hints": ["Use the exclusivity to determine which option is true", "Then follow the chain of implications", "One fact is not needed"]
+    },
+    {
+      "natural_language_premises": [
+        "If the recipe calls for flour (P) and sugar (Q), then the cake will rise (R).",
+        "If the cake will rise (R), then it will be fluffy (S).",
+        "The recipe calls for flour (P).",
+        "The recipe calls for sugar (Q).",
+        "The oven temperature is correct (T)."
+      ],
+      "hidden_logical_premises": ["(P ∧ Q) → R", "R → S", "P", "Q", "T"],
+      "natural_language_conclusion": "The cake will be fluffy (S).",
+      "hidden_logical_conclusion": "S",
+      "expected_operations": 3,
+      "description": "Conjunction leading to compound antecedent",
+      "solution": "Translate: P = 'Flour', Q = 'Sugar', R = 'Cake rises', S = 'Cake fluffy', T = 'Correct temp'. Apply Conjunction to P and Q to get P ∧ Q. Apply Modus Ponens to (P ∧ Q) → R to get R. Apply Modus Ponens to R → S to get S.",
+      "interpretation_hints": ["Combine premises to satisfy compound antecedent", "Follow the chain through multiple steps"]
+    },
+    {
+      "natural_language_premises": [
+        "Either we work overtime (P) or we miss the deadline (Q).",
+        "If we work overtime (P), then the team is exhausted (R).",
+        "If we miss the deadline (Q), then clients are angry (S).",
+        "We work overtime (P).",
+        "The project budget is limited (T)."
+      ],
+      "hidden_logical_premises": ["P ∨ Q", "P → R", "Q → S", "P", "T"],
+      "natural_language_conclusion": "The team is exhausted (R).",
+      "hidden_logical_conclusion": "R",
+      "expected_operations": 2,
+      "description": "Constructive Dilemma branch selection",
+      "solution": "Translate: P = 'Work overtime', Q = 'Miss deadline', R = 'Team exhausted', S = 'Clients angry', T = 'Budget limited'. Since P is true, apply Modus Ponens to P → R to get R.",
+      "interpretation_hints": ["When one branch of a dilemma is true, follow that path", "Apply the corresponding conditional"]
+    },
+    {
+      "natural_language_premises": [
+        "Either the email was received (P) or it was lost (Q).",
+        "If the email was received (P), then it is in the inbox (R).",
+        "If it is in the inbox (R), then it was read (S).",
+        "The email was not lost (¬Q).",
+        "The inbox has notifications enabled (T)."
+      ],
+      "hidden_logical_premises": ["P ∨ Q", "P → R", "R → S", "¬Q", "T"],
+      "natural_language_conclusion": "The email was read (S).",
+      "hidden_logical_conclusion": "S",
+      "expected_operations": 3,
+      "description": "Disjunctive Syllogism with chain",
+      "solution": "Translate: P = 'Email received', Q = 'Email lost', R = 'In inbox', S = 'Email read', T = 'Notifications on'. From P ∨ Q and ¬Q, deduce P. Apply Modus Ponens to P → R to get R. Apply Modus Ponens to R → S to get S.",
+      "interpretation_hints": ["Eliminate one option from the disjunction", "Use the result to start a chain"]
+    },
+    {
+      "natural_language_premises": [
+        "If the server is running (P), then both the website is online (Q) and database is accessible (R).",
+        "If the website is online (Q), then users can browse products (S).",
+        "If the database is accessible (R), then inventory is updated (T).",
+        "The server is running (P).",
+        "The internet connection is stable (U)."
+      ],
+      "hidden_logical_premises": ["P → (Q ∧ R)", "Q → S", "R → T", "P", "U"],
+      "natural_language_conclusion": "Users can browse products (S).",
+      "hidden_logical_conclusion": "S",
+      "expected_operations": 3,
+      "description": "Compound consequent with selective path",
+      "solution": "Translate: P = 'Server running', Q = 'Website online', R = 'Database accessible', S = 'Browse products', T = 'Inventory updated', U = 'Connection stable'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Extract Q using Simplification. Apply Modus Ponens to Q → S to get S.",
+      "interpretation_hints": ["Extract the needed component from compound result", "Follow one path from the compound structure", "Not all consequences need to be used"]
+    },
+    {
+      "natural_language_premises": [
+        "If the alarm is set (P), then we wake up on time (Q).",
+        "If we wake up on time (Q), then we have breakfast (R).",
+        "If we have breakfast (R), then we have energy (S).",
+        "We do not wake up on time (¬Q)."
+      ],
+      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "¬Q"],
+      "natural_language_conclusion": "The alarm is not set (¬P).",
+      "hidden_logical_conclusion": "¬P",
+      "expected_operations": 2,
+      "description": "Backward chain with Modus Tollens",
+      "solution": "Translate: P = 'Alarm set', Q = 'Wake on time', R = 'Have breakfast', S = 'Have energy'. Apply Modus Tollens to P → Q and ¬Q to get ¬P.",
+      "interpretation_hints": ["Work backwards from a false consequence", "Use Modus Tollens to trace back the chain"]
+    },
+    {
+      "natural_language_premises": [
+        "Either the promotion is active (P) or it has expired (Q).",
+        "If the promotion is active (P), then the discount applies (R).",
+        "If the discount applies (R), then the customer saves money (S).",
+        "If the customer saves money (S), then they are satisfied (T).",
+        "The promotion has not expired (¬Q).",
+        "The customer has a membership card (U)."
+      ],
+      "hidden_logical_premises": ["P ∨ Q", "P → R", "R → S", "S → T", "¬Q", "U"],
+      "natural_language_conclusion": "The customer is satisfied (T).",
+      "hidden_logical_conclusion": "T",
+      "expected_operations": 3,
+      "description": "Disjunctive Syllogism with three-step chain",
+      "solution": "Translate: P = 'Promotion active', Q = 'Promotion expired', R = 'Discount applies', S = 'Save money', T = 'Satisfied', U = 'Membership card'. From P ∨ Q and ¬Q, deduce P. Chain P → R → S → T using Hypothetical Syllogism to get P → T, then apply Modus Ponens with P to get T.",
+      "interpretation_hints": ["Determine truth from the disjunction", "Build a complete chain of consequences"]
+    },
+    {
+      "natural_language_premises": [
+        "If the meeting is important (P), then it requires preparation (Q).",
+        "If it requires preparation (Q), then we need an agenda (R).",
+        "If we need an agenda (R), then a document is created (S).",
+        "If a document is created (S), then it is shared with attendees (T).",
+        "The meeting is important (P).",
+        "The conference room is available (U)."
+      ],
+      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "S → T", "P", "U"],
+      "natural_language_conclusion": "The document is shared with attendees (T).",
+      "hidden_logical_conclusion": "T",
+      "expected_operations": 3,
+      "description": "Four-step implication chain",
+      "solution": "Translate: P = 'Meeting important', Q = 'Needs prep', R = 'Need agenda', S = 'Document created', T = 'Shared with attendees', U = 'Room available'. Chain all four conditionals: P → Q → R → S → T. Apply Hypothetical Syllogism three times to build P → T, then apply Modus Ponens with P to get T.",
+      "interpretation_hints": ["Build the entire chain step-by-step", "Each step leads directly to the next", "One fact is not needed for the logical chain"]
     }
   ]
 }

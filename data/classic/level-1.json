@@ -189,6 +189,119 @@
 	  "expected_operations": 1,
 	  "description": "Modus Tollens (variant)",
 	  "solution": "Apply Modus Tollens: from \"R → S\" and \"¬S\", conclude \"¬R\"."
+	},
+	{
+	  "natural_language_premises": [
+		"If the cat is hungry (P), then it meows (Q).",
+		"The cat is hungry (P)."
+	  ],
+	  "hidden_logical_premises": ["P → Q", "P"],
+	  "natural_language_conclusion": "The cat meows (Q).",
+	  "hidden_logical_conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Modus Ponens with natural language",
+	  "solution": "Translate: P = 'The cat is hungry', Q = 'The cat meows'. Apply Modus Ponens: from \"P → Q\" and \"P\", conclude \"Q\".",
+	  "interpretation_hints": ["Identify the condition and what follows from it", "The condition is met, so the consequence is true"]
+	},
+	{
+	  "natural_language_premises": [
+		"If the light is on (P), then the room is bright (Q).",
+		"The room is not bright (¬Q)."
+	  ],
+	  "hidden_logical_premises": ["P → Q", "¬Q"],
+	  "natural_language_conclusion": "The light is not on (¬P).",
+	  "hidden_logical_conclusion": "¬P",
+	  "expected_operations": 1,
+	  "description": "Modus Tollens with natural language",
+	  "solution": "Translate: P = 'The light is on', Q = 'The room is bright'. Apply Modus Tollens: from \"P → Q\" and \"¬Q\", conclude \"¬P\".",
+	  "interpretation_hints": ["Work backwards from the false consequence", "If the result is false, the condition must be false"]
+	},
+	{
+	  "natural_language_premises": [
+		"The book is fiction (P) and the book is entertaining (Q)."
+	  ],
+	  "hidden_logical_premises": ["P ∧ Q"],
+	  "natural_language_conclusion": "The book is fiction (P).",
+	  "hidden_logical_conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Simplification (extracting left component)",
+	  "solution": "Translate: P = 'Book is fiction', Q = 'Book is entertaining'. Apply Simplification to extract P from P ∧ Q.",
+	  "interpretation_hints": ["When something is both A and B, each property still holds individually"]
+	},
+	{
+	  "natural_language_premises": [
+		"Either the store is open (P) or it is closed (Q).",
+		"The store is not open (¬P)."
+	  ],
+	  "hidden_logical_premises": ["P ∨ Q", "¬P"],
+	  "natural_language_conclusion": "The store is closed (Q).",
+	  "hidden_logical_conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Disjunctive Syllogism with natural language",
+	  "solution": "Translate: P = 'Store is open', Q = 'Store is closed'. Apply Disjunctive Syllogism: from P ∨ Q and ¬P, conclude Q.",
+	  "interpretation_hints": ["One of two options must be true", "If one is false, the other must be true"]
+	},
+	{
+	  "natural_language_premises": [
+		"It is not the case that the weather is not sunny (¬¬P)."
+	  ],
+	  "hidden_logical_premises": ["¬¬P"],
+	  "natural_language_conclusion": "The weather is sunny (P).",
+	  "hidden_logical_conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Double Negation elimination",
+	  "solution": "Translate: P = 'Weather is sunny'. Apply Double Negation elimination: ¬¬P becomes P.",
+	  "interpretation_hints": ["Removing double negatives reveals the positive statement"]
+	},
+	{
+	  "natural_language_premises": [
+		"The car is red (P).",
+		"The car is fast (Q)."
+	  ],
+	  "hidden_logical_premises": ["P", "Q"],
+	  "natural_language_conclusion": "The car is red and fast (P ∧ Q).",
+	  "hidden_logical_conclusion": "P ∧ Q",
+	  "expected_operations": 1,
+	  "description": "Conjunction with natural language",
+	  "solution": "Translate: P = 'Car is red', Q = 'Car is fast'. Apply Conjunction to combine P and Q into P ∧ Q.",
+	  "interpretation_hints": ["Combine individual facts into a compound statement"]
+	},
+	{
+	  "natural_language_premises": [
+		"The pizza has cheese (P) and has pepperoni (Q)."
+	  ],
+	  "hidden_logical_premises": ["P ∧ Q"],
+	  "natural_language_conclusion": "The pizza has pepperoni (Q).",
+	  "hidden_logical_conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Simplification (extracting right component)",
+	  "solution": "Translate: P = 'Pizza has cheese', Q = 'Pizza has pepperoni'. Apply Simplification to extract Q from P ∧ Q.",
+	  "interpretation_hints": ["From a compound AND statement, extract the second component"]
+	},
+	{
+	  "natural_language_premises": [
+		"The student passed the exam (P).",
+		"Either the student failed the exam (¬P) or got a scholarship (Q)."
+	  ],
+	  "hidden_logical_premises": ["P", "¬P ∨ Q"],
+	  "natural_language_conclusion": "The student got a scholarship (Q).",
+	  "hidden_logical_conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Disjunctive Syllogism with premise negation",
+	  "solution": "Translate: P = 'Student passed', Q = 'Got scholarship'. From P, we know ¬P is false. Apply Disjunctive Syllogism with ¬P ∨ Q to conclude Q.",
+	  "interpretation_hints": ["Use the known fact to eliminate one option from the disjunction"]
+	},
+	{
+	  "natural_language_premises": [
+		"It is not the case that both the team won (P) and lost (Q)."
+	  ],
+	  "hidden_logical_premises": ["¬(P ∧ Q)"],
+	  "natural_language_conclusion": "Either the team did not win or did not lose (¬P ∨ ¬Q).",
+	  "hidden_logical_conclusion": "¬P ∨ ¬Q",
+	  "expected_operations": 1,
+	  "description": "De Morgan's Law with natural language",
+	  "solution": "Translate: P = 'Team won', Q = 'Team lost'. Apply De Morgan's Law: ¬(P ∧ Q) becomes ¬P ∨ ¬Q.",
+	  "interpretation_hints": ["'Not both' means at least one is false", "This is equivalent to saying 'not one or not the other'"]
 	}
   ]
 }
