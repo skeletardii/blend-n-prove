@@ -8,19 +8,19 @@
 content_margin_top = 16.0
 content_margin_bottom = 16.0
 texture = ExtResource("1_p3x10")
-texture_margin_left = 34.53459
-texture_margin_top = 34.184097
-texture_margin_right = 33.132614
-texture_margin_bottom = 32.43163
-region_rect = Rect2(-0.45758057, -0.021831512, 126.17791, 121.27098)
+texture_margin_left = 34.5346
+texture_margin_top = 34.1841
+texture_margin_right = 33.1326
+texture_margin_bottom = 32.4316
+region_rect = Rect2(-0.457581, -0.0218315, 126.178, 121.271)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2yqly"]
 texture = ExtResource("2_fe75p")
-texture_margin_left = 81.55526
-texture_margin_top = 60.555676
-texture_margin_right = 63.20002
-texture_margin_bottom = 77.04736
-region_rect = Rect2(0.72036743, 0.7501221, 566.7101, 379.89972)
+texture_margin_left = 81.5553
+texture_margin_top = 60.5557
+texture_margin_right = 63.2
+texture_margin_bottom = 77.0474
+region_rect = Rect2(0.720367, 0.750122, 566.71, 379.9)
 
 [resource]
 Button/fonts/font = ExtResource("1_2yqly")
