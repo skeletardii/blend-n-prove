@@ -1,12 +1,14 @@
 extends Control
 
 # UI References - Persistent Elements
+@onready var main_container: VBoxContainer = $UI/MainContainer
 @onready var lives_display: Label = $UI/MainContainer/TopBar/TopBarContainer/LivesContainer/LivesDisplay
 @onready var score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/ScoreDisplay
-@onready var customer_name: Label = $UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer/CustomerName
+@onready var customer_name: Label = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/CustomerName
 @onready var patience_bar: ProgressBar = $UI/MainContainer/PatienceBar
-@onready var order_display: RichTextLabel = $UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer/OrderDisplay
-@onready var phase_container: Control = $UI/MainContainer/GameContentArea/PhaseContainer
+@onready var hourglass_animation: Node2D = $UI/MainContainer/PatienceBar/HourglassAnimation
+@onready var order_display: RichTextLabel = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/OrderDisplay
+@onready var phase_container: Control = $UI/MainContainer/ScrollContainer/GameContentArea/PhaseContainer
 @onready var tutorial_help_panel: Panel = $UI/TutorialHelpPanel
 @onready var show_help_button: Button = $UI/MainContainer/TopBar/TopBarContainer/ShowHelpButton
 @onready var hint_button: Button = $UI/MainContainer/TopBar/TopBarContainer/HintButton
@@ -37,7 +39,23 @@ var is_paused: bool = false
 var tutorial_overlay: CanvasLayer = null
 var tutorial_manager: Node = null
 
+func setup_dynamic_spacing() -> void:
+	"""Set dynamic spacing between UI modules based on viewport height"""
+	var viewport_height: float = get_viewport_rect().size.y
+
+	# Calculate spacing as a percentage of viewport height
+	# For 1280px height, use 2px spacing (0.16%)
+	# This scales proportionally with screen size
+	var dynamic_spacing: int = max(2, int(viewport_height * 0.0016))
+
+	# Apply to main container
+	if main_container:
+		main_container.add_theme_constant_override("separation", dynamic_spacing)
+
 func _ready() -> void:
+	# Set dynamic spacing based on viewport size
+	setup_dynamic_spacing()
+
 	# Connect to GameManager signals
 	GameManager.score_updated.connect(_on_score_updated)
 	GameManager.lives_updated.connect(_on_lives_updated)
@@ -97,6 +115,10 @@ func update_patience_timer(delta: float) -> void:
 
 	var patience_percentage: float = (patience_timer / max_patience) * 100.0
 	patience_bar.value = patience_percentage
+
+	# Update hourglass sand level
+	if hourglass_animation:
+		hourglass_animation.update_sand(patience_percentage)
 
 	# Change color based on urgency
 	if patience_percentage > 60:

@@ -1,6 +1,7 @@
 extends Control
 
 # UI References
+@onready var work_container: VBoxContainer = $WorkContainer
 @onready var phase_label: Label = $WorkContainer/PhaseLabel
 @onready var premise_grid: GridContainer = $WorkContainer/InventoryArea/InventoryContainer/InventoryScroll/PremiseGrid
 @onready var target_expression: Label = $WorkContainer/TargetArea/TargetContainer/TargetExpression
@@ -90,7 +91,20 @@ var rule_definitions = {
 	"PAREN_REMOVE": {"type": RuleType.SINGLE, "name": "Remove Parentheses"}
 }
 
+func setup_dynamic_spacing() -> void:
+	"""Set dynamic spacing between UI modules based on viewport height"""
+	var viewport_height: float = get_viewport_rect().size.y
+
+	# Calculate spacing as a percentage of viewport height
+	# For 1280px height, use 10px spacing (0.78%)
+	var dynamic_spacing: int = max(5, int(viewport_height * 0.0078))
+
+	# Apply to work container
+	if work_container:
+		work_container.add_theme_constant_override("separation", dynamic_spacing)
+
 func _ready() -> void:
+	setup_dynamic_spacing()
 	connect_rule_buttons()
 	connect_page_toggle()
 	connect_addition_dialog()

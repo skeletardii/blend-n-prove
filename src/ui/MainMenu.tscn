@@ -2,11 +2,12 @@
 
 [ext_resource type="Script" uid="uid://k7rdb8uuwufw" path="res://src/ui/MainMenu.gd" id="1_2v8qy"]
 [ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_2wh52"]
-[ext_resource type="Texture2D" uid="uid://c8fy6qneuff6h" path="res://assets/sprites/bgfruits.png" id="3_ow34m"]
-[ext_resource type="Texture2D" uid="uid://b0v021veuh2bu" path="res://assets/sprites/logobeta.png" id="4_ow34m"]
+[ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_ihbld"]
+[ext_resource type="Texture2D" uid="uid://onbkto0umar" path="res://assets/sprites/newlogo.png" id="4_ihbld"]
 
 [sub_resource type="Gradient" id="Gradient_2wh52"]
-colors = PackedColorArray(0.976471, 0.662745, 0.835294, 1, 0.996078, 0.843137, 0.682353, 1)
+offsets = PackedFloat32Array(0, 0.004219409, 0.03797468, 0.9957806, 1)
+colors = PackedColorArray(0.976471, 0.662745, 0.835294, 1, 0.98275846, 0.72059226, 0.78624964, 1, 0.77517945, 0.4166604, 0.9455609, 1, 0.06301862, 0.10464167, 0.41681436, 1, 0.996078, 0.843137, 0.682353, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_ow34m"]
 gradient = SubResource("Gradient_2wh52")
@@ -16,6 +17,7 @@ fill_to = Vector2(1, 1)
 shader = ExtResource("2_2wh52")
 shader_parameter/speed = 0.05
 shader_parameter/opacity = 0.467
+shader_parameter/rotation_speed = 1.0
 shader_parameter/shaking = true
 shader_parameter/amplitude = 1.0
 shader_parameter/noise_scale = 20.0
@@ -44,13 +46,14 @@ texture = SubResource("GradientTexture2D_ow34m")
 texture_repeat = 2
 material = SubResource("ShaderMaterial_2wh52")
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1.0
-offset_top = 1.0
-offset_bottom = 1.0
-texture = ExtResource("3_ow34m")
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_ihbld")
+expand_mode = 1
+stretch_mode = 1
 
 [node name="MenuContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -59,18 +62,17 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -300.0
-offset_right = 200.0
-offset_bottom = 300.0
+offset_left = -250.0
+offset_top = -626.0
+offset_right = 250.0
+offset_bottom = 573.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="TextureRect" type="TextureRect" parent="MenuContainer"]
 layout_mode = 2
-texture = ExtResource("4_ow34m")
-expand_mode = 4
-stretch_mode = 3
+texture = ExtResource("4_ihbld")
+expand_mode = 5
 
 [node name="Title" type="Label" parent="MenuContainer"]
 visible = false
@@ -89,8 +91,9 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
 [node name="PlayButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(300, 60)
+custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "PLAY GAME"
 
 [node name="Spacer2" type="Control" parent="MenuContainer"]
@@ -98,8 +101,9 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="DebugButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(300, 60)
+custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "DEBUG OPTIONS"
 
 [node name="Spacer3" type="Control" parent="MenuContainer"]
@@ -107,8 +111,9 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="SettingsButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(300, 60)
+custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "SETTINGS"
 
 [node name="Spacer4" type="Control" parent="MenuContainer"]
@@ -116,16 +121,21 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="ProgressButton" type="Button" parent="MenuContainer"]
+custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
-text = "Progress & Stats"
+theme_override_font_sizes/font_size = 28
+text = "PROGRESS AND STATS
+"
 
 [node name="Spacer7" type="Control" parent="MenuContainer"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="GridButton" type="Button" parent="MenuContainer"]
+custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
-text = "Tutorials
+theme_override_font_sizes/font_size = 28
+text = "TUTORIALS
 "
 
 [node name="Spacer8" type="Control" parent="MenuContainer"]
@@ -133,8 +143,9 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="QuitButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(300, 60)
+custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "QUIT"
 
 [node name="BlenderEmoji" type="Label" parent="MenuContainer"]

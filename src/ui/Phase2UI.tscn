@@ -23,6 +23,7 @@ offset_right = -10.0
 offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 10
 
 [node name="PhaseLabel" type="Label" parent="WorkContainer"]
 layout_mode = 2
@@ -31,7 +32,7 @@ horizontal_alignment = 1
 
 [node name="InventoryArea" type="Panel" parent="WorkContainer"]
 modulate = Color(0.941, 0.91, 1, 1)
-custom_minimum_size = Vector2(0, 250)
+custom_minimum_size = Vector2(0, 180)
 layout_mode = 2
 
 [node name="InventoryContainer" type="VBoxContainer" parent="WorkContainer/InventoryArea"]
@@ -63,7 +64,7 @@ columns = 2
 
 [node name="TargetArea" type="Panel" parent="WorkContainer"]
 modulate = Color(1, 0.91, 0.91, 1)
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 
 [node name="TargetContainer" type="VBoxContainer" parent="WorkContainer/TargetArea"]
@@ -92,7 +93,7 @@ text = "Prove: Q"
 horizontal_alignment = 1
 
 [node name="RuleButtonsArea" type="Panel" parent="WorkContainer"]
-custom_minimum_size = Vector2(0, 300)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -176,6 +177,74 @@ layout_mode = 2
 text = "EQ"
 
 [node name="RESButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "RES"
+
+[node name="DoubleOperationsPage" type="Control" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DoubleOpsGrid" type="GridContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOperationsPage"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -150.0
+offset_right = 150.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 3
+
+[node name="MPButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOperationsPage/DoubleOpsGrid"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "MP"
+
+[node name="MTButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOperationsPage/DoubleOpsGrid"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "MT"
+
+[node name="HSButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOperationsPage/DoubleOpsGrid"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "HS"
+
+[node name="DSButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOperationsPage/DoubleOpsGrid"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "DS"
+
+[node name="CDButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOperationsPage/DoubleOpsGrid"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "CD"
+
+[node name="DNButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOperationsPage/DoubleOpsGrid"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "DN"
+
+[node name="CONJButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOperationsPage/DoubleOpsGrid"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "CONJ"
+
+[node name="EQButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOperationsPage/DoubleOpsGrid"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "EQ"
+
+[node name="RESButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "RES"
@@ -338,3 +407,6 @@ offset_right = 500.0
 offset_bottom = 300.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="TileMap" type="TileMap" parent="."]
+format = 2
