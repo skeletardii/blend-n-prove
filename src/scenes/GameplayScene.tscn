@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://bji7acucw6pe3"]
+[gd_scene load_steps=6 format=3 uid="uid://bji7acucw6pe3"]
 
 [ext_resource type="Script" uid="uid://cl7fuggwr1kue" path="res://src/ui/GameplayScene.gd" id="1_3v9zy"]
+[ext_resource type="Texture2D" uid="uid://dqs4mlo70fokf" path="res://assets/sprites/phase1bg.jpg" id="2_8e8l2"]
 [ext_resource type="PackedScene" uid="uid://cq3k7m5xywb8k" path="res://src/ui/TutorialHelpPanel.tscn" id="2_tutorial_help"]
 [ext_resource type="PackedScene" uid="uid://dpjc3t8yqr5h1" path="res://src/ui/HintPopup.tscn" id="3_hint_popup"]
+[ext_resource type="Script" uid="uid://cecylep86dlss" path="res://src/ui/HourglassSprite.gd" id="4_hourglass"]
 
 [node name="GameplayScene" type="Control"]
 layout_mode = 3
@@ -13,14 +15,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3v9zy")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.91, 0.957, 0.973, 1)
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -581.0
+offset_top = -8.0
+offset_right = 1358.0
+offset_bottom = 1271.0
+texture = ExtResource("2_8e8l2")
+expand_mode = 2
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 1
@@ -37,10 +39,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 2
 
 [node name="TopBar" type="Panel" parent="UI/MainContainer"]
 modulate = Color(0.91, 0.965, 0.953, 1)
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
 [node name="TopBarContainer" type="HBoxContainer" parent="UI/MainContainer/TopBar"]
@@ -103,21 +106,34 @@ text = "Hint"
 layout_mode = 2
 value = 100.0
 
-[node name="GameContentArea" type="HBoxContainer" parent="UI/MainContainer"]
+[node name="HourglassAnimation" type="Node2D" parent="UI/MainContainer/PatienceBar"]
+z_index = 1
+position = Vector2(22, 24)
+script = ExtResource("4_hourglass")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
 
-[node name="PhaseContainer" type="Control" parent="UI/MainContainer/GameContentArea"]
+[node name="GameContentArea" type="HBoxContainer" parent="UI/MainContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PhaseContainer" type="Control" parent="UI/MainContainer/ScrollContainer/GameContentArea"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CustomerArea" type="Panel" parent="UI/MainContainer/GameContentArea"]
+[node name="CustomerArea" type="Panel" parent="UI/MainContainer/ScrollContainer/GameContentArea"]
 visible = false
 modulate = Color(1, 0.949, 0.91, 1)
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 
-[node name="CustomerContainer" type="VBoxContainer" parent="UI/MainContainer/GameContentArea/CustomerArea"]
+[node name="CustomerContainer" type="VBoxContainer" parent="UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -129,21 +145,21 @@ offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CustomerTitle" type="Label" parent="UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer"]
+[node name="CustomerTitle" type="Label" parent="UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer"]
 layout_mode = 2
 text = "Customer Order"
 horizontal_alignment = 1
 
-[node name="CharacterAssetContainer" type="Control" parent="UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer"]
+[node name="CharacterAssetContainer" type="Control" parent="UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 
-[node name="CustomerName" type="Label" parent="UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer"]
+[node name="CustomerName" type="Label" parent="UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer"]
 layout_mode = 2
 text = "Alice"
 horizontal_alignment = 1
 
-[node name="OrderDisplay" type="RichTextLabel" parent="UI/MainContainer/GameContentArea/CustomerArea/CustomerContainer"]
+[node name="OrderDisplay" type="RichTextLabel" parent="UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 text = "Premises:
@@ -155,13 +171,17 @@ Q"
 
 [node name="TutorialHelpPanel" parent="UI" instance=ExtResource("2_tutorial_help")]
 visible = false
+layout_mode = 0
+anchors_preset = 0
 
 [node name="HintPopup" parent="UI" instance=ExtResource("3_hint_popup")]
 visible = false
+layout_mode = 0
+anchors_preset = 0
 
 [node name="PauseOverlay" type="CanvasLayer" parent="."]
-visible = false
 layer = 100
+visible = false
 
 [node name="DarkenBackground" type="ColorRect" parent="PauseOverlay"]
 anchors_preset = 15

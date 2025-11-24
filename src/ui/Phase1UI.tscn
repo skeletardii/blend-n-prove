@@ -4,7 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://5s07bsbpboi0" path="res://assets/sprites/Phase1UIMockup.png" id="2_tgfdk"]
 [ext_resource type="Texture2D" uid="uid://cxuas4sbxepc6" path="res://assets/sprites/PNG/CGB01-grey_XL_rounded_btn.png" id="3_3m56v"]
 [ext_resource type="Theme" uid="uid://cnoq1f1rj1b7b" path="res://assets/themes/main_theme.tres" id="4_cnisd"]
-[ext_resource type="Texture2D" uid="uid://cry2t8ap7ysoo" path="res://assets/sprites/PNG/CGB01-yellow_L_rounded_btn.png" id="5_cnisd"]
+[ext_resource type="Texture2D" uid="uid://ulrnbpojlrgt" path="res://assets/sprites/Wenrexa/Panel2_Opacity591x975px.png" id="6_bxf8h"]
+[ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="6_wbgmg"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7p1cq"]
 texture = ExtResource("3_3m56v")
@@ -17,16 +18,9 @@ texture_margin_bottom = 37.0
 color = Color(0.21, 0.21, 0.21, 1)
 thickness = 3
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cbvt0"]
-texture = ExtResource("5_cnisd")
-modulate_color = Color(0, 0.966667, 1, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kyooy"]
-bg_color = Color(0.9, 0.9, 0.9, 0.231373)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fnri5"]
+texture = ExtResource("6_bxf8h")
+region_rect = Rect2(66.77826, 0, 471.5902, 975)
 
 [node name="Phase1UI" type="Control"]
 layout_mode = 3
@@ -57,6 +51,7 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 10
 metadata/_edit_lock_ = true
 
 [node name="TopStatusBar" type="Control" parent="MainContainer"]
@@ -116,7 +111,7 @@ grow_vertical = 0
 value = 100.0
 
 [node name="CustomerArea" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 750)
+custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
 
 [node name="CustomerCharacter" type="Control" parent="MainContainer/CustomerArea"]
@@ -127,15 +122,15 @@ offset_right = 140.0
 offset_bottom = 180.0
 
 [node name="SpeechBubble" type="Panel" parent="MainContainer/CustomerArea"]
-custom_minimum_size = Vector2(0, 500)
+custom_minimum_size = Vector2(0, 300)
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -278.0
-offset_top = 152.0
-offset_right = 277.0
-offset_bottom = 679.0
+offset_left = -276.0
+offset_top = 15.0
+offset_right = 279.0
+offset_bottom = 412.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_7p1cq")
 
@@ -189,23 +184,23 @@ anchor_left = 0.501
 anchor_top = 0.162
 anchor_right = 0.501
 anchor_bottom = 0.162
-offset_left = -293.608
-offset_top = -57.96
-offset_right = 293.392
-offset_bottom = 58.04
+offset_left = -289.68
+offset_top = 10.04
+offset_right = 297.32
+offset_bottom = 126.04
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_cbvt0")
+theme = ExtResource("6_wbgmg")
 
 [node name="InputContainer" type="VBoxContainer" parent="MainContainer/InputSystem"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 60.0
-offset_top = -24.0
-offset_right = -60.0
-offset_bottom = -24.0
+offset_left = 58.0
+offset_top = 40.0
+offset_right = -62.0
+offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -218,7 +213,7 @@ horizontal_alignment = 1
 [node name="InputField" type="Panel" parent="MainContainer/InputSystem/InputContainer"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_kyooy")
+theme_override_styles/panel = SubResource("StyleBoxTexture_fnri5")
 
 [node name="InputDisplay" type="Label" parent="MainContainer/InputSystem/InputContainer/InputField"]
 layout_mode = 1
@@ -234,8 +229,12 @@ text = "Type your premise here..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="KeyboardSpacer" type="Control" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
 [node name="VirtualKeyboard" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 260)
+custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 
 [node name="VariableRow" type="HBoxContainer" parent="MainContainer/VirtualKeyboard"]
@@ -369,6 +368,10 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "⌫"
 
+[node name="ActionButtonsSpacer" type="Control" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
 [node name="ActionButtons" type="Control" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
@@ -396,4 +399,5 @@ text = "CLEAR"
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
 size_flags_horizontal = 3
+theme = ExtResource("6_wbgmg")
 text = "SUBMIT"

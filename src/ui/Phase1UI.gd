@@ -1,6 +1,7 @@
 extends Control
 
 # UI References
+@onready var main_container: VBoxContainer = $MainContainer
 @onready var lives_display: Label = $MainContainer/TopStatusBar/StatusContainer/LivesDisplay
 @onready var score_display: Label = $MainContainer/TopStatusBar/StatusContainer/ScoreDisplay
 @onready var level_display: Label = $MainContainer/TopStatusBar/StatusContainer/LevelDisplay
@@ -48,7 +49,20 @@ signal patience_expired
 signal life_lost
 signal text_changed(text: String)  # For tutorial detection
 
+func setup_dynamic_spacing() -> void:
+	"""Set dynamic spacing between UI modules based on viewport height"""
+	var viewport_height: float = get_viewport_rect().size.y
+
+	# Calculate spacing as a percentage of viewport height
+	# For 1280px height, use 10px spacing (0.78%)
+	var dynamic_spacing: int = max(5, int(viewport_height * 0.0078))
+
+	# Apply to main container
+	if main_container:
+		main_container.add_theme_constant_override("separation", dynamic_spacing)
+
 func _ready() -> void:
+	setup_dynamic_spacing()
 	connect_virtual_keyboard()
 	update_input_display()
 	update_status_display()

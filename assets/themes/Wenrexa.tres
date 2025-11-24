@@ -1,0 +1,29 @@
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://b2fedi5eycrnx"]
+
+[ext_resource type="FontFile" uid="uid://cc80pt3xtcjpc" path="res://assets/fonts/CFIndustrialFabrics-Regular.ttf" id="1_2yqly"]
+[ext_resource type="Texture2D" uid="uid://dtr4kba5tcql0" path="res://assets/sprites/Wenrexa/Cell125x121px.png" id="1_p3x10"]
+[ext_resource type="Texture2D" uid="uid://c0covl2ly0afp" path="res://assets/sprites/Wenrexa/PanelWindow.png" id="2_fe75p"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fe75p"]
+content_margin_top = 16.0
+content_margin_bottom = 16.0
+texture = ExtResource("1_p3x10")
+texture_margin_left = 34.53459
+texture_margin_top = 34.184097
+texture_margin_right = 33.132614
+texture_margin_bottom = 32.43163
+region_rect = Rect2(-0.45758057, -0.021831512, 126.17791, 121.27098)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2yqly"]
+texture = ExtResource("2_fe75p")
+texture_margin_left = 81.55526
+texture_margin_top = 60.555676
+texture_margin_right = 63.20002
+texture_margin_bottom = 77.04736
+region_rect = Rect2(0.72036743, 0.7501221, 566.7101, 379.89972)
+
+[resource]
+Button/fonts/font = ExtResource("1_2yqly")
+Button/styles/hover = SubResource("StyleBoxTexture_fe75p")
+Button/styles/normal = SubResource("StyleBoxTexture_fe75p")
+Panel/styles/panel = SubResource("StyleBoxTexture_2yqly")

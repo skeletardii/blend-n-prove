@@ -1,9 +1,24 @@
 shader_type canvas_item;
 uniform float speed = .001;
 uniform float opacity : hint_range(0,1) = 1.0;
+uniform float rotation_speed : hint_range(0, 5) = 1.0;
 void vertex() {
-	UV.x += TIME * speed;
-	UV.y += TIME * speed;
+	// Convert UV to centered coordinates (-0.5 to 0.5)
+	vec2 centered_uv = UV - vec2(0.5);
+
+	// Calculate rotation angle
+	float angle = TIME * speed * rotation_speed;
+
+	// Create rotation matrix
+	float cos_a = cos(angle);
+	float sin_a = sin(angle);
+	mat2 rotation = mat2(vec2(cos_a, -sin_a), vec2(sin_a, cos_a));
+
+	// Apply rotation around center
+	centered_uv = rotation * centered_uv;
+
+	// Convert back to UV space
+	UV = centered_uv + vec2(0.5);
 	//COLOR.a *= opacity;
 }
 

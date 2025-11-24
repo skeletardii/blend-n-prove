@@ -31,7 +31,8 @@
       "Bash(do echo \"Level $level:\")",
       "Bash(done)",
       "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --path \"C:/Users/X/documents/godot-mcp\" --script test_pause_feature.gd)",
-      "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --quit --path .)"
+      "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --quit --path .)",
+      "Bash(tree:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
