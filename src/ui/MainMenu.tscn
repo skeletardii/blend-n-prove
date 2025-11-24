@@ -6,8 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://onbkto0umar" path="res://assets/sprites/newlogo.png" id="4_ihbld"]
 
 [sub_resource type="Gradient" id="Gradient_2wh52"]
-offsets = PackedFloat32Array(0, 0.004219409, 0.03797468, 0.9957806, 1)
-colors = PackedColorArray(0.976471, 0.662745, 0.835294, 1, 0.98275846, 0.72059226, 0.78624964, 1, 0.77517945, 0.4166604, 0.9455609, 1, 0.06301862, 0.10464167, 0.41681436, 1, 0.996078, 0.843137, 0.682353, 1)
+offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
+colors = PackedColorArray(0.976471, 0.662745, 0.835294, 1, 0.982758, 0.720592, 0.78625, 1, 0.775179, 0.41666, 0.945561, 1, 0.0630186, 0.104642, 0.416814, 1, 0.996078, 0.843137, 0.682353, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_ow34m"]
 gradient = SubResource("Gradient_2wh52")
@@ -261,10 +261,10 @@ text = "Import Progress"
 
 [node name="SaveLocationLabel" type="Label" parent="DebugPanel/DebugContainer"]
 layout_mode = 2
-text = "Save: user://game_progress.json"
-horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
 theme_override_font_sizes/font_size = 10
+text = "Save: user://game_progress.json"
+horizontal_alignment = 1
 
 [node name="CloseDebugButton" type="Button" parent="DebugPanel/DebugContainer"]
 layout_mode = 2
@@ -329,8 +329,8 @@ layout_mode = 2
 
 [node name="ResetProgressButton" type="Button" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
-text = "Reset All Progress"
 theme_override_colors/font_color = Color(0.9, 0.3, 0.3, 1)
+text = "Reset All Progress"
 
 [node name="Spacer3" type="Control" parent="SettingsPanel/SettingsContainer"]
 custom_minimum_size = Vector2(0, 10)
@@ -391,6 +391,7 @@ text = "🍊"
 title = "Reset Progress"
 initial_position = 2
 size = Vector2i(400, 150)
+ok_button_text = "Reset Everything"
 dialog_text = "Are you sure you want to reset ALL progress?
 
 This will delete:
@@ -400,8 +401,6 @@ This will delete:
 - Tutorial progress
 
 This action cannot be undone!"
-ok_button_text = "Reset Everything"
-cancel_button_text = "Cancel"
 
 [node name="FeedbackLabel" type="Label" parent="."]
 layout_mode = 1
@@ -418,11 +417,9 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.2, 0.8, 0.2, 1)
 theme_override_font_sizes/font_size = 14
-text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="confirmed" from="ResetConfirmationDialog" to="." method="_on_reset_progress_confirmed"]
 [connection signal="pressed" from="MenuContainer/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="MenuContainer/DebugButton" to="." method="_on_debug_button_pressed"]
 [connection signal="pressed" from="MenuContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
@@ -441,3 +438,4 @@ vertical_alignment = 1
 [connection signal="item_selected" from="SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption" to="." method="_on_difficulty_mode_option_item_selected"]
 [connection signal="pressed" from="SettingsPanel/SettingsContainer/ResetProgressButton" to="." method="_on_reset_progress_button_pressed"]
 [connection signal="pressed" from="SettingsPanel/SettingsContainer/CloseSettingsButton" to="." method="_on_close_settings_button_pressed"]
+[connection signal="confirmed" from="ResetConfirmationDialog" to="." method="_on_reset_progress_confirmed"]

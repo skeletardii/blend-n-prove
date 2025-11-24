@@ -13,7 +13,7 @@ config_version=5
 config/name="Godot MCP"
 config/description="Educational game teaching boolean logic through bartender simulation"
 run/main_scene="uid://dvdwtisv5ow7b"
-config/features=PackedStringArray("4.5", "GL Compatibility")
+config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -47,6 +47,7 @@ enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
 
 folder_colors={
 "res://assets/": "yellow",
+"res://build/": "green",
 "res://data/": "pink",
 "res://devtools/": "red",
 "res://docs/": "gray",

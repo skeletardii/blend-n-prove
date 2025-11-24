@@ -218,15 +218,6 @@ func _on_premise_card_pressed(premise: BooleanLogicEngine.BooleanExpression, car
 	check_rule_application()
 
 func _on_rule_button_pressed(rule: String) -> void:
-	# Special handling for Addition rule - needs user input
-	if rule == "ADD":
-		if selected_premises.size() != 1:
-			feedback_message.emit("Select exactly 1 premise for Addition", Color.ORANGE)
-			return
-		# Show dialog for user to input the expression to add
-		addition_dialog.show_dialog(selected_premises[0])
-		return
-
 	# If clicking the same rule that's already selected, deselect everything
 	if selected_rule == rule:
 		clear_selections()
@@ -257,6 +248,11 @@ func check_rule_application() -> void:
 	var required_count = 1 if rule_def.type == RuleType.SINGLE else 2
 
 	if selected_premises.size() == required_count:
+		# Special handling for Addition rule - needs user input via dialog
+		if selected_rule == "ADD":
+			addition_dialog.show_dialog(selected_premises[0])
+			return
+
 		apply_rule()
 
 func clean_expression(expr: BooleanLogicEngine.BooleanExpression) -> BooleanLogicEngine.BooleanExpression:
