@@ -28,9 +28,11 @@ TutorialDataManager="*res://src/game/autoloads/TutorialDataManager.gd"
 
 [display]
 
-window/size/viewport_width=540
-window/size/viewport_height=960
-window/stretch/scale=0.69
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/window_width_override=360
+window/size/window_height_override=640
+window/stretch/mode="canvas_items"
 window/handheld/orientation=1
 
 [dotnet]
@@ -66,3 +68,4 @@ pointing/emulate_touch_from_mouse=true
 textures/canvas_textures/default_texture_filter=2
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true

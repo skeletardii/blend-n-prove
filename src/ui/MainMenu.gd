@@ -136,6 +136,16 @@ func _on_integration_test_button_pressed() -> void:
 	AudioManager.play_button_click()
 	GameManager.run_integration_test()
 
+func _on_launch_tutorial_button_pressed() -> void:
+	AudioManager.play_button_click()
+	debug_panel.visible = false
+
+	# Start first-time tutorial mode in GameManager
+	GameManager.start_first_time_tutorial()
+
+	# Load gameplay scene with tutorial
+	SceneManager.change_scene("res://src/scenes/GameplayScene.tscn")
+
 func _on_close_debug_button_pressed() -> void:
 	AudioManager.play_button_click()
 	debug_panel.visible = false

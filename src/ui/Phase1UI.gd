@@ -46,6 +46,7 @@ signal premises_completed(premises: Array[BooleanLogicEngine.BooleanExpression])
 signal feedback_message(message: String, color: Color)
 signal patience_expired
 signal life_lost
+signal text_changed(text: String)  # For tutorial detection
 
 func _ready() -> void:
 	connect_virtual_keyboard()
@@ -196,6 +197,9 @@ func update_input_display() -> void:
 	else:
 		input_display.text = current_input
 		input_display.modulate = Color.BLACK  # Active text
+
+	# Emit signal for tutorial detection
+	text_changed.emit(current_input)
 
 func update_status_display() -> void:
 	# Update lives display

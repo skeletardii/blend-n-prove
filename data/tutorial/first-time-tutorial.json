@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "title": "First Time Tutorial",
+    "description": "Interactive tutorial for learning the basics of logical deduction gameplay",
+    "difficulty": 1,
+    "estimated_time": "5-10 minutes"
+  },
+  "problems": [
+    {
+      "customer_name": "Tutorial Guide",
+      "customer_flavor": "Welcome! Let me show you how to solve logic puzzles.",
+      "required_premises_input": [
+        "P",
+        "Q"
+      ],
+      "target_expression": "P∧Q",
+      "solution_steps": [
+        {
+          "rule": "CONJ",
+          "premises": ["P", "Q"],
+          "result": "P∧Q"
+        }
+      ],
+      "hint": "Use the CONJ (Conjunction) rule to combine P and Q together.",
+      "tutorial_mode": true
+    }
+  ]
+}

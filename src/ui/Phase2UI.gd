@@ -52,6 +52,7 @@ var premise_cards: Array[Control] = []
 signal rule_applied(result: BooleanLogicEngine.BooleanExpression)
 signal target_reached(result: BooleanLogicEngine.BooleanExpression)
 signal feedback_message(message: String, color: Color)
+signal premise_selected(premise: String)  # For tutorial detection
 
 # Rule definitions
 enum RuleType {
@@ -191,6 +192,8 @@ func _on_premise_card_pressed(premise: BooleanLogicEngine.BooleanExpression, car
 		if premise not in selected_premises:
 			selected_premises.append(premise)
 			card.modulate = Color.CYAN
+			# Emit signal for tutorial detection
+			premise_selected.emit(premise.expression_string)
 	else:
 		# Deselect premise
 		if premise in selected_premises:

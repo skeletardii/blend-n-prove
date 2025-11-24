@@ -97,6 +97,7 @@ var debug_difficulty_mode: int = -1
 var tutorial_mode: bool = false
 var current_tutorial_key: String = ""
 var current_tutorial_problem_index: int = 0
+var is_first_time_tutorial: bool = false  # Special flag for first-time interactive tutorial
 
 # Order Templates organized by difficulty level - loaded from JSON
 var order_templates: Dictionary = {}
@@ -252,7 +253,7 @@ func start_new_game() -> void:
 	# Start progress tracking session
 	ProgressTracker.start_new_session(difficulty_level)
 
-func start_tutorial_mode(tutorial_key: String) -> void:
+func start_tutorial_mode(tutorial_key: String = "") -> void:
 	current_score = 0
 	current_lives = max_lives
 	difficulty_level = 1
@@ -261,11 +262,19 @@ func start_tutorial_mode(tutorial_key: String) -> void:
 	tutorial_mode = true
 	current_tutorial_key = tutorial_key
 	current_tutorial_problem_index = 0
+	is_first_time_tutorial = false
 	change_state(GameState.PLAYING)
 	score_updated.emit(current_score)
 	lives_updated.emit(current_lives)
 
 	print("Starting tutorial mode: ", tutorial_key)
+
+func start_first_time_tutorial() -> void:
+	"""Start the special first-time interactive tutorial"""
+	start_tutorial_mode("first-time-tutorial")
+	is_first_time_tutorial = true
+	infinite_patience = true  # Tutorial has infinite time
+	print("Starting first-time interactive tutorial")
 
 func pause_game() -> void:
 	change_state(GameState.PAUSED)

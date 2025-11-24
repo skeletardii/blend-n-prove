@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
-[ext_resource type="PackedScene" uid="uid://c8x4k5m9n2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
+[ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
 
 [node name="Phase2UI" type="Control"]
 layout_mode = 3
@@ -113,7 +113,6 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="DoubleOperationsPage" type="Control" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -182,6 +181,7 @@ layout_mode = 2
 text = "RES"
 
 [node name="SingleOperationsPage" type="Control" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -326,3 +326,15 @@ text = "→"
 [node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]
 visible = false
 z_index = 100
+layout_mode = 0
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 500.0
+offset_bottom = 300.0
+grow_horizontal = 1
+grow_vertical = 1

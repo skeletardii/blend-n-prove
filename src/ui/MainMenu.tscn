@@ -219,6 +219,10 @@ text = "Test Logic Engine"
 layout_mode = 2
 text = "Run Integration Test"
 
+[node name="LaunchTutorialButton" type="Button" parent="DebugPanel/DebugContainer"]
+layout_mode = 2
+text = "Launch First-Time Tutorial"
+
 [node name="CloseDebugButton" type="Button" parent="DebugPanel/DebugContainer"]
 layout_mode = 2
 text = "CLOSE"
@@ -340,6 +344,7 @@ text = "🍊"
 [connection signal="pressed" from="DebugPanel/DebugContainer/ForceGameOverButton" to="." method="_on_force_game_over_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/LogicTestButton" to="." method="_on_logic_test_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/IntegrationTestButton" to="." method="_on_integration_test_button_pressed"]
+[connection signal="pressed" from="DebugPanel/DebugContainer/LaunchTutorialButton" to="." method="_on_launch_tutorial_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/CloseDebugButton" to="." method="_on_close_debug_button_pressed"]
 [connection signal="item_selected" from="SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption" to="." method="_on_difficulty_mode_option_item_selected"]
 [connection signal="pressed" from="SettingsPanel/SettingsContainer/CloseSettingsButton" to="." method="_on_close_settings_button_pressed"]

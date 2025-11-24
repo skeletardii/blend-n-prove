@@ -20,6 +20,8 @@ extends Control
 var phase1_scene: PackedScene = preload("res://src/ui/Phase1UI.tscn")
 var phase2_scene: PackedScene = preload("res://src/ui/Phase2UI.tscn")
 var score_popup_scene: PackedScene = preload("res://src/ui/ScorePopup.tscn")
+var tutorial_overlay_scene: PackedScene = preload("res://src/ui/TutorialOverlay.tscn")
+var tutorial_completion_scene: PackedScene = preload("res://src/ui/TutorialCompletionScreen.tscn")
 var current_phase_instance: Control = null
 
 # Game State
@@ -30,6 +32,10 @@ var max_patience: float = 60.0
 var feedback_label: Label = null
 var feedback_timer: Timer = null
 var is_paused: bool = false
+
+# First-time tutorial
+var tutorial_overlay: CanvasLayer = null
+var tutorial_manager: Node = null
 
 func _ready() -> void:
 	# Connect to GameManager signals
@@ -43,8 +49,14 @@ func _ready() -> void:
 	update_lives_display()
 	update_score_display()
 
-	# Setup tutorial help panel if in tutorial mode
-	if GameManager.tutorial_mode:
+	# Setup first-time tutorial if active
+	if GameManager.is_first_time_tutorial:
+		setup_first_time_tutorial()
+		show_help_button.visible = false
+		tutorial_help_panel.visible = false
+		hint_button.visible = false  # Hide hint button during first-time tutorial
+	# Setup tutorial help panel if in regular tutorial mode
+	elif GameManager.tutorial_mode:
 		show_help_button.visible = true
 		show_help_button.pressed.connect(_on_show_help_button_pressed)
 		tutorial_help_panel.help_panel_closed.connect(_on_help_panel_closed)
@@ -52,9 +64,10 @@ func _ready() -> void:
 		show_help_button.visible = false
 		tutorial_help_panel.visible = false
 
-	# Setup hint button (available in all modes)
-	hint_button.pressed.connect(_on_hint_button_pressed)
-	hint_popup.popup_closed.connect(_on_hint_popup_closed)
+	# Setup hint button (available in all modes except first-time tutorial)
+	if not GameManager.is_first_time_tutorial:
+		hint_button.pressed.connect(_on_hint_button_pressed)
+		hint_popup.popup_closed.connect(_on_hint_popup_closed)
 
 	# Setup pause button
 	pause_button.pressed.connect(_on_pause_button_pressed)
@@ -66,6 +79,10 @@ func _ready() -> void:
 
 	# Start in Phase 1
 	switch_to_phase1()
+
+	# Start first-time tutorial after phase loads
+	if GameManager.is_first_time_tutorial and tutorial_manager:
+		call_deferred("start_first_time_tutorial")
 
 func _process(delta: float) -> void:
 	if GameManager.current_state == GameManager.GameState.PLAYING and current_customer:
@@ -138,6 +155,10 @@ func switch_to_phase2() -> void:
 	current_phase_instance.target_reached.connect(_on_target_reached)
 	current_phase_instance.feedback_message.connect(_on_feedback_message)
 
+	# Connect tutorial signals if in first-time tutorial
+	if GameManager.is_first_time_tutorial and tutorial_manager:
+		connect_phase2_tutorial_signals()
+
 	# Pass premises and target to Phase 2
 	# For Level 6, also pass natural language conclusion for display
 	if current_customer.is_natural_language:
@@ -153,8 +174,17 @@ func generate_new_customer() -> void:
 	var customer_names: Array[String] = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry"]
 	var random_name: String = customer_names[randi() % customer_names.size()]
 
-	# Check if we're in tutorial mode
-	if GameManager.tutorial_mode:
+	# Special handling for first-time tutorial
+	if GameManager.is_first_time_tutorial:
+		# Create a simple tutorial problem: prove P∧Q from premises P and Q
+		var tutorial_premises: Array[String] = ["P", "Q"]
+		var tutorial_target: String = "P∧Q"
+		var tutorial_patience: float = 999999.0  # Infinite time
+		current_customer = GameManager.CustomerData.new("Tutorial Guide", tutorial_premises, tutorial_target, tutorial_patience, "")
+		print("Loaded first-time tutorial problem")
+
+	# Check if we're in regular tutorial mode
+	elif GameManager.tutorial_mode:
 		var problem: TutorialDataManager.ProblemData = GameManager.get_current_tutorial_problem()
 		if problem:
 			# Create customer from tutorial problem
@@ -182,6 +212,12 @@ func generate_new_customer() -> void:
 
 		# Adjust patience based on difficulty and expected operations
 		var base_patience: float = 90.0 - (current_level * 10.0) + (random_template.expected_operations * 15.0)
+
+		# Add extra time for word analysis (natural language) problems
+		# +20 seconds per operation to account for translation overhead
+		if random_template.is_natural_language:
+			base_patience += random_template.expected_operations * 20.0
+
 		base_patience = max(30.0, base_patience)  # Minimum 30 seconds
 
 		# Create customer with logical premises (hidden premises for Level 6)
@@ -455,4 +491,87 @@ func _on_quit_button_pressed() -> void:
 	AudioManager.stop_music()
 
 	# Return to main menu
+	SceneManager.change_scene("res://src/ui/MainMenu.tscn")
+
+# ============================================================================
+# FIRST-TIME TUTORIAL FUNCTIONS
+# ============================================================================
+
+func setup_first_time_tutorial() -> void:
+	"""Initialize the first-time tutorial overlay and manager"""
+	# Create tutorial overlay
+	tutorial_overlay = tutorial_overlay_scene.instantiate()
+	add_child(tutorial_overlay)
+	tutorial_overlay.visible = false  # Will be shown when tutorial starts
+
+	# Create tutorial manager
+	var FirstTimeTutorialManager = load("res://src/game/FirstTimeTutorialManager.gd")
+	tutorial_manager = FirstTimeTutorialManager.new()
+	add_child(tutorial_manager)
+
+	# Connect tutorial signals
+	tutorial_manager.tutorial_completed.connect(_on_first_time_tutorial_completed)
+	tutorial_manager.tutorial_skipped.connect(_on_first_time_tutorial_skipped)
+
+	print("First-time tutorial initialized")
+
+func start_first_time_tutorial() -> void:
+	"""Start the first-time tutorial sequence"""
+	if tutorial_manager and tutorial_overlay:
+		# Initialize manager with references
+		tutorial_manager.initialize(
+			tutorial_overlay,
+			self,
+			current_phase_instance,
+			null  # Phase 2 will be set when we switch phases
+		)
+
+		# Connect phase 1 signals for tutorial detection
+		if current_phase_instance:
+			connect_phase1_tutorial_signals()
+
+		# Start tutorial
+		tutorial_manager.start_tutorial()
+		print("First-time tutorial started")
+
+func connect_phase1_tutorial_signals() -> void:
+	"""Connect Phase 1 UI signals needed for tutorial"""
+	if current_phase_instance.has_signal("text_changed"):
+		current_phase_instance.text_changed.connect(tutorial_manager._on_text_changed)
+	else:
+		print("Warning: Phase1UI missing text_changed signal")
+
+func connect_phase2_tutorial_signals() -> void:
+	"""Connect Phase 2 UI signals needed for tutorial"""
+	tutorial_manager.phase2_ui = current_phase_instance
+	tutorial_manager.connect_phase2_signals()
+
+func _on_first_time_tutorial_completed() -> void:
+	"""Handle tutorial completion - show completion screen"""
+	print("Tutorial completed!")
+
+	# Disable tutorial mode
+	GameManager.is_first_time_tutorial = false
+	GameManager.tutorial_mode = false
+	GameManager.infinite_patience = false
+
+	# Show completion screen
+	var completion_screen = tutorial_completion_scene.instantiate()
+	add_child(completion_screen)
+	completion_screen.return_to_menu_requested.connect(_on_return_to_menu_from_tutorial)
+
+func _on_first_time_tutorial_skipped() -> void:
+	"""Handle tutorial skip - return to menu"""
+	print("Tutorial skipped")
+
+	# Disable tutorial mode
+	GameManager.is_first_time_tutorial = false
+	GameManager.tutorial_mode = false
+	GameManager.infinite_patience = false
+
+	# Return to main menu
+	SceneManager.change_scene("res://src/ui/MainMenu.tscn")
+
+func _on_return_to_menu_from_tutorial() -> void:
+	"""Return to main menu after tutorial completion screen"""
 	SceneManager.change_scene("res://src/ui/MainMenu.tscn")

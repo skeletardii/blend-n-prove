@@ -1,8 +1,9 @@
 {
   "level": 1,
-  "description": "Level 1: 1 operation, max 2 premises",
+  "description": "Level 1: 1 operation, max 2 premises - Mix of direct symbols and word analysis",
   "problems": [
 	{
+	  "problem_type": "direct_symbols",
 	  "premises": [
 		"P → Q",
 		"P"

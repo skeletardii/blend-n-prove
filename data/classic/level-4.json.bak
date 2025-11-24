@@ -1,0 +1,227 @@
+{
+  "level": 4,
+  "description": "Level 4: 3-4 operations, 4-5 premises",
+  "problems": [
+    {
+      "premises": [
+        "P → Q",
+        "Q → (R ∧ S)",
+        "R → T",
+        "P"
+      ],
+      "conclusion": "T",
+      "expected_operations": 4,
+      "description": "Complex chain with branching",
+      "solution": "Chain the implications: Modus Ponens to get \"Q\", then \"R ∧ S\", extract \"R\" via Simplification, then Modus Ponens to get \"T\"."
+    },
+    {
+      "premises": [
+        "¬(P ∨ Q)",
+        "R ∧ S"
+      ],
+      "conclusion": "¬P ∧ S",
+      "expected_operations": 4,
+      "description": "De Morgan's + Simplification + Conjunction",
+      "solution": "Apply De Morgan's to get \"¬P ∧ ¬Q\", extract \"¬P\", extract \"S\" from \"R ∧ S\", then combine with Conjunction."
+    },
+    {
+      "premises": [
+        "P ∨ (Q ∧ R)",
+        "¬P",
+        "S ∨ T",
+        "¬S"
+      ],
+      "conclusion": "Q ∧ T",
+      "expected_operations": 4,
+      "description": "Multiple Disjunctive Syllogisms",
+      "solution": "Apply Disjunctive Syllogism twice: get \"Q ∧ R\" and \"T\", then extract \"Q\" and combine with \"T\" via Conjunction."
+    },
+    {
+      "premises": [
+        "(P ∧ Q) → (R ∨ S)",
+        "P",
+        "Q",
+        "¬R"
+      ],
+      "conclusion": "S",
+      "expected_operations": 4,
+      "description": "Conjunction + MP + Disj Syll",
+      "solution": "Combine \"P\" and \"Q\" via Conjunction, apply Modus Ponens to get \"R ∨ S\", then Disjunctive Syllogism with \"¬R\" to get \"S\"."
+    },
+    {
+      "premises": [
+        "¬¬(P → Q)",
+        "¬¬P",
+        "Q → (R ∧ S)"
+      ],
+      "conclusion": "R",
+      "expected_operations": 4,
+      "description": "Double Neg + MP + MP + Simplification",
+      "solution": "Apply Double Negation twice to get \"P → Q\" and \"P\", then chain Modus Ponens to get \"R ∧ S\", finally extract \"R\"."
+    },
+    {
+      "premises": [
+        "P ∨ Q",
+        "¬P",
+        "Q → R",
+        "R → S",
+        "S → T"
+      ],
+      "conclusion": "T",
+      "expected_operations": 4,
+      "description": "Disj Syll + Chain of MPs",
+      "solution": "Get \"Q\" via Disjunctive Syllogism, then chain Modus Ponens through \"R\", \"S\", to \"T\"."
+    },
+    {
+      "premises": [
+        "P → Q",
+        "Q → R",
+        "¬R"
+      ],
+      "conclusion": "¬P",
+      "expected_operations": 3,
+      "description": "Chained Modus Tollens",
+      "solution": "Apply Hypothetical Syllogism to chain \"P → Q\" and \"Q → R\" to get \"P → R\", then use Modus Tollens with \"¬R\" to get \"¬P\"."
+    },
+    {
+      "premises": [
+        "(P ∨ Q) ∧ (R ∨ S)",
+        "¬P",
+        "¬R"
+      ],
+      "conclusion": "Q ∧ S",
+      "expected_operations": 4,
+      "description": "Multiple simplifications + syllogisms",
+      "solution": "Extract \"P ∨ Q\" and \"R ∨ S\" via Simplification, then apply Disjunctive Syllogism twice to get \"Q\" and \"S\", combine via Conjunction."
+    },
+    {
+      "premises": [
+        "P → (Q → R)",
+        "P",
+        "Q",
+        "R → S"
+      ],
+      "conclusion": "S",
+      "expected_operations": 4,
+      "description": "Nested implications + chain",
+      "solution": "Apply Modus Ponens to get \"Q → R\", then Modus Ponens with \"Q\" to get \"R\", finally Modus Ponens with \"R → S\" to get \"S\"."
+    },
+    {
+      "premises": [
+        "¬(P ∨ Q) ∧ ¬(R ∨ S)"
+      ],
+      "conclusion": "¬P ∧ ¬R",
+      "expected_operations": 4,
+      "description": "Complex De Morgan's + Simplifications",
+      "solution": "Apply Simplification to separate conjuncts, then De Morgan's on each to get \"¬P ∧ ¬Q\" and \"¬R ∧ ¬S\", extract \"¬P\" and \"¬R\", combine via Conjunction."
+    },
+    {
+      "premises": [
+        "(P → Q) ∧ (R → S)",
+        "¬Q ∨ ¬S"
+      ],
+      "conclusion": "¬P ∨ ¬R",
+      "expected_operations": 1,
+      "description": "Destructive Dilemma",
+      "solution": "Apply Destructive Dilemma (DN) with premises \"(P → Q) ∧ (R → S)\" and \"¬Q ∨ ¬S\" to directly conclude \"¬P ∨ ¬R\"."
+    },
+    {
+      "premises": [
+        "P ↔ Q"
+      ],
+      "conclusion": "(P ∧ Q) ∨ (¬P ∧ ¬Q)",
+      "expected_operations": 1,
+      "description": "Biconditional to Equivalence",
+      "solution": "Apply Biconditional to Equivalence conversion: \"P ↔ Q\" is equivalent to \"(P ∧ Q) ∨ (¬P ∧ ¬Q)\", meaning both are true or both are false."
+    },
+    {
+      "premises": [
+        "P ⊕ Q",
+        "P → R",
+        "Q → R"
+      ],
+      "conclusion": "R",
+      "expected_operations": 4,
+      "description": "XOR Elimination + Case Analysis",
+      "solution": "Expand \"P ⊕ Q\" to \"(P ∨ Q) ∧ ¬(P ∧ Q)\", extract \"P ∨ Q\", then use case analysis: both P and Q lead to R, so R must be true."
+    },
+    {
+      "premises": [
+        "P → Q",
+        "¬Q → ¬R",
+        "R"
+      ],
+      "conclusion": "Q",
+      "expected_operations": 2,
+      "description": "Contrapositive + Modus Ponens",
+      "solution": "Apply Contrapositive (CONV) to \"¬Q → ¬R\" to get \"R → Q\", then apply Modus Ponens with \"R\" to get \"Q\"."
+    },
+    {
+      "premises": [
+        "P ∨ Q",
+        "¬P ∨ R",
+        "¬Q ∨ S"
+      ],
+      "conclusion": "R ∨ S",
+      "expected_operations": 4,
+      "description": "Multiple Resolution",
+      "solution": "Apply Resolution on \"P ∨ Q\" and \"¬P ∨ R\" to get \"Q ∨ R\", then Resolution with \"¬Q ∨ S\" to get \"R ∨ S\"."
+    },
+    {
+      "premises": [
+        "P ∧ (Q ∨ R)",
+        "¬Q",
+        "R → S"
+      ],
+      "conclusion": "P ∧ S",
+      "expected_operations": 4,
+      "description": "Distributivity + Disjunctive Syllogism + Modus Ponens",
+      "solution": "Use Distributivity or extract components: get \"P\" and \"Q ∨ R\", apply Disjunctive Syllogism to get \"R\", Modus Ponens to get \"S\", then Conjunction."
+    },
+    {
+      "premises": [
+        "P ∨ (Q ∧ R)",
+        "¬P",
+        "Q → S",
+        "R → T"
+      ],
+      "conclusion": "S ∧ T",
+      "expected_operations": 4,
+      "description": "Disjunctive Syllogism with Parallel Inferences",
+      "solution": "Apply Disjunctive Syllogism to get \"Q ∧ R\", then Simplification twice to extract \"Q\" and \"R\", apply Modus Ponens on each to get \"S\" and \"T\", finally Conjunction to combine them."
+    },
+    {
+      "premises": [
+        "P → Q",
+        "Q → R",
+        "R → S",
+        "¬S"
+      ],
+      "conclusion": "¬P",
+      "expected_operations": 4,
+      "description": "Chained Modus Tollens",
+      "solution": "Apply Hypothetical Syllogism twice to chain the implications: \"P → Q\" and \"Q → R\" gives \"P → R\", then \"P → R\" and \"R → S\" gives \"P → S\". Finally, apply Modus Tollens with \"¬S\" to get \"¬P\"."
+    },
+    {
+      "premises": [
+        "(P ∨ Q) → R",
+        "P",
+        "R → (S ∧ T)"
+      ],
+      "conclusion": "S",
+      "expected_operations": 4,
+      "description": "Addition + Modus Ponens Chain + Simplification",
+      "solution": "Use Addition to get \"P ∨ Q\" from \"P\", apply Modus Ponens to get \"R\", then Modus Ponens again to get \"S ∧ T\", extract \"S\"."
+    },
+    {
+      "premises": [
+        "P ⊕ Q",
+        "¬P"
+      ],
+      "conclusion": "Q ∧ ¬P",
+      "expected_operations": 4,
+      "description": "XOR with Negation",
+      "solution": "Expand \"P ⊕ Q\" to \"(P ∨ Q) ∧ ¬(P ∧ Q)\", use \"¬P\" with Disjunctive Syllogism to get \"Q\", then Conjunction with \"¬P\"."
+    }
+  ]
+}
