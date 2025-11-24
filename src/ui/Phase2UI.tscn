@@ -32,8 +32,9 @@ horizontal_alignment = 1
 
 [node name="TargetArea" type="Panel" parent="WorkContainer"]
 modulate = Color(1, 0.91, 0.91, 1)
-custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.0
 
 [node name="TargetContainer" type="VBoxContainer" parent="WorkContainer/TargetArea"]
 layout_mode = 1
@@ -62,8 +63,9 @@ horizontal_alignment = 1
 
 [node name="InventoryArea" type="Panel" parent="WorkContainer"]
 modulate = Color(0.941, 0.91, 1, 1)
-custom_minimum_size = Vector2(0, 180)
 layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
 
 [node name="InventoryContainer" type="VBoxContainer" parent="WorkContainer/InventoryArea"]
 layout_mode = 1
@@ -92,12 +94,43 @@ layout_mode = 2
 size_flags_horizontal = 3
 columns = 2
 
-[node name="RuleButtonsArea" type="Panel" parent="WorkContainer"]
-custom_minimum_size = Vector2(0, 200)
+[node name="RulesOverlay" type="Panel" parent="."]
+visible = true
+custom_minimum_size = Vector2(0, 450)
+layout_mode = 1
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -50.0
+offset_right = -10.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="OverlayContainer" type="VBoxContainer" parent="RulesOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ToggleRulesButton" type="Button" parent="RulesOverlay"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 50.0
+grow_horizontal = 2
+text = "▼ Hide Rules ▼"
+
+[node name="RuleButtonsArea" type="Panel" parent="RulesOverlay/OverlayContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="RuleButtonsContainer" type="VBoxContainer" parent="WorkContainer/RuleButtonsArea"]
+[node name="RuleButtonsContainer" type="VBoxContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -109,11 +142,11 @@ offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ButtonPages" type="Control" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer"]
+[node name="ButtonPages" type="Control" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="DoubleOperationsPage" type="Control" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages"]
+[node name="DoubleOperationsPage" type="Control" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -121,7 +154,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="DoubleOpsGrid" type="GridContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage"]
+[node name="DoubleOpsGrid" type="GridContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -136,52 +169,52 @@ grow_horizontal = 2
 grow_vertical = 2
 columns = 3
 
-[node name="MPButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+[node name="MPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "MP"
 
-[node name="MTButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+[node name="MTButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "MT"
 
-[node name="HSButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+[node name="HSButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "HS"
 
-[node name="DSButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+[node name="DSButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "DS"
 
-[node name="CDButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+[node name="CDButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "CD"
 
-[node name="DNButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+[node name="DNButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "DN"
 
-[node name="CONJButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+[node name="CONJButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "CONJ"
 
-[node name="EQButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+[node name="EQButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "EQ"
 
-[node name="RESButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
+[node name="RESButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "RES"
 
-[node name="SingleOperationsPage" type="Control" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages"]
+[node name="SingleOperationsPage" type="Control" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages"]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -190,7 +223,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SingleOpsContainer" type="VBoxContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage"]
+[node name="SingleOpsContainer" type="VBoxContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -204,101 +237,101 @@ offset_bottom = 225.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Row1" type="HBoxContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
+[node name="Row1" type="HBoxContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
 layout_mode = 2
 
-[node name="SIMPButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
+[node name="SIMPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "SIMP"
 
-[node name="IMPButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
+[node name="IMPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "IMP"
 
-[node name="CONVButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
+[node name="CONVButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row1"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "CONV"
 
-[node name="Row2" type="HBoxContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
+[node name="Row2" type="HBoxContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
 layout_mode = 2
 
-[node name="ADDButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
+[node name="ADDButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "ADD"
 
-[node name="DMButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
+[node name="DMButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "DM"
 
-[node name="DNEGButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
+[node name="DNEGButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row2"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "DNEG"
 
-[node name="Row3" type="HBoxContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
+[node name="Row3" type="HBoxContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
 layout_mode = 2
 
-[node name="DISTButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
+[node name="DISTButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "DIST"
 
-[node name="COMMButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
+[node name="COMMButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "COMM"
 
-[node name="ASSOCButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
+[node name="ASSOCButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row3"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "ASSOC"
 
-[node name="Row4" type="HBoxContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
+[node name="Row4" type="HBoxContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
 layout_mode = 2
 
-[node name="IDEMPButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4"]
+[node name="IDEMPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "IDEMP"
 
-[node name="ABSButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4"]
+[node name="ABSButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "ABS"
 
-[node name="PAREN_REMOVEButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4"]
+[node name="PAREN_REMOVEButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row4"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "( )"
 
-[node name="Row5" type="HBoxContainer" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
+[node name="Row5" type="HBoxContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer"]
 layout_mode = 2
 
-[node name="NEGButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5"]
+[node name="NEGButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "NEG"
 
-[node name="TAUTButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5"]
+[node name="TAUTButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "TAUT"
 
-[node name="CONTRButton" type="Button" parent="WorkContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5"]
+[node name="CONTRButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsContainer/Row5"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 text = "CONTR"
 
-[node name="Footer" type="Panel" parent="WorkContainer"]
+[node name="Footer" type="Panel" parent="RulesOverlay/OverlayContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 
-[node name="FooterContainer" type="HBoxContainer" parent="WorkContainer/Footer"]
+[node name="FooterContainer" type="HBoxContainer" parent="RulesOverlay/OverlayContainer/Footer"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -310,16 +343,16 @@ offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="OperationModeLabel" type="Label" parent="WorkContainer/Footer/FooterContainer"]
+[node name="OperationModeLabel" type="Label" parent="RulesOverlay/OverlayContainer/Footer/FooterContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Single Operations"
 
-[node name="Spacer" type="Control" parent="WorkContainer/Footer/FooterContainer"]
+[node name="Spacer" type="Control" parent="RulesOverlay/OverlayContainer/Footer/FooterContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PageToggleButton" type="Button" parent="WorkContainer/Footer/FooterContainer"]
+[node name="PageToggleButton" type="Button" parent="RulesOverlay/OverlayContainer/Footer/FooterContainer"]
 custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
 text = "→"
