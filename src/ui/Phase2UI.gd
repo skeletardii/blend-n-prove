@@ -118,14 +118,14 @@ func connect_rule_buttons() -> void:
 	ds_button.pressed.connect(_on_rule_button_pressed.bind("DS"))
 	cd_button.pressed.connect(_on_rule_button_pressed.bind("CD"))
 	dn_button.pressed.connect(_on_rule_button_pressed.bind("DN"))
-	imp_button.pressed.connect(_on_rule_button_pressed.bind("IMP"))
-	conv_button.pressed.connect(_on_rule_button_pressed.bind("CONV"))
+	conj_button.pressed.connect(_on_rule_button_pressed.bind("CONJ"))
 	eq_button.pressed.connect(_on_rule_button_pressed.bind("EQ"))
 	res_button.pressed.connect(_on_rule_button_pressed.bind("RES"))
 
 	# Single operation buttons
 	simp_button.pressed.connect(_on_rule_button_pressed.bind("SIMP"))
-	conj_button.pressed.connect(_on_rule_button_pressed.bind("CONJ"))
+	imp_button.pressed.connect(_on_rule_button_pressed.bind("IMP"))
+	conv_button.pressed.connect(_on_rule_button_pressed.bind("CONV"))
 	add_button.pressed.connect(_on_rule_button_pressed.bind("ADD"))
 	dm_button.pressed.connect(_on_rule_button_pressed.bind("DM"))
 	dist_button.pressed.connect(_on_rule_button_pressed.bind("DIST"))
