@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "my-godot-mcp": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\X\\Documents\\Godot-MCP\\server\\dist\\index.js"
+      ],
+      "env": {
+        "MCP_TRANSPORT": "stdio"
+      }
+    }
+  }
+}
