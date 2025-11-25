@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://c5oyjk8p0w8x4"]
+[gd_scene load_steps=4 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
 [ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
+[ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_occ7e"]
 
 [node name="Phase2UI" type="Control"]
 layout_mode = 3
@@ -34,7 +35,6 @@ horizontal_alignment = 1
 modulate = Color(1, 0.91, 0.91, 1)
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 1.0
 
 [node name="TargetContainer" type="VBoxContainer" parent="WorkContainer/TargetArea"]
 layout_mode = 1
@@ -56,6 +56,7 @@ horizontal_alignment = 1
 
 [node name="TargetExpression" type="Label" parent="WorkContainer/TargetArea/TargetContainer"]
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 theme_override_colors/font_color = Color(0.906, 0.298, 0.235, 1)
 theme_override_font_sizes/font_size = 60
 text = "Prove: Q"
@@ -93,22 +94,20 @@ size_flags_vertical = 3
 [node name="PremiseGrid" type="GridContainer" parent="WorkContainer/InventoryArea/InventoryContainer/InventoryScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-columns = 2
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
+columns = 2
 
 [node name="RulesOverlay" type="Panel" parent="."]
-visible = true
 custom_minimum_size = Vector2(0, 450)
 layout_mode = 1
-anchor_left = 0.0
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
 offset_top = -50.0
 offset_right = -10.0
-offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -120,14 +119,6 @@ anchor_bottom = 1.0
 offset_top = 50.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="ToggleRulesButton" type="Button" parent="RulesOverlay"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 50.0
-grow_horizontal = 2
-text = "▼ Hide Rules ▼"
 
 [node name="RuleButtonsArea" type="Panel" parent="RulesOverlay/OverlayContainer"]
 layout_mode = 2
@@ -170,53 +161,62 @@ offset_right = 270.0
 offset_bottom = 60.0
 grow_horizontal = 2
 grow_vertical = 2
-columns = 5
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
+columns = 5
 
 [node name="MPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "MP"
 
 [node name="MTButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "MT"
 
 [node name="HSButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "HS"
 
 [node name="DSButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "DS"
 
 [node name="CDButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "CD"
 
 [node name="DNButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "DN"
 
 [node name="CONJButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "CONJ"
 
 [node name="EQButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "EQ"
 
 [node name="RESButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "RES"
 
 [node name="SingleOperationsPage" type="Control" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages"]
@@ -241,83 +241,98 @@ offset_right = 270.0
 offset_bottom = 85.0
 grow_horizontal = 2
 grow_vertical = 2
-columns = 5
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
+columns = 5
 
 [node name="SIMPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "SIMP"
 
 [node name="IMPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "IMP"
 
 [node name="CONVButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "CONV"
 
 [node name="ADDButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "ADD"
 
 [node name="DMButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "DM"
 
 [node name="DNEGButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "DNEG"
 
 [node name="DISTButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "DIST"
 
 [node name="COMMButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "COMM"
 
 [node name="ASSOCButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "ASSOC"
 
 [node name="IDEMPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "IDEMP"
 
 [node name="ABSButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "ABS"
 
 [node name="PAREN_REMOVEButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "( )"
 
 [node name="NEGButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "NEG"
 
 [node name="TAUTButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "TAUT"
 
 [node name="CONTRButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "CONTR"
 
 [node name="Footer" type="Panel" parent="RulesOverlay/OverlayContainer"]
@@ -348,7 +363,18 @@ size_flags_horizontal = 3
 [node name="PageToggleButton" type="Button" parent="RulesOverlay/OverlayContainer/Footer/FooterContainer"]
 custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
+theme = ExtResource("2_occ7e")
 text = "→"
+
+[node name="ToggleRulesButton" type="Button" parent="RulesOverlay"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme = ExtResource("2_occ7e")
+text = "▼ Hide Rules ▼"
 
 [node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]
 visible = false
