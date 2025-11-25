@@ -13,7 +13,7 @@ config_version=5
 config/name="Godot MCP"
 config/description="Educational game teaching boolean logic through bartender simulation"
 run/main_scene="uid://dvdwtisv5ow7b"
-config/features=PackedStringArray("4.4", "GL Compatibility")
+config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -66,7 +66,7 @@ pointing/emulate_touch_from_mouse=true
 
 [rendering]
 
-textures/canvas_textures/default_texture_filter=2
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true

@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://dvdwtisv5ow7b"]
+[gd_scene load_steps=9 format=3 uid="uid://dvdwtisv5ow7b"]
 
 [ext_resource type="Script" uid="uid://k7rdb8uuwufw" path="res://src/ui/MainMenu.gd" id="1_2v8qy"]
 [ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_2wh52"]
 [ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_ihbld"]
 [ext_resource type="Texture2D" uid="uid://onbkto0umar" path="res://assets/sprites/newlogo.png" id="4_ihbld"]
+[ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="5_u6542"]
 
 [sub_resource type="Gradient" id="Gradient_2wh52"]
 offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
@@ -49,10 +50,14 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -506.0
+offset_top = 2.0
+offset_right = 54.0
+offset_bottom = 2.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_ihbld")
-expand_mode = 1
+expand_mode = 2
 stretch_mode = 1
 
 [node name="MenuContainer" type="VBoxContainer" parent="."]
@@ -93,6 +98,7 @@ layout_mode = 2
 [node name="PlayButton" type="Button" parent="MenuContainer"]
 custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
+theme = ExtResource("5_u6542")
 theme_override_font_sizes/font_size = 28
 text = "PLAY GAME"
 
@@ -103,6 +109,7 @@ layout_mode = 2
 [node name="DebugButton" type="Button" parent="MenuContainer"]
 custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
+theme = ExtResource("5_u6542")
 theme_override_font_sizes/font_size = 28
 text = "DEBUG OPTIONS"
 
@@ -113,6 +120,7 @@ layout_mode = 2
 [node name="SettingsButton" type="Button" parent="MenuContainer"]
 custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
+theme = ExtResource("5_u6542")
 theme_override_font_sizes/font_size = 28
 text = "SETTINGS"
 
@@ -123,6 +131,7 @@ layout_mode = 2
 [node name="ProgressButton" type="Button" parent="MenuContainer"]
 custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
+theme = ExtResource("5_u6542")
 theme_override_font_sizes/font_size = 28
 text = "PROGRESS AND STATS
 "
@@ -134,6 +143,7 @@ layout_mode = 2
 [node name="GridButton" type="Button" parent="MenuContainer"]
 custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
+theme = ExtResource("5_u6542")
 theme_override_font_sizes/font_size = 28
 text = "TUTORIALS
 "
@@ -145,6 +155,7 @@ layout_mode = 2
 [node name="QuitButton" type="Button" parent="MenuContainer"]
 custom_minimum_size = Vector2(500, 100)
 layout_mode = 2
+theme = ExtResource("5_u6542")
 theme_override_font_sizes/font_size = 28
 text = "QUIT"
 

@@ -1,10 +1,28 @@
-[gd_scene load_steps=6 format=3 uid="uid://bji7acucw6pe3"]
+[gd_scene load_steps=10 format=3 uid="uid://bji7acucw6pe3"]
 
 [ext_resource type="Script" uid="uid://cl7fuggwr1kue" path="res://src/ui/GameplayScene.gd" id="1_3v9zy"]
 [ext_resource type="Texture2D" uid="uid://dqs4mlo70fokf" path="res://assets/sprites/phase1bg.jpg" id="2_8e8l2"]
 [ext_resource type="PackedScene" uid="uid://cq3k7m5xywb8k" path="res://src/ui/TutorialHelpPanel.tscn" id="2_tutorial_help"]
 [ext_resource type="PackedScene" uid="uid://dpjc3t8yqr5h1" path="res://src/ui/HintPopup.tscn" id="3_hint_popup"]
+[ext_resource type="FontFile" uid="uid://ce67i1nf8ircd" path="res://assets/fonts/Glowforge.otf" id="3_n1mcv"]
+[ext_resource type="Texture2D" uid="uid://djmqnb3m2u5xr" path="res://assets/sprites/button assets.png" id="4_1yton"]
 [ext_resource type="Script" uid="uid://cecylep86dlss" path="res://src/ui/HourglassSprite.gd" id="4_hourglass"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hy4gw"]
+texture = ExtResource("4_1yton")
+texture_margin_left = 16.58393
+texture_margin_top = 0.078948975
+texture_margin_right = 16.695608
+texture_margin_bottom = 0.7529297
+region_rect = Rect2(63, 64, 56, 56)
+modulate_color = Color(0.86898494, 0.8689849, 0.8689849, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_n1mcv"]
+texture = ExtResource("4_1yton")
+texture_margin_left = 16.816864
+texture_margin_right = 16.421173
+region_rect = Rect2(63, 64, 56, 56)
+modulate_color = Color(0.4351923, 0.43519226, 0.43519226, 1)
 
 [node name="GameplayScene" type="Control"]
 layout_mode = 3
@@ -58,21 +76,29 @@ offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="PauseButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_n1mcv")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxTexture_hy4gw")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_n1mcv")
+theme_override_styles/hover = SubResource("StyleBoxTexture_n1mcv")
+theme_override_styles/focus = SubResource("StyleBoxTexture_hy4gw")
+text = "
+"
+
 [node name="LivesContainer" type="HBoxContainer" parent="UI/MainContainer/TopBar/TopBarContainer"]
 layout_mode = 2
 
 [node name="LivesLabel" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/LivesContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 30
 text = "Lives:"
 
 [node name="LivesDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/LivesContainer"]
 layout_mode = 2
 text = "♥♥♥"
-
-[node name="PauseButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
-custom_minimum_size = Vector2(60, 40)
-layout_mode = 2
-text = "⏸"
 
 [node name="Spacer" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
 layout_mode = 2
@@ -99,10 +125,12 @@ layout_mode = 2
 text = "Show Help"
 
 [node name="HintButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 text = "Hint"
 
 [node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer"]
+texture_filter = 1
 layout_mode = 2
 value = 100.0
 
@@ -173,11 +201,31 @@ Q"
 visible = false
 layout_mode = 0
 anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 700.0
+offset_bottom = 500.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="HintPopup" parent="UI" instance=ExtResource("3_hint_popup")]
 visible = false
 layout_mode = 0
 anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 600.0
+offset_bottom = 400.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="PauseOverlay" type="CanvasLayer" parent="."]
 layer = 100

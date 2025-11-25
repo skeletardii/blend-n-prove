@@ -7,7 +7,6 @@ extends Control
 @onready var level_display: Label = $MainContainer/TopStatusBar/StatusContainer/LevelDisplay
 @onready var patience_bar: ProgressBar = $MainContainer/TopStatusBar/PatienceBar
 @onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/SpeechBubble/PremiseChecklist/PremiseList
-@onready var target_expression: Label = $MainContainer/CustomerArea/SpeechBubble/PremiseChecklist/TargetContainer/TargetExpression
 @onready var input_display: Label = $MainContainer/InputSystem/InputContainer/InputField/InputDisplay
 
 # Virtual keyboard buttons
@@ -96,12 +95,6 @@ func set_customer_data(customer: GameManager.CustomerData) -> void:
 	current_customer = customer
 	validated_premises.clear()
 	update_premise_checklist()
-
-	# Level 6: Show natural language goal, Levels 1-5: Show logical conclusion
-	if customer.is_natural_language:
-		target_expression.text = customer.natural_language_conclusion
-	else:
-		target_expression.text = customer.target_conclusion
 
 	clear_input()
 
