@@ -227,20 +227,13 @@ func _on_load_progress_button_pressed() -> void:
 func _on_export_progress_button_pressed() -> void:
 	AudioManager.play_button_click()
 
-	# Get the JSON string from ProgressTracker
-	var json_string = ProgressTracker.export_progress_data()
+	# Export to encrypted file (ProgressTracker handles the file writing)
+	var export_path = ProgressTracker.export_progress_data()
 
-	# Save to export file
-	var export_path = "user://game_progress_export.json"
-	var file = FileAccess.open(export_path, FileAccess.WRITE)
-
-	if file:
-		file.store_string(json_string)
-		file.close()
-
-		# Get the actual filesystem path
+	if export_path != "":
+		# Get the actual filesystem path for display
 		var actual_path = ProjectSettings.globalize_path(export_path)
-		show_feedback("Progress exported to: " + actual_path, Color(0.2, 0.8, 0.2))
+		show_feedback("Progress exported (encrypted) to: " + actual_path, Color(0.2, 0.8, 0.2))
 		print("Progress exported to: " + actual_path)
 	else:
 		show_feedback("Failed to export progress!", Color(0.9, 0.3, 0.3))
@@ -248,47 +241,22 @@ func _on_export_progress_button_pressed() -> void:
 func _on_import_progress_button_pressed() -> void:
 	AudioManager.play_button_click()
 
-	var import_path = "user://game_progress_export.json"
+	var import_path = "user://game_progress_export.dat"  # Updated to use encrypted .dat extension
 
 	# Check if export file exists
 	if not FileAccess.file_exists(import_path):
 		show_feedback("No export file found!", Color(0.9, 0.3, 0.3))
 		return
 
-	# Read the export file
-	var file = FileAccess.open(import_path, FileAccess.READ)
-	if not file:
-		show_feedback("Failed to read export file!", Color(0.9, 0.3, 0.3))
-		return
+	# Use ProgressTracker's encrypted import function
+	var success = ProgressTracker.import_progress_data(import_path)
 
-	var json_string = file.get_as_text()
-	file.close()
-
-	# Parse JSON
-	var json = JSON.new()
-	var parse_result = json.parse(json_string)
-
-	if parse_result != OK:
-		show_feedback("Invalid JSON in export file!", Color(0.9, 0.3, 0.3))
-		return
-
-	var data = json.data
-
-	# Save as current progress
-	var save_path = "user://game_progress.json"
-	var save_file = FileAccess.open(save_path, FileAccess.WRITE)
-
-	if save_file:
-		save_file.store_string(json_string)
-		save_file.close()
-
-		# Reload progress
-		ProgressTracker.load_progress_data()
+	if success:
+		# Update UI to reflect imported data
 		update_quick_stats()
-
-		show_feedback("Progress imported successfully!", Color(0.2, 0.8, 0.2))
+		show_feedback("Progress imported successfully (encrypted)!", Color(0.2, 0.8, 0.2))
 	else:
-		show_feedback("Failed to import progress!", Color(0.9, 0.3, 0.3))
+		show_feedback("Failed to import progress! Check console for details.", Color(0.9, 0.3, 0.3))
 
 func _on_reset_progress_button_pressed() -> void:
 	AudioManager.play_button_click()

@@ -8,12 +8,12 @@
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_61da5"]
 texture = ExtResource("3_61da5")
-texture_margin_left = 10.122431
-texture_margin_top = 9.485168
-texture_margin_right = 11.715588
-texture_margin_bottom = 14.901899
+texture_margin_left = 10.1224
+texture_margin_top = 9.48517
+texture_margin_right = 11.7156
+texture_margin_bottom = 14.9019
 region_rect = Rect2(1, 129, 173, 50)
-modulate_color = Color(0.862261, 0.5276738, 1.0039686, 0.99215686)
+modulate_color = Color(0.862261, 0.527674, 1.00397, 0.992157)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fe75p"]
 texture = ExtResource("3_61da5")
@@ -22,33 +22,33 @@ texture_margin_top = 10.0
 texture_margin_right = 10.0
 texture_margin_bottom = 10.0
 region_rect = Rect2(1, 129, 173, 50)
-modulate_color = Color(0.57428205, 0.0013466021, 0.7355364, 1)
+modulate_color = Color(0.574282, 0.0013466, 0.735536, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7pq2t"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2yqly"]
 texture = ExtResource("3_61da5")
-texture_margin_left = 33.827408
-texture_margin_top = 30.21581
-texture_margin_right = 34.145683
-texture_margin_bottom = 34.67747
+texture_margin_left = 33.8274
+texture_margin_top = 30.2158
+texture_margin_right = 34.1457
+texture_margin_bottom = 34.6775
 region_rect = Rect2(126, 0, 56, 56)
-modulate_color = Color(0.8627451, 0.5294118, 1, 1)
+modulate_color = Color(0.862745, 0.529412, 1, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xg0kf"]
 texture = ExtResource("3_2yqly")
-texture_margin_left = 2.5034392
-texture_margin_top = 1.9655365
-texture_margin_right = 2.0883825
-texture_margin_bottom = 1.8426905
+texture_margin_left = 2.50344
+texture_margin_top = 1.96554
+texture_margin_right = 2.08838
+texture_margin_bottom = 1.84269
 region_rect = Rect2(297, 133, 32, 5)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_sqtcl"]
 texture = ExtResource("3_2yqly")
-texture_margin_left = 0.9827703
-texture_margin_top = 1.1313174
-texture_margin_right = 1.1056166
-texture_margin_bottom = 0.9827703
+texture_margin_left = 0.98277
+texture_margin_top = 1.13132
+texture_margin_right = 1.10562
+texture_margin_bottom = 0.98277
 region_rect = Rect2(57, 181, 32, 5)
 
 [resource]

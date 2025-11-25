@@ -3,8 +3,122 @@ extends Node
 signal progress_updated
 signal achievement_unlocked(achievement_name: String)
 
-const SAVE_FILE_PATH: String = "user://game_progress.json"
-const BACKUP_FILE_PATH: String = "user://game_progress_backup.json"
+## SAVE FILE CONFIGURATION
+##
+## Why user:// for Android?
+## - Internal Storage: Files are saved to Android's internal app-specific directory
+## - Sandboxing: Other apps cannot access these files (Android security model)
+## - No Permissions: Doesn't require STORAGE permissions in AndroidManifest.xml
+## - Auto-cleanup: Files are automatically deleted when app is uninstalled
+##
+## Security Note:
+## This encryption is designed to stop casual cheating (editing save files with text editors).
+## It's NOT designed to stop determined hackers or state-level actors. For a mobile game,
+## this provides a good balance between security and performance.
+
+const SAVE_FILE_PATH: String = "user://game_progress.dat"  # Changed from .json to .dat for encrypted format
+const BACKUP_FILE_PATH: String = "user://game_progress_backup.dat"
+const EXPORT_FILE_PATH: String = "user://game_progress_export.dat"
+
+## Encryption salt - This is combined with device-unique ID to create the encryption key.
+## WARNING: Changing this will invalidate all existing save files!
+const ENCRYPTION_SALT: String = "BlendNProve_2025_SecureSave_v1"
+
+## Current save format version - Increment this when making breaking changes to save structure
+const SAVE_VERSION: String = "2.0"  # Version 2.0 = Encrypted saves
+
+## ================================================================================================
+## ENCRYPTED SAVE MANAGER - USAGE DOCUMENTATION
+## ================================================================================================
+##
+## This autoload singleton manages player progress with encrypted save files for Android security.
+##
+## ENCRYPTION DETAILS:
+## ------------------
+## - Uses Godot 4's FileAccess.open_encrypted_with_pass() for encryption
+## - Hybrid key generation: Hardcoded salt + Device ID (OS.get_unique_id())
+## - Keys are hashed with SHA-256 for consistent length and good entropy
+## - Files use .dat extension instead of .json to discourage manual editing
+##
+## SAVE FILE LOCATIONS (user:// directory):
+## ----------------------------------------
+## - Primary save: user://game_progress.dat
+## - Backup save:  user://game_progress_backup.dat
+## - Export file:  user://game_progress_export.dat
+##
+## On Android, user:// maps to: /data/data/com.yourcompany.gamepackage/files/
+## On Windows, user:// maps to: C:/Users/[USER]/AppData/Roaming/Godot/app_userdata/[PROJECT_NAME]/
+##
+## FEATURES:
+## ---------
+## ✓ Automatic save/load on game events
+## ✓ Encrypted backup system (creates backup before every save)
+## ✓ Automatic recovery from backup if main file is corrupted
+## ✓ Version checking for forward/backward compatibility
+## ✓ Comprehensive error handling with detailed error codes
+## ✓ Export/import functionality (encrypted)
+## ✓ Statistics tracking (scores, achievements, play time, etc.)
+## ✓ Tutorial progress tracking
+##
+## USAGE EXAMPLES:
+## ---------------
+##
+## # Automatic save/load (no code needed):
+## # - Load happens automatically in _ready()
+## # - Save happens automatically when:
+## #   * A game session completes
+## #   * A tutorial problem is completed
+##
+## # Manual save:
+## ProgressTracker.save_progress_data()
+##
+## # Manual load:
+## ProgressTracker.load_progress_data()
+##
+## # Start a new game session:
+## ProgressTracker.start_new_session(difficulty_level)
+##
+## # Track operation usage during gameplay:
+## ProgressTracker.record_operation_used("AND", true)  # success
+## ProgressTracker.record_operation_used("OR", false)  # failure
+##
+## # Complete a session:
+## ProgressTracker.complete_current_session(final_score, lives_remaining, orders_completed, "win")
+##
+## # Export progress to encrypted file:
+## var export_path = ProgressTracker.export_progress_data()
+## if export_path != "":
+##     print("Exported to: ", export_path)
+##
+## # Import progress from encrypted file:
+## var success = ProgressTracker.import_progress_data("user://game_progress_export.dat")
+## if success:
+##     print("Import successful!")
+##
+## # Listen for progress updates:
+## ProgressTracker.progress_updated.connect(_on_progress_updated)
+## ProgressTracker.achievement_unlocked.connect(_on_achievement_unlocked)
+##
+## # Access statistics:
+## print("Total games played: ", ProgressTracker.statistics.total_games_played)
+## print("High score: ", ProgressTracker.statistics.high_score_overall)
+## print("Success rate: ", ProgressTracker.statistics.success_rate)
+##
+## SECURITY NOTES:
+## ---------------
+## - Saves cannot be transferred between devices (device-unique encryption)
+## - Prevents casual editing of save files with text editors
+## - NOT designed to stop determined hackers or state-level actors
+## - Good balance of security vs. convenience for mobile games
+##
+## TROUBLESHOOTING:
+## ----------------
+## - If save fails: Check console for error codes (ERR_FILE_*)
+## - If load fails: Backup recovery is attempted automatically
+## - If both fail: Progress will start fresh (no data loss from current session)
+## - Wrong encryption key errors: Device ID changed or file from different device
+##
+## ================================================================================================
 
 class GameSession:
 	var final_score: int = 0
@@ -125,6 +239,23 @@ var game_sessions: Array[GameSession] = []
 var statistics: PlayerStatistics = PlayerStatistics.new()
 var current_session: GameSession
 var session_start_time: float = 0.0
+
+## Generate encryption key using hybrid approach (hardcoded salt + device ID)
+## This provides device-unique encryption while maintaining simplicity.
+## Trade-off: Saves cannot be transferred between devices, but this prevents
+## simple save file editing and sharing between players.
+func _generate_encryption_key() -> String:
+	var device_id: String = OS.get_unique_id()
+
+	# Combine salt and device ID, then hash for consistent key length
+	var combined: String = ENCRYPTION_SALT + device_id
+
+	# Use SHA-256 hash to create a consistent-length key
+	# Godot's FileAccess.open_encrypted_with_pass() accepts any string, but
+	# using a hash ensures consistent length and good entropy distribution
+	var key: String = combined.sha256_text()
+
+	return key
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -284,7 +415,7 @@ func check_achievements() -> void:
 
 func save_progress_data() -> void:
 	var save_data = {
-		"version": "1.0",
+		"version": SAVE_VERSION,
 		"last_saved": Time.get_datetime_string_from_system(),
 		"statistics": statistics.to_dict(),
 		"recent_sessions": []
@@ -296,34 +427,50 @@ func save_progress_data() -> void:
 		save_data["recent_sessions"].append(session.to_dict())
 
 	var json_string = JSON.stringify(save_data)
+	var encryption_key = _generate_encryption_key()
 
-	# Create backup before saving
+	# Create encrypted backup before saving
 	if FileAccess.file_exists(SAVE_FILE_PATH):
-		var backup_file = FileAccess.open(BACKUP_FILE_PATH, FileAccess.WRITE)
+		var backup_file = FileAccess.open_encrypted_with_pass(BACKUP_FILE_PATH, FileAccess.WRITE, encryption_key)
 		if backup_file:
-			var current_file = FileAccess.open(SAVE_FILE_PATH, FileAccess.READ)
+			var current_file = FileAccess.open_encrypted_with_pass(SAVE_FILE_PATH, FileAccess.READ, encryption_key)
 			if current_file:
 				backup_file.store_string(current_file.get_as_text())
 				current_file.close()
+			else:
+				print("Warning: Could not read current save for backup. Error code: ", FileAccess.get_open_error())
 			backup_file.close()
+		else:
+			print("Warning: Could not create backup file. Error code: ", FileAccess.get_open_error())
 
-	# Save main file
-	var file = FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
+	# Save main file with encryption
+	var file = FileAccess.open_encrypted_with_pass(SAVE_FILE_PATH, FileAccess.WRITE, encryption_key)
 	if file:
 		file.store_string(json_string)
 		file.close()
-		print("Progress data saved successfully")
+		print("Progress data saved successfully (encrypted)")
 	else:
-		print("Error: Could not save progress data")
+		var error_code = FileAccess.get_open_error()
+		print("Error: Could not save progress data. Error code: ", error_code)
+		_print_file_error(error_code)
 
 func load_progress_data() -> void:
 	if not FileAccess.file_exists(SAVE_FILE_PATH):
 		print("No progress data found, starting fresh")
 		return
 
-	var file = FileAccess.open(SAVE_FILE_PATH, FileAccess.READ)
+	var encryption_key = _generate_encryption_key()
+	var file = FileAccess.open_encrypted_with_pass(SAVE_FILE_PATH, FileAccess.READ, encryption_key)
+
 	if not file:
-		print("Error: Could not open progress data file")
+		var error_code = FileAccess.get_open_error()
+		print("Error: Could not open progress data file. Error code: ", error_code)
+		_print_file_error(error_code)
+
+		# Try backup if main file fails
+		if error_code == ERR_FILE_CORRUPT or error_code == ERR_FILE_UNRECOGNIZED:
+			print("Main save file may be corrupted or encrypted with wrong key, trying backup...")
+			try_load_backup()
 		return
 
 	var json_string = file.get_as_text()
@@ -333,11 +480,18 @@ func load_progress_data() -> void:
 	var parse_result = json.parse(json_string)
 
 	if parse_result != OK:
-		print("Error: Could not parse progress data JSON")
+		print("Error: Could not parse progress data JSON. Parse error at line ", json.get_error_line(), ": ", json.get_error_message())
 		try_load_backup()
 		return
 
 	var save_data = json.data
+
+	# Version checking for future compatibility
+	var file_version = save_data.get("version", "1.0")
+	if file_version != SAVE_VERSION:
+		print("Warning: Save file version mismatch. File version: ", file_version, ", Current version: ", SAVE_VERSION)
+		# Handle version migrations here in the future
+		# For now, we'll attempt to load anyway since we're only on version 2.0
 
 	if save_data.has("statistics"):
 		statistics.from_dict(save_data["statistics"])
@@ -349,16 +503,22 @@ func load_progress_data() -> void:
 			session.from_dict(session_data)
 			game_sessions.append(session)
 
-	print("Progress data loaded successfully")
+	print("Progress data loaded successfully (version: ", file_version, ")")
 	progress_updated.emit()
 
 func try_load_backup() -> void:
 	if not FileAccess.file_exists(BACKUP_FILE_PATH):
+		print("No backup file found")
 		return
 
-	print("Attempting to load from backup file")
-	var backup_file = FileAccess.open(BACKUP_FILE_PATH, FileAccess.READ)
+	print("Attempting to load from encrypted backup file")
+	var encryption_key = _generate_encryption_key()
+	var backup_file = FileAccess.open_encrypted_with_pass(BACKUP_FILE_PATH, FileAccess.READ, encryption_key)
+
 	if not backup_file:
+		var error_code = FileAccess.get_open_error()
+		print("Error: Could not open backup file. Error code: ", error_code)
+		_print_file_error(error_code)
 		return
 
 	var json_string = backup_file.get_as_text()
@@ -369,6 +529,11 @@ func try_load_backup() -> void:
 
 	if parse_result == OK:
 		var save_data = json.data
+
+		# Version checking
+		var file_version = save_data.get("version", "1.0")
+		print("Backup file version: ", file_version)
+
 		if save_data.has("statistics"):
 			statistics.from_dict(save_data["statistics"])
 		if save_data.has("recent_sessions"):
@@ -379,6 +544,8 @@ func try_load_backup() -> void:
 				game_sessions.append(session)
 		print("Progress data loaded from backup successfully")
 		progress_updated.emit()
+	else:
+		print("Error: Could not parse backup file JSON. Parse error at line ", json.get_error_line(), ": ", json.get_error_message())
 
 func get_achievement_name(achievement_id: String) -> String:
 	var achievement_names = {
@@ -412,6 +579,7 @@ func get_recent_sessions(count: int = 10) -> Array[GameSession]:
 
 func export_progress_data() -> String:
 	var export_data = {
+		"version": SAVE_VERSION,
 		"export_date": Time.get_datetime_string_from_system(),
 		"statistics": statistics.to_dict(),
 		"all_sessions": []
@@ -420,7 +588,78 @@ func export_progress_data() -> String:
 	for session in game_sessions:
 		export_data["all_sessions"].append(session.to_dict())
 
-	return JSON.stringify(export_data, "\t")
+	var json_string = JSON.stringify(export_data, "\t")
+	var encryption_key = _generate_encryption_key()
+
+	# Save export to encrypted file
+	var export_file = FileAccess.open_encrypted_with_pass(EXPORT_FILE_PATH, FileAccess.WRITE, encryption_key)
+	if export_file:
+		export_file.store_string(json_string)
+		export_file.close()
+		print("Progress data exported successfully to: ", EXPORT_FILE_PATH)
+		return EXPORT_FILE_PATH
+	else:
+		var error_code = FileAccess.get_open_error()
+		print("Error: Could not export progress data. Error code: ", error_code)
+		_print_file_error(error_code)
+		return ""
+
+func import_progress_data(file_path: String) -> bool:
+	if not FileAccess.file_exists(file_path):
+		print("Error: Import file does not exist: ", file_path)
+		return false
+
+	var encryption_key = _generate_encryption_key()
+	var import_file = FileAccess.open_encrypted_with_pass(file_path, FileAccess.READ, encryption_key)
+
+	if not import_file:
+		var error_code = FileAccess.get_open_error()
+		print("Error: Could not open import file. Error code: ", error_code)
+		_print_file_error(error_code)
+		print("Note: Import files must be encrypted with this device's encryption key")
+		return false
+
+	var json_string = import_file.get_as_text()
+	import_file.close()
+
+	var json = JSON.new()
+	var parse_result = json.parse(json_string)
+
+	if parse_result != OK:
+		print("Error: Could not parse import file JSON. Parse error at line ", json.get_error_line(), ": ", json.get_error_message())
+		return false
+
+	var import_data = json.data
+
+	# Version checking
+	var file_version = import_data.get("version", "1.0")
+	print("Importing data from version: ", file_version)
+
+	if file_version != SAVE_VERSION:
+		print("Warning: Import file version (", file_version, ") differs from current version (", SAVE_VERSION, ")")
+		# Future: Add version migration logic here
+
+	# Import statistics
+	if import_data.has("statistics"):
+		statistics.from_dict(import_data["statistics"])
+		print("Statistics imported successfully")
+
+	# Import sessions (prefer "all_sessions" from export, fallback to "recent_sessions" from regular save)
+	var sessions_key = "all_sessions" if import_data.has("all_sessions") else "recent_sessions"
+	if import_data.has(sessions_key):
+		game_sessions.clear()
+		for session_data in import_data[sessions_key]:
+			var session = GameSession.new()
+			session.from_dict(session_data)
+			game_sessions.append(session)
+		print("Sessions imported successfully (", game_sessions.size(), " sessions)")
+
+	# Save the imported data
+	save_progress_data()
+	progress_updated.emit()
+
+	print("Progress data imported successfully from: ", file_path)
+	return true
 
 func reset_progress_data() -> void:
 	game_sessions.clear()
@@ -429,8 +668,40 @@ func reset_progress_data() -> void:
 		DirAccess.remove_absolute(SAVE_FILE_PATH)
 	if FileAccess.file_exists(BACKUP_FILE_PATH):
 		DirAccess.remove_absolute(BACKUP_FILE_PATH)
+	if FileAccess.file_exists(EXPORT_FILE_PATH):
+		DirAccess.remove_absolute(EXPORT_FILE_PATH)
 	progress_updated.emit()
 	print("Progress data reset successfully")
+
+## Helper function to print human-readable file error messages
+func _print_file_error(error_code: int) -> void:
+	match error_code:
+		OK:
+			print("  → No error (OK)")
+		ERR_FILE_NOT_FOUND:
+			print("  → File not found")
+		ERR_FILE_BAD_DRIVE:
+			print("  → Bad drive")
+		ERR_FILE_BAD_PATH:
+			print("  → Bad path")
+		ERR_FILE_NO_PERMISSION:
+			print("  → No permission to access file")
+		ERR_FILE_ALREADY_IN_USE:
+			print("  → File already in use")
+		ERR_FILE_CANT_OPEN:
+			print("  → Cannot open file")
+		ERR_FILE_CANT_WRITE:
+			print("  → Cannot write to file")
+		ERR_FILE_CANT_READ:
+			print("  → Cannot read from file")
+		ERR_FILE_UNRECOGNIZED:
+			print("  → File format unrecognized (possibly wrong encryption key)")
+		ERR_FILE_CORRUPT:
+			print("  → File is corrupt or encrypted with wrong key")
+		ERR_FILE_EOF:
+			print("  → Unexpected end of file")
+		_:
+			print("  → Unknown error code: ", error_code)
 
 # Tutorial progress tracking functions
 func complete_tutorial_problem(tutorial_key: String, problem_index: int) -> void:
