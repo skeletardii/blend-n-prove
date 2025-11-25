@@ -96,7 +96,7 @@ grow_vertical = 0
 value = 100.0
 
 [node name="CustomerArea" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 400)
+custom_minimum_size = Vector2(0, 520)
 layout_mode = 2
 
 [node name="CustomerCharacter" type="Control" parent="MainContainer/CustomerArea"]
@@ -107,7 +107,7 @@ offset_right = 140.0
 offset_bottom = 180.0
 
 [node name="SpeechBubble" type="Panel" parent="MainContainer/CustomerArea"]
-custom_minimum_size = Vector2(0, 300)
+custom_minimum_size = Vector2(0, 500)
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -137,9 +137,17 @@ theme = ExtResource("6_wbgmg")
 theme_override_font_sizes/font_size = 20
 text = "Premises to reconstruct:"
 
-[node name="PremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
+[node name="PremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="PremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist/PremiseListScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
 
 [node name="InputSystem" type="Control" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 80)
@@ -196,18 +204,18 @@ offset_bottom = -1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(0.86898494, 0.8689849, 0.8689849, 1)
+theme_override_colors/font_color = Color(0.98582214, 0.81944287, 0.87352365, 1)
 theme_override_fonts/font = ExtResource("4_o5hkq")
 text = "Type your premise here..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="KeyboardSpacer" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 
 [node name="VirtualKeyboard" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 265)
 layout_mode = 2
 
 [node name="VariableRow" type="HBoxContainer" parent="MainContainer/VirtualKeyboard"]
@@ -368,10 +376,6 @@ theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
 text = "⌫"
-
-[node name="ActionButtonsSpacer" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
 
 [node name="ActionButtons" type="Control" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 60)

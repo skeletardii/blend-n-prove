@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://c5oyjk8p0w8x4"]
+[gd_scene load_steps=5 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
 [ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_occ7e"]
+[ext_resource type="Script" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
 
 [node name="Phase2UI" type="Control"]
 layout_mode = 3
@@ -31,10 +32,10 @@ layout_mode = 2
 text = "Phase 2: Proof Building"
 horizontal_alignment = 1
 
-[node name="TargetArea" type="Panel" parent="WorkContainer"]
-modulate = Color(1, 0.91, 0.91, 1)
+[node name="TargetArea" type="Control" parent="WorkContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("4_speechbubble")
 
 [node name="TargetContainer" type="VBoxContainer" parent="WorkContainer/TargetArea"]
 layout_mode = 1
@@ -361,13 +362,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="PageToggleButton" type="Button" parent="RulesOverlay/OverlayContainer/Footer/FooterContainer"]
-custom_minimum_size = Vector2(60, 40)
+custom_minimum_size = Vector2(60, 20)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 text = "→"
 
 [node name="ToggleRulesButton" type="Button" parent="RulesOverlay"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0

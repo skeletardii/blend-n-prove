@@ -6,7 +6,7 @@ extends Control
 @onready var score_display: Label = $MainContainer/TopStatusBar/StatusContainer/ScoreDisplay
 @onready var level_display: Label = $MainContainer/TopStatusBar/StatusContainer/LevelDisplay
 @onready var patience_bar: ProgressBar = $MainContainer/TopStatusBar/PatienceBar
-@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/SpeechBubble/PremiseChecklist/PremiseList
+@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/SpeechBubble/PremiseChecklist/PremiseListScroll/PremiseList
 @onready var input_display: Label = $MainContainer/InputSystem/InputContainer/InputField/InputDisplay
 
 # Virtual keyboard buttons
@@ -241,45 +241,65 @@ func update_premise_checklist() -> void:
 		var premise_text = display_premises[i]
 		var is_completed = is_premise_completed_by_index(i)
 
-		var item_container = HBoxContainer.new()
-		var checkbox = create_checkbox(is_completed)
-		var label = Label.new()
+		var premise_panel = create_premise_panel(premise_text, is_completed)
+		premise_list.add_child(premise_panel)
+		premise_items.append(premise_panel)
 
-		label.text = premise_text
-		var font_size = 24 if current_customer.is_natural_language else 48
-		label.add_theme_font_size_override("font_size", font_size)
+func create_premise_panel(premise_text: String, is_completed: bool) -> PanelContainer:
+	var panel = PanelContainer.new()
 
-		# For natural language text, enable word wrapping and set width constraint
-		if current_customer.is_natural_language:
-			label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			label.custom_minimum_size.x = 350
+	# Create StyleBox for the panel
+	var style_box = StyleBoxFlat.new()
+	style_box.corner_radius_top_left = 8
+	style_box.corner_radius_top_right = 8
+	style_box.corner_radius_bottom_left = 8
+	style_box.corner_radius_bottom_right = 8
 
-		if is_completed:
-			label.add_theme_color_override("font_color", Color.GREEN)
-		else:
-			label.add_theme_color_override("font_color", Color(0.2, 0.2, 0.2))
-
-		item_container.add_child(checkbox)
-		item_container.add_child(label)
-		premise_list.add_child(item_container)
-		premise_items.append(item_container)
-
-func create_checkbox(checked: bool) -> Control:
-	var checkbox = ColorRect.new()
-	checkbox.custom_minimum_size = Vector2(16, 16)
-	if checked:
-		checkbox.color = Color.GREEN
-		# Add checkmark
-		var checkmark = Label.new()
-		checkmark.text = "✓"
-		checkmark.add_theme_color_override("font_color", Color.WHITE)
-		checkmark.add_theme_font_size_override("font_size", 12)
-		checkmark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		checkmark.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		checkbox.add_child(checkmark)
+	if is_completed:
+		# Completed: Lighter pink/purple hue, darker border to emphasize filled
+		style_box.bg_color = Color(0.85, 0.75, 0.85, 1.0)  # Light pink/purple
+		style_box.border_color = Color(0.4, 0.3, 0.4, 1.0)  # Darker purple border
+		style_box.shadow_color = Color(0.3, 0.2, 0.3, 0.6)  # Dark shadow
 	else:
-		checkbox.color = Color(0.925, 0.941, 0.945)
-	return checkbox
+		# Unchecked: Dark grey with drop shadow to emphasize hole
+		style_box.bg_color = Color(0.25, 0.25, 0.25, 1.0)  # Dark grey
+		style_box.border_color = Color(0.15, 0.15, 0.15, 1.0)  # Darker grey border
+		style_box.shadow_color = Color(0.0, 0.0, 0.0, 0.8)  # Deep shadow for hole effect
+
+	style_box.border_width_left = 2
+	style_box.border_width_right = 2
+	style_box.border_width_top = 2
+	style_box.border_width_bottom = 2
+	style_box.shadow_size = 4
+	style_box.shadow_offset = Vector2(2, 2)
+
+	style_box.content_margin_left = 12
+	style_box.content_margin_right = 12
+	style_box.content_margin_top = 8
+	style_box.content_margin_bottom = 8
+
+	panel.add_theme_stylebox_override("panel", style_box)
+
+	# Create label
+	var label = Label.new()
+	label.text = premise_text
+	var font_size = 24 if current_customer.is_natural_language else 48
+	label.add_theme_font_size_override("font_size", font_size)
+
+	# For natural language text, enable word wrapping
+	if current_customer.is_natural_language:
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		label.custom_minimum_size.x = 350
+
+	if is_completed:
+		# Dark purple text matching drop shadow for contrast
+		label.add_theme_color_override("font_color", Color(0.3, 0.2, 0.3, 1.0))  # Dark purple for contrast
+	else:
+		# Dirty white for unchecked
+		label.add_theme_color_override("font_color", Color(0.85, 0.85, 0.8, 1.0))  # Dirty white
+
+	panel.add_child(label)
+	return panel
 
 func is_premise_completed(premise_text: String) -> bool:
 	for validated in validated_premises:

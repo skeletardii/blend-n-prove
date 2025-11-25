@@ -6,7 +6,6 @@ extends Control
 @onready var score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/ScoreDisplay
 @onready var customer_name: Label = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/CustomerName
 @onready var patience_bar: ProgressBar = $UI/MainContainer/PatienceBar
-@onready var hourglass_animation: Node2D = $UI/MainContainer/PatienceBar/HourglassAnimation
 @onready var order_display: RichTextLabel = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/OrderDisplay
 @onready var phase_container: Control = $UI/MainContainer/ScrollContainer/GameContentArea/PhaseContainer
 @onready var tutorial_help_panel: Panel = $UI/TutorialHelpPanel
@@ -120,10 +119,6 @@ func update_patience_timer(delta: float) -> void:
 
 	var patience_percentage: float = (patience_timer / max_patience) * 100.0
 	patience_bar.value = patience_percentage
-
-	# Update hourglass sand level
-	if hourglass_animation:
-		hourglass_animation.update_sand(patience_percentage)
 
 	# Change color based on urgency
 	if patience_percentage > 60:

@@ -635,6 +635,9 @@ func animate_target_reached(result: BooleanLogicEngine.BooleanExpression) -> voi
 
 func create_target_flash(position: Vector2) -> void:
 	"""Create a satisfying circular flash effect where the ingredient disappears"""
+	# Move explosion up by 100px (was 200px, lowered by 100px)
+	position.y -= 100
+
 	# Create outer golden ring flash
 	var flash = ColorRect.new()
 	flash.color = Color(1.0, 0.9, 0.3, 0.8)  # Golden yellow
@@ -831,7 +834,10 @@ func _on_addition_dialog_confirmed(expr_text: String) -> void:
 		# Check if target is reached
 		if cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
 			feedback_message.emit("✓ Target reached! Proof complete!", Color.CYAN)
-			target_reached.emit(cleaned_result)
+			# Find the card that matches the result and animate it
+			animate_target_reached(cleaned_result)
+			# Emit signal after animation delay
+			get_tree().create_timer(1.0).timeout.connect(func(): target_reached.emit(cleaned_result))
 	else:
 		clear_selections()
 		feedback_message.emit("Addition failed to produce valid result", Color.RED)
