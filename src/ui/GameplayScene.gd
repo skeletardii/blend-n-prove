@@ -28,7 +28,7 @@ var current_phase_instance: Control = null
 
 # Background Textures
 var phase1_background: Texture2D = preload("res://assets/sprites/phase1bg.jpg")
-var phase2_background: Texture2D = preload("res://assets/sprites/spiralbg.jpg")
+var phase2_background: Texture2D = preload("res://assets/sprites/phase2bg.jpg")
 
 # Game State
 var current_customer: GameManager.CustomerData
@@ -140,8 +140,12 @@ func change_background(phase: GameManager.GamePhase) -> void:
 	match phase:
 		GameManager.GamePhase.PREPARING_PREMISES:
 			background_texture.texture = phase1_background
+			# Darken Phase 1 background by 60% (20% + 40% more)
+			background_texture.modulate = Color(0.4, 0.4, 0.4, 1.0)
 		GameManager.GamePhase.TRANSFORMING_PREMISES:
 			background_texture.texture = phase2_background
+			# Phase 2 background at full brightness
+			background_texture.modulate = Color(1.0, 1.0, 1.0, 1.0)
 
 func switch_to_phase1() -> void:
 	GameManager.change_phase(GameManager.GamePhase.PREPARING_PREMISES)

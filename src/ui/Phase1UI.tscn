@@ -134,14 +134,13 @@ grow_vertical = 2
 [node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
 layout_mode = 2
 theme = ExtResource("6_wbgmg")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 text = "Premises to reconstruct:"
 
 [node name="PremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
-vertical_scroll_mode = 1
 
 [node name="PremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist/PremiseListScroll"]
 layout_mode = 2
@@ -197,15 +196,14 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 32.0
-offset_top = -1.0
-offset_right = -8.0
-offset_bottom = -1.0
+offset_left = 122.0
+offset_right = -63.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(0.98582214, 0.81944287, 0.87352365, 1)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_fonts/font = ExtResource("4_o5hkq")
+theme_override_font_sizes/font_size = 25
 text = "Type your premise here..."
 horizontal_alignment = 1
 vertical_alignment = 1

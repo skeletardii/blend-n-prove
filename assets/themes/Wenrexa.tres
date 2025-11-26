@@ -15,7 +15,6 @@ region_rect = Rect2(1, 129, 173, 50)
 modulate_color = Color(0.862261, 0.5276738, 1.0039686, 0.99215686)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fe75p"]
-content_margin_bottom = 50.0
 texture = ExtResource("3_61da5")
 texture_margin_left = 10.0
 texture_margin_top = 10.0

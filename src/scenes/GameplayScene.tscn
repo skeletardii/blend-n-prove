@@ -33,6 +33,7 @@ grow_vertical = 2
 script = ExtResource("1_3v9zy")
 
 [node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(0.39688924, 0.39688927, 0.3968891, 1)
 layout_mode = 0
 offset_left = -581.0
 offset_top = -8.0
@@ -103,7 +104,9 @@ text = "Lives:"
 
 [node name="LivesDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/LivesContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 50
 text = "♥♥♥"
 
 [node name="Spacer" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
@@ -139,7 +142,9 @@ text = "Hint"
 
 [node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer"]
 texture_filter = 1
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+theme_override_font_sizes/font_size = 30
 value = 100.0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="UI/MainContainer"]

@@ -1,29 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://cg5v8xh2qwp3d"]
+[gd_scene load_steps=6 format=3 uid="uid://cg5v8xh2qwp3d"]
 
 [ext_resource type="Script" path="res://src/ui/ScorePopup.gd" id="1_score_popup"]
+[ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_wenrexa"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_base"]
-font_size = 48
-shadow_size = 5
-shadow_color = Color(0, 0, 0, 0.7)
-shadow_offset = Vector2(2, 2)
-outline_size = 3
+font_size = 72
+shadow_size = 8
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_offset = Vector2(3, 3)
+outline_size = 5
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_bonus"]
-font_size = 36
-shadow_size = 4
-shadow_color = Color(0, 0, 0, 0.7)
-shadow_offset = Vector2(2, 2)
-outline_size = 2
+font_size = 56
+shadow_size = 6
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_offset = Vector2(3, 3)
+outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_multiplier"]
-font_size = 32
-shadow_size = 4
-shadow_color = Color(0, 0, 0, 0.7)
-shadow_offset = Vector2(2, 2)
-outline_size = 2
+font_size = 64
+shadow_size = 7
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_offset = Vector2(3, 3)
+outline_size = 5
 outline_color = Color(0, 0, 0, 1)
 
 [node name="ScorePopup" type="CanvasLayer"]
@@ -42,6 +43,7 @@ color = Color(1, 1, 1, 0)
 [node name="CenterContainer" type="CenterContainer" parent="."]
 anchors_preset = 10
 anchor_right = 1.0
+offset_left = 300.0
 offset_top = 100.0
 offset_bottom = 250.0
 grow_horizontal = 2
@@ -52,18 +54,21 @@ theme_override_constants/separation = 5
 
 [node name="BaseScoreLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("2_wenrexa")
 text = "+150"
 label_settings = SubResource("LabelSettings_base")
 horizontal_alignment = 1
 
 [node name="BonusLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("2_wenrexa")
 text = "+100"
 label_settings = SubResource("LabelSettings_bonus")
 horizontal_alignment = 1
 
 [node name="MultiplierLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("2_wenrexa")
 text = "×1.5"
 label_settings = SubResource("LabelSettings_multiplier")
 horizontal_alignment = 1

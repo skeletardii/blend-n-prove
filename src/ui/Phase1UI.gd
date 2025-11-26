@@ -200,10 +200,10 @@ func clear_input() -> void:
 func update_input_display() -> void:
 	if current_input.is_empty():
 		input_display.text = "Type your premise here..."
-		input_display.modulate = Color(0.498, 0.549, 0.553, 1)  # Gray placeholder
+		input_display.modulate = Color(0.5, 0.5, 0.5, 1)  # Gray placeholder with better contrast
 	else:
 		input_display.text = current_input
-		input_display.modulate = Color.BLACK  # Active text
+		input_display.modulate = Color(0.1, 0.1, 0.1, 1)  # Dark text for better contrast
 
 	# Emit signal for tutorial detection
 	text_changed.emit(current_input)

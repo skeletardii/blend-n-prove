@@ -3,58 +3,58 @@ extends Control
 # UI References
 @onready var work_container: VBoxContainer = $WorkContainer
 @onready var phase_label: Label = $WorkContainer/PhaseLabel
-@onready var premise_grid: GridContainer = $WorkContainer/InventoryArea/InventoryContainer/InventoryScroll/PremiseGrid
-@onready var target_expression: Label = $WorkContainer/TargetArea/TargetContainer/TargetExpression
-@onready var rules_overlay: Panel = $RulesOverlay
-@onready var toggle_rules_button: Button = $RulesOverlay/ToggleRulesButton
-@onready var operation_mode_label: Label = $RulesOverlay/OverlayContainer/Footer/FooterContainer/OperationModeLabel
-@onready var page_toggle_button: Button = $RulesOverlay/OverlayContainer/Footer/FooterContainer/PageToggleButton
+@onready var premise_grid: GridContainer = $WorkContainer/InventoryArea/InventoryContainer/InventoryScroll/MarginContainer/PremiseGrid
+@onready var target_expression: Label = $WorkContainer/TargetArea/ChatBubble/TargetContainer/TargetExpression
 @onready var addition_dialog: Panel = $AdditionDialog
+@onready var silhouette: TextureRect = $Silhouette
 
-# Button Pages
-@onready var double_operations_page: Control = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage
-@onready var single_operations_page: Control = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage
+# Remote Controls
+@onready var double_ops_remote: Panel = $DoubleOpsRemote
+@onready var single_ops_remote: Panel = $SingleOpsRemote
+@onready var double_toggle_button: Button = $DoubleOpsRemote/Header/ToggleButton
+@onready var single_toggle_button: Button = $SingleOpsRemote/Header/ToggleButton
 
 # Double Operation Buttons
-@onready var mp_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/MPButton
-@onready var mt_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/MTButton
-@onready var hs_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/HSButton
-@onready var ds_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/DSButton
-@onready var cd_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/CDButton
-@onready var dn_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/DNButton
-@onready var conj_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/CONJButton
-@onready var eq_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/EQButton
-@onready var res_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid/RESButton
+@onready var mp_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/MPButton
+@onready var mt_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/MTButton
+@onready var hs_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/HSButton
+@onready var ds_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/DSButton
+@onready var cd_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/CDButton
+@onready var dn_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/DNButton
+@onready var conj_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/CONJButton
+@onready var eq_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/EQButton
+@onready var res_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/RESButton
 
 # Single Operation Buttons
-@onready var simp_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/SIMPButton
-@onready var imp_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/IMPButton
-@onready var conv_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/CONVButton
-@onready var add_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/ADDButton
-@onready var dm_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/DMButton
-@onready var dneg_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/DNEGButton
-@onready var dist_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/DISTButton
-@onready var comm_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/COMMButton
-@onready var assoc_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/ASSOCButton
-@onready var idemp_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/IDEMPButton
-@onready var abs_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/ABSButton
-@onready var paren_remove_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/PAREN_REMOVEButton
-@onready var neg_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/NEGButton
-@onready var taut_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/TAUTButton
-@onready var contr_button: Button = $RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid/CONTRButton
+@onready var simp_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/SIMPButton
+@onready var imp_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/IMPButton
+@onready var conv_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/CONVButton
+@onready var add_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/ADDButton
+@onready var dm_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/DMButton
+@onready var dneg_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/DNEGButton
+@onready var dist_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/DISTButton
+@onready var comm_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/COMMButton
+@onready var assoc_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/ASSOCButton
+@onready var idemp_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/IDEMPButton
+@onready var abs_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/ABSButton
+@onready var paren_remove_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/PAREN_REMOVEButton
+@onready var neg_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/NEGButton
+@onready var taut_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/TAUTButton
+@onready var contr_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/CONTRButton
 
 # Game State
 var available_premises: Array[BooleanLogicEngine.BooleanExpression] = []
 var selected_premises: Array[BooleanLogicEngine.BooleanExpression] = []
 var target_conclusion: String = ""
-var current_page: int = 0  # 0 = single operations, 1 = double operations
 var selected_rule: String = ""
 var premise_cards: Array[Control] = []
 
 # Animation State
-var rules_panel_height: float = 450.0
-var rules_button_height: float = 50.0
-var is_animating: bool = false
+var double_panel_height: float = 450.0
+var single_panel_height: float = 600.0
+var button_height: float = 50.0
+var is_animating_double: bool = false
+var is_animating_single: bool = false
 
 # Signals for parent communication
 signal rule_applied(result: BooleanLogicEngine.BooleanExpression)
@@ -113,17 +113,17 @@ func setup_dynamic_spacing() -> void:
 func _ready() -> void:
 	setup_dynamic_spacing()
 	connect_rule_buttons()
-	connect_page_toggle()
 	connect_addition_dialog()
-	connect_toggle_rules_button()
-	set_page(1)  # Start with double operations
+	connect_toggle_buttons()
 
-	# Initialize panel position (hidden - only button visible)
-	rules_overlay.visible = true
-	# Panel is anchored to bottom, so we use negative offset_top
-	# Hidden state: only button visible
-	rules_overlay.offset_top = -rules_button_height
-	rules_overlay.offset_bottom = rules_panel_height - rules_button_height
+	# Initialize both remotes (hidden - only buttons visible)
+	double_ops_remote.visible = true
+	single_ops_remote.visible = true
+
+	# Set initial positions (retracted - only button header visible at bottom)
+	# Both remotes start contracted, showing only the header (50px)
+	double_ops_remote.offset_top = -button_height
+	single_ops_remote.offset_top = -button_height
 
 func connect_rule_buttons() -> void:
 	# Double operation buttons
@@ -154,72 +154,108 @@ func connect_rule_buttons() -> void:
 	dneg_button.pressed.connect(_on_rule_button_pressed.bind("DNEG"))
 	paren_remove_button.pressed.connect(_on_rule_button_pressed.bind("PAREN_REMOVE"))
 
-func connect_page_toggle() -> void:
-	page_toggle_button.pressed.connect(_on_page_toggle_pressed)
 
 func connect_addition_dialog() -> void:
 	addition_dialog.expression_confirmed.connect(_on_addition_dialog_confirmed)
 	addition_dialog.dialog_cancelled.connect(_on_addition_dialog_cancelled)
 
-func connect_toggle_rules_button() -> void:
-	toggle_rules_button.pressed.connect(_on_toggle_rules_button_pressed)
+func connect_toggle_buttons() -> void:
+	double_toggle_button.pressed.connect(_on_double_toggle_pressed)
+	single_toggle_button.pressed.connect(_on_single_toggle_pressed)
 
-func _on_toggle_rules_button_pressed() -> void:
-	toggle_rules_overlay()
+func _on_double_toggle_pressed() -> void:
+	toggle_double_remote()
 
-func toggle_rules_overlay() -> void:
-	if is_animating:
-		return  # Don't allow toggling while animating
+func _on_single_toggle_pressed() -> void:
+	toggle_single_remote()
 
-	# Check current state based on position (with tolerance)
-	var is_hidden: bool = abs(rules_overlay.offset_top + rules_button_height) < 10.0
+func toggle_double_remote() -> void:
+	if is_animating_double or is_animating_single:
+		return
 
-	if is_hidden:
-		open_rules_overlay()
+	# Check if double remote is currently closed (showing only button)
+	var is_closed: bool = abs(double_ops_remote.offset_top + button_height) < 10.0
+
+	if is_closed:
+		# Close single remote first if it's open
+		var single_is_open: bool = abs(single_ops_remote.offset_top + single_panel_height) < 10.0
+		if single_is_open:
+			close_single_remote()
+		open_double_remote()
 	else:
-		close_rules_overlay()
+		close_double_remote()
 
-func close_rules_overlay() -> void:
-	if is_animating:
+func toggle_single_remote() -> void:
+	if is_animating_single or is_animating_double:
 		return
 
-	is_animating = true
-	toggle_rules_button.text = "▲ Show Rules ▲"
+	# Check if single remote is currently closed (showing only button)
+	var is_closed: bool = abs(single_ops_remote.offset_top + button_height) < 10.0
 
-	# Animate panel sliding down (hide - only button visible)
-	# offset_top: -50 (50px above bottom of screen)
-	# offset_bottom: 400 (extends 400px below screen, so only top 50px visible)
+	if is_closed:
+		# Close double remote first if it's open
+		var double_is_open: bool = abs(double_ops_remote.offset_top + double_panel_height) < 10.0
+		if double_is_open:
+			close_double_remote()
+		open_single_remote()
+	else:
+		close_single_remote()
+
+func open_double_remote() -> void:
+	if is_animating_double:
+		return
+
+	is_animating_double = true
+	double_toggle_button.text = "▼"
+
+	# Animate from -50 (button only) to -450 (full panel)
 	var tween = create_tween()
 	tween.set_ease(Tween.EASE_IN_OUT)
 	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.set_parallel(true)
-	tween.tween_property(rules_overlay, "offset_top", -rules_button_height, 0.3)
-	tween.tween_property(rules_overlay, "offset_bottom", rules_panel_height - rules_button_height, 0.3)
-	tween.finished.connect(_on_close_animation_finished)
+	tween.tween_property(double_ops_remote, "offset_top", -double_panel_height, 0.3)
+	tween.finished.connect(func(): is_animating_double = false)
 
-func open_rules_overlay() -> void:
-	if is_animating:
+func close_double_remote() -> void:
+	if is_animating_double:
 		return
 
-	is_animating = true
-	toggle_rules_button.text = "▼ Hide Rules ▼"
+	is_animating_double = true
+	double_toggle_button.text = "▲"
 
-	# Animate panel sliding up (show full panel)
-	# offset_top: -450 (450px above bottom of screen)
-	# offset_bottom: 0 (bottom edge at screen bottom)
+	# Animate from -450 (full panel) to -50 (button only)
 	var tween = create_tween()
 	tween.set_ease(Tween.EASE_IN_OUT)
 	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.set_parallel(true)
-	tween.tween_property(rules_overlay, "offset_top", -rules_panel_height, 0.3)
-	tween.tween_property(rules_overlay, "offset_bottom", 0.0, 0.3)
-	tween.finished.connect(_on_open_animation_finished)
+	tween.tween_property(double_ops_remote, "offset_top", -button_height, 0.3)
+	tween.finished.connect(func(): is_animating_double = false)
 
-func _on_close_animation_finished() -> void:
-	is_animating = false
+func open_single_remote() -> void:
+	if is_animating_single:
+		return
 
-func _on_open_animation_finished() -> void:
-	is_animating = false
+	is_animating_single = true
+	single_toggle_button.text = "▼"
+
+	# Animate from -50 (button only) to -600 (full panel)
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(single_ops_remote, "offset_top", -single_panel_height, 0.3)
+	tween.finished.connect(func(): is_animating_single = false)
+
+func close_single_remote() -> void:
+	if is_animating_single:
+		return
+
+	is_animating_single = true
+	single_toggle_button.text = "▲"
+
+	# Animate from -600 (full panel) to -50 (button only)
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(single_ops_remote, "offset_top", -button_height, 0.3)
+	tween.finished.connect(func(): is_animating_single = false)
 
 func set_premises_and_target(premises: Array[BooleanLogicEngine.BooleanExpression], target: String) -> void:
 	# Clean all premises before adding to inventory
@@ -230,6 +266,7 @@ func set_premises_and_target(premises: Array[BooleanLogicEngine.BooleanExpressio
 
 	target_conclusion = target
 	target_expression.text = "Prove: " + target
+	adjust_target_font_size()
 	create_premise_cards()
 
 # Extended version for Level 6 natural language problems
@@ -246,7 +283,32 @@ func set_premises_and_target_with_display(
 
 	target_conclusion = logical_target  # Validate against this
 	target_expression.text = "Prove: " + display_target  # Display this to player
+	adjust_target_font_size()
 	create_premise_cards()
+
+func adjust_target_font_size() -> void:
+	"""Dynamically adjust font size to fit text within the chat bubble"""
+	# Start with maximum font size
+	var max_font_size = 30
+	var min_font_size = 12
+	var current_font_size = max_font_size
+
+	# Get the available width/height from the parent container
+	await get_tree().process_frame  # Wait for layout to update
+
+	var available_size = target_expression.get_parent().size
+
+	# Try decreasing font sizes until text fits
+	while current_font_size >= min_font_size:
+		target_expression.add_theme_font_size_override("font_size", current_font_size)
+		await get_tree().process_frame  # Let label recalculate size
+
+		# Check if text fits within bounds
+		var text_size = target_expression.get_minimum_size()
+		if text_size.x <= available_size.x and text_size.y <= available_size.y:
+			break
+
+		current_font_size -= 2  # Decrease by 2px each iteration
 
 func create_premise_cards() -> void:
 	# Clear existing cards
@@ -264,11 +326,13 @@ func create_premise_cards() -> void:
 func create_premise_card(premise: BooleanLogicEngine.BooleanExpression, index: int) -> Control:
 	var card = Button.new()
 	card.text = str(index + 1) + ". " + premise.expression_string
-	card.custom_minimum_size = Vector2(200, 60)
+	card.custom_minimum_size = Vector2(150, 50)  # Narrower: 200->150, shorter: 60->50
 	card.toggle_mode = true
-	# Center the text horizontally and vertically
+	# Center the text horizontally (vertical centering is automatic for buttons)
 	card.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	card.vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER
+
+	# No modulation or theme overrides - use default theme
+
 	card.pressed.connect(_on_premise_card_pressed.bind(premise, card))
 	return card
 
@@ -277,21 +341,19 @@ func _on_premise_card_pressed(premise: BooleanLogicEngine.BooleanExpression, car
 	if selected_rule.is_empty():
 		card.button_pressed = false  # Reset button state
 		feedback_message.emit("Please select an operation first", Color.ORANGE)
-		open_rules_overlay()  # Open rules if not selected
+		# Don't auto-open remotes - let user choose which one
 		return
 
 	if card.button_pressed:
 		# Select premise
 		if premise not in selected_premises:
 			selected_premises.append(premise)
-			card.modulate = Color.CYAN
 			# Emit signal for tutorial detection
 			premise_selected.emit(premise.expression_string)
 	else:
 		# Deselect premise
 		if premise in selected_premises:
 			selected_premises.erase(premise)
-			card.modulate = Color.WHITE
 
 	# Check if we can apply the selected rule
 	check_rule_application()
@@ -319,8 +381,9 @@ func _on_rule_button_pressed(rule: String) -> void:
 	# Start jiggle animation
 	start_button_jiggle(rule)
 
-	# Close the rules overlay after selecting a rule
-	close_rules_overlay()
+	# Close both remotes after selecting a rule
+	close_double_remote()
+	close_single_remote()
 
 func check_rule_application() -> void:
 	if selected_rule.is_empty():
@@ -389,7 +452,7 @@ func apply_rule() -> void:
 			# No valid results - show error
 			clear_selections()
 			feedback_message.emit(rule_def.name + " produced no valid results", Color.RED)
-			open_rules_overlay()  # Reopen rules on failure
+			# Don't auto-open remotes on failure
 		return
 
 	# Single-result operation (original behavior)
@@ -423,7 +486,7 @@ func apply_rule() -> void:
 		# Clear selections when rule fails
 		clear_selections()
 		feedback_message.emit(rule_def.name + " cannot be applied to selected premises", Color.RED)
-		open_rules_overlay()  # Reopen rules on failure
+		# Don't auto-open remotes on failure
 
 func apply_logical_rule_multi(rule: String, premises: Array[BooleanLogicEngine.BooleanExpression]) -> Array:
 	# Returns an array of results for operations that can produce multiple statements
@@ -585,11 +648,19 @@ func animate_target_reached(result: BooleanLogicEngine.BooleanExpression) -> voi
 	animated_card.custom_minimum_size = winning_card.custom_minimum_size
 	animated_card.modulate = Color.GOLD
 	animated_card.z_index = 100
+	# Set pivot to center for rotation
+	animated_card.pivot_offset = winning_card.size / 2
 	add_child(animated_card)
 
 	# Get start and end positions
 	var start_pos: Vector2 = winning_card.global_position
-	var end_pos: Vector2 = target_expression.global_position + target_expression.size / 2
+	# End position is the center of the silhouette, moved 30px left
+	var end_pos: Vector2 = silhouette.global_position + silhouette.size / 2
+	end_pos.x -= 30  # Move 30px to the left
+
+	# Explosion position is 30px to the right of the flying endpoint
+	var explosion_pos: Vector2 = end_pos
+	explosion_pos.x += 30  # Move 30px to the right
 
 	# Set initial position
 	animated_card.global_position = start_pos
@@ -621,10 +692,13 @@ func animate_target_reached(result: BooleanLogicEngine.BooleanExpression) -> voi
 	# Scale down as it flies
 	tween.parallel().tween_property(animated_card, "scale", Vector2(0.3, 0.3), duration)
 
-	# When animation completes, create flash at the collision position (target) and clean up
+	# Add swirling rotation animation (multiple full rotations for dramatic effect)
+	tween.parallel().tween_property(animated_card, "rotation", TAU * 3, duration)
+
+	# When animation completes, create flash at the explosion position and clean up
 	tween.finished.connect(func():
-		# Flash spawns where the card collides with target (at end_pos)
-		create_target_flash(end_pos)
+		# Flash spawns at explosion_pos (30px right of where card lands)
+		create_target_flash(explosion_pos)
 		animated_card.queue_free()
 		# Play success sound
 		AudioManager.play_logic_success()
@@ -635,16 +709,22 @@ func animate_target_reached(result: BooleanLogicEngine.BooleanExpression) -> voi
 
 func create_target_flash(position: Vector2) -> void:
 	"""Create a satisfying circular flash effect where the ingredient disappears"""
-	# Move explosion up by 100px (was 200px, lowered by 100px)
+	# Move explosion up by 100px from silhouette center
 	position.y -= 100
 
-	# Create outer golden ring flash
-	var flash = ColorRect.new()
-	flash.color = Color(1.0, 0.9, 0.3, 0.8)  # Golden yellow
+	# Create outer golden ring flash (circular)
+	var flash = Panel.new()
+	var flash_style = StyleBoxFlat.new()
+	flash_style.bg_color = Color(1.0, 0.9, 0.3, 0.8)  # Golden yellow
+	flash_style.corner_radius_top_left = 20
+	flash_style.corner_radius_top_right = 20
+	flash_style.corner_radius_bottom_left = 20
+	flash_style.corner_radius_bottom_right = 20
+	flash.add_theme_stylebox_override("panel", flash_style)
+	flash.custom_minimum_size = Vector2(40, 40)
 	flash.size = Vector2(40, 40)
 	flash.position = position - flash.size / 2
 	flash.z_index = 200
-	# Make it circular by setting pivot and rotating slightly for visual effect
 	flash.pivot_offset = flash.size / 2
 	add_child(flash)
 
@@ -655,9 +735,16 @@ func create_target_flash(position: Vector2) -> void:
 	tween.tween_property(flash, "modulate:a", 0.0, 0.5)
 	tween.tween_property(flash, "rotation", TAU, 0.5)  # Full rotation for effect
 
-	# Create inner white flash (faster and more intense)
-	var flash2 = ColorRect.new()
-	flash2.color = Color(1.0, 1.0, 1.0, 1.0)  # Bright white
+	# Create inner white flash (faster and more intense, circular)
+	var flash2 = Panel.new()
+	var flash2_style = StyleBoxFlat.new()
+	flash2_style.bg_color = Color(1.0, 1.0, 1.0, 1.0)  # Bright white
+	flash2_style.corner_radius_top_left = 13
+	flash2_style.corner_radius_top_right = 13
+	flash2_style.corner_radius_bottom_left = 13
+	flash2_style.corner_radius_bottom_right = 13
+	flash2.add_theme_stylebox_override("panel", flash2_style)
+	flash2.custom_minimum_size = Vector2(25, 25)
 	flash2.size = Vector2(25, 25)
 	flash2.position = position - flash2.size / 2
 	flash2.z_index = 201
@@ -670,10 +757,17 @@ func create_target_flash(position: Vector2) -> void:
 	tween2.tween_property(flash2, "modulate:a", 0.0, 0.3)
 	tween2.tween_property(flash2, "rotation", -TAU, 0.3)  # Counter-rotation
 
-	# Create additional particle-like flashes around the impact point
+	# Create additional particle-like flashes around the impact point (circular)
 	for i in range(6):  # 6 small particles
-		var particle = ColorRect.new()
-		particle.color = Color(1.0, 0.95, 0.5, 1.0)
+		var particle = Panel.new()
+		var particle_style = StyleBoxFlat.new()
+		particle_style.bg_color = Color(1.0, 0.95, 0.5, 1.0)
+		particle_style.corner_radius_top_left = 5
+		particle_style.corner_radius_top_right = 5
+		particle_style.corner_radius_bottom_left = 5
+		particle_style.corner_radius_bottom_right = 5
+		particle.add_theme_stylebox_override("panel", particle_style)
+		particle.custom_minimum_size = Vector2(10, 10)
 		particle.size = Vector2(10, 10)
 		var angle = (TAU / 6.0) * i  # Evenly spaced around circle
 		var offset = Vector2(cos(angle), sin(angle)) * 20
@@ -698,12 +792,11 @@ func clear_selections() -> void:
 	selected_premises.clear()
 	selected_rule = ""
 
-	# Reset card colors
+	# Reset card states
 	for card in premise_cards:
 		var button = card as Button
 		if button:
 			button.button_pressed = false
-			button.modulate = Color.WHITE
 
 	# Clear rule button highlights
 	clear_rule_selection()
@@ -773,23 +866,6 @@ func stop_button_jiggle(button: Button) -> void:
 			tween.kill()
 	button.rotation = 0.0
 
-func _on_page_toggle_pressed() -> void:
-	current_page = 1 - current_page  # Toggle between 0 and 1
-	set_page(current_page)
-
-func set_page(page: int) -> void:
-	current_page = page
-
-	if page == 0:  # Single operations
-		single_operations_page.visible = true
-		double_operations_page.visible = false
-		operation_mode_label.text = "Single Operations"
-		page_toggle_button.text = "→"
-	else:  # Double operations
-		single_operations_page.visible = false
-		double_operations_page.visible = true
-		operation_mode_label.text = "Double Operations"
-		page_toggle_button.text = "←"
 
 func add_premise_to_inventory(premise: BooleanLogicEngine.BooleanExpression) -> void:
 	# Clean expression before adding to inventory

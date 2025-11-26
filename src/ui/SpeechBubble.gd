@@ -9,23 +9,42 @@ class_name SpeechBubble
 @export var border_color: Color = Color(0.2, 0.2, 0.2)
 @export var border_width: float = 2.0
 @export var corner_radius: float = 10.0
+@export var shadow_enabled: bool = true
+@export var shadow_color: Color = Color(0, 0, 0, 0.3)
+@export var shadow_offset: Vector2 = Vector2(3, 3)
+@export var shadow_size: float = 4.0
 
 func _draw() -> void:
 	var rect = get_rect()
+
+	# Draw shadow if enabled
+	if shadow_enabled:
+		var shadow_rect = Rect2(shadow_offset, rect.size)
+		draw_rounded_rect(shadow_rect, corner_radius, shadow_color)
+
+		# Draw shadow for triangle (lower right pointing)
+		var right_x = rect.size.x
+		var bottom_y = rect.size.y
+		var shadow_triangle = PackedVector2Array([
+			Vector2(right_x - pointer_size * 1.5, bottom_y) + shadow_offset,
+			Vector2(right_x, bottom_y - pointer_size / 2) + shadow_offset,
+			Vector2(right_x + pointer_size, bottom_y + pointer_size) + shadow_offset
+		])
+		draw_colored_polygon(shadow_triangle, shadow_color)
 
 	# Draw bubble background with rounded corners
 	var bubble_rect = Rect2(Vector2.ZERO, rect.size)
 	draw_rounded_rect(bubble_rect, corner_radius, bubble_color)
 
-	# Draw pointer triangle pointing downward to center of target
-	var center_x = rect.size.x / 2.0
+	# Draw pointer triangle pointing to lower right
+	var right_x = rect.size.x
 	var bottom_y = rect.size.y
 
-	# Triangle vertices: center bottom of bubble, and two points at the tip
+	# Triangle vertices: pointing to lower right
 	var triangle_points = PackedVector2Array([
-		Vector2(center_x - pointer_size / 2, bottom_y),
-		Vector2(center_x + pointer_size / 2, bottom_y),
-		Vector2(center_x, bottom_y + pointer_size)
+		Vector2(right_x - pointer_size * 1.5, bottom_y),
+		Vector2(right_x, bottom_y - pointer_size / 2),
+		Vector2(right_x + pointer_size, bottom_y + pointer_size)
 	])
 
 	draw_colored_polygon(triangle_points, bubble_color)

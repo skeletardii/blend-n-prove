@@ -1,9 +1,72 @@
-[gd_scene load_steps=5 format=3 uid="uid://c5oyjk8p0w8x4"]
+[gd_scene load_steps=17 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
 [ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_occ7e"]
-[ext_resource type="Script" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
+[ext_resource type="Texture2D" uid="uid://eem0fnt1l4gc" path="res://assets/sprites/caution.jpg" id="3_a7jfc"]
+[ext_resource type="Texture2D" uid="uid://jaw4ij5ytu36" path="res://assets/sprites/silhouette.png" id="3_drutf"]
+[ext_resource type="Script" uid="uid://6us7btkgp6wo" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
+[ext_resource type="Texture2D" uid="uid://djch2aguhxkuu" path="res://assets/sprites/speech.png" id="5_eptc2"]
+[ext_resource type="Texture2D" uid="uid://w8uk8e7hvuc7" path="res://assets/sprites/whitetexture.jpg" id="6_eptc2"]
+[ext_resource type="Texture2D" uid="uid://dns23dgghmdcc" path="res://assets/sprites/sign.png" id="8_sign"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d87rg"]
+texture = ExtResource("5_eptc2")
+
+[sub_resource type="Theme" id="Theme_gxw17"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wood"]
+texture = ExtResource("6_eptc2")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+modulate_color = Color(0.65834004, 0.6583399, 0.6583399, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_remote"]
+bg_color = Color(0.15, 0.15, 0.18, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.25, 0.25, 0.3, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dark_purple_normal"]
+bg_color = Color(0.35, 0.2, 0.5, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 3
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dark_purple_pressed"]
+bg_color = Color(0.25, 0.15, 0.4, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 3
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dark_purple_hover"]
+bg_color = Color(0.45, 0.3, 0.6, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 3
+shadow_offset = Vector2(2, 2)
 
 [node name="Phase2UI" type="Control"]
 layout_mode = 3
@@ -13,6 +76,24 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_phase2")
+
+[node name="Silhouette" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -124.0
+offset_top = 35.0
+offset_right = 882.0
+offset_bottom = 994.0
+texture = ExtResource("3_drutf")
+
+[node name="Roof" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 90.0
+grow_horizontal = 2
+texture = ExtResource("3_a7jfc")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="WorkContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -27,47 +108,54 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="PhaseLabel" type="Label" parent="WorkContainer"]
-layout_mode = 2
-text = "Phase 2: Proof Building"
-horizontal_alignment = 1
-
 [node name="TargetArea" type="Control" parent="WorkContainer"]
+custom_minimum_size = Vector2(0, 600)
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 0.75
 script = ExtResource("4_speechbubble")
+bubble_color = Color(1, 1, 1, 0)
 
-[node name="TargetContainer" type="VBoxContainer" parent="WorkContainer/TargetArea"]
+[node name="ChatBubble" type="Panel" parent="WorkContainer/TargetArea"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = -32.0
+offset_right = 352.0
+offset_bottom = 335.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_d87rg")
+
+[node name="TargetContainer" type="VBoxContainer" parent="WorkContainer/TargetArea/ChatBubble"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = 5.0
-offset_right = -5.0
-offset_bottom = -5.0
+offset_left = 16.0
+offset_top = 8.0
+offset_right = -15.0
+offset_bottom = -11.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = SubResource("Theme_gxw17")
+alignment = 1
 
-[node name="TargetLabel" type="Label" parent="WorkContainer/TargetArea/TargetContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Target:"
-horizontal_alignment = 1
-
-[node name="TargetExpression" type="Label" parent="WorkContainer/TargetArea/TargetContainer"]
+[node name="TargetExpression" type="Label" parent="WorkContainer/TargetArea/ChatBubble/TargetContainer"]
+z_index = 10
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_colors/font_color = Color(0.906, 0.298, 0.235, 1)
-theme_override_font_sizes/font_size = 60
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
 text = "Prove: Q"
 horizontal_alignment = 1
+autowrap_mode = 3
+clip_text = false
+text_overrun_behavior = 3
 
 [node name="InventoryArea" type="Panel" parent="WorkContainer"]
-modulate = Color(0.941, 0.91, 1, 1)
+custom_minimum_size = Vector2(720, 0)
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_wood")
 
 [node name="InventoryContainer" type="VBoxContainer" parent="WorkContainer/InventoryArea"]
 layout_mode = 1
@@ -82,300 +170,424 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="InventoryLabel" type="Label" parent="WorkContainer/InventoryArea/InventoryContainer"]
+[node name="SignPanel" type="Control" parent="WorkContainer/InventoryArea/InventoryContainer"]
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+
+[node name="CautionBottom" type="TextureRect" parent="WorkContainer/InventoryArea/InventoryContainer/SignPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -56.0
+offset_right = 360.0
+offset_bottom = 58.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_a7jfc")
+expand_mode = 1
+
+[node name="SignTexture" type="TextureRect" parent="WorkContainer/InventoryArea/InventoryContainer/SignPanel"]
+modulate = Color(0.556953, 0.556953, 0.556953, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -156.0
+offset_top = -135.0
+offset_right = 159.0
+offset_bottom = 136.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_sign")
+expand_mode = 1
+
+[node name="InventoryLabel" type="Label" parent="WorkContainer/InventoryArea/InventoryContainer/SignPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 2.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.93569213, 0.8104755, 0.1759902, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/outline_size = 2
 theme_override_font_sizes/font_size = 50
 text = "Inventory"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="InventoryScroll" type="ScrollContainer" parent="WorkContainer/InventoryArea/InventoryContainer"]
+modulate = Color(0.46229059, 0.46229059, 0.46229059, 1)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PremiseGrid" type="GridContainer" parent="WorkContainer/InventoryArea/InventoryContainer/InventoryScroll"]
+[node name="MarginContainer" type="MarginContainer" parent="WorkContainer/InventoryArea/InventoryContainer/InventoryScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="PremiseGrid" type="GridContainer" parent="WorkContainer/InventoryArea/InventoryContainer/InventoryScroll/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 2
 
-[node name="RulesOverlay" type="Panel" parent="."]
-custom_minimum_size = Vector2(0, 450)
+[node name="DoubleOpsRemote" type="Panel" parent="."]
+custom_minimum_size = Vector2(280, 450)
 layout_mode = 1
-anchors_preset = 12
+anchors_preset = 7
+anchor_left = 0.5
 anchor_top = 1.0
-anchor_right = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -50.0
-offset_right = -10.0
+offset_left = -304.0
+offset_top = -64.0
+offset_right = -24.0
+offset_bottom = 386.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_remote")
 
-[node name="OverlayContainer" type="VBoxContainer" parent="RulesOverlay"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 50.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="RuleButtonsArea" type="Panel" parent="RulesOverlay/OverlayContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="RuleButtonsContainer" type="VBoxContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = 5.0
-offset_right = -5.0
-offset_bottom = -5.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ButtonPages" type="Control" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="DoubleOperationsPage" type="Control" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="DoubleOpsGrid" type="GridContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -270.0
-offset_top = -60.0
-offset_right = 270.0
-offset_bottom = 60.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
-columns = 5
-
-[node name="MPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "MP"
-
-[node name="MTButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "MT"
-
-[node name="HSButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "HS"
-
-[node name="DSButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "DS"
-
-[node name="CDButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "CD"
-
-[node name="DNButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "DN"
-
-[node name="CONJButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "CONJ"
-
-[node name="EQButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "EQ"
-
-[node name="RESButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/DoubleOperationsPage/DoubleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "RES"
-
-[node name="SingleOperationsPage" type="Control" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages"]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="SingleOpsGrid" type="GridContainer" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -270.0
-offset_top = -85.0
-offset_right = 270.0
-offset_bottom = 85.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
-columns = 5
-
-[node name="SIMPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "SIMP"
-
-[node name="IMPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "IMP"
-
-[node name="CONVButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "CONV"
-
-[node name="ADDButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "ADD"
-
-[node name="DMButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "DM"
-
-[node name="DNEGButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "DNEG"
-
-[node name="DISTButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "DIST"
-
-[node name="COMMButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "COMM"
-
-[node name="ASSOCButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "ASSOC"
-
-[node name="IDEMPButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "IDEMP"
-
-[node name="ABSButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "ABS"
-
-[node name="PAREN_REMOVEButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "( )"
-
-[node name="NEGButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "NEG"
-
-[node name="TAUTButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "TAUT"
-
-[node name="CONTRButton" type="Button" parent="RulesOverlay/OverlayContainer/RuleButtonsArea/RuleButtonsContainer/ButtonPages/SingleOperationsPage/SingleOpsGrid"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "CONTR"
-
-[node name="Footer" type="Panel" parent="RulesOverlay/OverlayContainer"]
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-
-[node name="FooterContainer" type="HBoxContainer" parent="RulesOverlay/OverlayContainer/Footer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = -10.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="OperationModeLabel" type="Label" parent="RulesOverlay/OverlayContainer/Footer/FooterContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "Single Operations"
-
-[node name="Spacer" type="Control" parent="RulesOverlay/OverlayContainer/Footer/FooterContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="PageToggleButton" type="Button" parent="RulesOverlay/OverlayContainer/Footer/FooterContainer"]
-custom_minimum_size = Vector2(60, 20)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "→"
-
-[node name="ToggleRulesButton" type="Button" parent="RulesOverlay"]
-custom_minimum_size = Vector2(0, 10)
+[node name="Header" type="HBoxContainer" parent="DoubleOpsRemote"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 50.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 48.0
 grow_horizontal = 2
+theme_override_constants/separation = 8
+
+[node name="ToggleButton" type="Button" parent="DoubleOpsRemote/Header"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
 theme = ExtResource("2_occ7e")
-text = "▼ Hide Rules ▼"
+text = "▲"
+
+[node name="Label" type="Label" parent="DoubleOpsRemote/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Double Ops"
+vertical_alignment = 1
+
+[node name="RemoteContainer" type="VBoxContainer" parent="DoubleOpsRemote"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 56.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 5
+
+[node name="ButtonsScroll" type="ScrollContainer" parent="DoubleOpsRemote/RemoteContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="MPButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "MP"
+
+[node name="MTButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "MT"
+
+[node name="HSButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "HS"
+
+[node name="DSButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "DS"
+
+[node name="CDButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "CD"
+
+[node name="DNButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "DN"
+
+[node name="CONJButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "CONJ"
+
+[node name="EQButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "EQ"
+
+[node name="RESButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "RES"
+
+[node name="SingleOpsRemote" type="Panel" parent="."]
+custom_minimum_size = Vector2(280, 600)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -67.0
+offset_right = 290.0
+offset_bottom = 533.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_remote")
+
+[node name="Header" type="HBoxContainer" parent="SingleOpsRemote"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 48.0
+grow_horizontal = 2
+theme_override_constants/separation = 8
+
+[node name="ToggleButton" type="Button" parent="SingleOpsRemote/Header"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+text = "▲"
+
+[node name="Label" type="Label" parent="SingleOpsRemote/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Single Ops"
+vertical_alignment = 1
+
+[node name="RemoteContainer" type="VBoxContainer" parent="SingleOpsRemote"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 56.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 5
+
+[node name="ButtonsScroll" type="ScrollContainer" parent="SingleOpsRemote/RemoteContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="SIMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "SIMP"
+
+[node name="IMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "IMP"
+
+[node name="CONVButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "CONV"
+
+[node name="ADDButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "ADD"
+
+[node name="DMButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "DM"
+
+[node name="DNEGButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "DNEG"
+
+[node name="DISTButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "DIST"
+
+[node name="COMMButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "COMM"
+
+[node name="ASSOCButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "ASSOC"
+
+[node name="IDEMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "IDEMP"
+
+[node name="ABSButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "ABS"
+
+[node name="PAREN_REMOVEButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "( )"
+
+[node name="NEGButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "NEG"
+
+[node name="TAUTButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "TAUT"
+
+[node name="CONTRButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+text = "CONTR"
 
 [node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]
 visible = false

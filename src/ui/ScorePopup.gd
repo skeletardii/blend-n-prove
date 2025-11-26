@@ -15,11 +15,11 @@ const FADE_DELAY: float = 1.5
 const FADE_DURATION: float = 0.5
 const PARTICLE_LIFETIME: float = 0.8
 
-# Color thresholds for multiplier
-const COLOR_GREEN: Color = Color(0.0, 1.0, 0.0)  # 1.0x
-const COLOR_YELLOW: Color = Color(1.0, 1.0, 0.0)  # 1.5x
-const COLOR_ORANGE: Color = Color(1.0, 0.53, 0.0)  # 2.0x
-const COLOR_RED: Color = Color(1.0, 0.0, 0.0)  # 2.5x+
+# Color thresholds for multiplier (green = low, purple = high)
+const COLOR_GREEN: Color = Color(0.0, 1.0, 0.0)  # 1.0x - worst
+const COLOR_CYAN: Color = Color(0.0, 1.0, 1.0)  # 1.5x
+const COLOR_BLUE: Color = Color(0.3, 0.3, 1.0)  # 2.0x
+const COLOR_PURPLE: Color = Color(0.7, 0.0, 1.0)  # 2.5x+ - best
 
 func _ready() -> void:
 	# Start invisible
@@ -57,22 +57,22 @@ func show_score_popup(base_score: int, time_bonus: int) -> void:
 	_animate_popup(multiplier, popup_color)
 
 func _calculate_color_from_multiplier(multiplier: float) -> Color:
-	# Green (1.0x) → Yellow (1.5x) → Orange (2.0x) → Red (2.5x+)
+	# Green (1.0x - worst) → Cyan (1.5x) → Blue (2.0x) → Purple (2.5x+ - best)
 	if multiplier < 1.5:
-		# Interpolate between Green and Yellow
+		# Interpolate between Green and Cyan
 		var t: float = (multiplier - 1.0) / 0.5
-		return COLOR_GREEN.lerp(COLOR_YELLOW, t)
+		return COLOR_GREEN.lerp(COLOR_CYAN, t)
 	elif multiplier < 2.0:
-		# Interpolate between Yellow and Orange
+		# Interpolate between Cyan and Blue
 		var t: float = (multiplier - 1.5) / 0.5
-		return COLOR_YELLOW.lerp(COLOR_ORANGE, t)
+		return COLOR_CYAN.lerp(COLOR_BLUE, t)
 	elif multiplier < 2.5:
-		# Interpolate between Orange and Red
+		# Interpolate between Blue and Purple
 		var t: float = (multiplier - 2.0) / 0.5
-		return COLOR_ORANGE.lerp(COLOR_RED, t)
+		return COLOR_BLUE.lerp(COLOR_PURPLE, t)
 	else:
-		# Max color (Red)
-		return COLOR_RED
+		# Max color (Purple - best)
+		return COLOR_PURPLE
 
 func _animate_popup(multiplier: float, popup_color: Color) -> void:
 	# Create tween for explosive scale animation
