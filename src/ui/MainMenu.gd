@@ -14,6 +14,7 @@ extends Control
 @onready var streak_quick: Label = $QuickStatsPanel/StreakQuick
 @onready var reset_confirmation_dialog: ConfirmationDialog = $ResetConfirmationDialog
 @onready var feedback_label: Label = $FeedbackLabel
+@onready var title_sprite: TextureRect = $MenuContainer/TextureRect
 
 func _ready() -> void:
 	AudioManager.start_menu_music()
@@ -50,6 +51,9 @@ func _ready() -> void:
 
 	# Update quick stats display
 	update_quick_stats()
+
+	# Start title sprite tilting animation
+	start_title_tilt_animation()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
@@ -327,3 +331,32 @@ func hide_feedback() -> void:
 	if feedback_timer:
 		feedback_timer.queue_free()
 		feedback_timer = null
+
+func start_title_tilt_animation() -> void:
+	"""Creates a subtle tilting animation for the title sprite"""
+	if not title_sprite:
+		return
+
+	# Set pivot point to top center (anchored like a hanging sign)
+	title_sprite.pivot_offset = Vector2(title_sprite.size.x / 2, 0)
+
+	# Create infinite looping tween for tilting
+	var tilt_tween = create_tween()
+	tilt_tween.set_loops()  # Infinite loop
+
+	# Subtle tilt parameters (similar to a hanging sign swaying)
+	var tilt_duration_right = 2.0  # 2 seconds to tilt right
+	var tilt_duration_left = 2.0   # 2 seconds to tilt left
+	var max_tilt_angle = 0.05      # ~3 degrees in radians (very subtle)
+
+	# Tilt to the right
+	tilt_tween.tween_property(title_sprite, "rotation", max_tilt_angle, tilt_duration_right) \
+		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+	# Tilt to the left
+	tilt_tween.tween_property(title_sprite, "rotation", -max_tilt_angle, tilt_duration_left) \
+		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+	# Return to center
+	tilt_tween.tween_property(title_sprite, "rotation", 0.0, tilt_duration_right) \
+		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)

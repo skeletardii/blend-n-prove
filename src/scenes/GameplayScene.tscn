@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bji7acucw6pe3"]
+[gd_scene load_steps=10 format=3 uid="uid://bji7acucw6pe3"]
 
 [ext_resource type="Script" uid="uid://cl7fuggwr1kue" path="res://src/ui/GameplayScene.gd" id="1_3v9zy"]
 [ext_resource type="Texture2D" uid="uid://dqs4mlo70fokf" path="res://assets/sprites/phase1bg.jpg" id="2_8e8l2"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dpjc3t8yqr5h1" path="res://src/ui/HintPopup.tscn" id="3_hint_popup"]
 [ext_resource type="FontFile" uid="uid://ce67i1nf8ircd" path="res://assets/fonts/Glowforge.otf" id="3_n1mcv"]
 [ext_resource type="Texture2D" uid="uid://djmqnb3m2u5xr" path="res://assets/sprites/button assets.png" id="4_1yton"]
+[ext_resource type="FontFile" uid="uid://rkxmldc64bol" path="res://assets/fonts/Good-Game.ttf" id="5_n1mcv"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hy4gw"]
 texture = ExtResource("4_1yton")
@@ -88,28 +89,7 @@ theme_override_styles/focus = SubResource("StyleBoxTexture_hy4gw")
 text = "
 "
 
-[node name="LivesContainer" type="HBoxContainer" parent="UI/MainContainer/TopBar/TopBarContainer"]
-layout_mode = 2
-
-[node name="SpacerLives" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer/LivesContainer"]
-custom_minimum_size = Vector2(20, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="LivesLabel" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/LivesContainer"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "Lives:"
-
-[node name="LivesDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/LivesContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 50
-text = "♥♥♥"
-
-[node name="Spacer" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
+[node name="SpacerLeft" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -118,17 +98,19 @@ layout_mode = 2
 
 [node name="ScoreLabel" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("5_n1mcv")
+theme_override_font_sizes/font_size = 50
 text = "Score:"
 
 [node name="ScoreDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("5_n1mcv")
+theme_override_font_sizes/font_size = 50
 text = "0"
 
-[node name="Spacer2" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
-custom_minimum_size = Vector2(20, 0)
+[node name="SpacerRight" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="ShowHelpButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
 visible = false
@@ -146,6 +128,7 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 value = 100.0
+show_percentage = false
 
 [node name="ScrollContainer" type="ScrollContainer" parent="UI/MainContainer"]
 layout_mode = 2

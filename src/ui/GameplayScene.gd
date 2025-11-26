@@ -2,7 +2,6 @@ extends Control
 
 # UI References - Persistent Elements
 @onready var main_container: VBoxContainer = $UI/MainContainer
-@onready var lives_display: Label = $UI/MainContainer/TopBar/TopBarContainer/LivesContainer/LivesDisplay
 @onready var score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/ScoreDisplay
 @onready var customer_name: Label = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/CustomerName
 @onready var patience_bar: ProgressBar = $UI/MainContainer/PatienceBar
@@ -62,13 +61,11 @@ func _ready() -> void:
 
 	# Connect to GameManager signals
 	GameManager.score_updated.connect(_on_score_updated)
-	GameManager.lives_updated.connect(_on_lives_updated)
 
 	# Start background music
 	AudioManager.start_background_music()
 
 	# Initialize UI
-	update_lives_display()
 	update_score_display()
 
 	# Setup first-time tutorial if active
@@ -114,7 +111,12 @@ func update_patience_timer(delta: float) -> void:
 	if GameManager.infinite_patience:
 		return
 
-	patience_timer -= delta
+	# Calculate timer speed multiplier based on score
+	# Higher score = faster countdown (1.0x at score 0, up to 3.0x at score 5000+)
+	var speed_multiplier: float = 1.0 + (GameManager.current_score / 2500.0)
+	speed_multiplier = min(speed_multiplier, 3.0)  # Cap at 3x speed
+
+	patience_timer -= delta * speed_multiplier
 	patience_timer = max(0.0, patience_timer)
 
 	var patience_percentage: float = (patience_timer / max_patience) * 100.0
@@ -321,22 +323,18 @@ func update_customer_display() -> void:
 func customer_leaves() -> void:
 	AudioManager.play_customer_leave()
 
-	# In tutorial mode, don't lose lives - just try again
+	# In tutorial mode, just try again
 	if GameManager.tutorial_mode:
 		show_feedback_message("Time's up! Try this problem again.", Color.RED)
 		# Regenerate same problem
 		generate_new_customer()
 		switch_to_phase1()
 	else:
-		GameManager.lose_life()
-
-		if GameManager.current_lives > 0:
-			# Generate new customer
-			generate_new_customer()
-			switch_to_phase1()
-		else:
-			# Game over
+		# Time's up = Game Over (no lives system)
+		show_feedback_message("Time's Up! Game Over!", Color.RED)
+		get_tree().create_timer(2.0).timeout.connect(func():
 			SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
+		)
 
 func complete_order_successfully() -> void:
 	AudioManager.play_logic_success()
@@ -345,6 +343,12 @@ func complete_order_successfully() -> void:
 	var time_bonus: int = int(patience_timer)
 	var base_score: int = 100 + (GameManager.difficulty_level * 50)
 	var total_score: int = base_score + time_bonus
+
+	# Add time to the patience timer on successful completion
+	# Time bonus scales with difficulty: 15-30 seconds added
+	var time_reward: float = 15.0 + (GameManager.difficulty_level * 2.5)
+	patience_timer += time_reward
+	patience_timer = min(patience_timer, max_patience * 1.5)  # Cap at 1.5x max patience
 
 	# Show score popup animation
 	var popup: CanvasLayer = score_popup_scene.instantiate()
@@ -418,17 +422,8 @@ func _on_feedback_message(message: String, color: Color) -> void:
 func _on_score_updated(new_score: int) -> void:
 	update_score_display()
 
-func _on_lives_updated(new_lives: int) -> void:
-	update_lives_display()
-
 func update_score_display() -> void:
 	score_display.text = str(GameManager.current_score)
-
-func update_lives_display() -> void:
-	var hearts: String = ""
-	for i in range(GameManager.current_lives):
-		hearts += "♥"
-	lives_display.text = hearts
 
 func show_feedback_message(message: String, color: Color = Color.WHITE) -> void:
 	# Create feedback label if it doesn't exist

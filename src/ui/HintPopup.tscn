@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://src/ui/HintPopup.gd" id="1_hint_popup"]
 
 [node name="HintPopup" type="Panel"]
+z_index = 100
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -47,6 +48,8 @@ custom_minimum_size = Vector2(0, 250)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 24
+theme_override_font_sizes/bold_font_size = 28
 bbcode_enabled = true
 text = "Solution text will appear here..."
 fit_content = true

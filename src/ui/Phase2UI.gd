@@ -115,6 +115,7 @@ func _ready() -> void:
 	connect_rule_buttons()
 	connect_addition_dialog()
 	connect_toggle_buttons()
+	start_silhouette_breathing()
 
 	# Initialize both remotes (hidden - only buttons visible)
 	double_ops_remote.visible = true
@@ -257,6 +258,32 @@ func close_single_remote() -> void:
 	tween.tween_property(single_ops_remote, "offset_top", -button_height, 0.3)
 	tween.finished.connect(func(): is_animating_single = false)
 
+func start_silhouette_breathing() -> void:
+	"""Creates a subtle breathing animation for the silhouette sprite"""
+	if not silhouette:
+		return
+
+	# Set the pivot point to center bottom (feet stay grounded while body breathes)
+	silhouette.pivot_offset = Vector2(silhouette.size.x / 2, silhouette.size.y)
+
+	# Create infinite looping tween for breathing
+	var breathe_tween = create_tween()
+	breathe_tween.set_loops()  # Infinite loop
+
+	# Breathing cycle parameters (based on natural breathing: ~4-5 seconds per cycle)
+	var inhale_duration = 2.0  # 2 seconds to inhale
+	var exhale_duration = 2.5  # 2.5 seconds to exhale
+	var inhale_scale = Vector2(1.02, 1.03)  # Slight vertical expansion (chest rises)
+	var exhale_scale = Vector2(1.0, 1.0)  # Return to normal
+
+	# Inhale: Expand slightly (chest/torso rises)
+	breathe_tween.tween_property(silhouette, "scale", inhale_scale, inhale_duration) \
+		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+	# Exhale: Return to normal size
+	breathe_tween.tween_property(silhouette, "scale", exhale_scale, exhale_duration) \
+		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
 func set_premises_and_target(premises: Array[BooleanLogicEngine.BooleanExpression], target: String) -> void:
 	# Clean all premises before adding to inventory
 	available_premises.clear()
@@ -326,12 +353,35 @@ func create_premise_cards() -> void:
 func create_premise_card(premise: BooleanLogicEngine.BooleanExpression, index: int) -> Control:
 	var card = Button.new()
 	card.text = str(index + 1) + ". " + premise.expression_string
-	card.custom_minimum_size = Vector2(150, 50)  # Narrower: 200->150, shorter: 60->50
+	card.custom_minimum_size = Vector2(200, 60)
 	card.toggle_mode = true
 	# Center the text horizontally (vertical centering is automatic for buttons)
 	card.alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-	# No modulation or theme overrides - use default theme
+	# Lighten the button appearance by overriding the dark purple modulation from the theme
+	# Create lighter versions of the button styles
+	var normal_style = StyleBoxTexture.new()
+	normal_style.texture = load("res://assets/sprites/button assets.png")
+	normal_style.texture_margin_left = 10
+	normal_style.texture_margin_top = 9
+	normal_style.texture_margin_right = 11
+	normal_style.texture_margin_bottom = 14
+	normal_style.region_rect = Rect2(1, 129, 173, 50)
+	normal_style.modulate_color = Color(1.0, 1.0, 1.0, 1.0)  # White = no tinting
+
+	var hover_style = StyleBoxTexture.new()
+	hover_style.texture = load("res://assets/sprites/button assets.png")
+	hover_style.texture_margin_left = 10
+	hover_style.texture_margin_top = 10
+	hover_style.texture_margin_right = 10
+	hover_style.texture_margin_bottom = 10
+	hover_style.region_rect = Rect2(1, 129, 173, 50)
+	hover_style.modulate_color = Color(0.9, 0.9, 1.0, 1.0)  # Slight blue tint on hover
+
+	card.add_theme_stylebox_override("normal", normal_style)
+	card.add_theme_stylebox_override("hover", hover_style)
+	card.add_theme_stylebox_override("pressed", hover_style)
+	card.add_theme_stylebox_override("focus", normal_style)
 
 	card.pressed.connect(_on_premise_card_pressed.bind(premise, card))
 	return card
@@ -654,9 +704,9 @@ func animate_target_reached(result: BooleanLogicEngine.BooleanExpression) -> voi
 
 	# Get start and end positions
 	var start_pos: Vector2 = winning_card.global_position
-	# End position is the center of the silhouette, moved 30px left
+	# End position is the center of the silhouette, moved 40px left
 	var end_pos: Vector2 = silhouette.global_position + silhouette.size / 2
-	end_pos.x -= 30  # Move 30px to the left
+	end_pos.x -= 40  # Move 40px to the left
 
 	# Explosion position is 30px to the right of the flying endpoint
 	var explosion_pos: Vector2 = end_pos

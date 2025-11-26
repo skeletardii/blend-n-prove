@@ -1,9 +1,10 @@
-[gd_resource type="Theme" load_steps=11 format=3 uid="uid://b2fedi5eycrnx"]
+[gd_resource type="Theme" load_steps=12 format=3 uid="uid://b2fedi5eycrnx"]
 
 [ext_resource type="FontFile" uid="uid://cc80pt3xtcjpc" path="res://assets/fonts/CFIndustrialFabrics-Regular.ttf" id="1_2yqly"]
 [ext_resource type="Texture2D" uid="uid://cprib5ycelxp" path="res://assets/sprites/Pixel UI pack 3/04.png" id="3_2yqly"]
 [ext_resource type="Texture2D" uid="uid://djmqnb3m2u5xr" path="res://assets/sprites/button assets.png" id="3_61da5"]
 [ext_resource type="FontFile" uid="uid://bkxsms4t0m2yk" path="res://assets/fonts/Glowforge.ttf" id="4_61da5"]
+[ext_resource type="FontFile" uid="uid://rkxmldc64bol" path="res://assets/fonts/Good-Game.ttf" id="5_7pq2t"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_61da5"]
 texture = ExtResource("3_61da5")
@@ -51,7 +52,7 @@ texture_margin_bottom = 0.9827703
 region_rect = Rect2(57, 181, 32, 5)
 
 [resource]
-default_font = ExtResource("4_61da5")
+default_font = ExtResource("5_7pq2t")
 Button/fonts/font = ExtResource("1_2yqly")
 Button/styles/focus = SubResource("StyleBoxTexture_61da5")
 Button/styles/hover = SubResource("StyleBoxTexture_fe75p")

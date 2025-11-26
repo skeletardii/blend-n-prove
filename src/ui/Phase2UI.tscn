@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://eem0fnt1l4gc" path="res://assets/sprites/caution.jpg" id="3_a7jfc"]
 [ext_resource type="Texture2D" uid="uid://jaw4ij5ytu36" path="res://assets/sprites/silhouette.png" id="3_drutf"]
 [ext_resource type="Script" uid="uid://6us7btkgp6wo" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
-[ext_resource type="Texture2D" uid="uid://djch2aguhxkuu" path="res://assets/sprites/speech.png" id="5_eptc2"]
+[ext_resource type="Texture2D" uid="uid://ddpxvnafn11yi" path="res://assets/sprites/speech.png" id="5_eptc2"]
 [ext_resource type="Texture2D" uid="uid://w8uk8e7hvuc7" path="res://assets/sprites/whitetexture.jpg" id="6_eptc2"]
 [ext_resource type="Texture2D" uid="uid://dns23dgghmdcc" path="res://assets/sprites/sign.png" id="8_sign"]
 
@@ -117,37 +117,43 @@ script = ExtResource("4_speechbubble")
 bubble_color = Color(1, 1, 1, 0)
 
 [node name="ChatBubble" type="Panel" parent="WorkContainer/TargetArea"]
-layout_mode = 0
-offset_left = 18.0
-offset_top = -32.0
-offset_right = 352.0
-offset_bottom = 335.0
-theme_override_styles/panel = SubResource("StyleBoxTexture_d87rg")
-
-[node name="TargetContainer" type="VBoxContainer" parent="WorkContainer/TargetArea/ChatBubble"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 8.0
-offset_right = -15.0
-offset_bottom = -11.0
+offset_left = -7.0
+offset_top = -3.0
+offset_right = -349.0
+offset_bottom = -321.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_d87rg")
+
+[node name="TargetContainer" type="MarginContainer" parent="WorkContainer/TargetArea/ChatBubble"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -40.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_gxw17")
-alignment = 1
 
 [node name="TargetExpression" type="Label" parent="WorkContainer/TargetArea/ChatBubble/TargetContainer"]
 z_index = 10
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme = ExtResource("2_occ7e")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "Prove: Q"
 horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
-clip_text = false
 text_overrun_behavior = 3
 
 [node name="InventoryArea" type="Panel" parent="WorkContainer"]
@@ -245,7 +251,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
-columns = 2
+columns = 3
 
 [node name="DoubleOpsRemote" type="Panel" parent="."]
 custom_minimum_size = Vector2(280, 450)

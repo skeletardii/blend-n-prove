@@ -2,7 +2,6 @@ extends Node
 
 signal game_state_changed(new_state: GameState)
 signal score_updated(new_score: int)
-signal lives_updated(new_lives: int)
 
 enum GameState {
 	MENU,
@@ -82,8 +81,6 @@ class CustomerData:
 var current_state: GameState = GameState.MENU
 var current_phase: GamePhase = GamePhase.PREPARING_PREMISES
 var current_score: int = 0
-var current_lives: int = 3
-var max_lives: int = 3
 var difficulty_level: int = 1
 var orders_completed_this_session: int = 0
 
@@ -211,26 +208,15 @@ func add_score(points: int) -> void:
 	current_score += points
 	score_updated.emit(current_score)
 
-func lose_life() -> void:
-	current_lives = max(0, current_lives - 1)
-	lives_updated.emit(current_lives)
-
-	if current_lives <= 0:
-		complete_progress_session("loss")
-		change_state(GameState.GAME_OVER)
-
 func reset_game() -> void:
 	current_score = 0
-	current_lives = max_lives
 	difficulty_level = 1
 	orders_completed_this_session = 0
 	change_state(GameState.MENU)
 	score_updated.emit(current_score)
-	lives_updated.emit(current_lives)
 
 func start_new_game() -> void:
 	current_score = 0
-	current_lives = max_lives
 
 	# Set initial difficulty based on debug mode
 	if debug_difficulty_mode != -1:
@@ -248,14 +234,12 @@ func start_new_game() -> void:
 	current_tutorial_problem_index = 0
 	change_state(GameState.PLAYING)
 	score_updated.emit(current_score)
-	lives_updated.emit(current_lives)
 
 	# Start progress tracking session
 	ProgressTracker.start_new_session(difficulty_level)
 
 func start_tutorial_mode(tutorial_key: String = "") -> void:
 	current_score = 0
-	current_lives = max_lives
 	difficulty_level = 1
 	orders_completed_this_session = 0
 	current_phase = GamePhase.PREPARING_PREMISES
@@ -265,7 +249,6 @@ func start_tutorial_mode(tutorial_key: String = "") -> void:
 	is_first_time_tutorial = false
 	change_state(GameState.PLAYING)
 	score_updated.emit(current_score)
-	lives_updated.emit(current_lives)
 
 	print("Starting tutorial mode: ", tutorial_key)
 
@@ -312,7 +295,7 @@ func complete_progress_session(completion_status: String) -> void:
 
 	ProgressTracker.complete_current_session(
 		current_score,
-		current_lives,
+		0,  # Lives removed
 		orders_completed_this_session,
 		completion_status
 	)
@@ -382,17 +365,7 @@ func run_integration_test() -> void:
 		print("✗ Score system test failed")
 	current_score = original_score
 
-	# Test 3: Lives System
-	print("Testing lives system...")
-	var original_lives = current_lives
-	lose_life()
-	if current_lives == original_lives - 1:
-		print("✓ Lives system test passed")
-	else:
-		print("✗ Lives system test failed")
-	current_lives = original_lives
-
-	# Test 4: Phase Management
+	# Test 3: Phase Management
 	print("Testing phase management...")
 	change_phase(GamePhase.TRANSFORMING_PREMISES)
 	if current_phase == GamePhase.TRANSFORMING_PREMISES:
