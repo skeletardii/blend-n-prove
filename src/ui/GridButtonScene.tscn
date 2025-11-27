@@ -29,94 +29,118 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ButtonGrid" type="GridContainer" parent="MainContainer/ScrollContainer"]
+[node name="ButtonGrid" type="VBoxContainer" parent="MainContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-columns = 3
+separation = 12
 
 [node name="Button1" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 1"
 
 [node name="Button2" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 2"
 
 [node name="Button3" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 3"
 
 [node name="Button4" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 4"
 
 [node name="Button5" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 5"
 
 [node name="Button6" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 6"
 
 [node name="Button7" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 7"
 
 [node name="Button8" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 8"
 
 [node name="Button9" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 9"
 
 [node name="Button10" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 10"
 
 [node name="Button11" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 11"
 
 [node name="Button12" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 12"
 
 [node name="Button13" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 13"
 
 [node name="Button14" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 14"
 
 [node name="Button15" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 15"
 
 [node name="Button16" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 16"
 
 [node name="Button17" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 17"
 
 [node name="Button18" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 80)
 text = "Button 18"
 
 [node name="BackButton" type="Button" parent="MainContainer"]
