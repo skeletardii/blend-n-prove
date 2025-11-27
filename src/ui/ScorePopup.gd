@@ -197,7 +197,7 @@ func _animate_score_count_up() -> void:
 	count_tween.tween_method(
 		func(value: float):
 			score_display_label.text = str(int(value))
-		,
+	,
 		float(old_score),
 		float(old_score + total_score),
 		COUNT_UP_DURATION
