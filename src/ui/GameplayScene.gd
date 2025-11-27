@@ -353,9 +353,13 @@ func complete_order_successfully() -> void:
 	# Show score popup animation
 	var popup: CanvasLayer = score_popup_scene.instantiate()
 	add_child(popup)
-	popup.show_score_popup(base_score, time_bonus)
+	popup.show_score_popup(base_score, time_bonus, score_display, GameManager.current_score)
 
-	GameManager.add_score(total_score)
+	# Don't add score immediately - let the popup animation handle the display update
+	# The actual score will be added to GameManager after the animation completes
+	get_tree().create_timer(1.2 + 0.3 + 0.6).timeout.connect(func():
+		GameManager.add_score(total_score)
+	)
 
 	# Handle tutorial mode completion
 	if GameManager.tutorial_mode:
