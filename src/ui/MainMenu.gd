@@ -22,6 +22,9 @@ func _ready() -> void:
 	# Connect to GameManager signals
 	GameManager.game_state_changed.connect(_on_game_state_changed)
 
+	# Check for app updates (Android only)
+	_check_for_app_updates()
+
 	# Connect button signals
 	print("Connecting play button...")
 	if not play_button.pressed.is_connected(_on_play_button_pressed):
@@ -328,3 +331,34 @@ func start_title_tilt_animation() -> void:
 	# Return to center
 	tilt_tween.tween_property(title_sprite, "rotation", 0.0, tilt_duration_right) \
 		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+# ===== UPDATE CHECKER =====
+
+func _check_for_app_updates() -> void:
+	# Connect to UpdateCheckerService signals
+	if not UpdateCheckerService.update_available.is_connected(_on_update_available):
+		UpdateCheckerService.update_available.connect(_on_update_available)
+
+	if not UpdateCheckerService.update_check_failed.is_connected(_on_update_check_failed):
+		UpdateCheckerService.update_check_failed.connect(_on_update_check_failed)
+
+	# Start update check (async, non-blocking)
+	UpdateCheckerService.check_for_updates()
+
+func _on_update_available(update_info: Dictionary) -> void:
+	print("MainMenu: Update available, showing popup...")
+
+	# Get or create UpdateChecker popup
+	var update_checker = get_node_or_null("UpdateCheckerPopup")
+
+	if not update_checker:
+		var update_checker_scene = load("res://src/ui/UpdateChecker.tscn")
+		update_checker = update_checker_scene.instantiate()
+		update_checker.name = "UpdateCheckerPopup"
+		add_child(update_checker)
+
+	update_checker.show_update(update_info)
+
+func _on_update_check_failed(error_message: String) -> void:
+	print("MainMenu: Update check failed: ", error_message)
+	# Fail silently - don't interrupt user experience

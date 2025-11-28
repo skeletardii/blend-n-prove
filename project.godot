@@ -10,8 +10,9 @@ config_version=5
 
 [application]
 
-config/name="Godot MCP"
-config/description="Educational game teaching boolean logic through bartender simulation"
+config/name="Fusion Rush"
+config/description="Educational game teaching boolean logic through industrial simulation"
+config/version="0.1"
 run/main_scene="uid://dvdwtisv5ow7b"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
@@ -25,6 +26,8 @@ SceneManager="*res://src/game/autoloads/SceneManager.gd"
 TutorialManager="*res://src/game/autoloads/TutorialManager.gd"
 ProgressTracker="*res://src/game/autoloads/ProgressTracker.gd"
 TutorialDataManager="*res://src/game/autoloads/TutorialDataManager.gd"
+AppConstants="*res://src/game/autoloads/AppConstants.gd"
+UpdateCheckerService="*res://src/game/autoloads/UpdateCheckerService.gd"
 
 [display]
 
