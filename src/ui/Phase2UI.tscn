@@ -21,50 +21,50 @@ texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
-modulate_color = Color(0.65834004, 0.6583399, 0.6583399, 1)
+modulate_color = Color(1.0, 1.0, 1.0, 1.0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_remote"]
-bg_color = Color(0.15, 0.15, 0.18, 1)
+bg_color = Color(1.0, 1.0, 1.0, 1.0)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.25, 0.25, 0.3, 1)
+border_color = Color(0.85, 0.85, 0.85, 1)
 corner_radius_top_left = 25
 corner_radius_top_right = 25
 corner_radius_bottom_right = 25
 corner_radius_bottom_left = 25
-shadow_color = Color(0, 0, 0, 0.5)
+shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 8
 shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dark_purple_normal"]
-bg_color = Color(0.35, 0.2, 0.5, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0, 0, 0, 0.5)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_normal"]
+bg_color = Color(1.0, 1.0, 1.0, 1.0)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 3
 shadow_offset = Vector2(2, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dark_purple_pressed"]
-bg_color = Color(0.25, 0.15, 0.4, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0, 0, 0, 0.5)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_pressed"]
+bg_color = Color(0.8, 0.8, 0.8, 1.0)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 3
 shadow_offset = Vector2(2, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dark_purple_hover"]
-bg_color = Color(0.45, 0.3, 0.6, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0, 0, 0, 0.5)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_hover"]
+bg_color = Color(0.9, 0.9, 0.9, 1.0)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 3
 shadow_offset = Vector2(2, 2)
 
@@ -253,6 +253,14 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 3
 
+[node name="FeedbackLabel" type="Label" parent="WorkContainer/InventoryArea/InventoryContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="DoubleOpsRemote" type="Panel" parent="."]
 custom_minimum_size = Vector2(280, 450)
 layout_mode = 1
@@ -320,81 +328,81 @@ theme_override_constants/separation = 5
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "MP"
 
 [node name="MTButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "MT"
 
 [node name="HSButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "HS"
 
 [node name="DSButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "DS"
 
 [node name="CDButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "CD"
 
 [node name="DNButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "DN"
 
 [node name="CONJButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "CONJ"
 
 [node name="EQButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "EQ"
 
 [node name="RESButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "RES"
 
 [node name="SingleOpsRemote" type="Panel" parent="."]
@@ -464,135 +472,135 @@ theme_override_constants/separation = 5
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "SIMP"
 
 [node name="IMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "IMP"
 
 [node name="CONVButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "CONV"
 
 [node name="ADDButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "ADD"
 
 [node name="DMButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "DM"
 
 [node name="DNEGButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "DNEG"
 
 [node name="DISTButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "DIST"
 
 [node name="COMMButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "COMM"
 
 [node name="ASSOCButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "ASSOC"
 
 [node name="IDEMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "IDEMP"
 
 [node name="ABSButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "ABS"
 
 [node name="PAREN_REMOVEButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "( )"
 
 [node name="NEGButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "NEG"
 
 [node name="TAUTButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "TAUT"
 
 [node name="CONTRButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
 custom_minimum_size = Vector2(240, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_dark_purple_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_dark_purple_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dark_purple_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "CONTR"
 
 [node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]

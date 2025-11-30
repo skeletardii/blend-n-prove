@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://dvdwtisv5ow7b"]
+[gd_scene load_steps=10 format=3 uid="uid://dvdwtisv5ow7b"]
 
 [ext_resource type="Script" uid="uid://k7rdb8uuwufw" path="res://src/ui/MainMenu.gd" id="1_2v8qy"]
 [ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_2wh52"]
 [ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_ihbld"]
 [ext_resource type="Texture2D" uid="uid://onbkto0umar" path="res://assets/sprites/newlogo.png" id="4_ihbld"]
+[ext_resource type="FontFile" uid="uid://c1fnar2v6mvb0" path="res://assets/fonts/MuseoSansRounded1000.otf" id="5_dbyr8"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="5_u6542"]
 
 [sub_resource type="Gradient" id="Gradient_2wh52"]
@@ -68,9 +69,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -250.0
-offset_top = -626.0
+offset_top = -600.0
 offset_right = 250.0
-offset_bottom = 573.0
+offset_bottom = 473.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -78,6 +79,24 @@ grow_vertical = 2
 layout_mode = 2
 texture = ExtResource("4_ihbld")
 expand_mode = 5
+
+[node name="HighScoreContainer" type="VBoxContainer" parent="MenuContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="HighScoreLabel" type="Label" parent="MenuContainer/HighScoreContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_dbyr8")
+theme_override_font_sizes/font_size = 24
+text = "HIGH SCORE"
+horizontal_alignment = 1
+
+[node name="HighScoreValue" type="Label" parent="MenuContainer/HighScoreContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_font_sizes/font_size = 72
+text = "0"
+horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="MenuContainer"]
 visible = false
@@ -96,10 +115,10 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
 [node name="PlayButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(500, 100)
+custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 theme = ExtResource("5_u6542")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "PLAY GAME"
 
 [node name="Spacer2" type="Control" parent="MenuContainer"]
@@ -107,10 +126,10 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="DebugButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(500, 100)
+custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 theme = ExtResource("5_u6542")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "DEBUG OPTIONS"
 
 [node name="Spacer3" type="Control" parent="MenuContainer"]
@@ -118,10 +137,10 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="SettingsButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(500, 100)
+custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 theme = ExtResource("5_u6542")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "SETTINGS"
 
 [node name="Spacer4" type="Control" parent="MenuContainer"]
@@ -129,10 +148,10 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="ProgressButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(500, 100)
+custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 theme = ExtResource("5_u6542")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "PROGRESS AND STATS
 "
 
@@ -141,10 +160,10 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="GridButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(500, 100)
+custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 theme = ExtResource("5_u6542")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "TUTORIALS
 "
 
@@ -153,10 +172,10 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="QuitButton" type="Button" parent="MenuContainer"]
-custom_minimum_size = Vector2(500, 100)
+custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 theme = ExtResource("5_u6542")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "QUIT"
 
 [node name="BlenderEmoji" type="Label" parent="MenuContainer"]
@@ -354,9 +373,9 @@ text = "CLOSE"
 [node name="QuickStatsPanel" type="VBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 14.0
+offset_top = -86.0
 offset_right = 202.0
-offset_bottom = 194.0
+offset_bottom = 94.0
 
 [node name="QuickStatsTitle" type="Label" parent="QuickStatsPanel"]
 layout_mode = 2
@@ -421,9 +440,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -150.0
-offset_top = -50.0
+offset_top = -150.0
 offset_right = 150.0
-offset_bottom = -20.0
+offset_bottom = -120.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.2, 0.8, 0.2, 1)

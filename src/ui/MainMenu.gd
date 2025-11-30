@@ -15,6 +15,7 @@ extends Control
 @onready var reset_confirmation_dialog: ConfirmationDialog = $ResetConfirmationDialog
 @onready var feedback_label: Label = $FeedbackLabel
 @onready var title_sprite: TextureRect = $MenuContainer/TextureRect
+@onready var high_score_value: Label = $MenuContainer/HighScoreContainer/HighScoreValue
 
 func _ready() -> void:
 	AudioManager.start_menu_music()
@@ -179,6 +180,9 @@ func update_quick_stats() -> void:
 	games_played_quick.text = "Games Played: " + str(stats.total_games_played)
 	streak_quick.text = "Current Streak: " + str(stats.current_streak)
 
+	# Update the main high score display below the title
+	high_score_value.text = str(stats.high_score_overall)
+
 func setup_difficulty_mode_options() -> void:
 	# Clear existing items
 	difficulty_mode_option.clear()
@@ -333,30 +337,34 @@ func hide_feedback() -> void:
 		feedback_timer = null
 
 func start_title_tilt_animation() -> void:
-	"""Creates a subtle tilting animation for the title sprite"""
+	"""Creates a breathing animation for the title sprite"""
 	if not title_sprite:
 		return
 
-	# Set pivot point to top center (anchored like a hanging sign)
-	title_sprite.pivot_offset = Vector2(title_sprite.size.x / 2, 0)
+	# Wait for layout to complete
+	await get_tree().process_frame
+	await get_tree().process_frame
 
-	# Create infinite looping tween for tilting
-	var tilt_tween = create_tween()
-	tilt_tween.set_loops()  # Infinite loop
+	# Get the rect that the texture is drawn in
+	var rect_size: Vector2 = title_sprite.get_rect().size
 
-	# Subtle tilt parameters (similar to a hanging sign swaying)
-	var tilt_duration_right = 2.0  # 2 seconds to tilt right
-	var tilt_duration_left = 2.0   # 2 seconds to tilt left
-	var max_tilt_angle = 0.05      # ~3 degrees in radians (very subtle)
+	# Set pivot to the center of the drawn rect
+	title_sprite.pivot_offset = rect_size / 2
 
-	# Tilt to the right
-	tilt_tween.tween_property(title_sprite, "rotation", max_tilt_angle, tilt_duration_right) \
+	# Create infinite looping tween for breathing effect
+	var breathe_tween = create_tween()
+	breathe_tween.set_loops()  # Infinite loop
+
+	# Breathing parameters (expand and shrink)
+	var breathe_duration = 2.5  # 2.5 seconds to expand
+	var shrink_duration = 2.5   # 2.5 seconds to shrink
+	var expanded_scale = Vector2(1.05, 1.05)  # Expand to 105%
+	var normal_scale = Vector2(1.0, 1.0)      # Normal size (100%)
+
+	# Expand (inhale)
+	breathe_tween.tween_property(title_sprite, "scale", expanded_scale, breathe_duration) \
 		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
 
-	# Tilt to the left
-	tilt_tween.tween_property(title_sprite, "rotation", -max_tilt_angle, tilt_duration_left) \
-		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
-
-	# Return to center
-	tilt_tween.tween_property(title_sprite, "rotation", 0.0, tilt_duration_right) \
+	# Shrink (exhale)
+	breathe_tween.tween_property(title_sprite, "scale", normal_scale, shrink_duration) \
 		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)

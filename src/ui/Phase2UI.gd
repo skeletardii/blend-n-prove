@@ -1,5 +1,8 @@
 extends Control
 
+# Preload score popup scene
+const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
+
 # UI References
 @onready var work_container: VBoxContainer = $WorkContainer
 @onready var phase_label: Label = $WorkContainer/PhaseLabel
@@ -7,6 +10,11 @@ extends Control
 @onready var target_expression: Label = $WorkContainer/TargetArea/ChatBubble/TargetContainer/TargetExpression
 @onready var addition_dialog: Panel = $AdditionDialog
 @onready var silhouette: TextureRect = $Silhouette
+@onready var feedback_label: Label = $WorkContainer/InventoryArea/InventoryContainer/FeedbackLabel
+
+# References passed from GameplayScene
+var score_display: Label = null
+var patience_timer: float = 0.0
 
 # Remote Controls
 @onready var double_ops_remote: Panel = $DoubleOpsRemote
@@ -48,6 +56,7 @@ var selected_premises: Array[BooleanLogicEngine.BooleanExpression] = []
 var target_conclusion: String = ""
 var selected_rule: String = ""
 var premise_cards: Array[Control] = []
+var target_reached_triggered: bool = false  # Prevent multiple target animations
 
 # Animation State
 var double_panel_height: float = 450.0
@@ -296,6 +305,9 @@ func set_premises_and_target(premises: Array[BooleanLogicEngine.BooleanExpressio
 	adjust_target_font_size()
 	create_premise_cards()
 
+	# Reset target reached flag for new problem
+	target_reached_triggered = false
+
 # Extended version for Level 6 natural language problems
 func set_premises_and_target_with_display(
 	premises: Array[BooleanLogicEngine.BooleanExpression],
@@ -312,6 +324,9 @@ func set_premises_and_target_with_display(
 	target_expression.text = "Prove: " + display_target  # Display this to player
 	adjust_target_font_size()
 	create_premise_cards()
+
+	# Reset target reached flag for new problem
+	target_reached_triggered = false
 
 func adjust_target_font_size() -> void:
 	"""Dynamically adjust font size to fit text within the chat bubble"""
@@ -383,6 +398,12 @@ func create_premise_card(premise: BooleanLogicEngine.BooleanExpression, index: i
 	card.add_theme_stylebox_override("pressed", hover_style)
 	card.add_theme_stylebox_override("focus", normal_style)
 
+	# Set text color to white for better visibility
+	card.add_theme_color_override("font_color", Color.WHITE)
+	card.add_theme_color_override("font_hover_color", Color.WHITE)
+	card.add_theme_color_override("font_pressed_color", Color.WHITE)
+	card.add_theme_color_override("font_focus_color", Color.WHITE)
+
 	card.pressed.connect(_on_premise_card_pressed.bind(premise, card))
 	return card
 
@@ -390,7 +411,7 @@ func _on_premise_card_pressed(premise: BooleanLogicEngine.BooleanExpression, car
 	# Only allow premise selection if a rule is selected
 	if selected_rule.is_empty():
 		card.button_pressed = false  # Reset button state
-		feedback_message.emit("Please select an operation first", Color.ORANGE)
+		show_feedback("Select operation first", Color.ORANGE, false)
 		# Don't auto-open remotes - let user choose which one
 		return
 
@@ -412,7 +433,7 @@ func _on_rule_button_pressed(rule: String) -> void:
 	# If clicking the same rule that's already selected, deselect everything
 	if selected_rule == rule:
 		clear_selections()
-		feedback_message.emit("Operation deselected", Color.WHITE)
+		show_feedback("Deselected", Color.WHITE, false)
 		return
 
 	# Clear previous rule selection
@@ -421,9 +442,8 @@ func _on_rule_button_pressed(rule: String) -> void:
 	selected_rule = rule
 	var rule_def = rule_definitions[rule]
 
-	feedback_message.emit("Selected " + rule_def.name + ". Select " +
-						  ("1 premise" if rule_def.type == RuleType.SINGLE else "2 premises") +
-						  " to apply this rule.", Color.YELLOW)
+	var premise_count = "1 premise" if rule_def.type == RuleType.SINGLE else "2 premises"
+	show_feedback(rule_def.name + " - Select " + premise_count, Color.YELLOW, false)
 
 	# Highlight the selected button
 	highlight_rule_button(rule)
@@ -486,14 +506,16 @@ func apply_rule() -> void:
 			ProgressTracker.record_operation_used(rule_def.name, true)
 			clear_selections()
 
-			feedback_message.emit("✓ Applied " + rule_def.name + ": Added " + str(added_results.size()) + " result" + ("s" if added_results.size() > 1 else ""), Color.GREEN)
+			var result_text = str(added_results.size()) + " result" + ("s" if added_results.size() > 1 else "")
+			show_feedback("✓ " + rule_def.name + ": " + result_text, Color.GREEN, false)
 
 			# Emit signal for each valid result
 			for cleaned_result in added_results:
 				rule_applied.emit(cleaned_result)
-				# Check if any result is the target
-				if cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
-					feedback_message.emit("✓ Target reached! Proof complete!", Color.CYAN)
+				# Check if any result is the target (only trigger once)
+				if not target_reached_triggered and cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
+					target_reached_triggered = true
+					show_feedback("✓ Proof complete!", Color.CYAN)
 					# Find the card that matches the result and animate it
 					animate_target_reached(cleaned_result)
 					# Emit signal after animation delay
@@ -501,7 +523,7 @@ func apply_rule() -> void:
 		else:
 			# No valid results - show error
 			clear_selections()
-			feedback_message.emit(rule_def.name + " produced no valid results", Color.RED)
+			show_feedback("✗ No valid results", Color.RED, false)
 			# Don't auto-open remotes on failure
 		return
 
@@ -522,12 +544,13 @@ func apply_rule() -> void:
 		# Clear selections
 		clear_selections()
 
-		feedback_message.emit("✓ Applied " + rule_def.name + ": " + cleaned_result.expression_string, Color.GREEN)
+		show_feedback("✓ " + rule_def.name, Color.GREEN, false)
 		rule_applied.emit(cleaned_result)
 
-		# Check if target is reached
-		if cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
-			feedback_message.emit("✓ Target reached! Proof complete!", Color.CYAN)
+		# Check if target is reached (only trigger once)
+		if not target_reached_triggered and cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
+			target_reached_triggered = true
+			show_feedback("✓ Proof complete!", Color.CYAN)
 			# Find the card that matches the result and animate it
 			animate_target_reached(cleaned_result)
 			# Emit signal after animation delay
@@ -535,7 +558,7 @@ func apply_rule() -> void:
 	else:
 		# Clear selections when rule fails
 		clear_selections()
-		feedback_message.emit(rule_def.name + " cannot be applied to selected premises", Color.RED)
+		show_feedback("✗ Cannot apply " + rule_def.name, Color.RED, false)
 		# Don't auto-open remotes on failure
 
 func apply_logical_rule_multi(rule: String, premises: Array[BooleanLogicEngine.BooleanExpression]) -> Array:
@@ -836,7 +859,46 @@ func create_target_flash(position: Vector2) -> void:
 
 	# Clean up after animation
 	tween.finished.connect(func(): flash.queue_free())
-	tween2.finished.connect(func(): flash2.queue_free())
+	tween2.finished.connect(func():
+		flash2.queue_free()
+		# Show score popup after explosion
+		show_score_popup_at_position(position)
+	)
+
+func show_feedback(message: String, color: Color, emit_to_parent: bool = true) -> void:
+	"""Show shortened feedback at the bottom of the premise box"""
+	feedback_label.text = message
+	feedback_label.modulate = color
+
+	# Emit to parent for any global handling if needed
+	if emit_to_parent:
+		feedback_message.emit(message, color)
+
+	# Auto-clear feedback after 3 seconds
+	get_tree().create_timer(3.0).timeout.connect(func():
+		if feedback_label.text == message:  # Only clear if message hasn't changed
+			feedback_label.text = ""
+	)
+
+func show_score_popup_at_position(explosion_pos: Vector2) -> void:
+	"""Show score popup at the explosion position"""
+	if not score_display:
+		return
+
+	# Calculate score based on speed and efficiency
+	var time_bonus: int = int(patience_timer)
+	var base_score: int = 100 + (GameManager.difficulty_level * 50)
+	var total_score: int = base_score + time_bonus
+
+	# Show score popup animation at explosion position
+	var popup: CanvasLayer = score_popup_scene.instantiate()
+	get_tree().root.add_child(popup)
+	popup.show_score_popup_phase2(total_score, time_bonus, base_score, explosion_pos, score_display, GameManager.current_score)
+
+	# Add score to GameManager after animation completes
+	get_tree().create_timer(0.6 + 0.5).timeout.connect(func():
+		GameManager.add_score(total_score)
+	)
 
 func clear_selections() -> void:
 	selected_premises.clear()
@@ -926,7 +988,7 @@ func add_premise_to_inventory(premise: BooleanLogicEngine.BooleanExpression) -> 
 func _on_addition_dialog_confirmed(expr_text: String) -> void:
 	# User confirmed the Addition dialog with an expression
 	if selected_premises.size() != 1:
-		feedback_message.emit("Error: No premise selected", Color.RED)
+		show_feedback("✗ No premise selected", Color.RED, false)
 		clear_selections()
 		return
 
@@ -934,7 +996,7 @@ func _on_addition_dialog_confirmed(expr_text: String) -> void:
 	var additional_expr = BooleanLogicEngine.create_expression(expr_text)
 
 	if not additional_expr.is_valid:
-		feedback_message.emit("Invalid expression: " + expr_text, Color.RED)
+		show_feedback("✗ Invalid expression", Color.RED, false)
 		return
 
 	# Apply addition rule: P ⊢ P ∨ Q
@@ -954,19 +1016,20 @@ func _on_addition_dialog_confirmed(expr_text: String) -> void:
 		# Clear selections
 		clear_selections()
 
-		feedback_message.emit("✓ Applied Addition: " + cleaned_result.expression_string, Color.GREEN)
+		show_feedback("✓ Addition", Color.GREEN, false)
 		rule_applied.emit(cleaned_result)
 
-		# Check if target is reached
-		if cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
-			feedback_message.emit("✓ Target reached! Proof complete!", Color.CYAN)
+		# Check if target is reached (only trigger once)
+		if not target_reached_triggered and cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
+			target_reached_triggered = true
+			show_feedback("✓ Proof complete!", Color.CYAN)
 			# Find the card that matches the result and animate it
 			animate_target_reached(cleaned_result)
 			# Emit signal after animation delay
 			get_tree().create_timer(1.0).timeout.connect(func(): target_reached.emit(cleaned_result))
 	else:
 		clear_selections()
-		feedback_message.emit("Addition failed to produce valid result", Color.RED)
+		show_feedback("✗ Addition failed", Color.RED, false)
 
 func _on_addition_dialog_cancelled() -> void:
 	# User cancelled the Addition dialog

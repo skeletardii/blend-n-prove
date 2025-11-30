@@ -93,16 +93,36 @@ text = "
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ScoreContainer" type="HBoxContainer" parent="UI/MainContainer/TopBar/TopBarContainer"]
+[node name="ScoreContainer" type="VBoxContainer" parent="UI/MainContainer/TopBar/TopBarContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="HighScoreContainer" type="HBoxContainer" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer"]
 layout_mode = 2
 
-[node name="ScoreLabel" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer"]
+[node name="HighScoreLabel" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/HighScoreContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_n1mcv")
+theme_override_font_sizes/font_size = 24
+text = "High Score:"
+
+[node name="HighScoreDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/HighScoreContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_fonts/font = ExtResource("5_n1mcv")
+theme_override_font_sizes/font_size = 24
+text = "0"
+
+[node name="CurrentScoreContainer" type="HBoxContainer" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer"]
+layout_mode = 2
+
+[node name="ScoreLabel" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/CurrentScoreContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_n1mcv")
 theme_override_font_sizes/font_size = 50
 text = "Score:"
 
-[node name="ScoreDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer"]
+[node name="ScoreDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/CurrentScoreContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_n1mcv")
 theme_override_font_sizes/font_size = 50
