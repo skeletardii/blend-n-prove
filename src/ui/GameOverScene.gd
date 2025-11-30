@@ -3,6 +3,8 @@ extends Control
 @onready var final_score_label: Label = $GameOverContainer/FinalScore
 
 func _ready() -> void:
+	# Wait a brief moment before stopping music to avoid cutting off game over sound
+	await get_tree().create_timer(0.2).timeout
 	AudioManager.stop_music()
 
 	# Display final score
