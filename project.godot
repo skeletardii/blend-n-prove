@@ -25,13 +25,13 @@ SceneManager="*res://src/game/autoloads/SceneManager.gd"
 AudioManager="*res://src/game/autoloads/AudioManager.gd"
 AppConstants="*res://src/game/autoloads/AppConstants.gd"
 
-# Proxied autoloads (loaded from PCK via ManagerBootstrap)
-#GameManager="*res://src/game/autoloads/GameManager.gd"
-#BooleanLogicEngine="*res://src/game/autoloads/BooleanLogicEngine.gd"
-#ProgressTracker="*res://src/game/autoloads/ProgressTracker.gd"
-#TutorialManager="*res://src/game/autoloads/TutorialManager.gd"
-#TutorialDataManager="*res://src/game/autoloads/TutorialDataManager.gd"
-#UpdateCheckerService="*res://src/game/autoloads/UpdateCheckerService.gd"
+# Proxied autoloads (implementations loaded from PCK via ManagerBootstrap)
+GameManager="*res://src/game/autoloads/GameManager.gd"
+BooleanLogicEngine="*res://src/game/autoloads/BooleanLogicEngine.gd"
+ProgressTracker="*res://src/game/autoloads/ProgressTracker.gd"
+TutorialManager="*res://src/game/autoloads/TutorialManager.gd"
+TutorialDataManager="*res://src/game/autoloads/TutorialDataManager.gd"
+UpdateCheckerService="*res://src/game/autoloads/UpdateCheckerService.gd"
 
 [display]
 
