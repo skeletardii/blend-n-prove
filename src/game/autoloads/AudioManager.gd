@@ -9,6 +9,8 @@ var is_muted: bool = false
 
 var music_player: AudioStreamPlayer
 var sfx_player: AudioStreamPlayer
+var sfx_players_pool: Array[AudioStreamPlayer] = []
+const MAX_SFX_PLAYERS: int = 8  # Allow up to 8 simultaneous sound effects
 
 # Audio file paths - Updated to use 8-bit .wav files
 var audio_paths: Dictionary = {
@@ -29,18 +31,25 @@ var loaded_sounds: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	
+
 	# Create audio players
 	music_player = AudioStreamPlayer.new()
 	sfx_player = AudioStreamPlayer.new()
-	
+
 	add_child(music_player)
 	add_child(sfx_player)
-	
+
+	# Create pool of additional SFX players for simultaneous sounds
+	for i in range(MAX_SFX_PLAYERS):
+		var player = AudioStreamPlayer.new()
+		player.volume_db = linear_to_db(sfx_volume * master_volume)
+		add_child(player)
+		sfx_players_pool.append(player)
+
 	# Configure players
 	music_player.volume_db = linear_to_db(music_volume * master_volume)
 	sfx_player.volume_db = linear_to_db(sfx_volume * master_volume)
-	
+
 	# Try to load audio files (they may not exist yet)
 	load_audio_files()
 
@@ -53,13 +62,24 @@ func load_audio_files() -> void:
 				loaded_sounds[sound_name] = audio_stream
 		# If file doesn't exist, we'll just skip it (no error)
 
+func get_available_sfx_player() -> AudioStreamPlayer:
+	"""Get an available SFX player from the pool, or the first one if all are busy"""
+	for player in sfx_players_pool:
+		if not player.playing:
+			return player
+	# If all players are busy, use the first one (will interrupt)
+	return sfx_players_pool[0]
+
 func play_sfx(sound_name: String) -> void:
 	if is_muted:
 		return
-	
+
+	# Get an available player from the pool
+	var player = get_available_sfx_player()
+
 	if sound_name in loaded_sounds:
-		sfx_player.stream = loaded_sounds[sound_name]
-		sfx_player.play()
+		player.stream = loaded_sounds[sound_name]
+		player.play()
 	else:
 		# Try to load the sound if it wasn't loaded before
 		var path: String = audio_paths.get(sound_name, "")
@@ -67,8 +87,8 @@ func play_sfx(sound_name: String) -> void:
 			var audio_stream = load(path)
 			if audio_stream:
 				loaded_sounds[sound_name] = audio_stream
-				sfx_player.stream = audio_stream
-				sfx_player.play()
+				player.stream = audio_stream
+				player.play()
 
 func play_music(music_name: String, loop: bool = true) -> void:
 	if is_muted:
@@ -115,6 +135,9 @@ func toggle_mute() -> void:
 	if is_muted:
 		music_player.volume_db = -80.0  # Effectively mute
 		sfx_player.volume_db = -80.0
+		# Mute all players in the pool
+		for player in sfx_players_pool:
+			player.volume_db = -80.0
 	else:
 		update_volumes()
 	audio_settings_changed.emit()
@@ -123,6 +146,9 @@ func update_volumes() -> void:
 	if not is_muted:
 		music_player.volume_db = linear_to_db(music_volume * master_volume)
 		sfx_player.volume_db = linear_to_db(sfx_volume * master_volume)
+		# Update all players in the pool
+		for player in sfx_players_pool:
+			player.volume_db = linear_to_db(sfx_volume * master_volume)
 	audio_settings_changed.emit()
 
 func play_button_click() -> void:
@@ -150,16 +176,19 @@ func play_score_popup(multiplier: float) -> void:
 	if is_muted:
 		return
 
+	# Get an available player from the pool
+	var player = get_available_sfx_player()
+
 	if "score_popup" in loaded_sounds:
-		sfx_player.stream = loaded_sounds["score_popup"]
+		player.stream = loaded_sounds["score_popup"]
 		# Adjust pitch based on multiplier (1.0x = normal, 2.5x+ = higher pitch)
 		# Pitch range: 1.0 to 1.5
 		var pitch: float = 1.0 + (clamp(multiplier - 1.0, 0.0, 1.5) * 0.33)
-		sfx_player.pitch_scale = pitch
-		sfx_player.play()
+		player.pitch_scale = pitch
+		player.play()
 		# Reset pitch after playing
 		await get_tree().create_timer(0.1).timeout
-		sfx_player.pitch_scale = 1.0
+		player.pitch_scale = 1.0
 	else:
 		play_sfx("score_popup")
 

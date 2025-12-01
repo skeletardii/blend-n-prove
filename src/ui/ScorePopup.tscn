@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://cg5v8xh2qwp3d"]
+[gd_scene load_steps=7 format=3 uid="uid://cg5v8xh2qwp3d"]
 
 [ext_resource type="Script" path="res://src/ui/ScorePopup.gd" id="1_score_popup"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_wenrexa"]
+[ext_resource type="FontFile" uid="uid://rkxmldc64bol" path="res://assets/fonts/Good-Game.ttf" id="3_goodgame"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_base"]
+font = ExtResource("3_goodgame")
 font_size = 72
 shadow_size = 8
 shadow_color = Color(0, 0, 0, 0.8)
@@ -12,6 +14,7 @@ outline_size = 5
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_bonus"]
+font = ExtResource("3_goodgame")
 font_size = 56
 shadow_size = 6
 shadow_color = Color(0, 0, 0, 0.8)
@@ -20,6 +23,7 @@ outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_multiplier"]
+font = ExtResource("3_goodgame")
 font_size = 64
 shadow_size = 7
 shadow_color = Color(0, 0, 0, 0.8)

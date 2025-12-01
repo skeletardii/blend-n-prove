@@ -74,6 +74,47 @@ func show_score_popup(base_score: int, time_bonus: int, score_display: Label, cu
 	# Start animations
 	_animate_popup(multiplier, popup_color)
 
+func show_score_popup_phase2(added_score: int, time_bonus: int, base_score: int, explosion_pos: Vector2, score_display: Label, current_score: int) -> void:
+	"""Show score popup for Phase 2 - simplified format with just the added score and multiplier"""
+	# Store references
+	score_display_label = score_display
+	old_score = current_score
+	total_score = added_score
+
+	# Calculate multiplier
+	var multiplier: float = 1.0
+	if base_score > 0:
+		multiplier = 1.0 + (float(time_bonus) / float(base_score))
+
+	# Determine color based on multiplier
+	var popup_color: Color = _calculate_color_from_multiplier(multiplier)
+
+	# Set simplified label text - just the total with multiplier in parenthesis
+	total_score_label.text = "+%d (×%.1f)" % [added_score, multiplier]
+	total_score_label.modulate = popup_color
+	total_score_label.modulate.a = 1.0  # Make visible immediately
+
+	# Hide the breakdown labels for Phase 2
+	base_score_label.visible = false
+	bonus_label.visible = false
+	multiplier_label.visible = false
+
+	# Position at explosion location
+	center_container.offset_left = explosion_pos.x - 100
+	center_container.offset_top = explosion_pos.y - 50
+	center_container.offset_right = explosion_pos.x + 100
+	center_container.offset_bottom = explosion_pos.y + 50
+
+	# Configure particles
+	particles.color = popup_color
+	particles.emitting = true
+
+	# Play sound effect
+	AudioManager.play_score_popup(multiplier)
+
+	# Start simplified animation
+	_animate_popup_phase2(multiplier, popup_color)
+
 func _calculate_color_from_multiplier(multiplier: float) -> Color:
 	# Green (1.0x - worst) → Cyan (1.5x) → Blue (2.0x) → Purple (2.5x+ - best)
 	if multiplier < 1.5:
@@ -196,8 +237,7 @@ func _animate_score_count_up() -> void:
 	# Use a custom method to interpolate integer values
 	count_tween.tween_method(
 		func(value: float):
-			score_display_label.text = str(int(value))
-	,
+			score_display_label.text = str(int(value)),
 		float(old_score),
 		float(old_score + total_score),
 		COUNT_UP_DURATION
@@ -209,3 +249,61 @@ func _animate_score_count_up() -> void:
 		.set_ease(Tween.EASE_OUT)
 	pulse_tween.tween_property(score_display_label, "scale", Vector2.ONE, COUNT_UP_DURATION * 0.5) \
 		.set_ease(Tween.EASE_IN)
+
+func _animate_popup_phase2(multiplier: float, popup_color: Color) -> void:
+	"""Simplified animation for Phase 2 - just show, wait, then fly to score"""
+	# Phase 1: Pop in (0.0 - 0.3s)
+	var tween: Tween = create_tween()
+	tween.set_parallel(true)
+
+	# Fade in
+	tween.tween_property(center_container, "modulate:a", 1.0, SCALE_DURATION * 0.5)
+
+	# Explosive scale with overshoot
+	tween.tween_property(container, "scale", Vector2(1.3, 1.3), SCALE_DURATION * 0.6) \
+		.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+
+	# Settle back to normal size
+	tween.chain().tween_property(container, "scale", Vector2.ONE, SCALE_DURATION * 0.4) \
+		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+	# Phase 2: Wait briefly (0.3 - 0.9s)
+	await get_tree().create_timer(0.6).timeout
+
+	# Phase 3: Fly score to score display (0.9 - 1.4s)
+	if score_display_label:
+		var start_pos: Vector2 = total_score_label.global_position + total_score_label.size / 2
+		var end_pos: Vector2 = score_display_label.global_position + score_display_label.size / 2
+
+		# Create a duplicate label that will fly
+		var flying_label: Label = Label.new()
+		flying_label.text = total_score_label.text
+		flying_label.label_settings = total_score_label.label_settings
+		flying_label.modulate = total_score_label.modulate
+		flying_label.position = start_pos
+		flying_label.z_index = 200
+		get_tree().root.add_child(flying_label)
+
+		# Hide the original total label
+		total_score_label.modulate.a = 0.0
+		center_container.modulate.a = 0.0  # Hide container
+
+		# Animate flying label
+		var fly_tween: Tween = create_tween()
+		fly_tween.set_parallel(true)
+		fly_tween.tween_property(flying_label, "position", end_pos, FLY_DURATION) \
+			.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+		fly_tween.tween_property(flying_label, "scale", Vector2(0.5, 0.5), FLY_DURATION) \
+			.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+
+		await fly_tween.finished
+
+		# Remove flying label
+		flying_label.queue_free()
+
+		# Phase 4: Count up the score display
+		_animate_score_count_up()
+
+	# Cleanup after all animations
+	await get_tree().create_timer(COUNT_UP_DURATION + 0.2).timeout
+	queue_free()

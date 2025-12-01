@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://csubga53p2pr4" path="res://src/ui/Phase1UI.gd" id="1_phase1"]
 [ext_resource type="Texture2D" uid="uid://5s07bsbpboi0" path="res://assets/sprites/Phase1UIMockup.png" id="2_tgfdk"]
-[ext_resource type="FontFile" uid="uid://cc80pt3xtcjpc" path="res://assets/fonts/CFIndustrialFabrics-Regular.ttf" id="4_o5hkq"]
+[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="4_qjtox"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="6_wbgmg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qjtox"]
@@ -134,6 +134,7 @@ grow_vertical = 2
 [node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
 layout_mode = 2
 theme = ExtResource("6_wbgmg")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "Premises to reconstruct:"
 
@@ -165,7 +166,6 @@ offset_right = 291.32
 offset_bottom = 124.04
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("6_wbgmg")
 
 [node name="InputContainer" type="VBoxContainer" parent="MainContainer/InputSystem"]
 layout_mode = 1
@@ -181,7 +181,7 @@ grow_vertical = 2
 
 [node name="InputLabel" type="Label" parent="MainContainer/InputSystem/InputContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("4_o5hkq")
+theme_override_fonts/font = ExtResource("4_qjtox")
 theme_override_font_sizes/font_size = 20
 text = "Current Input:"
 horizontal_alignment = 1
@@ -196,13 +196,15 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 122.0
-offset_right = -63.0
+offset_left = 95.0
+offset_top = -2.0
+offset_right = -90.0
+offset_bottom = -2.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
-theme_override_fonts/font = ExtResource("4_o5hkq")
+theme_override_fonts/font = ExtResource("4_qjtox")
 theme_override_font_sizes/font_size = 25
 text = "Type your premise here..."
 horizontal_alignment = 1
@@ -232,7 +234,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "P"
 
@@ -241,7 +243,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "Q"
 
@@ -250,7 +252,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "R"
 
@@ -259,7 +261,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "S"
 
@@ -268,7 +270,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "T"
 
@@ -288,7 +290,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "∧"
 
@@ -297,7 +299,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "⊕"
 
@@ -306,7 +308,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "↔"
 
@@ -315,7 +317,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "∨"
 
@@ -335,7 +337,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "→"
 
@@ -344,7 +346,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "("
 
@@ -353,7 +355,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = ")"
 
@@ -362,7 +364,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "¬"
 
@@ -371,7 +373,7 @@ custom_minimum_size = Vector2(60, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "⌫"
 

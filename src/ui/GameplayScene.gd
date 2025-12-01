@@ -2,7 +2,8 @@ extends Control
 
 # UI References - Persistent Elements
 @onready var main_container: VBoxContainer = $UI/MainContainer
-@onready var score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/ScoreDisplay
+@onready var score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/CurrentScoreContainer/ScoreDisplay
+@onready var high_score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/HighScoreContainer/HighScoreDisplay
 @onready var customer_name: Label = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/CustomerName
 @onready var patience_bar: ProgressBar = $UI/MainContainer/PatienceBar
 @onready var order_display: RichTextLabel = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/OrderDisplay
@@ -67,6 +68,7 @@ func _ready() -> void:
 
 	# Initialize UI
 	update_score_display()
+	update_high_score_display()
 
 	# Setup first-time tutorial if active
 	if GameManager.is_first_time_tutorial:
@@ -194,6 +196,10 @@ func switch_to_phase2() -> void:
 	# Load Phase 2
 	current_phase_instance = phase2_scene.instantiate()
 	phase_container.add_child(current_phase_instance)
+
+	# Pass score display and patience timer references
+	current_phase_instance.score_display = score_display
+	current_phase_instance.patience_timer = patience_timer
 
 	# Connect Phase 2 signals
 	current_phase_instance.rule_applied.connect(_on_rule_applied)
@@ -428,6 +434,10 @@ func _on_score_updated(new_score: int) -> void:
 
 func update_score_display() -> void:
 	score_display.text = str(GameManager.current_score)
+
+func update_high_score_display() -> void:
+	var stats = ProgressTracker.statistics
+	high_score_display.text = str(stats.high_score_overall)
 
 func show_feedback_message(message: String, color: Color = Color.WHITE) -> void:
 	# Create feedback label if it doesn't exist
