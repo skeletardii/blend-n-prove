@@ -256,10 +256,10 @@ func create_premise_panel(premise_text: String, is_completed: bool) -> PanelCont
 	style_box.corner_radius_bottom_right = 8
 
 	if is_completed:
-		# Completed: Lighter pink/purple hue, darker border to emphasize filled
-		style_box.bg_color = Color(0.85, 0.75, 0.85, 1.0)  # Light pink/purple
-		style_box.border_color = Color(0.4, 0.3, 0.4, 1.0)  # Darker purple border
-		style_box.shadow_color = Color(0.3, 0.2, 0.3, 0.6)  # Dark shadow
+		# Completed: White background with subtle gray border
+		style_box.bg_color = Color(1.0, 1.0, 1.0, 1.0)  # White
+		style_box.border_color = Color(0.7, 0.7, 0.7, 1.0)  # Light gray border
+		style_box.shadow_color = Color(0.0, 0.0, 0.0, 0.3)  # Subtle shadow
 	else:
 		# Unchecked: Dark grey with drop shadow to emphasize hole
 		style_box.bg_color = Color(0.25, 0.25, 0.25, 1.0)  # Dark grey
@@ -292,8 +292,8 @@ func create_premise_panel(premise_text: String, is_completed: bool) -> PanelCont
 		label.custom_minimum_size.x = 350
 
 	if is_completed:
-		# Dark purple text matching drop shadow for contrast
-		label.add_theme_color_override("font_color", Color(0.3, 0.2, 0.3, 1.0))  # Dark purple for contrast
+		# Black text for contrast on white background
+		label.add_theme_color_override("font_color", Color(0.0, 0.0, 0.0, 1.0))  # Black for contrast
 	else:
 		# Dirty white for unchecked
 		label.add_theme_color_override("font_color", Color(0.85, 0.85, 0.8, 1.0))  # Dirty white
