@@ -1,5 +1,8 @@
 extends Control
 
+# Explicit preload to ensure BooleanExpression type is available
+const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
+
 # UI References - Persistent Elements
 @onready var main_container: VBoxContainer = $UI/MainContainer
 @onready var score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/CurrentScoreContainer/ScoreDisplay
@@ -31,8 +34,8 @@ var phase1_background: Texture2D = preload("res://assets/sprites/phase1bg.jpg")
 var phase2_background: Texture2D = preload("res://assets/sprites/phase2bg.jpg")
 
 # Game State
-var current_customer: GameManager.CustomerData
-var validated_premises: Array[BooleanLogicEngine.BooleanExpression] = []
+var current_customer  # GameManager.CustomerData (type annotation removed for proxy compatibility)
+var validated_premises: Array[BooleanExpression] = []
 var patience_timer: float = 0.0
 var max_patience: float = 60.0
 var feedback_label: Label = null
@@ -259,7 +262,7 @@ func generate_new_customer() -> void:
 
 		# Get random order template for this level
 		var templates_for_level = GameManager.order_templates[current_level]
-		var random_template: GameManager.OrderTemplate = templates_for_level[randi() % templates_for_level.size()]
+		var random_template = templates_for_level[randi() % templates_for_level.size()]
 
 		# Adjust patience based on difficulty and expected operations
 		var base_patience: float = 90.0 - (current_level * 10.0) + (random_template.expected_operations * 15.0)
@@ -405,22 +408,22 @@ func complete_order_successfully() -> void:
 		switch_to_phase1()
 
 # Phase 1 Signal Handlers
-func _on_premise_validated(expression: BooleanLogicEngine.BooleanExpression) -> void:
+func _on_premise_validated(expression: BooleanExpression) -> void:
 	validated_premises.append(expression)
 	AudioManager.play_premise_complete()
 
-func _on_premises_completed(premises: Array[BooleanLogicEngine.BooleanExpression]) -> void:
+func _on_premises_completed(premises: Array[BooleanExpression]) -> void:
 	validated_premises = premises
 	show_feedback_message("✓ All premises ready! Advancing to Phase 2...", Color.CYAN)
 	# Auto-advance to Phase 2 after a short delay
 	get_tree().create_timer(1.5).timeout.connect(switch_to_phase2)
 
 # Phase 2 Signal Handlers
-func _on_rule_applied(result: BooleanLogicEngine.BooleanExpression) -> void:
+func _on_rule_applied(result: BooleanExpression) -> void:
 	validated_premises.append(result)
 	AudioManager.play_logic_success()
 
-func _on_target_reached(result: BooleanLogicEngine.BooleanExpression) -> void:
+func _on_target_reached(result: BooleanExpression) -> void:
 	show_feedback_message("✓ Proof complete! Order fulfilled!", Color.CYAN)
 	# Complete order after a short delay
 	get_tree().create_timer(2.0).timeout.connect(complete_order_successfully)

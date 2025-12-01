@@ -21,10 +21,20 @@ class ProblemData:
 	var interpretation_hints: Array[String] = []
 
 class TutorialData:
-	var tutorial_name: String = ""
-	var display_name: String = ""
-	var problems: Array = []
-	var button_index: int = -1
+	var rule_name: String = ""
+	var description: String = ""
+	var rule_pattern: String = ""
+	var problems: Array[ProblemData] = []
+	var file_path: String = ""
+	var tutorial_key: String = ""
+
+	func _init(name: String = "", desc: String = "", pattern: String = "", path: String = "", key: String = "") -> void:
+		rule_name = name
+		description = desc
+		rule_pattern = pattern
+		file_path = path
+		tutorial_key = key
+		problems = []
 
 # Implementation reference
 var _impl: Node = null
@@ -56,19 +66,19 @@ func _set(property: StringName, value: Variant) -> bool:
 func load_all_tutorials() -> void:
 	if _impl: _impl.load_all_tutorials()
 
-func load_tutorial(file_path: String, tutorial_key: String):
+func load_tutorial(file_path: String, tutorial_key: String) -> TutorialData:
 	if _impl: return _impl.load_tutorial(file_path, tutorial_key)
 	return null
 
-func parse_tutorial_json(content: String, file_path: String, tutorial_key: String):
+func parse_tutorial_json(content: String, file_path: String, tutorial_key: String) -> TutorialData:
 	if _impl: return _impl.parse_tutorial_json(content, file_path, tutorial_key)
 	return null
 
-func get_tutorial_by_name(tutorial_key: String):
+func get_tutorial_by_name(tutorial_key: String) -> TutorialData:
 	if _impl: return _impl.get_tutorial_by_name(tutorial_key)
 	return null
 
-func get_tutorial_by_button_index(button_index: int):
+func get_tutorial_by_button_index(button_index: int) -> TutorialData:
 	if _impl: return _impl.get_tutorial_by_button_index(button_index)
 	return null
 

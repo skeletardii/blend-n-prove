@@ -41,6 +41,9 @@ var is_downloading: bool = false
 var current_version_info: Dictionary = {}
 
 func _ready() -> void:
+	call_deferred("_start_boot_sequence")
+
+func _start_boot_sequence() -> void:
 	boot_started.emit()
 	current_state = BootState.INITIALIZING
 
@@ -49,6 +52,20 @@ func _ready() -> void:
 
 	print("UpdateManager: Starting boot sequence...")
 
+	# EDITOR MODE: Skip PCK loading, directly load managers
+	# All manager implementations are already available in res://src/managers/
+	if OS.has_feature("editor"):
+		print("UpdateManager: Running in editor - skipping PCK, loading managers directly")
+		_load_managers()
+		return
+
+	# Temporarily disable PCK check for non-Android builds
+	if OS.get_name() != "Android":
+		print("UpdateManager: Not on Android, skipping PCK check and loading managers.")
+		_load_managers()
+		return
+
+	# PRODUCTION MODE: Full PCK flow (version check, download, load)
 	# Create HTTP request node
 	http_request = HTTPRequest.new()
 	add_child(http_request)
@@ -57,6 +74,7 @@ func _ready() -> void:
 
 	# Start boot sequence
 	_check_pck_status()
+
 
 func _check_pck_status() -> void:
 	current_state = BootState.CHECKING_PCK
@@ -87,7 +105,9 @@ func _on_version_check_completed(result: int, response_code: int, headers: Packe
 			print("UpdateManager: Version check failed, using local PCK")
 			_load_pck()
 		else:
-			_handle_error("Version check failed and no local PCK available")
+			# NO LOCAL PCK: Fallback to loading managers directly
+			print("UpdateManager: Version check failed and no local PCK. Loading managers directly as a fallback.")
+			_load_managers()
 		return
 
 	var json_string = body.get_string_from_utf8()
@@ -142,7 +162,9 @@ func _handle_version_check_error(error: String) -> void:
 		print("UpdateManager: ", error, " - using local PCK")
 		_load_pck()
 	else:
-		_handle_error(error)
+		# NO LOCAL PCK: Fallback to loading managers directly
+		print("UpdateManager: ", error, " - no local PCK. Loading managers directly as a fallback.")
+		_load_managers()
 
 func _download_pck(url: String, version: String) -> void:
 	current_state = BootState.DOWNLOADING_PCK
@@ -318,13 +340,13 @@ func _load_managers() -> void:
 	print("UpdateManager: Triggering ManagerBootstrap...")
 
 	# Connect to ManagerBootstrap signals
-	if not ManagerBootstrap.managers_ready.is_connected(_on_managers_ready):
-		ManagerBootstrap.managers_ready.connect(_on_managers_ready)
-	if not ManagerBootstrap.manager_load_failed.is_connected(_on_manager_load_failed):
-		ManagerBootstrap.manager_load_failed.connect(_on_manager_load_failed)
+	if not get_node("/root/ManagerBootstrap").managers_ready.is_connected(_on_managers_ready):
+		get_node("/root/ManagerBootstrap").managers_ready.connect(_on_managers_ready)
+	if not get_node("/root/ManagerBootstrap").manager_load_failed.is_connected(_on_manager_load_failed):
+		get_node("/root/ManagerBootstrap").manager_load_failed.connect(_on_manager_load_failed)
 
 	# Trigger manager loading
-	ManagerBootstrap.load_managers()
+	get_node("/root/ManagerBootstrap").load_managers()
 
 func _on_managers_ready() -> void:
 	current_state = BootState.READY

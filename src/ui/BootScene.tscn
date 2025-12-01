@@ -1,30 +1,47 @@
-[gd_scene format=3 uid="uid://bm1bvu5uphy11"]
+[gd_scene load_steps=5 format=3 uid="uid://c6vgtf8bs8jkv"]
+
+
+[ext_resource type="Script" path="res://src/core/UpdateManager.gd" id="2_8n3w5"]
+[ext_resource type="Script" path="res://src/ui/BootUI.gd" id="3_g7x5c"]
+
+[sub_resource type="Theme" id="Theme_m5jlc"]
 
 [node name="BootScene" type="Node"]
 
 [node name="UpdateManager" type="Node" parent="."]
-script = "res://src/core/UpdateManager.gd"
+script = ExtResource("2_8n3w5")
 
 [node name="BootUI" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = "res://src/ui/BootUI.gd"
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_g7x5c")
 
 [node name="VBox" type="VBoxContainer" parent="BootUI"]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-alignment = 1
-
-[node name="LogoSprite" type="TextureRect" parent="BootUI/VBox"]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -50.0
+offset_right = 150.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="StatusLabel" type="Label" parent="BootUI/VBox"]
 layout_mode = 2
+theme = SubResource("Theme_m5jlc")
 text = "Initializing..."
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="BootUI/VBox"]
 layout_mode = 2
+value = 0
+show_percentage = true

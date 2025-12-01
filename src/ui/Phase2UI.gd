@@ -1,5 +1,8 @@
 extends Control
 
+# Explicit preload to ensure BooleanExpression type is available
+const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
+
 # Preload score popup scene
 const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 
@@ -51,8 +54,8 @@ var patience_timer: float = 0.0
 @onready var contr_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/CONTRButton
 
 # Game State
-var available_premises: Array[BooleanLogicEngine.BooleanExpression] = []
-var selected_premises: Array[BooleanLogicEngine.BooleanExpression] = []
+var available_premises: Array[BooleanExpression] = []
+var selected_premises: Array[BooleanExpression] = []
 var target_conclusion: String = ""
 var selected_rule: String = ""
 var premise_cards: Array[Control] = []
@@ -66,8 +69,8 @@ var is_animating_double: bool = false
 var is_animating_single: bool = false
 
 # Signals for parent communication
-signal rule_applied(result: BooleanLogicEngine.BooleanExpression)
-signal target_reached(result: BooleanLogicEngine.BooleanExpression)
+signal rule_applied(result: BooleanExpression)
+signal target_reached(result: BooleanExpression)
 signal feedback_message(message: String, color: Color)
 signal premise_selected(premise: String)  # For tutorial detection
 
@@ -293,7 +296,7 @@ func start_silhouette_breathing() -> void:
 	breathe_tween.tween_property(silhouette, "scale", exhale_scale, exhale_duration) \
 		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
 
-func set_premises_and_target(premises: Array[BooleanLogicEngine.BooleanExpression], target: String) -> void:
+func set_premises_and_target(premises: Array[BooleanExpression], target: String) -> void:
 	# Clean all premises before adding to inventory
 	available_premises.clear()
 	for premise in premises:
@@ -310,7 +313,7 @@ func set_premises_and_target(premises: Array[BooleanLogicEngine.BooleanExpressio
 
 # Extended version for Level 6 natural language problems
 func set_premises_and_target_with_display(
-	premises: Array[BooleanLogicEngine.BooleanExpression],
+	premises: Array[BooleanExpression],
 	logical_target: String,
 	display_target: String
 ) -> void:
@@ -365,7 +368,7 @@ func create_premise_cards() -> void:
 		premise_grid.add_child(card)
 		premise_cards.append(card)
 
-func create_premise_card(premise: BooleanLogicEngine.BooleanExpression, index: int) -> Control:
+func create_premise_card(premise: BooleanExpression, index: int) -> Control:
 	var card = Button.new()
 	card.text = str(index + 1) + ". " + premise.expression_string
 	card.custom_minimum_size = Vector2(200, 60)
@@ -407,7 +410,7 @@ func create_premise_card(premise: BooleanLogicEngine.BooleanExpression, index: i
 	card.pressed.connect(_on_premise_card_pressed.bind(premise, card))
 	return card
 
-func _on_premise_card_pressed(premise: BooleanLogicEngine.BooleanExpression, card: Button) -> void:
+func _on_premise_card_pressed(premise: BooleanExpression, card: Button) -> void:
 	# Only allow premise selection if a rule is selected
 	if selected_rule.is_empty():
 		card.button_pressed = false  # Reset button state
@@ -470,7 +473,7 @@ func check_rule_application() -> void:
 
 		apply_rule()
 
-func clean_expression(expr: BooleanLogicEngine.BooleanExpression) -> BooleanLogicEngine.BooleanExpression:
+func clean_expression(expr: BooleanExpression) -> BooleanExpression:
 	# DON'T auto-clean! Preserve structure so users can see what they built
 	# Users can explicitly use PAREN_REMOVE button if they want to clean up
 	# This preserves expressions like (P ∧ Q) instead of converting to P ∧ Q
@@ -561,7 +564,7 @@ func apply_rule() -> void:
 		show_feedback("✗ Cannot apply " + rule_def.name, Color.RED, false)
 		# Don't auto-open remotes on failure
 
-func apply_logical_rule_multi(rule: String, premises: Array[BooleanLogicEngine.BooleanExpression]) -> Array:
+func apply_logical_rule_multi(rule: String, premises: Array[BooleanExpression]) -> Array:
 	# Returns an array of results for operations that can produce multiple statements
 	# Returns empty array if this is not a multi-result operation
 	match rule:
@@ -587,7 +590,7 @@ func apply_logical_rule_multi(rule: String, premises: Array[BooleanLogicEngine.B
 			# Not a multi-result operation
 			return []
 
-func apply_logical_rule(rule: String, premises: Array[BooleanLogicEngine.BooleanExpression]) -> BooleanLogicEngine.BooleanExpression:
+func apply_logical_rule(rule: String, premises: Array[BooleanExpression]) -> BooleanExpression:
 	# Use actual BooleanLogicEngine functions to apply logical rules
 	match rule:
 		# Double operation rules (require 2 premises)
@@ -616,91 +619,91 @@ func apply_logical_rule(rule: String, premises: Array[BooleanLogicEngine.Boolean
 					return BooleanLogicEngine.apply_de_morgan_and(premise)
 				elif premise.is_disjunction():
 					return BooleanLogicEngine.apply_de_morgan_or(premise)
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"DOUBLE_NEG":  # Double Negation: ¬¬P ⊢ P
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_double_negation(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 
 		# Biconditional rules
 		"IMP":  # Biconditional to Implications: P↔Q ⊢ (P→Q)∧(Q→P)
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_biconditional_to_implications(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"CONV":  # Biconditional to Equivalence: P↔Q ⊢ (P∧Q)∨(¬P∧¬Q)
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_biconditional_to_equivalence(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 
 		# XOR rules
 		"XOR_ELIM":  # XOR Elimination: P⊕Q ⊢ (P∨Q)∧¬(P∧Q)
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_xor_elimination(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 
 		# New double operation rules
 		"EQ":  # Equivalence: P↔Q, P ⊢ Q (or similar equivalence rule)
 			if premises.size() == 2:
 				return BooleanLogicEngine.apply_equivalence(premises)
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"RES":  # Resolution: P∨Q, ¬P∨R ⊢ Q∨R
 			if premises.size() == 2:
 				return BooleanLogicEngine.apply_resolution(premises)
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 
 		# Double negation (moved to single operations section)
 		"DNEG":  # Double Negation: ¬¬P ⊢ P
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_double_negation(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 
 		# Single operation rules - now fully implemented
 		"DIST":  # Distributivity Laws: A∧(B∨C) ≡ (A∧B)∨(A∧C)
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_distributivity(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"COMM":  # Commutativity Laws: A∧B ≡ B∧A
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_commutativity(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"ASSOC":  # Associativity Laws: (A∧B)∧C ≡ A∧(B∧C)
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_associativity(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"IDEMP":  # Idempotent Laws: A∧A ≡ A
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_idempotent(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"ABS":  # Absorption Laws: A∧(A∨B) ≡ A
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_absorption(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"NEG":  # Negation Laws: A∧¬A ≡ FALSE
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_negation_laws(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"TAUT":  # Tautology Laws: A∨TRUE ≡ TRUE
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_tautology_laws(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"CONTR":  # Contradiction Laws: A∧FALSE ≡ FALSE
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_contradiction_laws(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		"PAREN_REMOVE":  # Remove Parentheses: (P) ≡ P
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_parenthesis_removal(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 
 		# Other single operation rules (special cases)
 		"ADD":  # Addition: P ⊢ P∨Q (needs additional expression)
 			# For ADD rule, we need to ask user for the additional expression
 			# For now, return empty to indicate this rule needs special handling
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 		_:
-			return BooleanLogicEngine.BooleanExpression.new("")
+			return BooleanExpression.new("")
 
-func animate_target_reached(result: BooleanLogicEngine.BooleanExpression) -> void:
+func animate_target_reached(result: BooleanExpression) -> void:
 	"""Animate the newly created winning card flying into the target box with a flash effect"""
 	# Find the LAST (most recently added) card that matches the result
 	# This ensures we animate the newly created ingredient, not an old one
@@ -979,7 +982,7 @@ func stop_button_jiggle(button: Button) -> void:
 	button.rotation = 0.0
 
 
-func add_premise_to_inventory(premise: BooleanLogicEngine.BooleanExpression) -> void:
+func add_premise_to_inventory(premise: BooleanExpression) -> void:
 	# Clean expression before adding to inventory
 	var cleaned_premise = clean_expression(premise)
 	available_premises.append(cleaned_premise)

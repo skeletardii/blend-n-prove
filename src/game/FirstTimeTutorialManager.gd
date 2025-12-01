@@ -1,6 +1,9 @@
 extends Node
 class_name FirstTimeTutorialManager
 
+# Explicit preload to ensure BooleanExpression type is available
+const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
+
 ## Manages the first-time tutorial flow with action-based progression
 
 signal tutorial_completed
@@ -428,7 +431,7 @@ func _on_text_changed(_text: String) -> void:
 		advance_to_next_step()
 
 
-func _on_premise_validated(_expression: BooleanLogicEngine.BooleanExpression) -> void:
+func _on_premise_validated(_expression: BooleanExpression) -> void:
 	"""Detect when player submits a premise"""
 	if current_step == TutorialStep.SUBMIT_PREMISE and not has_submitted_premise:
 		has_submitted_premise = true
@@ -451,7 +454,7 @@ func _on_premise_selected(_premise: String) -> void:
 	pass
 
 
-func _on_rule_applied(_result: BooleanLogicEngine.BooleanExpression) -> void:
+func _on_rule_applied(_result: BooleanExpression) -> void:
 	"""Detect when player applies a rule"""
 	if current_step == TutorialStep.APPLY_FIRST_RULE and not has_applied_rule:
 		has_applied_rule = true
@@ -459,7 +462,7 @@ func _on_rule_applied(_result: BooleanLogicEngine.BooleanExpression) -> void:
 		advance_to_next_step()
 
 
-func _on_target_reached(_result: BooleanLogicEngine.BooleanExpression) -> void:
+func _on_target_reached(_result: BooleanExpression) -> void:
 	"""Detect when player reaches the target"""
 	if not target_reached:
 		target_reached = true

@@ -1,5 +1,8 @@
 extends Panel
 
+# Explicit preload to ensure BooleanExpression type is available
+const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
+
 # Signals
 signal expression_confirmed(expression_text: String)
 signal dialog_cancelled()
@@ -92,7 +95,7 @@ func update_input_display() -> void:
 	else:
 		input_display.text = current_input
 
-func show_dialog(premise: BooleanLogicEngine.BooleanExpression) -> void:
+func show_dialog(premise: BooleanExpression) -> void:
 	# Update premise label to show what was selected
 	if premise and premise.is_valid:
 		premise_label.text = "Selected premise: " + premise.expression_string

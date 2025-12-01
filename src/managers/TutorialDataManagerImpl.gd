@@ -8,14 +8,30 @@ class ProblemData:
 	var difficulty: String = ""
 	var premises: Array[String] = []
 	var conclusion: String = ""
+	var expected_operations: int = 0
 	var solution: String = ""
+	var description: String = ""
+	var problem_title: String = ""
+	var hints: Array[String] = []
+	var hidden_premises: Array[String] = []
+	var hidden_conclusion: String = ""
+	var interpretation_hints: Array[String] = []
 
-	func _init(num: int = 0, diff: String = "", prems: Array[String] = [], concl: String = "", sol: String = "") -> void:
+	func _init(num: int = 0, diff: String = "", prems: Array[String] = [], concl: String = "", sol: String = "",
+	           desc: String = "", title: String = "", hint_list: Array[String] = [], exp_ops: int = 0,
+	           hidden_prems: Array[String] = [], hidden_concl: String = "", interpret_hints: Array[String] = []) -> void:
 		problem_number = num
 		difficulty = diff
 		premises = prems.duplicate()
 		conclusion = concl
+		expected_operations = exp_ops
 		solution = sol
+		description = desc
+		problem_title = title
+		hints = hint_list.duplicate()
+		hidden_premises = hidden_prems.duplicate()
+		hidden_conclusion = hidden_concl
+		interpretation_hints = interpret_hints.duplicate()
 
 class TutorialData:
 	var rule_name: String = ""
