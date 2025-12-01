@@ -1,6 +1,6 @@
 extends Control
 
-@onready var final_score_label: Label = $GameOverContainer/FinalScore
+@onready var final_score_label: Label = $GameOverPanel/GameOverContainer/FinalScore
 
 func _ready() -> void:
 	# Wait a brief moment before stopping music to avoid cutting off game over sound
@@ -33,43 +33,55 @@ func _on_game_state_changed(new_state: GameManager.GameState) -> void:
 
 func add_progress_context() -> void:
 	var stats = ProgressTracker.statistics
-	var game_over_container = $GameOverContainer
+	var game_over_container = $GameOverPanel/GameOverContainer
 	var current_score = GameManager.current_score
+
+	# Add spacer before progress info
+	var spacer_before = Control.new()
+	spacer_before.custom_minimum_size = Vector2(0, 20)
+	game_over_container.add_child(spacer_before)
 
 	# Add progress information labels
 	var progress_info = VBoxContainer.new()
 	progress_info.name = "ProgressInfo"
+	progress_info.add_theme_constant_override("separation", 15)
 	game_over_container.add_child(progress_info)
 
 	# High Score Comparison
 	var high_score_comparison = Label.new()
+	high_score_comparison.add_theme_font_size_override("font_size", 28)
+	high_score_comparison.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if current_score > stats.high_score_overall:
 		high_score_comparison.text = "🎉 NEW HIGH SCORE! 🎉"
-		high_score_comparison.modulate = Color.GOLD
+		high_score_comparison.modulate = Color.BLACK
 	elif current_score > stats.high_score_overall * 0.8:
 		high_score_comparison.text = "Great performance! Close to your best: " + str(stats.high_score_overall)
-		high_score_comparison.modulate = Color.GREEN
+		high_score_comparison.modulate = Color.BLACK
 	else:
 		high_score_comparison.text = "Your best score: " + str(stats.high_score_overall)
-		high_score_comparison.modulate = Color.WHITE
+		high_score_comparison.modulate = Color.BLACK
 	progress_info.add_child(high_score_comparison)
 
 	# Streak Information
 	var streak_info = Label.new()
+	streak_info.add_theme_font_size_override("font_size", 24)
+	streak_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if stats.current_streak > 0:
 		streak_info.text = "Streak: " + str(stats.current_streak) + " games"
 		if stats.current_streak == stats.best_streak:
 			streak_info.text += " (Your Best!)"
-			streak_info.modulate = Color.GOLD
+			streak_info.modulate = Color.BLACK
 		else:
-			streak_info.modulate = Color.GREEN
+			streak_info.modulate = Color.BLACK
 	else:
 		streak_info.text = "Your best streak: " + str(stats.best_streak) + " games"
-		streak_info.modulate = Color.WHITE
+		streak_info.modulate = Color.BLACK
 	progress_info.add_child(streak_info)
 
 	# Games Played
 	var games_info = Label.new()
+	games_info.add_theme_font_size_override("font_size", 24)
+	games_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	games_info.text = "Games played: " + str(stats.total_games_played)
 	if stats.total_games_played > 0:
 		games_info.text += " | Success rate: %.1f%%" % (stats.success_rate * 100.0)
@@ -79,19 +91,23 @@ func add_progress_context() -> void:
 	var recent_achievements = get_recent_achievements()
 	if recent_achievements.size() > 0:
 		var achievement_label = Label.new()
+		achievement_label.add_theme_font_size_override("font_size", 24)
+		achievement_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		achievement_label.text = "🏆 Recent Achievement: " + recent_achievements[0]
-		achievement_label.modulate = Color.YELLOW
+		achievement_label.modulate = Color.BLACK
 		progress_info.add_child(achievement_label)
 
 	# Encouragement based on performance
 	var encouragement = Label.new()
+	encouragement.add_theme_font_size_override("font_size", 24)
+	encouragement.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if current_score == 0:
 		encouragement.text = "Keep practicing! Every expert was once a beginner."
 	elif current_score < stats.average_score_overall:
 		encouragement.text = "You can do better! Your average is " + str(int(stats.average_score_overall))
 	else:
 		encouragement.text = "Above your average! Keep up the great work!"
-	encouragement.modulate = Color.CYAN
+	encouragement.modulate = Color.BLACK
 	progress_info.add_child(encouragement)
 
 func get_recent_achievements() -> Array[String]:

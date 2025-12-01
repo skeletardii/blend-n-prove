@@ -1,8 +1,21 @@
-[gd_scene load_steps=7 format=3 uid="uid://cg5v8xh2qwp3d"]
+[gd_scene load_steps=10 format=3 uid="uid://cg5v8xh2qwp3d"]
 
 [ext_resource type="Script" path="res://src/ui/ScorePopup.gd" id="1_score_popup"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_wenrexa"]
 [ext_resource type="FontFile" uid="uid://rkxmldc64bol" path="res://assets/fonts/Good-Game.ttf" id="3_goodgame"]
+
+[sub_resource type="Gradient" id="Gradient_bg"]
+offsets = PackedFloat32Array(0, 0.7, 1)
+colors = PackedColorArray(0, 0, 0, 0.9, 0, 0, 0, 0.5, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_bg"]
+gradient = SubResource("Gradient_bg")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0, 0.5)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bg"]
+texture = SubResource("GradientTexture2D_bg")
 
 [sub_resource type="LabelSettings" id="LabelSettings_base"]
 font = ExtResource("3_goodgame")
@@ -51,9 +64,26 @@ offset_top = 100.0
 offset_right = 700.0
 offset_bottom = 300.0
 
+[node name="BackgroundPanel" type="Panel" parent="CenterContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_bg")
+
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
-layout_mode = 2
+z_index = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 5
+alignment = 1
 
 [node name="BaseScoreLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2

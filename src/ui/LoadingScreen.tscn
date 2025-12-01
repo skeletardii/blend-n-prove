@@ -1,0 +1,93 @@
+[gd_scene load_steps=8 format=3 uid="uid://loading_screen_001"]
+
+[ext_resource type="Script" path="res://src/ui/LoadingScreen.gd" id="1_loading"]
+[ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_theme"]
+[ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="3_shader"]
+[ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="4_spiralbg"]
+
+[sub_resource type="Gradient" id="Gradient_bg"]
+offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
+colors = PackedColorArray(0.976471, 0.662745, 0.835294, 1, 0.982758, 0.720592, 0.78625, 1, 0.775179, 0.41666, 0.945561, 1, 0.0630186, 0.104642, 0.416814, 1, 0.996078, 0.843137, 0.682353, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_bg"]
+gradient = SubResource("Gradient_bg")
+fill_to = Vector2(1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
+shader = ExtResource("3_shader")
+shader_parameter/speed = 0.05
+shader_parameter/opacity = 0.467
+shader_parameter/rotation_speed = 1.0
+shader_parameter/shaking = true
+shader_parameter/amplitude = 1.0
+shader_parameter/noise_scale = 20.0
+shader_parameter/noise_speed = 20.0
+
+[node name="LoadingScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_loading")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.999
+offset_right = 1.0
+offset_bottom = 0.279907
+texture = SubResource("GradientTexture2D_bg")
+
+[node name="ScrollingBG" type="TextureRect" parent="."]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_bg")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -506.0
+offset_top = 2.0
+offset_right = 54.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_spiralbg")
+expand_mode = 2
+stretch_mode = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="LoadingLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Loading..."
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(500, 40)
+layout_mode = 2
+max_value = 100.0
+value = 0.0
+show_percentage = false
+
+[node name="TipLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Tip: Practice makes perfect!"
+horizontal_alignment = 1
+autowrap_mode = 3

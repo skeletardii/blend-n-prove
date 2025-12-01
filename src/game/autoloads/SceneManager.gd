@@ -54,3 +54,44 @@ func get_current_scene_name() -> String:
 		return ""
 
 	return current_scene_path.get_file().get_basename()
+
+func change_scene_with_loading(target_scene_path: String) -> void:
+	"""Change scene with a loading screen in between"""
+	print("SceneManager.change_scene_with_loading called with: ", target_scene_path)
+
+	if is_changing_scene:
+		print("Scene change already in progress")
+		return
+
+	is_changing_scene = true
+	var old_scene_path := current_scene_path
+
+	# First, change to loading screen
+	print("Loading screen first, then will load: ", target_scene_path)
+	scene_changing.emit(old_scene_path, "res://src/ui/LoadingScreen.tscn")
+
+	# Store target scene for loading screen to use
+	var loading_scene = load("res://src/ui/LoadingScreen.tscn")
+	if loading_scene:
+		var result := get_tree().change_scene_to_packed(loading_scene)
+		if result == OK:
+			# Wait for loading screen to be ready
+			await get_tree().process_frame
+			await get_tree().process_frame
+
+			# Get the loading screen instance and set target
+			var loading_screen = get_tree().current_scene
+			if loading_screen and loading_screen.has_method("set_target_scene"):
+				loading_screen.set_target_scene(target_scene_path)
+				current_scene_path = "res://src/ui/LoadingScreen.tscn"
+			else:
+				print("❌ Failed to get loading screen instance")
+				is_changing_scene = false
+		else:
+			print("❌ Failed to load loading screen, error: ", result)
+			is_changing_scene = false
+	else:
+		print("❌ Failed to load LoadingScreen.tscn")
+		is_changing_scene = false
+
+	is_changing_scene = false

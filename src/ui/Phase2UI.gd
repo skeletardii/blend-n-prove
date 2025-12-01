@@ -368,41 +368,16 @@ func create_premise_cards() -> void:
 func create_premise_card(premise: BooleanLogicEngine.BooleanExpression, index: int) -> Control:
 	var card = Button.new()
 	card.text = str(index + 1) + ". " + premise.expression_string
-	card.custom_minimum_size = Vector2(200, 60)
+	card.custom_minimum_size = Vector2(280, 80)
 	card.toggle_mode = true
 	# Center the text horizontally (vertical centering is automatic for buttons)
 	card.alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-	# Lighten the button appearance by overriding the dark purple modulation from the theme
-	# Create lighter versions of the button styles
-	var normal_style = StyleBoxTexture.new()
-	normal_style.texture = load("res://assets/sprites/button assets.png")
-	normal_style.texture_margin_left = 10
-	normal_style.texture_margin_top = 9
-	normal_style.texture_margin_right = 11
-	normal_style.texture_margin_bottom = 14
-	normal_style.region_rect = Rect2(1, 129, 173, 50)
-	normal_style.modulate_color = Color(1.0, 1.0, 1.0, 1.0)  # White = no tinting
+	# Increase font size
+	card.add_theme_font_size_override("font_size", 24)
 
-	var hover_style = StyleBoxTexture.new()
-	hover_style.texture = load("res://assets/sprites/button assets.png")
-	hover_style.texture_margin_left = 10
-	hover_style.texture_margin_top = 10
-	hover_style.texture_margin_right = 10
-	hover_style.texture_margin_bottom = 10
-	hover_style.region_rect = Rect2(1, 129, 173, 50)
-	hover_style.modulate_color = Color(0.9, 0.9, 1.0, 1.0)  # Slight blue tint on hover
-
-	card.add_theme_stylebox_override("normal", normal_style)
-	card.add_theme_stylebox_override("hover", hover_style)
-	card.add_theme_stylebox_override("pressed", hover_style)
-	card.add_theme_stylebox_override("focus", normal_style)
-
-	# Set text color to white for better visibility
-	card.add_theme_color_override("font_color", Color.WHITE)
-	card.add_theme_color_override("font_hover_color", Color.WHITE)
-	card.add_theme_color_override("font_pressed_color", Color.WHITE)
-	card.add_theme_color_override("font_focus_color", Color.WHITE)
+	# Use default theme styling (white buttons with gray border and drop shadow from Wenrexa theme)
+	# No custom StyleBox overrides - let the theme handle it
 
 	card.pressed.connect(_on_premise_card_pressed.bind(premise, card))
 	return card
@@ -719,7 +694,7 @@ func animate_target_reached(result: BooleanLogicEngine.BooleanExpression) -> voi
 	var animated_card = Button.new()
 	animated_card.text = winning_card.text
 	animated_card.custom_minimum_size = winning_card.custom_minimum_size
-	animated_card.modulate = Color.GOLD
+	animated_card.modulate = Color.BLACK
 	animated_card.z_index = 100
 	# Set pivot to center for rotation
 	animated_card.pivot_offset = winning_card.size / 2
@@ -916,7 +891,7 @@ func clear_selections() -> void:
 func clear_rule_selection() -> void:
 	# Reset all rule button colors
 	for button in get_all_rule_buttons():
-		button.modulate = Color.WHITE
+		button.modulate = Color.BLACK
 		stop_button_jiggle(button)
 
 func get_all_rule_buttons() -> Array[Button]:
@@ -930,7 +905,7 @@ func get_all_rule_buttons() -> Array[Button]:
 func highlight_rule_button(rule: String) -> void:
 	var button = get_rule_button(rule)
 	if button:
-		button.modulate = Color.YELLOW
+		button.modulate = Color.BLACK
 
 func get_rule_button(rule: String) -> Button:
 	match rule:
