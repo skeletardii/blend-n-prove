@@ -26,8 +26,9 @@ SceneManager="*res://src/game/autoloads/SceneManager.gd"
 TutorialManager="*res://src/game/autoloads/TutorialManager.gd"
 ProgressTracker="*res://src/game/autoloads/ProgressTracker.gd"
 TutorialDataManager="*res://src/game/autoloads/TutorialDataManager.gd"
-AppConstants="*res://src/game/autoloads/AppConstants.gd"
-UpdateCheckerService="*res://src/game/autoloads/UpdateCheckerService.gd"
+# PCK Update System (disabled - uncomment to enable)
+#AppConstants="*res://src/game/autoloads/AppConstants.gd"
+#UpdateCheckerService="*res://src/game/autoloads/UpdateCheckerService.gd"
 
 [display]
 

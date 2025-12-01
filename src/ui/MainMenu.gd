@@ -23,8 +23,9 @@ func _ready() -> void:
 	# Connect to GameManager signals
 	GameManager.game_state_changed.connect(_on_game_state_changed)
 
-	# Check for app updates (Android only)
-	_check_for_app_updates()
+	# Check for app updates (Android only) - disabled if UpdateChecker not loaded
+	if has_node("/root/UpdateCheckerService"):
+		_check_for_app_updates()
 
 	# Connect button signals
 	print("Connecting play button...")
@@ -343,6 +344,10 @@ func start_title_tilt_animation() -> void:
 # ===== UPDATE CHECKER =====
 
 func _check_for_app_updates() -> void:
+	# Only run if UpdateCheckerService exists (for future PCK update system)
+	if not has_node("/root/UpdateCheckerService"):
+		return
+
 	# Connect to UpdateCheckerService signals
 	if not UpdateCheckerService.update_available.is_connected(_on_update_available):
 		UpdateCheckerService.update_available.connect(_on_update_available)

@@ -43,9 +43,7 @@
       "Bash(dir \"C:\\Users\\Admin\\Documents\\blend and prove repo\\blend-n-prove\\assets\\sprites\")",
       "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --path \".\" --script test_phase2_bg.gd)",
       "Bash(findstr:*)",
-      "Bash(where:*)",
-      "Bash(./Godot_v4.4.1-stable_mono_win64_console.exe --headless --quit --path \"C:/Users/Admin/Documents/blend and prove repo/blend-n-prove\")",
-      "Bash(git stash:*)"
+      "Bash(git fetch:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
