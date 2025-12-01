@@ -13,21 +13,24 @@ config_version=5
 config/name="Fusion Rush"
 config/description="Educational game teaching boolean logic through industrial simulation"
 config/version="0.1"
-run/main_scene="uid://dvdwtisv5ow7b"
+run/main_scene="res://src/ui/BootScene.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameManager="*res://src/game/autoloads/GameManager.gd"
-BooleanLogicEngine="*res://src/game/autoloads/BooleanLogicEngine.gd"
-AudioManager="*res://src/game/autoloads/AudioManager.gd"
+# Core autoloads (remain full, not proxied)
+ManagerBootstrap="*res://src/core/ManagerBootstrap.gd"
 SceneManager="*res://src/game/autoloads/SceneManager.gd"
-TutorialManager="*res://src/game/autoloads/TutorialManager.gd"
-ProgressTracker="*res://src/game/autoloads/ProgressTracker.gd"
-TutorialDataManager="*res://src/game/autoloads/TutorialDataManager.gd"
-# PCK Update System (disabled - uncomment to enable)
-#AppConstants="*res://src/game/autoloads/AppConstants.gd"
+AudioManager="*res://src/game/autoloads/AudioManager.gd"
+AppConstants="*res://src/game/autoloads/AppConstants.gd"
+
+# Proxied autoloads (loaded from PCK via ManagerBootstrap)
+#GameManager="*res://src/game/autoloads/GameManager.gd"
+#BooleanLogicEngine="*res://src/game/autoloads/BooleanLogicEngine.gd"
+#ProgressTracker="*res://src/game/autoloads/ProgressTracker.gd"
+#TutorialManager="*res://src/game/autoloads/TutorialManager.gd"
+#TutorialDataManager="*res://src/game/autoloads/TutorialDataManager.gd"
 #UpdateCheckerService="*res://src/game/autoloads/UpdateCheckerService.gd"
 
 [display]

@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://bm1bvu5uphy11"]
+
+[node name="BootScene" type="Node"]
+
+[node name="UpdateManager" type="Node" parent="."]
+script = "res://src/core/UpdateManager.gd"
+
+[node name="BootUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = "res://src/ui/BootUI.gd"
+
+[node name="VBox" type="VBoxContainer" parent="BootUI"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+
+[node name="LogoSprite" type="TextureRect" parent="BootUI/VBox"]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="BootUI/VBox"]
+layout_mode = 2
+text = "Initializing..."
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="BootUI/VBox"]
+layout_mode = 2

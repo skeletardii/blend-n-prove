@@ -1,5 +1,7 @@
 extends Node
 
+## GameManager Proxy - Delegates to implementation loaded from PCK
+
 signal game_state_changed(new_state: GameState)
 signal score_updated(new_score: int)
 
@@ -15,13 +17,13 @@ enum GamePhase {
 	TRANSFORMING_PREMISES
 }
 
+# Inner classes must be defined in proxy for type compatibility
 class OrderTemplate:
 	var premises: Array[String] = []
 	var conclusion: String
 	var expected_operations: int
 	var description: String
 	var solution: String
-	# Level 6 natural language fields
 	var is_natural_language: bool = false
 	var natural_language_premises: Array[String] = []
 	var natural_language_conclusion: String = ""
@@ -35,7 +37,6 @@ class OrderTemplate:
 		solution = sol
 		is_natural_language = false
 
-	# Constructor for natural language problems (Level 6)
 	static func create_natural_language(
 		nl_premises: Array[String],
 		hidden_premises: Array[String],
@@ -59,7 +60,6 @@ class CustomerData:
 	var target_conclusion: String
 	var patience_duration: float
 	var solution: String = ""
-	# Level 6 natural language fields
 	var is_natural_language: bool = false
 	var natural_language_premises: Array[String] = []
 	var natural_language_conclusion: String = ""
@@ -72,327 +72,105 @@ class CustomerData:
 		solution = sol
 		is_natural_language = false
 
-	# Set natural language data for Level 6 problems
 	func set_natural_language_data(nl_premises: Array[String], nl_conclusion: String) -> void:
 		is_natural_language = true
 		natural_language_premises = nl_premises
 		natural_language_conclusion = nl_conclusion
 
-var current_state: GameState = GameState.MENU
-var current_phase: GamePhase = GamePhase.PREPARING_PREMISES
-var current_score: int = 0
-var difficulty_level: int = 1
-var orders_completed_this_session: int = 0
+# Implementation reference
+var _impl: Node = null
 
-var debug_mode: bool = false
-var infinite_patience: bool = false
-
-# Debug difficulty mode: -1 = Auto (normal scaling), 1-6 = locked difficulty level
-var debug_difficulty_mode: int = -1
-
-# Tutorial mode variables
-var tutorial_mode: bool = false
-var current_tutorial_key: String = ""
-var current_tutorial_problem_index: int = 0
-var is_first_time_tutorial: bool = false  # Special flag for first-time interactive tutorial
-
-# Order Templates organized by difficulty level - loaded from JSON
-var order_templates: Dictionary = {}
+func _set_impl(impl: Node) -> void:
+	_impl = impl
+	# Forward signals from implementation
+	if _impl.has_signal("game_state_changed"):
+		_impl.game_state_changed.connect(func(state): game_state_changed.emit(state))
+	if _impl.has_signal("score_updated"):
+		_impl.score_updated.connect(func(score): score_updated.emit(score))
 
 func _ready() -> void:
-	process_mode = Node.PROCESS_MODE_ALWAYS
-	load_classic_problems()
+	pass  # Wait for impl injection
 
+# Property forwarding
+func _get(property: StringName) -> Variant:
+	if _impl:
+		return _impl.get(property)
+	return null
+
+func _set(property: StringName, value: Variant) -> bool:
+	if _impl:
+		_impl.set(property, value)
+		return true
+	return false
+
+# Method forwarding
 func load_classic_problems() -> void:
-	print("Loading classic mode problems...")
-
-	for level in range(1, 7):  # Levels 1-6 (now includes Level 6)
-		var file_path: String = "res://data/classic/level-" + str(level) + ".json"
-
-		if not FileAccess.file_exists(file_path):
-			print("Classic problems file not found: ", file_path)
-			continue
-
-		var file: FileAccess = FileAccess.open(file_path, FileAccess.READ)
-		if not file:
-			print("Failed to open classic problems file: ", file_path)
-			continue
-
-		var content: String = file.get_as_text()
-		file.close()
-
-		# Parse JSON
-		var json: JSON = JSON.new()
-		var error: Error = json.parse(content)
-
-		if error != OK:
-			print("JSON parse error at line ", json.get_error_line(), ": ", json.get_error_message())
-			continue
-
-		var level_data: Dictionary = json.data
-		if not level_data:
-			print("Failed to get JSON data from: ", file_path)
-			continue
-
-		# Parse problems array
-		var problems_array: Array = level_data.get("problems", [])
-		var level_templates: Array[OrderTemplate] = []
-
-		for problem_dict in problems_array:
-			if not problem_dict is Dictionary:
-				continue
-
-			# Check if this is a natural language problem (Level 6)
-			var has_natural_language: bool = problem_dict.has("natural_language_premises")
-
-			if has_natural_language:
-				# Level 6: Natural language problem
-				var nl_premises: Array[String] = []
-				var nl_premises_data: Array = problem_dict.get("natural_language_premises", [])
-				for nl_premise in nl_premises_data:
-					nl_premises.append(str(nl_premise))
-
-				var hidden_premises: Array[String] = []
-				var hidden_premises_data: Array = problem_dict.get("hidden_logical_premises", [])
-				for hidden_premise in hidden_premises_data:
-					hidden_premises.append(str(hidden_premise))
-
-				var hints: Array[String] = []
-				var hints_data: Array = problem_dict.get("interpretation_hints", [])
-				for hint in hints_data:
-					hints.append(str(hint))
-
-				var template: OrderTemplate = OrderTemplate.create_natural_language(
-					nl_premises,
-					hidden_premises,
-					problem_dict.get("natural_language_conclusion", ""),
-					problem_dict.get("hidden_logical_conclusion", ""),
-					problem_dict.get("expected_operations", 1),
-					problem_dict.get("description", ""),
-					problem_dict.get("solution", ""),
-					hints
-				)
-
-				level_templates.append(template)
-			else:
-				# Levels 1-5: Standard logical symbols problem
-				var premises: Array[String] = []
-				var premises_data: Array = problem_dict.get("premises", [])
-				for premise in premises_data:
-					premises.append(str(premise))
-
-				var template: OrderTemplate = OrderTemplate.new(
-					premises,
-					problem_dict.get("conclusion", ""),
-					problem_dict.get("expected_operations", 1),
-					problem_dict.get("description", ""),
-					problem_dict.get("solution", "")
-				)
-
-				level_templates.append(template)
-
-		order_templates[level] = level_templates
-		print("✓ Loaded level ", level, ": ", level_templates.size(), " problems")
-
-	print("All classic problems loaded!")
+	if _impl: _impl.load_classic_problems()
 
 func change_state(new_state: GameState) -> void:
-	if current_state != new_state:
-		current_state = new_state
-		game_state_changed.emit(new_state)
+	if _impl: _impl.change_state(new_state)
 
 func change_phase(new_phase: GamePhase) -> void:
-	current_phase = new_phase
+	if _impl: _impl.change_phase(new_phase)
 
 func add_score(points: int) -> void:
-	current_score += points
-	score_updated.emit(current_score)
+	if _impl: _impl.add_score(points)
 
 func reset_game() -> void:
-	current_score = 0
-	difficulty_level = 1
-	orders_completed_this_session = 0
-	change_state(GameState.MENU)
-	score_updated.emit(current_score)
+	if _impl: _impl.reset_game()
 
 func start_new_game() -> void:
-	current_score = 0
-
-	# Set initial difficulty based on debug mode
-	if debug_difficulty_mode != -1:
-		# Debug mode: start at specified difficulty (1-6)
-		difficulty_level = clamp(debug_difficulty_mode, 1, 6)
-		print("Starting game with debug difficulty: ", difficulty_level)
-	else:
-		# Normal mode: start at difficulty 1
-		difficulty_level = 1
-
-	orders_completed_this_session = 0
-	current_phase = GamePhase.PREPARING_PREMISES
-	tutorial_mode = false
-	current_tutorial_key = ""
-	current_tutorial_problem_index = 0
-	change_state(GameState.PLAYING)
-	score_updated.emit(current_score)
-
-	# Start progress tracking session
-	ProgressTracker.start_new_session(difficulty_level)
+	if _impl: _impl.start_new_game()
 
 func start_tutorial_mode(tutorial_key: String = "") -> void:
-	current_score = 0
-	difficulty_level = 1
-	orders_completed_this_session = 0
-	current_phase = GamePhase.PREPARING_PREMISES
-	tutorial_mode = true
-	current_tutorial_key = tutorial_key
-	current_tutorial_problem_index = 0
-	is_first_time_tutorial = false
-	change_state(GameState.PLAYING)
-	score_updated.emit(current_score)
-
-	print("Starting tutorial mode: ", tutorial_key)
+	if _impl: _impl.start_tutorial_mode(tutorial_key)
 
 func start_first_time_tutorial() -> void:
-	"""Start the special first-time interactive tutorial"""
-	start_tutorial_mode("first-time-tutorial")
-	is_first_time_tutorial = true
-	infinite_patience = true  # Tutorial has infinite time
-	print("Starting first-time interactive tutorial")
+	if _impl: _impl.start_first_time_tutorial()
 
 func pause_game() -> void:
-	change_state(GameState.PAUSED)
+	if _impl: _impl.pause_game()
 
 func resume_game() -> void:
-	change_state(GameState.PLAYING)
+	if _impl: _impl.resume_game()
 
 func toggle_debug_mode() -> void:
-	debug_mode = !debug_mode
+	if _impl: _impl.toggle_debug_mode()
 
 func toggle_infinite_patience() -> void:
-	infinite_patience = !infinite_patience
+	if _impl: _impl.toggle_infinite_patience()
 
 func force_game_over() -> void:
-	complete_progress_session("quit")
-	change_state(GameState.GAME_OVER)
+	if _impl: _impl.force_game_over()
 
 func set_difficulty(level: int) -> void:
-	difficulty_level = max(1, level)
+	if _impl: _impl.set_difficulty(level)
 
 func set_debug_difficulty_mode(mode: int) -> void:
-	# mode: -1 = Auto, 1-6 = specific difficulty level
-	debug_difficulty_mode = mode
-	print("Debug difficulty mode set to: ", "Auto" if mode == -1 else str(mode))
+	if _impl: _impl.set_debug_difficulty_mode(mode)
 
 func record_order_completed() -> void:
-	orders_completed_this_session += 1
+	if _impl: _impl.record_order_completed()
 
 func record_operation_used(operation_name: String, success: bool) -> void:
-	ProgressTracker.record_operation_used(operation_name, success)
+	if _impl: _impl.record_operation_used(operation_name, success)
 
 func complete_progress_session(completion_status: String) -> void:
-	if current_state != GameState.PLAYING:
-		return
-
-	ProgressTracker.complete_current_session(
-		current_score,
-		0,  # Lives removed
-		orders_completed_this_session,
-		completion_status
-	)
+	if _impl: _impl.complete_progress_session(completion_status)
 
 func complete_game_successfully() -> void:
-	complete_progress_session("win")
-	change_state(GameState.GAME_OVER)
+	if _impl: _impl.complete_game_successfully()
 
-func get_current_tutorial_problem() -> TutorialDataManager.ProblemData:
-	if not tutorial_mode or current_tutorial_key.is_empty():
-		return null
-
-	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(current_tutorial_key)
-	if not tutorial:
-		return null
-
-	if current_tutorial_problem_index >= tutorial.problems.size():
-		return null
-
-	return tutorial.problems[current_tutorial_problem_index]
+func get_current_tutorial_problem():
+	if _impl: return _impl.get_current_tutorial_problem()
+	return null
 
 func advance_to_next_tutorial_problem() -> bool:
-	if not tutorial_mode or current_tutorial_key.is_empty():
-		return false
-
-	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(current_tutorial_key)
-	if not tutorial:
-		return false
-
-	# Mark current problem as completed
-	ProgressTracker.complete_tutorial_problem(current_tutorial_key, current_tutorial_problem_index)
-
-	current_tutorial_problem_index += 1
-
-	# Check if there are more problems
-	if current_tutorial_problem_index >= tutorial.problems.size():
-		print("Tutorial completed!")
-		return false
-
-	return true
+	if _impl: return _impl.advance_to_next_tutorial_problem()
+	return false
 
 func exit_tutorial_mode() -> void:
-	tutorial_mode = false
-	current_tutorial_key = ""
-	current_tutorial_problem_index = 0
+	if _impl: _impl.exit_tutorial_mode()
 
 func run_integration_test() -> void:
-	print("Running Game Systems Integration Test...")
-
-	# Test 1: Game State Management
-	print("Testing game state management...")
-	var original_state = current_state
-	change_state(GameState.PLAYING)
-	if current_state == GameState.PLAYING:
-		print("✓ State change test passed")
-	else:
-		print("✗ State change test failed")
-	change_state(original_state)
-
-	# Test 2: Score System
-	print("Testing score system...")
-	var original_score = current_score
-	add_score(100)
-	if current_score == original_score + 100:
-		print("✓ Score system test passed")
-	else:
-		print("✗ Score system test failed")
-	current_score = original_score
-
-	# Test 3: Phase Management
-	print("Testing phase management...")
-	change_phase(GamePhase.TRANSFORMING_PREMISES)
-	if current_phase == GamePhase.TRANSFORMING_PREMISES:
-		print("✓ Phase management test passed")
-	else:
-		print("✗ Phase management test failed")
-	change_phase(GamePhase.PREPARING_PREMISES)
-
-	# Test 5: Boolean Logic Engine Integration
-	print("Testing boolean logic engine integration...")
-	BooleanLogicEngine.test_logic_engine()
-
-	# Test 6: Audio Manager Integration
-	print("Testing audio manager integration...")
-	AudioManager.play_button_click()
-	print("✓ Audio manager integration test passed")
-
-	# Test 7: Progress Tracker Integration
-	print("Testing progress tracker integration...")
-	var original_sessions = ProgressTracker.game_sessions.size()
-	ProgressTracker.start_new_session(2)
-	ProgressTracker.record_operation_used("Modus Ponens", true)
-	ProgressTracker.complete_current_session(500, 2, 3, "win")
-	if ProgressTracker.game_sessions.size() == original_sessions + 1:
-		print("✓ Progress tracker integration test passed")
-	else:
-		print("✗ Progress tracker integration test failed")
-
-	print("Integration test complete!")
-	print("All core systems are functioning properly.")
+	if _impl: _impl.run_integration_test()

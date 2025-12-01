@@ -1,132 +1,76 @@
 extends Node
 
-## Service for checking app updates from remote server
+## UpdateCheckerService Proxy - Delegates to implementation loaded from PCK
 
+# Signals
 signal update_available(update_info: Dictionary)
 signal update_check_failed(error_message: String)
 signal no_update_available()
+signal pck_download_started(total_bytes: int)
+signal pck_download_progress(downloaded_bytes: int, total_bytes: int, percent: float)
+signal pck_download_completed(success: bool)
+signal pck_loaded(success: bool)
+signal first_launch_detected()
 
-var http_request: HTTPRequest = null
-const REQUEST_TIMEOUT: float = 10.0
+# Implementation reference
+var _impl: Node = null
+
+func _set_impl(impl: Node) -> void:
+	_impl = impl
+	# Forward signals
+	if _impl.has_signal("update_available"):
+		_impl.update_available.connect(func(info): update_available.emit(info))
+	if _impl.has_signal("update_check_failed"):
+		_impl.update_check_failed.connect(func(err): update_check_failed.emit(err))
+	if _impl.has_signal("no_update_available"):
+		_impl.no_update_available.connect(func(): no_update_available.emit())
+	if _impl.has_signal("pck_download_started"):
+		_impl.pck_download_started.connect(func(total): pck_download_started.emit(total))
+	if _impl.has_signal("pck_download_progress"):
+		_impl.pck_download_progress.connect(func(down, total, pct): pck_download_progress.emit(down, total, pct))
+	if _impl.has_signal("pck_download_completed"):
+		_impl.pck_download_completed.connect(func(success): pck_download_completed.emit(success))
+	if _impl.has_signal("pck_loaded"):
+		_impl.pck_loaded.connect(func(success): pck_loaded.emit(success))
+	if _impl.has_signal("first_launch_detected"):
+		_impl.first_launch_detected.connect(func(): first_launch_detected.emit())
 
 func _ready() -> void:
-	http_request = HTTPRequest.new()
-	add_child(http_request)
-	http_request.timeout = REQUEST_TIMEOUT
-	http_request.request_completed.connect(_on_request_completed)
+	pass  # Wait for impl injection
 
-func check_for_updates() -> void:
-	# Platform check - Android only (but allow in editor for testing)
-	var is_editor = OS.has_feature("editor")
-	if not is_editor and OS.get_name() != "Android":
-		print("UpdateChecker: Skipping update check (platform: ", OS.get_name(), ")")
-		no_update_available.emit()
-		return
+# Property forwarding
+func _get(property: StringName) -> Variant:
+	if _impl:
+		return _impl.get(property)
+	return null
 
-	if is_editor:
-		print("UpdateChecker: Running in editor mode - check enabled for testing")
-
-	print("UpdateChecker: Checking for updates at ", AppConstants.VERSION_CHECK_URL)
-	var error = http_request.request(AppConstants.VERSION_CHECK_URL)
-
-	if error != OK:
-		var error_msg = "Network request failed with error code: " + str(error)
-		print("UpdateChecker ERROR: ", error_msg)
-		update_check_failed.emit(error_msg)
-
-func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
-	# Handle network errors
-	if result != HTTPRequest.RESULT_SUCCESS:
-		var error_msg = "Network connection failed (result: " + str(result) + ")"
-		print("UpdateChecker ERROR: ", error_msg)
-		update_check_failed.emit(error_msg)
-		return
-
-	# Handle HTTP errors
-	if response_code != 200:
-		var error_msg = "Server returned error code: " + str(response_code)
-		print("UpdateChecker ERROR: ", error_msg)
-		update_check_failed.emit(error_msg)
-		return
-
-	# Parse JSON
-	var json_string = body.get_string_from_utf8()
-	var json = JSON.new()
-	var parse_error = json.parse(json_string)
-
-	if parse_error != OK:
-		var error_msg = "Invalid JSON response from server"
-		print("UpdateChecker ERROR: ", error_msg)
-		update_check_failed.emit(error_msg)
-		return
-
-	var data = json.data
-
-	# Validate required fields
-	if not _validate_json_data(data):
-		var error_msg = "Invalid or missing fields in version data"
-		print("UpdateChecker ERROR: ", error_msg)
-		update_check_failed.emit(error_msg)
-		return
-
-	# Compare versions
-	var remote_version = data.version
-	var current_version = AppConstants.APP_VERSION
-
-	print("UpdateChecker: Current version: ", current_version, ", Remote version: ", remote_version)
-
-	if _is_newer_version(remote_version, current_version):
-		print("UpdateChecker: Update available!")
-		update_available.emit(data)
-	else:
-		print("UpdateChecker: No update available")
-		no_update_available.emit()
-
-func _validate_json_data(data) -> bool:
-	if typeof(data) != TYPE_DICTIONARY:
-		print("UpdateChecker: Data is not a Dictionary")
-		return false
-
-	var required_fields = ["version", "download_url", "header", "changelog", "message"]
-	for field in required_fields:
-		if not data.has(field):
-			print("UpdateChecker: Missing required field: ", field)
-			return false
-
-		if typeof(data[field]) != TYPE_STRING:
-			print("UpdateChecker: Field '", field, "' is not a String")
-			return false
-
-	return true
-
-func _is_newer_version(remote_version: String, current_version: String) -> bool:
-	var remote_parts = _parse_version(remote_version)
-	var current_parts = _parse_version(current_version)
-
-	var max_length = max(remote_parts.size(), current_parts.size())
-
-	for i in range(max_length):
-		var remote_part = remote_parts[i] if i < remote_parts.size() else 0
-		var current_part = current_parts[i] if i < current_parts.size() else 0
-
-		if remote_part > current_part:
-			return true
-		elif remote_part < current_part:
-			return false
-
-	# Versions are equal
+func _set(property: StringName, value: Variant) -> bool:
+	if _impl:
+		_impl.set(property, value)
+		return true
 	return false
 
-func _parse_version(version_string: String) -> Array[int]:
-	var parts: Array[int] = []
-	var split_parts = version_string.split(".")
+# Method forwarding
+func is_first_launch() -> bool:
+	if _impl: return _impl.is_first_launch()
+	return false
 
-	for part in split_parts:
-		var cleaned = part.strip_edges()
-		if cleaned.is_valid_int():
-			parts.append(int(cleaned))
-		else:
-			print("UpdateChecker WARNING: Invalid version part '", part, "', using 0")
-			parts.append(0)
+func mark_first_launch_complete() -> void:
+	if _impl: _impl.mark_first_launch_complete()
 
-	return parts
+func get_loaded_pck_version() -> String:
+	if _impl: return _impl.get_loaded_pck_version()
+	return ""
+
+func save_pck_version(version: String) -> void:
+	if _impl: _impl.save_pck_version(version)
+
+func check_for_updates() -> void:
+	if _impl: _impl.check_for_updates()
+
+func download_pck(pck_url: String) -> void:
+	if _impl: _impl.download_pck(pck_url)
+
+func load_pck() -> bool:
+	if _impl: return _impl.load_pck()
+	return false

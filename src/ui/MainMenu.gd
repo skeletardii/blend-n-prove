@@ -348,15 +348,18 @@ func _check_for_app_updates() -> void:
 	if not has_node("/root/UpdateCheckerService"):
 		return
 
-	# Connect to UpdateCheckerService signals
-	if not UpdateCheckerService.update_available.is_connected(_on_update_available):
-		UpdateCheckerService.update_available.connect(_on_update_available)
+	# Get reference to UpdateCheckerService
+	var update_checker_service = get_node("/root/UpdateCheckerService")
 
-	if not UpdateCheckerService.update_check_failed.is_connected(_on_update_check_failed):
-		UpdateCheckerService.update_check_failed.connect(_on_update_check_failed)
+	# Connect to UpdateCheckerService signals
+	if not update_checker_service.update_available.is_connected(_on_update_available):
+		update_checker_service.update_available.connect(_on_update_available)
+
+	if not update_checker_service.update_check_failed.is_connected(_on_update_check_failed):
+		update_checker_service.update_check_failed.connect(_on_update_check_failed)
 
 	# Start update check (async, non-blocking)
-	UpdateCheckerService.check_for_updates()
+	update_checker_service.check_for_updates()
 
 func _on_update_available(update_info: Dictionary) -> void:
 	print("MainMenu: Update available, showing popup...")

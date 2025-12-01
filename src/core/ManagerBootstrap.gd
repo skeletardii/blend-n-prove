@@ -12,27 +12,25 @@ signal managers_ready()
 signal manager_load_failed(manager_name: String, error: String)
 
 ## Mapping of manager names to their implementation script paths in the PCK
+## Note: SceneManager, AudioManager, and AppConstants are full autoloads (not proxied)
 const MANAGER_PATHS = {
 	"GameManager": "res://src/managers/GameManagerImpl.gd",
-	"AudioManager": "res://src/managers/AudioManagerImpl.gd",
 	"BooleanLogicEngine": "res://src/managers/BooleanLogicEngineImpl.gd",
 	"TutorialManager": "res://src/managers/TutorialManagerImpl.gd",
 	"ProgressTracker": "res://src/managers/ProgressTrackerImpl.gd",
 	"TutorialDataManager": "res://src/managers/TutorialDataManagerImpl.gd",
-	"AppConstants": "res://src/managers/AppConstantsImpl.gd",
 	"UpdateCheckerService": "res://src/managers/UpdateCheckerServiceImpl.gd",
 }
 
 ## Order in which managers are loaded (respects dependencies)
+## Note: SceneManager, AudioManager, and AppConstants remain full autoloads
 const MANAGER_LOAD_ORDER = [
-	"AppConstants",           # No dependencies
-	"AudioManager",           # No dependencies
 	"ProgressTracker",        # No dependencies
 	"BooleanLogicEngine",     # No dependencies
 	"TutorialDataManager",    # Depends on ProgressTracker
-	"UpdateCheckerService",   # Depends on AppConstants
+	"UpdateCheckerService",   # Depends on AppConstants (full autoload)
 	"TutorialManager",        # No hard dependencies
-	"GameManager",            # Depends on AudioManager, ProgressTracker, BooleanLogicEngine, TutorialDataManager
+	"GameManager",            # Depends on AudioManager (full autoload), ProgressTracker, BooleanLogicEngine, TutorialDataManager
 ]
 
 ## Loaded manager instances (keyed by manager name)
@@ -79,7 +77,7 @@ func load_managers() -> void:
 	print("ManagerBootstrap: Starting manager load sequence...")
 
 	# Verify PCK is loaded by checking if a manager implementation exists
-	if not ResourceLoader.exists(MANAGER_PATHS["AudioManager"]):
+	if not ResourceLoader.exists(MANAGER_PATHS["GameManager"]):
 		push_error("ManagerBootstrap: PCK not loaded! Cannot find manager implementations.")
 		manager_load_failed.emit("ALL", "PCK not loaded")
 		_loading = false
