@@ -129,11 +129,11 @@ func update_patience_timer(delta: float) -> void:
 
 	# Change color based on urgency
 	if patience_percentage > 60:
-		patience_bar.modulate = Color.GREEN
+		patience_bar.modulate = Color.BLACK
 	elif patience_percentage > 30:
-		patience_bar.modulate = Color.YELLOW
+		patience_bar.modulate = Color.BLACK
 	else:
-		patience_bar.modulate = Color.RED
+		patience_bar.modulate = Color.BLACK
 
 	# Customer leaves if patience runs out
 	if patience_timer <= 0.0:

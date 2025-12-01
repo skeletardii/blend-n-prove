@@ -2,6 +2,7 @@ extends CanvasLayer
 
 # References to child nodes
 @onready var center_container: Control = $CenterContainer
+@onready var background_panel: Panel = $CenterContainer/BackgroundPanel
 @onready var container: VBoxContainer = $CenterContainer/VBoxContainer
 @onready var base_score_label: Label = $CenterContainer/VBoxContainer/BaseScoreLabel
 @onready var bonus_label: Label = $CenterContainer/VBoxContainer/BonusLabel
@@ -134,23 +135,20 @@ func _calculate_color_from_multiplier(multiplier: float) -> Color:
 		return COLOR_PURPLE
 
 func _position_popup_near_score() -> void:
-	"""Position the popup to the right of the score display"""
-	if not score_display_label:
-		return
+	"""Position the popup in the left 1/3 of the screen"""
+	# Get the screen width
+	var screen_width: float = get_viewport().get_visible_rect().size.x
+	var screen_height: float = get_viewport().get_visible_rect().size.y
 
-	# Get the global position of the score display
-	var score_pos: Vector2 = score_display_label.global_position
-	var score_size: Vector2 = score_display_label.size
-
-	# Position to the right of the score, with some padding
-	var popup_x: float = score_pos.x + score_size.x + 30
-	var popup_y: float = score_pos.y
+	# Position in the left third of the screen, centered vertically
+	var popup_x: float = screen_width / 6  # Center of left 1/3
+	var popup_y: float = screen_height / 2 - 100  # Centered vertically
 
 	# Update center container position
-	center_container.offset_left = popup_x
+	center_container.offset_left = popup_x - 200  # Center the 400px container
 	center_container.offset_top = popup_y
-	center_container.offset_right = popup_x + 400  # Width for container
-	center_container.offset_bottom = popup_y + 200  # Height for container
+	center_container.offset_right = popup_x + 200
+	center_container.offset_bottom = popup_y + 200
 
 func _animate_popup(multiplier: float, popup_color: Color) -> void:
 	# Phase 1: Pop in with breakdown (0.0 - 0.3s)

@@ -88,7 +88,7 @@ func run_tutorial_tests() -> void:
 func _on_play_button_pressed() -> void:
 	print("Play button pressed!")
 	AudioManager.play_button_click()
-	print("About to change scene to Phase1UI...")
+	print("About to change scene to GameplayScene...")
 
 	# Check if the scene file exists first
 	if ResourceLoader.exists("res://src/scenes/GameplayScene.tscn"):
@@ -97,17 +97,12 @@ func _on_play_button_pressed() -> void:
 		print("❌ GameplayScene.tscn does not exist!")
 		return
 
-	# Try to load the scene directly
-	var scene = load("res://src/scenes/GameplayScene.tscn")
-	if scene:
-		print("✅ Scene loaded successfully")
-		SceneManager.change_scene("res://src/scenes/GameplayScene.tscn")
-	else:
-		print("❌ Failed to load scene!")
-		return
-
+	# Start new game first
 	GameManager.start_new_game()
 	print("Started new game")
+
+	# Use loading screen transition
+	SceneManager.change_scene_with_loading("res://src/scenes/GameplayScene.tscn")
 
 #func _on_phase1_button_pressed() -> void:
 	#AudioManager.play_button_click()

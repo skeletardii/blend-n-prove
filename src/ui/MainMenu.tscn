@@ -86,15 +86,16 @@ theme_override_constants/separation = 5
 
 [node name="HighScoreLabel" type="Label" parent="MenuContainer/HighScoreContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("5_dbyr8")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 40
 text = "HIGH SCORE"
 horizontal_alignment = 1
 
 [node name="HighScoreValue" type="Label" parent="MenuContainer/HighScoreContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 72
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 80
 text = "0"
 horizontal_alignment = 1
 
@@ -291,7 +292,7 @@ text = "Import Progress"
 
 [node name="SaveLocationLabel" type="Label" parent="DebugPanel/DebugContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
 text = "Save: user://game_progress.json"
 horizontal_alignment = 1
@@ -359,7 +360,7 @@ layout_mode = 2
 
 [node name="ResetProgressButton" type="Button" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.3, 0.3, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Reset All Progress"
 
 [node name="Spacer3" type="Control" parent="SettingsPanel/SettingsContainer"]
@@ -445,7 +446,7 @@ offset_right = 150.0
 offset_bottom = -120.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(0.2, 0.8, 0.2, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 14
 horizontal_alignment = 1
 vertical_alignment = 1

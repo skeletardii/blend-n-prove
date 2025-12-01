@@ -204,11 +204,11 @@ func add_operation_statistics_section() -> void:
 
 			# Color code success rate
 			if rate >= 0.8:
-				rate_label.modulate = Color.GREEN
+				rate_label.modulate = Color.BLACK
 			elif rate >= 0.5:
-				rate_label.modulate = Color.YELLOW
+				rate_label.modulate = Color.BLACK
 			else:
-				rate_label.modulate = Color.ORANGE
+				rate_label.modulate = Color.BLACK
 		else:
 			rate_label.text = "N/A"
 		operations_grid.add_child(rate_label)
@@ -273,16 +273,16 @@ func add_recent_sessions_section() -> void:
 		match session.completion_status:
 			"win":
 				result_label.text = "✓ Win"
-				result_label.modulate = Color.GREEN
+				result_label.modulate = Color.BLACK
 			"loss":
 				result_label.text = "✗ Loss"
-				result_label.modulate = Color.RED
+				result_label.modulate = Color.BLACK
 			"quit":
 				result_label.text = "⊘ Quit"
-				result_label.modulate = Color.YELLOW
+				result_label.modulate = Color.BLACK
 			_:
 				result_label.text = "? Incomplete"
-				result_label.modulate = Color.GRAY
+				result_label.modulate = Color.BLACK
 		sessions_grid.add_child(result_label)
 
 		var operations_label = Label.new()

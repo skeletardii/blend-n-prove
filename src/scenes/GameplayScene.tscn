@@ -1,12 +1,19 @@
 [gd_scene load_steps=10 format=3 uid="uid://bji7acucw6pe3"]
 
 [ext_resource type="Script" uid="uid://cl7fuggwr1kue" path="res://src/ui/GameplayScene.gd" id="1_3v9zy"]
-[ext_resource type="Texture2D" uid="uid://dqs4mlo70fokf" path="res://assets/sprites/phase1bg.jpg" id="2_8e8l2"]
 [ext_resource type="PackedScene" uid="uid://cq3k7m5xywb8k" path="res://src/ui/TutorialHelpPanel.tscn" id="2_tutorial_help"]
 [ext_resource type="PackedScene" uid="uid://dpjc3t8yqr5h1" path="res://src/ui/HintPopup.tscn" id="3_hint_popup"]
 [ext_resource type="FontFile" uid="uid://ce67i1nf8ircd" path="res://assets/fonts/Glowforge.otf" id="3_n1mcv"]
 [ext_resource type="Texture2D" uid="uid://djmqnb3m2u5xr" path="res://assets/sprites/button assets.png" id="4_1yton"]
-[ext_resource type="FontFile" uid="uid://rkxmldc64bol" path="res://assets/fonts/Good-Game.ttf" id="5_n1mcv"]
+[ext_resource type="FontFile" uid="uid://bu186h4gwve1c" path="res://assets/fonts/MuseoSansRounded300.otf" id="4_wxnvq"]
+[ext_resource type="Texture2D" uid="uid://pause_icon_001" path="res://assets/sprites/pause_icon.svg" id="5_pause_icon"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_n1mcv"]
+texture = ExtResource("4_1yton")
+texture_margin_left = 16.816864
+texture_margin_right = 16.421173
+region_rect = Rect2(63, 64, 56, 56)
+modulate_color = Color(0.4351923, 0.43519226, 0.43519226, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hy4gw"]
 texture = ExtResource("4_1yton")
@@ -17,13 +24,6 @@ texture_margin_bottom = 0.7529297
 region_rect = Rect2(63, 64, 56, 56)
 modulate_color = Color(0.86898494, 0.8689849, 0.8689849, 1)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_n1mcv"]
-texture = ExtResource("4_1yton")
-texture_margin_left = 16.816864
-texture_margin_right = 16.421173
-region_rect = Rect2(63, 64, 56, 56)
-modulate_color = Color(0.4351923, 0.43519226, 0.43519226, 1)
-
 [node name="GameplayScene" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -33,15 +33,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3v9zy")
 
-[node name="TextureRect" type="TextureRect" parent="."]
-modulate = Color(0.39688924, 0.39688927, 0.3968891, 1)
-layout_mode = 0
-offset_left = -581.0
-offset_top = -8.0
-offset_right = 1358.0
-offset_bottom = 1271.0
-texture = ExtResource("2_8e8l2")
-expand_mode = 2
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.92, 0.92, 0.92, 1)
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 1
@@ -80,14 +79,9 @@ grow_vertical = 2
 [node name="PauseButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
 custom_minimum_size = Vector2(70, 50)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_n1mcv")
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxTexture_hy4gw")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_n1mcv")
-theme_override_styles/hover = SubResource("StyleBoxTexture_n1mcv")
-theme_override_styles/focus = SubResource("StyleBoxTexture_hy4gw")
-text = "
-"
+icon = ExtResource("5_pause_icon")
+icon_alignment = 1
+expand_icon = true
 
 [node name="SpacerLeft" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
 layout_mode = 2
@@ -102,15 +96,15 @@ layout_mode = 2
 
 [node name="HighScoreLabel" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/HighScoreContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("5_n1mcv")
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("4_wxnvq")
+theme_override_font_sizes/font_size = 30
 text = "High Score:"
 
 [node name="HighScoreDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/HighScoreContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_fonts/font = ExtResource("5_n1mcv")
-theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_wxnvq")
+theme_override_font_sizes/font_size = 30
 text = "0"
 
 [node name="CurrentScoreContainer" type="HBoxContainer" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer"]
@@ -118,14 +112,14 @@ layout_mode = 2
 
 [node name="ScoreLabel" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/CurrentScoreContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("5_n1mcv")
-theme_override_font_sizes/font_size = 50
+theme_override_fonts/font = ExtResource("4_wxnvq")
+theme_override_font_sizes/font_size = 30
 text = "Score:"
 
 [node name="ScoreDisplay" type="Label" parent="UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/CurrentScoreContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("5_n1mcv")
-theme_override_font_sizes/font_size = 50
+theme_override_fonts/font = ExtResource("4_wxnvq")
+theme_override_font_sizes/font_size = 30
 text = "0"
 
 [node name="SpacerRight" type="Control" parent="UI/MainContainer/TopBar/TopBarContainer"]
@@ -140,6 +134,7 @@ text = "Show Help"
 [node name="HintButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
 custom_minimum_size = Vector2(80, 50)
 layout_mode = 2
+theme_override_font_sizes/font_size = 30
 text = "Hint"
 
 [node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer"]
@@ -256,10 +251,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -120.0
-offset_right = 150.0
-offset_bottom = 120.0
+offset_left = -250.0
+offset_top = -180.0
+offset_right = 250.0
+offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -268,30 +263,33 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = -40.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 30
+alignment = 1
 
 [node name="PausedLabel" type="Label" parent="PauseOverlay/PauseMenu/MenuContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 48
 text = "PAUSED"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="PauseOverlay/PauseMenu/MenuContainer"]
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
 [node name="ResumeButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(300, 60)
 layout_mode = 2
+size_flags_horizontal = 4
 text = "Resume"
 
 [node name="QuitButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(300, 60)
 layout_mode = 2
+size_flags_horizontal = 4
 text = "Quit to Menu"
