@@ -135,6 +135,10 @@ func _ready() -> void:
 	double_ops_remote.offset_top = -button_height
 	single_ops_remote.offset_top = -button_height
 
+	# Set initial toggle button text (both start collapsed)
+	double_toggle_button.text = "Double Ops ▲"
+	single_toggle_button.text = "Single Ops ▲"
+
 func connect_rule_buttons() -> void:
 	# Double operation buttons
 	mp_button.pressed.connect(_on_rule_button_pressed.bind("MP"))
@@ -216,7 +220,7 @@ func open_double_remote() -> void:
 		return
 
 	is_animating_double = true
-	double_toggle_button.text = "▼"
+	double_toggle_button.text = "Double Ops ▼"
 
 	# Animate from -50 (button only) to -450 (full panel)
 	var tween = create_tween()
@@ -230,7 +234,7 @@ func close_double_remote() -> void:
 		return
 
 	is_animating_double = true
-	double_toggle_button.text = "▲"
+	double_toggle_button.text = "Double Ops ▲"
 
 	# Animate from -450 (full panel) to -50 (button only)
 	var tween = create_tween()
@@ -244,7 +248,7 @@ func open_single_remote() -> void:
 		return
 
 	is_animating_single = true
-	single_toggle_button.text = "▼"
+	single_toggle_button.text = "Single Ops ▼"
 
 	# Animate from -50 (button only) to -600 (full panel)
 	var tween = create_tween()
@@ -258,7 +262,7 @@ func close_single_remote() -> void:
 		return
 
 	is_animating_single = true
-	single_toggle_button.text = "▲"
+	single_toggle_button.text = "Single Ops ▲"
 
 	# Animate from -600 (full panel) to -50 (button only)
 	var tween = create_tween()
@@ -376,6 +380,9 @@ func create_premise_card(premise: BooleanLogicEngine.BooleanExpression, index: i
 	# Increase font size
 	card.add_theme_font_size_override("font_size", 24)
 
+	# Ensure white background color
+	card.modulate = Color.WHITE
+
 	# Use default theme styling (white buttons with gray border and drop shadow from Wenrexa theme)
 	# No custom StyleBox overrides - let the theme handle it
 
@@ -422,9 +429,6 @@ func _on_rule_button_pressed(rule: String) -> void:
 
 	# Highlight the selected button
 	highlight_rule_button(rule)
-
-	# Start jiggle animation
-	start_button_jiggle(rule)
 
 	# Close both remotes after selecting a rule
 	close_double_remote()
@@ -676,9 +680,8 @@ func apply_logical_rule(rule: String, premises: Array[BooleanLogicEngine.Boolean
 			return BooleanLogicEngine.BooleanExpression.new("")
 
 func animate_target_reached(result: BooleanLogicEngine.BooleanExpression) -> void:
-	"""Animate the newly created winning card flying into the target box with a flash effect"""
+	"""Show green glow effect on the winning card and display score popup"""
 	# Find the LAST (most recently added) card that matches the result
-	# This ensures we animate the newly created ingredient, not an old one
 	var winning_card: Control = null
 	for i in range(premise_cards.size() - 1, -1, -1):  # Search backwards
 		var card = premise_cards[i]
@@ -690,155 +693,21 @@ func animate_target_reached(result: BooleanLogicEngine.BooleanExpression) -> voi
 	if not winning_card:
 		return
 
-	# Create a duplicate card for animation
-	var animated_card = Button.new()
-	animated_card.text = winning_card.text
-	animated_card.custom_minimum_size = winning_card.custom_minimum_size
-	animated_card.modulate = Color.BLACK
-	animated_card.z_index = 100
-	# Set pivot to center for rotation
-	animated_card.pivot_offset = winning_card.size / 2
-	add_child(animated_card)
+	# Play success sound
+	AudioManager.play_logic_success()
 
-	# Get start and end positions
-	var start_pos: Vector2 = winning_card.global_position
-	# End position is the center of the silhouette, moved 40px left
-	var end_pos: Vector2 = silhouette.global_position + silhouette.size / 2
-	end_pos.x -= 40  # Move 40px to the left
-
-	# Explosion position is 30px to the right of the flying endpoint
-	var explosion_pos: Vector2 = end_pos
-	explosion_pos.x += 30  # Move 30px to the right
-
-	# Set initial position
-	animated_card.global_position = start_pos
-
-	# Create randomized curved path for variety
-	var mid_pos: Vector2 = (start_pos + end_pos) / 2
-	# Randomize arc height between 100-200px
-	var arc_height: float = randf_range(100.0, 200.0)
-	mid_pos.y -= arc_height
-	# Randomize horizontal offset for more natural curves
-	var horizontal_offset: float = randf_range(-50.0, 50.0)
-	mid_pos.x += horizontal_offset
-
-	# Consistent animation duration for all cards (same speed)
-	var duration = 0.8
-
-	# Animate the card along a curved path
+	# Create green glow effect
 	var tween = create_tween()
-	tween.set_ease(Tween.EASE_IN_OUT)
-	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.set_loops(3)  # Pulse 3 times
+	tween.tween_property(winning_card, "modulate", Color.GREEN, 0.3)
+	tween.tween_property(winning_card, "modulate", Color.WHITE, 0.3)
 
-	# Animate position using a custom bezier curve
-	for i in range(0, 101, 5):  # 0 to 100 in steps of 5
-		var t = i / 100.0
-		# Quadratic bezier curve
-		var pos = start_pos.lerp(mid_pos, t).lerp(mid_pos.lerp(end_pos, t), t)
-		tween.tween_property(animated_card, "global_position", pos, duration / 20.0)
-
-	# Scale down as it flies
-	tween.parallel().tween_property(animated_card, "scale", Vector2(0.3, 0.3), duration)
-
-	# Add swirling rotation animation (multiple full rotations for dramatic effect)
-	tween.parallel().tween_property(animated_card, "rotation", TAU * 3, duration)
-
-	# When animation completes, create flash at the explosion position and clean up
+	# Show score popup at the card's position after glow animation
 	tween.finished.connect(func():
-		# Flash spawns at explosion_pos (30px right of where card lands)
-		create_target_flash(explosion_pos)
-		animated_card.queue_free()
-		# Play success sound
-		AudioManager.play_logic_success()
+		winning_card.modulate = Color.GREEN  # Keep final green color
+		show_score_popup_at_card(winning_card)
 	)
 
-	# Hide the original card
-	winning_card.modulate = Color(1, 1, 1, 0)
-
-func create_target_flash(position: Vector2) -> void:
-	"""Create a satisfying circular flash effect where the ingredient disappears"""
-	# Move explosion up by 100px from silhouette center
-	position.y -= 100
-
-	# Create outer golden ring flash (circular)
-	var flash = Panel.new()
-	var flash_style = StyleBoxFlat.new()
-	flash_style.bg_color = Color(1.0, 0.9, 0.3, 0.8)  # Golden yellow
-	flash_style.corner_radius_top_left = 20
-	flash_style.corner_radius_top_right = 20
-	flash_style.corner_radius_bottom_left = 20
-	flash_style.corner_radius_bottom_right = 20
-	flash.add_theme_stylebox_override("panel", flash_style)
-	flash.custom_minimum_size = Vector2(40, 40)
-	flash.size = Vector2(40, 40)
-	flash.position = position - flash.size / 2
-	flash.z_index = 200
-	flash.pivot_offset = flash.size / 2
-	add_child(flash)
-
-	# Animate the flash expanding and fading (creates circular explosion effect)
-	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(flash, "scale", Vector2(5.0, 5.0), 0.5)
-	tween.tween_property(flash, "modulate:a", 0.0, 0.5)
-	tween.tween_property(flash, "rotation", TAU, 0.5)  # Full rotation for effect
-
-	# Create inner white flash (faster and more intense, circular)
-	var flash2 = Panel.new()
-	var flash2_style = StyleBoxFlat.new()
-	flash2_style.bg_color = Color(1.0, 1.0, 1.0, 1.0)  # Bright white
-	flash2_style.corner_radius_top_left = 13
-	flash2_style.corner_radius_top_right = 13
-	flash2_style.corner_radius_bottom_left = 13
-	flash2_style.corner_radius_bottom_right = 13
-	flash2.add_theme_stylebox_override("panel", flash2_style)
-	flash2.custom_minimum_size = Vector2(25, 25)
-	flash2.size = Vector2(25, 25)
-	flash2.position = position - flash2.size / 2
-	flash2.z_index = 201
-	flash2.pivot_offset = flash2.size / 2
-	add_child(flash2)
-
-	var tween2 = create_tween()
-	tween2.set_parallel(true)
-	tween2.tween_property(flash2, "scale", Vector2(4.0, 4.0), 0.3)
-	tween2.tween_property(flash2, "modulate:a", 0.0, 0.3)
-	tween2.tween_property(flash2, "rotation", -TAU, 0.3)  # Counter-rotation
-
-	# Create additional particle-like flashes around the impact point (circular)
-	for i in range(6):  # 6 small particles
-		var particle = Panel.new()
-		var particle_style = StyleBoxFlat.new()
-		particle_style.bg_color = Color(1.0, 0.95, 0.5, 1.0)
-		particle_style.corner_radius_top_left = 5
-		particle_style.corner_radius_top_right = 5
-		particle_style.corner_radius_bottom_left = 5
-		particle_style.corner_radius_bottom_right = 5
-		particle.add_theme_stylebox_override("panel", particle_style)
-		particle.custom_minimum_size = Vector2(10, 10)
-		particle.size = Vector2(10, 10)
-		var angle = (TAU / 6.0) * i  # Evenly spaced around circle
-		var offset = Vector2(cos(angle), sin(angle)) * 20
-		particle.position = position + offset - particle.size / 2
-		particle.z_index = 199
-		add_child(particle)
-
-		# Animate particles flying outward
-		var particle_tween = create_tween()
-		particle_tween.set_parallel(true)
-		var final_offset = offset * 3  # Fly outward
-		particle_tween.tween_property(particle, "position", position + final_offset - particle.size / 2, 0.4)
-		particle_tween.tween_property(particle, "modulate:a", 0.0, 0.4)
-		particle_tween.tween_property(particle, "scale", Vector2(0.5, 0.5), 0.4)
-		particle_tween.finished.connect(func(): particle.queue_free())
-
-	# Clean up after animation
-	tween.finished.connect(func(): flash.queue_free())
-	tween2.finished.connect(func():
-		flash2.queue_free()
-		# Show score popup after explosion
-		show_score_popup_at_position(position)
-	)
 
 func show_feedback(message: String, color: Color, emit_to_parent: bool = true) -> void:
 	"""Show shortened feedback at the bottom of the premise box"""
@@ -855,8 +724,8 @@ func show_feedback(message: String, color: Color, emit_to_parent: bool = true) -
 			feedback_label.text = ""
 	)
 
-func show_score_popup_at_position(explosion_pos: Vector2) -> void:
-	"""Show score popup at the explosion position"""
+func show_score_popup_at_card(card: Control) -> void:
+	"""Show score popup at the card's position"""
 	if not score_display:
 		return
 
@@ -865,10 +734,13 @@ func show_score_popup_at_position(explosion_pos: Vector2) -> void:
 	var base_score: int = 100 + (GameManager.difficulty_level * 50)
 	var total_score: int = base_score + time_bonus
 
-	# Show score popup animation at explosion position
+	# Get card center position
+	var card_pos: Vector2 = card.global_position + card.size / 2
+
+	# Show score popup animation at card position
 	var popup: CanvasLayer = score_popup_scene.instantiate()
 	get_tree().root.add_child(popup)
-	popup.show_score_popup_phase2(total_score, time_bonus, base_score, explosion_pos, score_display, GameManager.current_score)
+	popup.show_score_popup_phase2(total_score, time_bonus, base_score, card_pos, score_display, GameManager.current_score)
 
 	# Add score to GameManager after animation completes
 	get_tree().create_timer(0.6 + 0.5).timeout.connect(func():
@@ -891,8 +763,7 @@ func clear_selections() -> void:
 func clear_rule_selection() -> void:
 	# Reset all rule button colors
 	for button in get_all_rule_buttons():
-		button.modulate = Color.BLACK
-		stop_button_jiggle(button)
+		button.modulate = Color.WHITE
 
 func get_all_rule_buttons() -> Array[Button]:
 	var buttons: Array[Button] = []
@@ -905,7 +776,7 @@ func get_all_rule_buttons() -> Array[Button]:
 func highlight_rule_button(rule: String) -> void:
 	var button = get_rule_button(rule)
 	if button:
-		button.modulate = Color.BLACK
+		button.modulate = Color.YELLOW
 
 func get_rule_button(rule: String) -> Button:
 	match rule:
@@ -934,24 +805,6 @@ func get_rule_button(rule: String) -> Button:
 		"DNEG": return dneg_button
 		"PAREN_REMOVE": return paren_remove_button
 		_: return null
-
-func start_button_jiggle(rule: String) -> void:
-	var button = get_rule_button(rule)
-	if button:
-		var tween = create_tween()
-		tween.set_loops()
-		tween.tween_property(button, "rotation", 0.1, 0.1)
-		tween.tween_property(button, "rotation", -0.1, 0.1)
-		tween.tween_property(button, "rotation", 0.0, 0.1)
-		tween.tween_interval(0.3)
-
-func stop_button_jiggle(button: Button) -> void:
-	# Stop any running tweens on this button
-	var tweens = get_tree().get_processed_tweens()
-	for tween in tweens:
-		if tween.is_valid():
-			tween.kill()
-	button.rotation = 0.0
 
 
 func add_premise_to_inventory(premise: BooleanLogicEngine.BooleanExpression) -> void:
