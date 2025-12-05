@@ -6,8 +6,10 @@ extends Control
 @onready var score_display: Label = $MainContainer/TopStatusBar/StatusContainer/ScoreDisplay
 @onready var level_display: Label = $MainContainer/TopStatusBar/StatusContainer/LevelDisplay
 @onready var patience_bar: ProgressBar = $MainContainer/TopStatusBar/PatienceBar
-@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/SpeechBubble/PremiseChecklist/PremiseListScroll/PremiseList
+@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/SpeechBubble/ContentContainer/PremiseChecklist/PremiseListScroll/PremiseList
 @onready var input_display: Label = $MainContainer/InputSystem/InputContainer/InputField/InputDisplay
+@onready var variable_definitions_panel: PanelContainer = $MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel
+@onready var definitions_list: VBoxContainer = $MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer/DefinitionsScroll/DefinitionsList
 
 # Virtual keyboard buttons
 @onready var var_p: Button = $MainContainer/VirtualKeyboard/VariableRow/VarP
@@ -94,6 +96,7 @@ func connect_virtual_keyboard() -> void:
 func set_customer_data(customer: GameManager.CustomerData) -> void:
 	current_customer = customer
 	validated_premises.clear()
+	update_variable_definitions()
 	update_premise_checklist()
 
 	clear_input()
@@ -220,6 +223,61 @@ func update_status_display() -> void:
 
 	# Update level
 	level_display.text = "LV." + str(level)
+
+func update_variable_definitions() -> void:
+	"""Extract and display variable definitions from natural language premises"""
+	if not current_customer:
+		variable_definitions_panel.visible = false
+		return
+
+	if not current_customer.is_natural_language:
+		variable_definitions_panel.visible = false
+		return
+
+	# Clear existing definitions
+	for child in definitions_list.get_children():
+		child.queue_free()
+
+	# Extract variable definitions from natural language premises
+	# Pattern: "text (X)" or "text (¬X)" where X is a variable letter
+	var regex = RegEx.new()
+	regex.compile("\\(([¬]?[A-Z])\\)")
+
+	var definitions: Dictionary = {}
+	for premise in current_customer.natural_language_premises:
+		var matches = regex.search_all(premise)
+		for match_result in matches:
+			var variable = match_result.get_string(1)
+			# Extract the text before the variable definition
+			var start_pos = match_result.get_start(0)
+			var text_before = premise.substr(0, start_pos).strip_edges()
+			# Clean up common prefixes
+			text_before = text_before.trim_prefix("If ")
+			text_before = text_before.trim_prefix("Either ")
+			text_before = text_before.trim_prefix("There are no ")
+			text_before = text_before.trim_prefix("The ")
+			text_before = text_before.trim_suffix(" is")
+			text_before = text_before.trim_suffix(" are")
+			text_before = text_before.trim_suffix(",")
+			text_before = text_before.trim_suffix(" then")
+			text_before = text_before.strip_edges()
+
+			# Only store if not a negation (we'll handle those separately)
+			if not variable.begins_with("¬"):
+				definitions[variable] = text_before
+
+	# Display definitions
+	if definitions.size() > 0:
+		variable_definitions_panel.visible = true
+		for variable in definitions.keys():
+			var def_label = Label.new()
+			def_label.text = "Let " + variable + " be \"" + definitions[variable] + "\""
+			def_label.add_theme_font_size_override("font_size", 25)
+			def_label.add_theme_color_override("font_color", Color(1,1,1,1))
+			def_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			definitions_list.add_child(def_label)
+	else:
+		variable_definitions_panel.visible = false
 
 func update_premise_checklist() -> void:
 	# Clear existing items

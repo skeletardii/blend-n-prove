@@ -16,39 +16,37 @@ const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 var score_display: Label = null
 var patience_timer: float = 0.0
 
-# Remote Controls
-@onready var double_ops_remote: Panel = $DoubleOpsRemote
-@onready var single_ops_remote: Panel = $SingleOpsRemote
-@onready var double_toggle_button: Button = $DoubleOpsRemote/Header/ToggleButton
-@onready var single_toggle_button: Button = $SingleOpsRemote/Header/ToggleButton
+# Operations Panel
+@onready var operations_panel: Panel = $OperationsPanel
+@onready var operations_close_button: Button = $OperationsPanel/MainContainer/Header/CloseButton
+@onready var double_ops_tab: Button = $OperationsPanel/MainContainer/TabContainer/DoubleOpsTab
+@onready var single_ops_tab: Button = $OperationsPanel/MainContainer/TabContainer/SingleOpsTab
+@onready var double_ops_container: VBoxContainer = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer
+@onready var single_ops_container: VBoxContainer = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer
 
 # Double Operation Buttons
-@onready var mp_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/MPButton
-@onready var mt_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/MTButton
-@onready var hs_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/HSButton
-@onready var ds_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/DSButton
-@onready var cd_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/CDButton
-@onready var dn_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/DNButton
-@onready var conj_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/CONJButton
-@onready var eq_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/EQButton
-@onready var res_button: Button = $DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/RESButton
+@onready var mp_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer/MPButton
+@onready var mt_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer/MTButton
+@onready var hs_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer/HSButton
+@onready var ds_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer/DSButton
+@onready var cd_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer/CDButton
+@onready var dn_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer/DNButton
+@onready var conj_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer/CONJButton
+@onready var eq_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer/EQButton
+@onready var res_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer/RESButton
 
 # Single Operation Buttons
-@onready var simp_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/SIMPButton
-@onready var imp_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/IMPButton
-@onready var conv_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/CONVButton
-@onready var add_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/ADDButton
-@onready var dm_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/DMButton
-@onready var dneg_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/DNEGButton
-@onready var dist_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/DISTButton
-@onready var comm_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/COMMButton
-@onready var assoc_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/ASSOCButton
-@onready var idemp_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/IDEMPButton
-@onready var abs_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/ABSButton
-@onready var paren_remove_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/PAREN_REMOVEButton
-@onready var neg_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/NEGButton
-@onready var taut_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/TAUTButton
-@onready var contr_button: Button = $SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer/CONTRButton
+@onready var simp_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/SIMPButton
+@onready var imp_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/IMPButton
+@onready var conv_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/CONVButton
+@onready var add_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/ADDButton
+@onready var dm_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/DMButton
+@onready var dneg_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/DNEGButton
+@onready var dist_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/DISTButton
+@onready var comm_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/COMMButton
+@onready var assoc_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/ASSOCButton
+@onready var idemp_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/IDEMPButton
+@onready var abs_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/ABSButton
 
 # Game State
 var available_premises: Array[BooleanLogicEngine.BooleanExpression] = []
@@ -59,11 +57,10 @@ var premise_cards: Array[Control] = []
 var target_reached_triggered: bool = false  # Prevent multiple target animations
 
 # Animation State
-var double_panel_height: float = 450.0
-var single_panel_height: float = 600.0
-var button_height: float = 50.0
-var is_animating_double: bool = false
-var is_animating_single: bool = false
+var panel_height: float = 800.0
+var panel_closed_height: float = 70.0
+var is_animating_panel: bool = false
+var current_tab: String = "double"  # "double" or "single"
 
 # Signals for parent communication
 signal rule_applied(result: BooleanLogicEngine.BooleanExpression)
@@ -100,11 +97,7 @@ var rule_definitions = {
 	"ASSOC": {"type": RuleType.SINGLE, "name": "Associativity"},
 	"IDEMP": {"type": RuleType.SINGLE, "name": "Idempotent Laws"},
 	"ABS": {"type": RuleType.SINGLE, "name": "Absorption"},
-	"NEG": {"type": RuleType.SINGLE, "name": "Negation Laws"},
-	"TAUT": {"type": RuleType.SINGLE, "name": "Tautology"},
-	"CONTR": {"type": RuleType.SINGLE, "name": "Contradiction"},
-	"DNEG": {"type": RuleType.SINGLE, "name": "Double Negation"},
-	"PAREN_REMOVE": {"type": RuleType.SINGLE, "name": "Remove Parentheses"}
+	"DNEG": {"type": RuleType.SINGLE, "name": "Double Negation"}
 }
 
 func setup_dynamic_spacing() -> void:
@@ -126,18 +119,14 @@ func _ready() -> void:
 	connect_toggle_buttons()
 	start_silhouette_breathing()
 
-	# Initialize both remotes (hidden - only buttons visible)
-	double_ops_remote.visible = true
-	single_ops_remote.visible = true
+	# Initialize operations panel (starts collapsed)
+	operations_panel.visible = true
 
-	# Set initial positions (retracted - only button header visible at bottom)
-	# Both remotes start contracted, showing only the header (50px)
-	double_ops_remote.offset_top = -button_height
-	single_ops_remote.offset_top = -button_height
-
-	# Set initial toggle button text (both start collapsed)
-	double_toggle_button.text = "Double Ops ▲"
-	single_toggle_button.text = "Single Ops ▲"
+	# Show double ops by default
+	double_ops_container.visible = true
+	single_ops_container.visible = false
+	double_ops_tab.button_pressed = true
+	single_ops_tab.button_pressed = false
 
 func connect_rule_buttons() -> void:
 	# Double operation buttons
@@ -162,11 +151,7 @@ func connect_rule_buttons() -> void:
 	assoc_button.pressed.connect(_on_rule_button_pressed.bind("ASSOC"))
 	idemp_button.pressed.connect(_on_rule_button_pressed.bind("IDEMP"))
 	abs_button.pressed.connect(_on_rule_button_pressed.bind("ABS"))
-	neg_button.pressed.connect(_on_rule_button_pressed.bind("NEG"))
-	taut_button.pressed.connect(_on_rule_button_pressed.bind("TAUT"))
-	contr_button.pressed.connect(_on_rule_button_pressed.bind("CONTR"))
 	dneg_button.pressed.connect(_on_rule_button_pressed.bind("DNEG"))
-	paren_remove_button.pressed.connect(_on_rule_button_pressed.bind("PAREN_REMOVE"))
 
 
 func connect_addition_dialog() -> void:
@@ -174,102 +159,72 @@ func connect_addition_dialog() -> void:
 	addition_dialog.dialog_cancelled.connect(_on_addition_dialog_cancelled)
 
 func connect_toggle_buttons() -> void:
-	double_toggle_button.pressed.connect(_on_double_toggle_pressed)
-	single_toggle_button.pressed.connect(_on_single_toggle_pressed)
+	operations_close_button.pressed.connect(_on_operations_panel_toggle)
+	double_ops_tab.pressed.connect(_on_double_tab_pressed)
+	single_ops_tab.pressed.connect(_on_single_tab_pressed)
 
-func _on_double_toggle_pressed() -> void:
-	toggle_double_remote()
+func _on_operations_panel_toggle() -> void:
+	toggle_operations_panel()
 
-func _on_single_toggle_pressed() -> void:
-	toggle_single_remote()
+func _on_double_tab_pressed() -> void:
+	switch_to_tab("double")
 
-func toggle_double_remote() -> void:
-	if is_animating_double or is_animating_single:
+func _on_single_tab_pressed() -> void:
+	switch_to_tab("single")
+
+func toggle_operations_panel() -> void:
+	if is_animating_panel:
 		return
 
-	# Check if double remote is currently closed (showing only button)
-	var is_closed: bool = abs(double_ops_remote.offset_top + button_height) < 10.0
+	# Check if panel is currently closed
+	var is_closed: bool = abs(operations_panel.offset_top + panel_closed_height) < 10.0
 
 	if is_closed:
-		# Close single remote first if it's open
-		var single_is_open: bool = abs(single_ops_remote.offset_top + single_panel_height) < 10.0
-		if single_is_open:
-			close_single_remote()
-		open_double_remote()
+		open_operations_panel()
 	else:
-		close_double_remote()
+		close_operations_panel()
 
-func toggle_single_remote() -> void:
-	if is_animating_single or is_animating_double:
+func open_operations_panel() -> void:
+	if is_animating_panel:
 		return
 
-	# Check if single remote is currently closed (showing only button)
-	var is_closed: bool = abs(single_ops_remote.offset_top + button_height) < 10.0
+	is_animating_panel = true
+	operations_close_button.text = "▼"
 
-	if is_closed:
-		# Close double remote first if it's open
-		var double_is_open: bool = abs(double_ops_remote.offset_top + double_panel_height) < 10.0
-		if double_is_open:
-			close_double_remote()
-		open_single_remote()
+	# Animate from closed to open
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(operations_panel, "offset_top", -panel_height, 0.3)
+	tween.finished.connect(func(): is_animating_panel = false)
+
+func close_operations_panel() -> void:
+	if is_animating_panel:
+		return
+
+	is_animating_panel = true
+	operations_close_button.text = "▲"
+
+	# Animate from open to closed
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(operations_panel, "offset_top", -panel_closed_height, 0.3)
+	tween.finished.connect(func(): is_animating_panel = false)
+
+func switch_to_tab(tab: String) -> void:
+	current_tab = tab
+
+	if tab == "double":
+		double_ops_container.visible = true
+		single_ops_container.visible = false
+		double_ops_tab.button_pressed = true
+		single_ops_tab.button_pressed = false
 	else:
-		close_single_remote()
-
-func open_double_remote() -> void:
-	if is_animating_double:
-		return
-
-	is_animating_double = true
-	double_toggle_button.text = "Double Ops ▼"
-
-	# Animate from -50 (button only) to -450 (full panel)
-	var tween = create_tween()
-	tween.set_ease(Tween.EASE_IN_OUT)
-	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.tween_property(double_ops_remote, "offset_top", -double_panel_height, 0.3)
-	tween.finished.connect(func(): is_animating_double = false)
-
-func close_double_remote() -> void:
-	if is_animating_double:
-		return
-
-	is_animating_double = true
-	double_toggle_button.text = "Double Ops ▲"
-
-	# Animate from -450 (full panel) to -50 (button only)
-	var tween = create_tween()
-	tween.set_ease(Tween.EASE_IN_OUT)
-	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.tween_property(double_ops_remote, "offset_top", -button_height, 0.3)
-	tween.finished.connect(func(): is_animating_double = false)
-
-func open_single_remote() -> void:
-	if is_animating_single:
-		return
-
-	is_animating_single = true
-	single_toggle_button.text = "Single Ops ▼"
-
-	# Animate from -50 (button only) to -600 (full panel)
-	var tween = create_tween()
-	tween.set_ease(Tween.EASE_IN_OUT)
-	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.tween_property(single_ops_remote, "offset_top", -single_panel_height, 0.3)
-	tween.finished.connect(func(): is_animating_single = false)
-
-func close_single_remote() -> void:
-	if is_animating_single:
-		return
-
-	is_animating_single = true
-	single_toggle_button.text = "Single Ops ▲"
-
-	# Animate from -600 (full panel) to -50 (button only)
-	var tween = create_tween()
-	tween.set_ease(Tween.EASE_IN_OUT)
-	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.tween_property(single_ops_remote, "offset_top", -button_height, 0.3)
-	tween.finished.connect(func(): is_animating_single = false)
+		double_ops_container.visible = false
+		single_ops_container.visible = true
+		double_ops_tab.button_pressed = false
+		single_ops_tab.button_pressed = true
 
 func start_silhouette_breathing() -> void:
 	"""Creates a subtle breathing animation for the silhouette sprite"""
@@ -430,9 +385,8 @@ func _on_rule_button_pressed(rule: String) -> void:
 	# Highlight the selected button
 	highlight_rule_button(rule)
 
-	# Close both remotes after selecting a rule
-	close_double_remote()
-	close_single_remote()
+	# Close operations panel after selecting a rule
+	close_operations_panel()
 
 func check_rule_application() -> void:
 	if selected_rule.is_empty():
@@ -654,22 +608,6 @@ func apply_logical_rule(rule: String, premises: Array[BooleanLogicEngine.Boolean
 			if premises.size() == 1:
 				return BooleanLogicEngine.apply_absorption(premises[0])
 			return BooleanLogicEngine.BooleanExpression.new("")
-		"NEG":  # Negation Laws: A∧¬A ≡ FALSE
-			if premises.size() == 1:
-				return BooleanLogicEngine.apply_negation_laws(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
-		"TAUT":  # Tautology Laws: A∨TRUE ≡ TRUE
-			if premises.size() == 1:
-				return BooleanLogicEngine.apply_tautology_laws(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
-		"CONTR":  # Contradiction Laws: A∧FALSE ≡ FALSE
-			if premises.size() == 1:
-				return BooleanLogicEngine.apply_contradiction_laws(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
-		"PAREN_REMOVE":  # Remove Parentheses: (P) ≡ P
-			if premises.size() == 1:
-				return BooleanLogicEngine.apply_parenthesis_removal(premises[0])
-			return BooleanLogicEngine.BooleanExpression.new("")
 
 		# Other single operation rules (special cases)
 		"ADD":  # Addition: P ⊢ P∨Q (needs additional expression)
@@ -768,9 +706,8 @@ func clear_rule_selection() -> void:
 func get_all_rule_buttons() -> Array[Button]:
 	var buttons: Array[Button] = []
 	# Add all rule buttons
-	buttons.append_array([mp_button, mt_button, hs_button, ds_button, cd_button, dn_button, imp_button, conv_button, eq_button, res_button])
-	buttons.append_array([simp_button, conj_button, add_button, dm_button, dist_button, comm_button, assoc_button, idemp_button])
-	buttons.append_array([abs_button, neg_button, taut_button, contr_button, dneg_button, paren_remove_button])
+	buttons.append_array([mp_button, mt_button, hs_button, ds_button, cd_button, dn_button, conj_button, eq_button, res_button])
+	buttons.append_array([simp_button, imp_button, conv_button, add_button, dm_button, dneg_button, dist_button, comm_button, assoc_button, idemp_button, abs_button])
 	return buttons
 
 func highlight_rule_button(rule: String) -> void:
@@ -799,11 +736,7 @@ func get_rule_button(rule: String) -> Button:
 		"ASSOC": return assoc_button
 		"IDEMP": return idemp_button
 		"ABS": return abs_button
-		"NEG": return neg_button
-		"TAUT": return taut_button
-		"CONTR": return contr_button
 		"DNEG": return dneg_button
-		"PAREN_REMOVE": return paren_remove_button
 		_: return null
 
 

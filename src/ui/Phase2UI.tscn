@@ -132,6 +132,7 @@ theme = SubResource("Theme_gxw17")
 
 [node name="TargetExpression" type="Label" parent="WorkContainer/TargetArea/ChatBubble/TargetContainer"]
 z_index = 10
+custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -217,362 +218,315 @@ theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DoubleOpsRemote" type="Panel" parent="."]
-custom_minimum_size = Vector2(280, 450)
+[node name="OperationsPanel" type="Panel" parent="."]
+custom_minimum_size = Vector2(700, 800)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -355.0
-offset_top = -205.0
-offset_right = -3.0
-offset_bottom = 386.0
+offset_left = -350.0
+offset_top = -70.0
+offset_right = 350.0
+offset_bottom = 730.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_remote")
 
-[node name="Header" type="HBoxContainer" parent="DoubleOpsRemote"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = 48.0
-grow_horizontal = 2
-theme_override_constants/separation = 8
-
-[node name="ToggleButton" type="Button" parent="DoubleOpsRemote/Header"]
-custom_minimum_size = Vector2(200, 40)
-layout_mode = 2
-size_flags_horizontal = 4
-theme = ExtResource("2_occ7e")
-theme_override_fonts/font = ExtResource("8_gxw17")
-theme_override_font_sizes/font_size = 18
-text = "▲"
-
-[node name="RemoteContainer" type="VBoxContainer" parent="DoubleOpsRemote"]
+[node name="MainContainer" type="VBoxContainer" parent="OperationsPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 12.0
-offset_top = 56.0
+offset_top = 12.0
 offset_right = -12.0
 offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 10
 
-[node name="ButtonsScroll" type="ScrollContainer" parent="DoubleOpsRemote/RemoteContainer"]
+[node name="Header" type="HBoxContainer" parent="OperationsPanel/MainContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="OperationsPanel/MainContainer/Header"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 24
+text = "Operations"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="OperationsPanel/MainContainer/Header"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 18
+text = "▲"
+
+[node name="TabContainer" type="HBoxContainer" parent="OperationsPanel/MainContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_constants/separation = 5
+alignment = 1
+
+[node name="DoubleOpsTab" type="Button" parent="OperationsPanel/MainContainer/TabContainer"]
+custom_minimum_size = Vector2(150, 45)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 18
+toggle_mode = true
+button_pressed = true
+text = "Double"
+
+[node name="SingleOpsTab" type="Button" parent="OperationsPanel/MainContainer/TabContainer"]
+custom_minimum_size = Vector2(150, 45)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 18
+toggle_mode = true
+text = "Single"
+
+[node name="ButtonsScroll" type="ScrollContainer" parent="OperationsPanel/MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="ButtonsContainer" type="VBoxContainer" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll"]
+[node name="DoubleOpsContainer" type="VBoxContainer" parent="OperationsPanel/MainContainer/ButtonsScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 5
 
-[node name="MPButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="MPButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Modus Ponens"
 
-[node name="MTButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="MTButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Modus Tollens"
 
-[node name="HSButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="HSButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Hypothetical Syllogism"
 
-[node name="DSButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="DSButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Disjunctive Syllogism"
 
-[node name="CDButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="CDButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Constructive Dilemma"
 
-[node name="DNButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="DNButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Double Negation"
 
-[node name="CONJButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="CONJButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Conjunction"
 
-[node name="EQButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="EQButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Equivalence"
 
-[node name="RESButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="RESButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "Resolution
-"
+text = "Resolution"
 
-[node name="SingleOpsRemote" type="Panel" parent="."]
-custom_minimum_size = Vector2(280, 600)
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = -207.0
-offset_right = 353.0
-offset_bottom = 533.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_remote")
-
-[node name="Header" type="HBoxContainer" parent="SingleOpsRemote"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = 48.0
-grow_horizontal = 2
-theme_override_constants/separation = 8
-
-[node name="ToggleButton" type="Button" parent="SingleOpsRemote/Header"]
-custom_minimum_size = Vector2(200, 40)
-layout_mode = 2
-size_flags_horizontal = 4
-theme = ExtResource("2_occ7e")
-theme_override_fonts/font = ExtResource("8_gxw17")
-theme_override_font_sizes/font_size = 18
-text = "▲"
-
-[node name="RemoteContainer" type="VBoxContainer" parent="SingleOpsRemote"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 56.0
-offset_right = -12.0
-offset_bottom = -12.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 5
-
-[node name="ButtonsScroll" type="ScrollContainer" parent="SingleOpsRemote/RemoteContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="ButtonsContainer" type="VBoxContainer" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll"]
+[node name="SingleOpsContainer" type="VBoxContainer" parent="OperationsPanel/MainContainer/ButtonsScroll"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 5
 
-[node name="SIMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="SIMPButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Simplification"
 
-[node name="IMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="IMPButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Implication"
 
-[node name="CONVButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="CONVButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Conversion"
 
-[node name="ADDButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="ADDButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "Addition
-"
+text = "Addition"
 
-[node name="DMButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="DMButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "De Morgan's Law"
 
-[node name="DNEGButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="DNEGButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Double Negation"
 
-[node name="DISTButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="DISTButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Distribution"
 
-[node name="COMMButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="COMMButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Commutative"
 
-[node name="ASSOCButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="ASSOCButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Associative"
 
-[node name="IDEMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="IDEMPButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Idempotent"
 
-[node name="ABSButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="ABSButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Absorption"
-
-[node name="PAREN_REMOVEButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-theme_override_fonts/font = ExtResource("8_gxw17")
-theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "( )"
-
-[node name="NEGButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "NEG"
-
-[node name="TAUTButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "TAUT"
-
-[node name="CONTRButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "CONTR"
 
 [node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]
 visible = false

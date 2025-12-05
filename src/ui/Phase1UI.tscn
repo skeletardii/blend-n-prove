@@ -120,7 +120,7 @@ offset_bottom = 412.0
 grow_horizontal = 2
 theme = ExtResource("6_wbgmg")
 
-[node name="PremiseChecklist" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble"]
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -131,8 +131,50 @@ offset_right = -35.0
 offset_bottom = -49.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 15
 
-[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
+[node name="VariableDefinitionsPanel" type="PanelContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("6_wbgmg")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("5_o5hkq")
+theme_override_font_sizes/font_size = 30
+text = "Variable Definitions:"
+
+[node name="DefinitionsScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("6_wbgmg")
+horizontal_scroll_mode = 0
+
+[node name="DefinitionsList" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer/DefinitionsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("6_wbgmg")
+theme_override_constants/separation = 3
+
+[node name="PremiseChecklist" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/PremiseChecklist"]
 layout_mode = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -140,12 +182,12 @@ theme_override_fonts/font = ExtResource("4_qjtox")
 theme_override_font_sizes/font_size = 30
 text = "Premises to reconstruct:"
 
-[node name="PremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist"]
+[node name="PremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/PremiseChecklist"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="PremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/PremiseChecklist/PremiseListScroll"]
+[node name="PremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/PremiseChecklist/PremiseListScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -181,13 +223,6 @@ offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="InputLabel" type="Label" parent="MainContainer/InputSystem/InputContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("4_qjtox")
-theme_override_font_sizes/font_size = 20
-text = "Current Input:"
-horizontal_alignment = 1
-
 [node name="InputField" type="Panel" parent="MainContainer/InputSystem/InputContainer"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
@@ -198,10 +233,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 95.0
-offset_top = -2.0
-offset_right = -90.0
-offset_bottom = -2.0
+offset_left = 87.0
+offset_top = 14.0
+offset_right = -79.0
+offset_bottom = 17.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_wbgmg")

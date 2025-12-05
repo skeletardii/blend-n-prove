@@ -1,6 +1,7 @@
 extends Control
 
 @onready var debug_panel: Panel = $DebugPanel
+@onready var debug_blur_overlay: ColorRect = $DebugBlurOverlay
 @onready var difficulty_slider: HSlider = $DebugPanel/DebugContainer/DifficultyContainer/DifficultySlider
 @onready var difficulty_value_label: Label = $DebugPanel/DebugContainer/DifficultyContainer/DifficultyValue
 @onready var infinite_patience_check: CheckBox = $DebugPanel/DebugContainer/InfinitePatienceCheck
@@ -62,6 +63,7 @@ func _input(event: InputEvent) -> void:
 			KEY_D:
 				# Toggle debug panel with 'D' key
 				debug_panel.visible = !debug_panel.visible
+				debug_blur_overlay.visible = debug_panel.visible
 			KEY_T:
 				# Run integration test with 'T' key
 				if debug_panel.visible:
