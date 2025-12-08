@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cnm685gopfxtf"]
 
 [ext_resource type="Script" uid="uid://485fcvl6hdf" path="res://src/ui/ProgressScene.gd" id="1_progress_script"]
-[ext_resource type="FontFile" uid="uid://c1fnar2v6mvb0" path="res://assets/fonts/MuseoSansRounded1000.otf" id="2_font"]
+[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_1000_with_fallback.tres" id="2_font"]
 [ext_resource type="StyleBox" uid="uid://s5te78mum416" path="res://assets/styles/dark_inventory_panel.tres" id="3_panel"]
 
 [node name="ProgressScene" type="Control"]

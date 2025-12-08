@@ -188,9 +188,33 @@ Q"
 
 [node name="TutorialHelpPanel" parent="UI" instance=ExtResource("2_tutorial_help")]
 visible = false
+layout_mode = 0
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 600.0
+offset_bottom = 600.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="HintPopup" parent="UI" instance=ExtResource("3_hint_popup")]
 visible = false
+layout_mode = 0
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 500.0
+offset_bottom = 600.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="PauseOverlay" type="CanvasLayer" parent="."]
 layer = 100

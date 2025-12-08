@@ -1,0 +1,6 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://b8jflamxp5tqw"]
+
+[ext_resource type="FontFile" uid="uid://cr8pnpks0ggeg" path="res://assets/fonts/TT Octosquares Trial DemiBold.ttf" id="1_octosquares"]
+
+[resource]
+base_font = ExtResource("1_octosquares")

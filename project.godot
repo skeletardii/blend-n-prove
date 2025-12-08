@@ -15,7 +15,7 @@ config/description="Educational game teaching boolean logic through industrial s
 config/version="0.1"
 run/main_scene="res://src/ui/BootScene.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="uid://c7v0r4e0livyo"
 
 [autoload]
 
@@ -29,6 +29,7 @@ TutorialManager="*res://src/game/autoloads/TutorialManager.gd"
 TutorialDataManager="*res://src/game/autoloads/TutorialDataManager.gd"
 UpdateCheckerService="*res://src/game/autoloads/UpdateCheckerService.gd"
 ManagerBootstrap="*res://src/core/ManagerBootstrap.gd"
+WebFontManager="*res://src/game/autoloads/WebFontManager.gd"
 
 [display]
 

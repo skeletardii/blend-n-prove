@@ -79,7 +79,7 @@ func create_fuel_label() -> void:
 		return
 
 	fuel_label = Label.new()
-	fuel_label.text = "🚀 Fuel"
+	fuel_label.text = "Rocket Fuel"
 	fuel_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	fuel_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	fuel_label.add_theme_font_size_override("font_size", 18)

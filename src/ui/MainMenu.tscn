@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://c8j6y3q5x2v8l" path="res://src/ui/BooleanAsteroidField.gd" id="2_asteroid"]
 [ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_ihbld"]
 [ext_resource type="Texture2D" uid="uid://onbkto0umar" path="res://assets/sprites/newlogo.png" id="4_ihbld"]
-[ext_resource type="FontFile" uid="uid://c1fnar2v6mvb0" path="res://assets/fonts/MuseoSansRounded1000.otf" id="5_dbyr8"]
+[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_1000_with_fallback.tres" id="5_dbyr8"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="5_u6542"]
 
 [sub_resource type="Gradient" id="Gradient_2wh52"]

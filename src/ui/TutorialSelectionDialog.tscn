@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://tutorial_selection_dialog"]
+[gd_scene load_steps=8 format=3 uid="uid://bj8bn2wrfa8f1"]
 
-[ext_resource type="Script" path="res://src/ui/TutorialSelectionDialog.gd" id="1_script"]
-[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="2_font"]
-[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="3_font_bold"]
+[ext_resource type="Script" uid="uid://ca3kel5dkd111" path="res://src/ui/TutorialSelectionDialog.gd" id="1_script"]
+
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(1, 1, 1, 1)
@@ -19,6 +18,13 @@ shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 15
 shadow_offset = Vector2(0, 5)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_cancel_normal"]
+bg_color = Color(0.8, 0.2, 0.2, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_start_normal"]
 bg_color = Color(0.1, 0.7, 0.3, 1)
 corner_radius_top_left = 10
@@ -28,13 +34,6 @@ corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_start_hover"]
 bg_color = Color(0.15, 0.8, 0.35, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_cancel_normal"]
-bg_color = Color(0.8, 0.2, 0.2, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -92,7 +91,6 @@ theme_override_constants/separation = 20
 [node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 40
 text = "Tutorial Title"
 horizontal_alignment = 1
@@ -112,8 +110,6 @@ theme_override_constants/separation = 15
 [node name="DescriptionLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer/ContentScroll/VBox"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0.2, 0.2, 0.2, 1)
-theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_fonts/bold_font = ExtResource("3_font_bold")
 theme_override_font_sizes/normal_font_size = 24
 theme_override_font_sizes/bold_font_size = 24
 bbcode_enabled = true
@@ -123,8 +119,6 @@ fit_content = true
 [node name="RulePatternLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer/ContentScroll/VBox"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0.1, 0.1, 0.5, 1)
-theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_fonts/bold_font = ExtResource("3_font_bold")
 theme_override_font_sizes/normal_font_size = 32
 theme_override_font_sizes/bold_font_size = 32
 bbcode_enabled = true
@@ -138,7 +132,6 @@ alignment = 1
 [node name="ProgressLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ProgressContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 20
 text = "Progress: 0/10 Completed"
 
@@ -150,7 +143,6 @@ alignment = 1
 [node name="CancelButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cancel_normal")
 text = "Cancel"
@@ -158,7 +150,6 @@ text = "Cancel"
 [node name="StartButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(250, 60)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_start_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_start_hover")

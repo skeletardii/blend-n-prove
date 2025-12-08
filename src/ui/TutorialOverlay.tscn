@@ -1,8 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://tutorial_overlay_001"]
 
 [ext_resource type="Script" path="res://src/ui/TutorialOverlay.gd" id="1"]
-[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="2_font"]
-[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="3_font_bold"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(1, 1, 1, 0.95)
@@ -95,8 +93,6 @@ theme_override_constants/margin_bottom = 80
 [node name="ExplanationLabel" type="RichTextLabel" parent="ExplanationPanel/MarginContainer"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0.15, 0.15, 0.15, 1)
-theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_fonts/bold_font = ExtResource("3_font_bold")
 theme_override_font_sizes/normal_font_size = 32
 theme_override_font_sizes/bold_font_size = 34
 bbcode_enabled = true
@@ -117,7 +113,6 @@ offset_right = -30.0
 offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 0
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
@@ -134,7 +129,6 @@ offset_right = -20.0
 offset_bottom = 70.0
 grow_horizontal = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")

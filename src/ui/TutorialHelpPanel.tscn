@@ -1,8 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://cq3k7m5xywb8k"]
 
-[ext_resource type="Script" path="res://src/ui/TutorialHelpPanel.gd" id="1_tutorial_help"]
-[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="2_font"]
-[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="3_font_bold"]
+[ext_resource type="Script" uid="uid://dtuwmpn0kw54i" path="res://src/ui/TutorialHelpPanel.gd" id="1_tutorial_help"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_panel"]
 bg_color = Color(0.97, 0.97, 0.99, 1)
@@ -19,6 +17,8 @@ shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 20
 shadow_offset = Vector2(0, 8)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_transparent"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
 bg_color = Color(0.25, 0.65, 1, 1)
 corner_radius_top_left = 12
@@ -28,16 +28,6 @@ corner_radius_bottom_left = 12
 shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 2
 shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0.35, 0.75, 1, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 3
-shadow_offset = Vector2(0, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
 bg_color = Color(0.15, 0.55, 0.9, 1)
@@ -49,7 +39,15 @@ shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 1
 shadow_offset = Vector2(0, 1)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_transparent"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.35, 0.75, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
 
 [node name="TutorialHelpPanel" type="Panel"]
 anchors_preset = 8
@@ -89,7 +87,6 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 [node name="RuleTitle" type="Label" parent="MarginContainer/VBoxContainer/RuleTitleContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.2, 0.4, 1)
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 35
 text = "Tutorial Rule Name"
 horizontal_alignment = 1
@@ -104,8 +101,6 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_fonts/bold_font = ExtResource("3_font_bold")
 theme_override_font_sizes/normal_font_size = 30
 theme_override_font_sizes/bold_font_size = 30
 bbcode_enabled = true
@@ -116,7 +111,6 @@ scroll_active = false
 [node name="ProblemNumberLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.2, 0.4, 1)
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 30
 text = "Problem 1/10 (Easy)"
 horizontal_alignment = 1
@@ -130,8 +124,6 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_fonts/bold_font = ExtResource("3_font_bold")
 theme_override_font_sizes/normal_font_size = 30
 theme_override_font_sizes/bold_font_size = 30
 bbcode_enabled = true
@@ -146,9 +138,8 @@ alignment = 1
 [node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "Close Help"
