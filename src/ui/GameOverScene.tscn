@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bcmuhrnjliwde"]
+[gd_scene load_steps=9 format=3 uid="uid://bcmuhrnjliwde"]
 
 [ext_resource type="Script" uid="uid://1pl6aae4iwul" path="res://src/ui/GameOverScene.gd" id="1_4w0zy"]
 [ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_shader"]
@@ -21,6 +21,21 @@ shader_parameter/shaking = true
 shader_parameter/amplitude = 1.0
 shader_parameter/noise_scale = 20.0
 shader_parameter/noise_speed = 20.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gameover"]
+bg_color = Color(0.95, 0.95, 0.95, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3, 0.3, 0.3, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_size = 8
+shadow_offset = Vector2(4, 4)
+shadow_color = Color(0, 0, 0, 0.3)
 
 [node name="GameOverScene" type="Control"]
 layout_mode = 3
@@ -66,6 +81,7 @@ offset_right = 400.0
 offset_bottom = 450.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gameover")
 
 [node name="GameOverContainer" type="VBoxContainer" parent="GameOverPanel"]
 layout_mode = 1

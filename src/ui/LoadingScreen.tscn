@@ -69,47 +69,56 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 40
+alignment = 1
 
 [node name="LoadingLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 56
+theme_override_font_sizes/font_size = 64
 text = "Loading..."
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="LoadingCircles" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 15
+size_flags_vertical = 4
+theme_override_constants/separation = 20
 alignment = 1
 
 [node name="Circle1" type="Panel" parent="CenterContainer/VBoxContainer/LoadingCircles"]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
+size_flags_vertical = 4
 
 [node name="Circle2" type="Panel" parent="CenterContainer/VBoxContainer/LoadingCircles"]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
+size_flags_vertical = 4
 
 [node name="Circle3" type="Panel" parent="CenterContainer/VBoxContainer/LoadingCircles"]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
+size_flags_vertical = 4
 
 [node name="Circle4" type="Panel" parent="CenterContainer/VBoxContainer/LoadingCircles"]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
+size_flags_vertical = 4
 
 [node name="Circle5" type="Panel" parent="CenterContainer/VBoxContainer/LoadingCircles"]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
+size_flags_vertical = 4
 
 [node name="TipLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(700, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 text = "Tip: Practice makes perfect!"
 horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3

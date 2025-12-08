@@ -16,21 +16,24 @@ signal dialog_cancelled()
 @onready var cancel_button: Button = $MarginContainer/VBoxContainer/ButtonContainer/CancelButton
 @onready var apply_button: Button = $MarginContainer/VBoxContainer/ButtonContainer/ApplyButton
 
-# Virtual Keyboard Button References
-@onready var var_p: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/VariableRow/VarP
-@onready var var_q: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/VariableRow/VarQ
-@onready var var_r: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/VariableRow/VarR
-@onready var var_s: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/VariableRow/VarS
-@onready var var_t: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/VariableRow/VarT
-@onready var and_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/OperatorRow/AndButton
-@onready var xor_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/OperatorRow/XorButton
-@onready var biconditional_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/OperatorRow/BiconditionalButton
-@onready var or_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/OperatorRow/OrButton
-@onready var implies_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/MixedRow/ImpliesButton
-@onready var open_paren_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/MixedRow/OpenParenButton
-@onready var close_paren_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/MixedRow/CloseParenButton
-@onready var not_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/MixedRow/NotButton
-@onready var backspace_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/MixedRow/BackspaceButton
+# Virtual Keyboard Button References - Updated for new layout
+@onready var var_p: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarP
+@onready var var_q: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarQ
+@onready var var_r: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarR
+@onready var var_s: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarS
+@onready var var_t: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarT
+
+@onready var and_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row2/AndButton
+@onready var or_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row2/OrButton
+@onready var implies_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row2/ImpliesButton
+@onready var not_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row2/NotButton
+
+@onready var open_paren_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row3/OpenParenButton
+@onready var close_paren_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row3/CloseParenButton
+@onready var xor_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row3/XorButton
+@onready var biconditional_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row3/BiconditionalButton
+
+@onready var backspace_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row4/BackspaceButton
 
 # Input state
 var current_input: String = ""
@@ -56,15 +59,15 @@ func connect_virtual_keyboard() -> void:
 
 	# Operator buttons
 	and_button.pressed.connect(_on_symbol_pressed.bind("∧"))
-	xor_button.pressed.connect(_on_symbol_pressed.bind("⊕"))
-	biconditional_button.pressed.connect(_on_symbol_pressed.bind("↔"))
 	or_button.pressed.connect(_on_symbol_pressed.bind("∨"))
 	implies_button.pressed.connect(_on_symbol_pressed.bind("→"))
-
-	# Parentheses and not
+	not_button.pressed.connect(_on_symbol_pressed.bind("¬"))
+	
+	# Advanced operators and parens
 	open_paren_button.pressed.connect(_on_symbol_pressed.bind("("))
 	close_paren_button.pressed.connect(_on_symbol_pressed.bind(")"))
-	not_button.pressed.connect(_on_symbol_pressed.bind("¬"))
+	xor_button.pressed.connect(_on_symbol_pressed.bind("⊕"))
+	biconditional_button.pressed.connect(_on_symbol_pressed.bind("↔"))
 
 	# Backspace
 	backspace_button.pressed.connect(_on_backspace_pressed)

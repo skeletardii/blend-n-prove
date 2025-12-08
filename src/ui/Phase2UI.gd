@@ -12,8 +12,26 @@ const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 @onready var premise_grid: GridContainer = $WorkContainer/InventoryArea/InventoryContainer/InventoryScroll/MarginContainer/PremiseGrid
 @onready var target_expression: Label = $WorkContainer/TargetArea/ChatBubble/TargetContainer/TargetExpression
 @onready var addition_dialog: Panel = $AdditionDialog
-@onready var silhouette: TextureRect = $Silhouette
+@onready var rocket: TextureRect = $WorkContainer/TargetArea/Rocket
+@onready var engine_particles: CPUParticles2D = $WorkContainer/TargetArea/Rocket/EngineParticles
 @onready var feedback_label: Label = $WorkContainer/InventoryArea/InventoryContainer/FeedbackLabel
+@onready var space_bg1: TextureRect = $WorkContainer/TargetArea/SpaceBG1
+@onready var space_bg2: TextureRect = $WorkContainer/TargetArea/SpaceBG2
+
+@onready var combo_container: VBoxContainer = $WorkContainer/TargetArea/ComboContainer
+@onready var combo_label: Label = $WorkContainer/TargetArea/ComboContainer/ComboLabel
+@onready var combo_line: ColorRect = $WorkContainer/TargetArea/ComboContainer/ComboLine
+
+# Particle State
+var normal_gradient: Gradient
+var boost_gradient: Gradient # 3x (Red/Orange)
+var blue_gradient: Gradient # 5x
+var purple_gradient: Gradient # 10x
+
+# Combo State
+var combo_count: int = 0
+var combo_timer: float = 0.0
+var combo_max_time: float = 8.0 # Generous time to keep combo
 
 # References passed from GameplayScene
 var score_display: Label = null
@@ -64,6 +82,19 @@ var panel_height: float = 800.0
 var panel_closed_height: float = 70.0
 var is_animating_panel: bool = false
 var current_tab: String = "double"  # "double" or "single"
+
+# Parallax Background State
+var bg_scroll_speed: float = 20.0  # Base scroll speed in pixels per second
+var bg_offset1: float = 0.0
+var bg_offset2: float = 0.0
+var rocket_speed_multiplier: float = 1.0  # Syncs with rocket ship speed
+
+# Rocket Animation State
+var rocket_base_x: float = 0.0  # Base X position (2/5 of width)
+var rocket_bobbing_time: float = 0.0  # Time accumulator for bobbing
+var rocket_target_offset: float = 0.0  # Target horizontal offset when speeding up
+var rocket_current_offset: float = 0.0  # Current smooth offset
+var rocket_wobble_offset: float = 0.0   # Wobble offset for damage
 
 # Signals for parent communication
 signal rule_applied(result: BooleanExpression)
@@ -120,7 +151,8 @@ func _ready() -> void:
 	connect_rule_buttons()
 	connect_addition_dialog()
 	connect_toggle_buttons()
-	start_silhouette_breathing()
+	initialize_parallax_background()
+	initialize_rocket()
 
 	# Initialize operations panel (starts collapsed)
 	operations_panel.visible = true
@@ -130,6 +162,240 @@ func _ready() -> void:
 	single_ops_container.visible = false
 	double_ops_tab.button_pressed = true
 	single_ops_tab.button_pressed = false
+
+	# Initialize particle gradients
+	if engine_particles:
+		normal_gradient = engine_particles.color_ramp
+		
+		# Create boost gradient (Reddish-Orange to Transparent)
+		boost_gradient = Gradient.new()
+		boost_gradient.add_point(0.0, Color(1, 0.27, 0, 1))
+		boost_gradient.add_point(1.0, Color(1, 0.27, 0, 0))
+		
+		# Blue Gradient (5x)
+		blue_gradient = Gradient.new()
+		blue_gradient.add_point(0.0, Color(0, 0.5, 1, 1))
+		blue_gradient.add_point(1.0, Color(0, 0.5, 1, 0))
+
+		# Purple Gradient (10x)
+		purple_gradient = Gradient.new()
+		purple_gradient.add_point(0.0, Color(0.8, 0, 1, 1))
+		purple_gradient.add_point(1.0, Color(0.8, 0, 1, 0))
+	
+	# Initialize particle size/speed
+	set_rocket_speed(1.0)
+
+func initialize_parallax_background() -> void:
+	"""Initialize the parallax scrolling background"""
+	if not space_bg1 or not space_bg2:
+		return
+
+	# Get the width of the background texture to calculate seamless looping
+	await get_tree().process_frame  # Wait for layout to update
+	var bg_width = space_bg1.size.x
+
+	# Position the second background to the right of the first
+	bg_offset1 = 0.0
+	bg_offset2 = bg_width
+
+	space_bg1.position.x = bg_offset1
+	space_bg2.position.x = bg_offset2
+
+func _process(delta: float) -> void:
+	"""Update parallax background scrolling and rocket animation every frame"""
+	update_parallax_background(delta)
+	update_rocket_animation(delta)
+
+	# Update combo timer
+	if combo_count >= 2:
+		combo_timer -= delta
+		if combo_timer <= 0:
+			reset_combo_penalty()
+		else:
+			# Update bar width based on percentage
+			if combo_line:
+				var max_width = 130.0
+				combo_line.custom_minimum_size.x = max_width * (combo_timer / combo_max_time)
+
+func update_parallax_background(delta: float) -> void:
+	"""Scroll the background from right to left in a seamless loop"""
+	if not space_bg1 or not space_bg2:
+		return
+
+	# Calculate effective scroll speed (base speed * rocket speed multiplier)
+	var effective_speed = bg_scroll_speed * rocket_speed_multiplier
+
+	# Move both backgrounds to the left
+	bg_offset1 -= effective_speed * delta
+	bg_offset2 -= effective_speed * delta
+
+	# Get the width for seamless wrapping
+	var bg_width = space_bg1.size.x
+
+	# Wrap around when a background goes off-screen to the left
+	if bg_offset1 <= -bg_width:
+		bg_offset1 = bg_offset2 + bg_width
+	if bg_offset2 <= -bg_width:
+		bg_offset2 = bg_offset1 + bg_width
+
+	# Apply the positions
+	space_bg1.position.x = bg_offset1
+	space_bg2.position.x = bg_offset2
+
+func set_rocket_speed(speed_multiplier: float) -> void:
+	"""Update the background scroll speed based on rocket ship velocity"""
+	rocket_speed_multiplier = speed_multiplier
+
+	# Calculate target offset based on speed boost
+	# When speed > 1.0, rocket moves right; when speed returns to 1.0, it returns to base
+	if speed_multiplier > 1.0:
+		# Move right proportional to speed boost (max 100px offset at 3x speed)
+		rocket_target_offset = min((speed_multiplier - 1.0) * 50.0, 100.0)
+		
+		# Boost particles (Intensity)
+		if engine_particles:
+			engine_particles.amount = 400
+			engine_particles.lifetime = 3.0
+			engine_particles.initial_velocity_min = 800.0
+			engine_particles.initial_velocity_max = 1200.0
+			engine_particles.scale_amount_min = 15.0
+			engine_particles.scale_amount_max = 30.0
+	else:
+		rocket_target_offset = 0.0
+		
+		# Normal particles (Intensity)
+		if engine_particles:
+			engine_particles.amount = 200
+			engine_particles.lifetime = 2.0
+			engine_particles.initial_velocity_min = 400.0
+			engine_particles.initial_velocity_max = 600.0
+			engine_particles.scale_amount_min = 10.0
+			engine_particles.scale_amount_max = 20.0
+	
+	# Update color
+	update_particle_color()
+
+func initialize_rocket() -> void:
+	"""Initialize rocket position at 2/5 of the horizontal width, vertically centered"""
+	if not rocket:
+		return
+
+	# Wait for layout to be calculated
+	await get_tree().process_frame
+
+	# Get the TargetArea size to calculate 2/5 position
+	var target_area = rocket.get_parent() as Control
+	if target_area:
+		var area_width = target_area.size.x
+		# Position at 2/5 (40%) of the width from left
+		rocket_base_x = area_width * 0.4
+
+		# Set initial position (will be centered due to anchors)
+		# Offset from center to move to 2/5 position
+		var center_to_base = rocket_base_x - (area_width * 0.5)
+		rocket.offset_left = center_to_base - 50.0
+		rocket.offset_right = center_to_base + 50.0
+
+func update_rocket_animation(delta: float) -> void:
+	"""Update rocket bobbing and speed-based movement"""
+	if not rocket:
+		return
+
+	# Accumulate time for bobbing animation
+	rocket_bobbing_time += delta
+
+	# Bobbing left-right motion using sine wave (subtle movement, ±15px)
+	var bobbing_offset = sin(rocket_bobbing_time * 1.5) * 15.0
+
+	# Smoothly interpolate current offset towards target offset (ease in/out)
+	var ease_speed = 2.0  # Adjust for faster/slower easing
+	rocket_current_offset = lerp(rocket_current_offset, rocket_target_offset, delta * ease_speed)
+
+	# Get the TargetArea size to recalculate base position (in case of resize)
+	var target_area = rocket.get_parent() as Control
+	if target_area:
+		var area_width = target_area.size.x
+		rocket_base_x = area_width * 0.4
+		var center_to_base = rocket_base_x - (area_width * 0.5)
+
+		# Apply combined offset: base position + bobbing + speed offset + wobble
+		var total_offset = center_to_base + bobbing_offset + rocket_current_offset + rocket_wobble_offset
+		rocket.offset_left = total_offset - 50.0
+		rocket.offset_right = total_offset + 50.0
+
+func increment_combo() -> void:
+	combo_count += 1
+	if combo_count < 2:
+		combo_count = 2 # Start streak at 2x
+	
+	combo_timer = combo_max_time
+	
+	# Update UI
+	if combo_container:
+		combo_container.visible = true
+		combo_label.text = str(combo_count) + "x"
+		combo_label.modulate = Color.WHITE
+		combo_line.modulate = Color.WHITE
+		combo_line.custom_minimum_size.x = 130.0 # Reset bar
+		
+		# Pop animation
+		var tween = create_tween()
+		tween.tween_property(combo_label, "scale", Vector2(1.5, 1.5), 0.1)
+		tween.tween_property(combo_label, "scale", Vector2(1.0, 1.0), 0.1)
+	
+	# Update Particle Color
+	update_particle_color()
+	
+	# Update Speed
+	var new_speed = 1.0 + (float(combo_count) * 0.1)
+	set_rocket_speed(new_speed)
+
+func reset_combo_penalty() -> void:
+	if combo_count < 2:
+		return # Already reset or low
+		
+	# Visual fail feedback
+	if combo_container:
+		combo_label.modulate = Color.RED
+		combo_line.modulate = Color.RED
+		
+		var tween = create_tween()
+		tween.tween_property(combo_container, "modulate:a", 0.0, 0.5)
+		tween.finished.connect(func(): 
+			combo_container.visible = false
+			combo_container.modulate.a = 1.0
+		)
+	
+	combo_count = 0
+	set_rocket_speed(1.0)
+	
+	# Gameplay Penalty
+	apply_fuel_penalty()
+	trigger_damage_wobble()
+
+func trigger_damage_wobble() -> void:
+	var tween = create_tween()
+	# Move left quickly
+	tween.tween_property(self, "rocket_wobble_offset", -30.0, 0.1).set_trans(Tween.TRANS_ELASTIC)
+	# Shake/Wobble back to 0
+	tween.tween_property(self, "rocket_wobble_offset", 10.0, 0.1)
+	tween.tween_property(self, "rocket_wobble_offset", -5.0, 0.1)
+	tween.tween_property(self, "rocket_wobble_offset", 0.0, 0.2).set_ease(Tween.EASE_OUT)
+
+func update_particle_color() -> void:
+	if not engine_particles:
+		return
+		
+	var target_gradient = normal_gradient
+	
+	if combo_count >= 10:
+		target_gradient = purple_gradient
+	elif combo_count >= 5:
+		target_gradient = blue_gradient
+	elif combo_count >= 3:
+		target_gradient = boost_gradient
+	
+	engine_particles.color_ramp = target_gradient
 
 func connect_rule_buttons() -> void:
 	# Double operation buttons
@@ -228,32 +494,6 @@ func switch_to_tab(tab: String) -> void:
 		single_ops_container.visible = true
 		double_ops_tab.button_pressed = false
 		single_ops_tab.button_pressed = true
-
-func start_silhouette_breathing() -> void:
-	"""Creates a subtle breathing animation for the silhouette sprite"""
-	if not silhouette:
-		return
-
-	# Set the pivot point to center bottom (feet stay grounded while body breathes)
-	silhouette.pivot_offset = Vector2(silhouette.size.x / 2, silhouette.size.y)
-
-	# Create infinite looping tween for breathing
-	var breathe_tween = create_tween()
-	breathe_tween.set_loops()  # Infinite loop
-
-	# Breathing cycle parameters (based on natural breathing: ~4-5 seconds per cycle)
-	var inhale_duration = 2.0  # 2 seconds to inhale
-	var exhale_duration = 2.5  # 2.5 seconds to exhale
-	var inhale_scale = Vector2(1.02, 1.03)  # Slight vertical expansion (chest rises)
-	var exhale_scale = Vector2(1.0, 1.0)  # Return to normal
-
-	# Inhale: Expand slightly (chest/torso rises)
-	breathe_tween.tween_property(silhouette, "scale", inhale_scale, inhale_duration) \
-		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
-
-	# Exhale: Return to normal size
-	breathe_tween.tween_property(silhouette, "scale", exhale_scale, exhale_duration) \
-		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
 
 func set_premises_and_target(premises: Array[BooleanExpression], target: String) -> void:
 	# Clean all premises before adding to inventory
@@ -441,6 +681,8 @@ func apply_rule() -> void:
 			create_premise_cards()
 			ProgressTracker.record_operation_used(rule_def.name, true)
 			clear_selections()
+			
+			increment_combo()
 
 			var result_text = str(added_results.size()) + " result" + ("s" if added_results.size() > 1 else "")
 			show_feedback("✓ " + rule_def.name + ": " + result_text, Color.GREEN, false)
@@ -461,7 +703,7 @@ func apply_rule() -> void:
 			clear_selections()
 			show_feedback("✗ No valid results", Color.RED, false)
 			# Penalty: lose fuel and reset combo
-			apply_fuel_penalty()
+			reset_combo_penalty()
 			# Don't auto-open remotes on failure
 		return
 
@@ -481,6 +723,8 @@ func apply_rule() -> void:
 
 		# Clear selections
 		clear_selections()
+		
+		increment_combo()
 
 		show_feedback("✓ " + rule_def.name, Color.GREEN, false)
 		rule_applied.emit(cleaned_result)
@@ -498,7 +742,7 @@ func apply_rule() -> void:
 		clear_selections()
 		show_feedback("✗ Cannot apply " + rule_def.name, Color.RED, false)
 		# Penalty: lose fuel and reset combo
-		apply_fuel_penalty()
+		reset_combo_penalty()
 		# Don't auto-open remotes on failure
 
 func apply_logical_rule_multi(rule: String, premises: Array[BooleanExpression]) -> Array:
@@ -804,6 +1048,8 @@ func _on_addition_dialog_confirmed(expr_text: String) -> void:
 
 		# Clear selections
 		clear_selections()
+		
+		increment_combo()
 
 		show_feedback("✓ Addition", Color.GREEN, false)
 		rule_applied.emit(cleaned_result)
@@ -820,7 +1066,7 @@ func _on_addition_dialog_confirmed(expr_text: String) -> void:
 		clear_selections()
 		show_feedback("✗ Addition failed", Color.RED, false)
 		# Penalty: lose fuel and reset combo
-		apply_fuel_penalty()
+		reset_combo_penalty()
 
 func _on_addition_dialog_cancelled() -> void:
 	# User cancelled the Addition dialog

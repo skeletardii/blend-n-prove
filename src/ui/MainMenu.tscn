@@ -72,6 +72,7 @@ grow_vertical = 2
 script = ExtResource("2_asteroid")
 
 [node name="MenuContainer" type="VBoxContainer" parent="."]
+z_index = 10
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -219,6 +220,7 @@ z_index = 98
 
 [node name="DebugPanel" type="Panel" parent="."]
 visible = false
+z_index = 99
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -231,7 +233,6 @@ offset_right = 300.0
 offset_bottom = 400.0
 grow_horizontal = 2
 grow_vertical = 2
-z_index = 99
 
 [node name="DebugContainer" type="VBoxContainer" parent="DebugPanel"]
 layout_mode = 1
@@ -357,6 +358,7 @@ text = "CLOSE"
 
 [node name="SettingsPanel" type="Panel" parent="."]
 visible = false
+z_index = 20
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -482,6 +484,7 @@ theme_override_font_sizes/font_size = 48
 text = "CLOSE"
 
 [node name="QuickStatsPanel" type="VBoxContainer" parent="."]
+z_index = 10
 layout_mode = 0
 offset_left = 14.0
 offset_top = -86.0

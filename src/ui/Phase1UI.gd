@@ -245,7 +245,7 @@ func update_variable_definitions() -> void:
 	# Extract variable definitions from natural language premises
 	# Pattern: "text (X)" or "text (¬X)" where X is a variable letter
 	var regex = RegEx.new()
-	regex.compile("\\(([¬]?[A-Z])\\)")
+	regex.compile("\\(\\s*([¬]?[A-Z])\\s*\\)")
 
 	var definitions: Dictionary = {}
 	for premise in current_customer.natural_language_premises:
@@ -315,7 +315,7 @@ func update_premise_checklist() -> void:
 		for i in range(display_premises.size()):
 			# Use regex to remove parenthesis with variable symbols
 			var regex = RegEx.new()
-			regex.compile("\\s*\\([¬]?[A-Z]\\)")
+			regex.compile("\\s*\\(\\s*[¬]?[A-Z]\\s*\\)")
 			display_premises[i] = regex.sub(display_premises[i], "", true)
 	else:
 		# Levels 1-5: Show logical symbols

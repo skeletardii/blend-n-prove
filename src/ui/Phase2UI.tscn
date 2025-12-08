@@ -1,12 +1,17 @@
-[gd_scene load_steps=14 format=3 uid="uid://c5oyjk8p0w8x4"]
+[gd_scene load_steps=17 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
 [ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_occ7e"]
+[ext_resource type="Texture2D" uid="uid://uaewt5lwfaa6" path="res://assets/sprites/rocketsprite.png" id="3_rocketsprite"]
+[ext_resource type="Texture2D" uid="uid://b4vqkomx2ejnw" path="res://assets/sprites/spacebg.jpg" id="3_spacebg"]
 [ext_resource type="Script" uid="uid://6us7btkgp6wo" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
 [ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="6_eptc2"]
 [ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="7_d87rg"]
 [ext_resource type="FontFile" uid="uid://bx0fmm2ck5w42" path="res://assets/fonts/MuseoSansRounded900.otf" id="8_gxw17"]
+
+[sub_resource type="Gradient" id="Gradient_rocket_fuel"]
+colors = PackedColorArray(1, 0.647059, 0, 1, 1, 0.270588, 0, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chat_bubble"]
 bg_color = Color(0, 0, 0, 0.7)
@@ -65,6 +70,17 @@ shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 3
 shadow_offset = Vector2(2, 2)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_inventory"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.5, 0.5, 1)
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 5
+shadow_offset = Vector2(2, 3)
+
 [node name="Phase2UI" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -85,7 +101,7 @@ offset_right = -10.0
 offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = -1
 
 [node name="PhaseLabel" type="Label" parent="WorkContainer"]
 layout_mode = 2
@@ -98,6 +114,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="TargetArea" type="Control" parent="WorkContainer"]
+clip_contents = true
 custom_minimum_size = Vector2(0, 600)
 layout_mode = 2
 size_flags_vertical = 3
@@ -105,15 +122,103 @@ size_flags_stretch_ratio = 0.4
 script = ExtResource("4_speechbubble")
 bubble_color = Color(1, 1, 1, 0)
 
+[node name="SpaceBG1" type="TextureRect" parent="WorkContainer/TargetArea"]
+texture_repeat = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_spacebg")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="SpaceBG2" type="TextureRect" parent="WorkContainer/TargetArea"]
+texture_repeat = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_spacebg")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="Rocket" type="TextureRect" parent="WorkContainer/TargetArea"]
+z_index = 5
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_right = 50.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.5708
+pivot_offset = Vector2(50, 50)
+texture = ExtResource("3_rocketsprite")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EngineParticles" type="CPUParticles2D" parent="WorkContainer/TargetArea/Rocket"]
+position = Vector2(50, 95)
+rotation = -1.5708
+amount = 200
+lifetime = 2.0
+local_coords = false
+randomness = 0.2
+lifetime_randomness = 0.3
+emission_shape = 1
+emission_sphere_radius = 5.0
+direction = Vector2(-1, 0)
+spread = 15.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 400.0
+initial_velocity_max = 600.0
+scale_amount_min = 10.0
+scale_amount_max = 20.0
+color_ramp = SubResource("Gradient_rocket_fuel")
+
+[node name="ComboContainer" type="VBoxContainer" parent="WorkContainer/TargetArea"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 80.0
+grow_horizontal = 0
+
+[node name="ComboLabel" type="Label" parent="WorkContainer/TargetArea/ComboContainer"]
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
+text = "2x"
+horizontal_alignment = 2
+
+[node name="ComboLine" type="ColorRect" parent="WorkContainer/TargetArea/ComboContainer"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+color = Color(1, 1, 1, 1)
+
 [node name="ChatBubble" type="Panel" parent="WorkContainer/TargetArea"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1.0
-offset_top = 471.0
-offset_right = -5.0
-offset_bottom = 6.0
+offset_left = 2.0
+offset_top = 447.0
+offset_right = -4.0
+offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_chat_bubble")
@@ -148,6 +253,7 @@ autowrap_mode = 3
 text_overrun_behavior = 3
 
 [node name="InventoryArea" type="Panel" parent="WorkContainer"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_inventory")
 custom_minimum_size = Vector2(720, 1000)
 layout_mode = 2
 size_flags_vertical = 3

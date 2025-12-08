@@ -54,6 +54,7 @@ var speed_boost: float = 0.0  # Temporary boost from clean solutions
 var combo_count: int = 0  # Consecutive correct answers
 var fuel_consumption_rate: float = 1.0  # Base consumption per second
 var score_accumulator: float = 0.0  # Accumulates score over time
+var is_first_customer: bool = true  # Track if this is the first customer to initialize fuel
 
 # First-time tutorial
 var tutorial_overlay: CanvasLayer = null
@@ -171,6 +172,10 @@ func update_fuel_system(delta: float) -> void:
 	# Calculate current speed (base + boost)
 	current_speed = base_speed + speed_boost
 
+	# Update Phase2UI background scroll speed to match rocket speed
+	if current_phase_instance and current_phase_instance.has_method("set_rocket_speed"):
+		current_phase_instance.set_rocket_speed(current_speed)
+
 	# Consume fuel
 	fuel -= delta * fuel_consumption_rate * score_multiplier
 	fuel = max(0.0, fuel)
@@ -276,16 +281,20 @@ func convert_premises_and_skip_to_phase2() -> void:
 		if expr.is_valid:
 			validated_premises.append(expr)
 
-	# Initialize fuel system (same as Phase 1 would do)
+	# Update patience timer for new customer (but keep fuel as-is for subsequent customers)
 	patience_timer = current_customer.patience_duration
 	max_patience = current_customer.patience_duration
-	fuel = 100.0  # Start with full fuel
-	max_fuel = 100.0
-	combo_count = 0
-	speed_boost = 0.0
-	current_speed = 1.0
-	score_accumulator = 0.0
 	patience_bar.visible = true
+
+	# Initialize fuel system only for the first customer
+	if is_first_customer:
+		fuel = 100.0  # Start with full fuel
+		max_fuel = 100.0
+		combo_count = 0
+		speed_boost = 0.0
+		current_speed = 1.0
+		score_accumulator = 0.0
+		is_first_customer = false  # Mark that first customer has been initialized
 
 	# Go directly to Phase 2
 	switch_to_phase2()
@@ -316,16 +325,20 @@ func switch_to_phase1() -> void:
 	# Reset validated premises
 	validated_premises.clear()
 
-	# Start fuel system for Phase 1
+	# Update patience timer for new customer
 	patience_timer = current_customer.patience_duration
 	max_patience = current_customer.patience_duration
-	fuel = 100.0  # Start with full fuel
-	max_fuel = 100.0
-	combo_count = 0
-	speed_boost = 0.0
-	current_speed = 1.0
-	score_accumulator = 0.0
 	patience_bar.visible = true
+
+	# Initialize fuel system only for the first customer
+	if is_first_customer:
+		fuel = 100.0  # Start with full fuel
+		max_fuel = 100.0
+		combo_count = 0
+		speed_boost = 0.0
+		current_speed = 1.0
+		score_accumulator = 0.0
+		is_first_customer = false  # Mark that first customer has been initialized
 
 func switch_to_phase2() -> void:
 	GameManager.change_phase(GameManager.GamePhase.TRANSFORMING_PREMISES)
@@ -333,29 +346,33 @@ func switch_to_phase2() -> void:
 	# Change background to Phase 2
 	change_background(GameManager.GamePhase.TRANSFORMING_PREMISES)
 
-	# Clear current phase
-	if current_phase_instance:
-		current_phase_instance.queue_free()
-		current_phase_instance = null
+	# Check if we're already in Phase 2 - if so, just update premises instead of recreating scene
+	var already_in_phase2 = current_phase_instance != null and current_phase_instance.has_method("set_premises_and_target")
 
-	# Load Phase 2
-	current_phase_instance = phase2_scene.instantiate()
-	phase_container.add_child(current_phase_instance)
+	if not already_in_phase2:
+		# Clear current phase (Phase 1)
+		if current_phase_instance:
+			current_phase_instance.queue_free()
+			current_phase_instance = null
 
-	# Pass score display and patience timer references
-	current_phase_instance.score_display = score_display
-	current_phase_instance.patience_timer = patience_timer
+		# Load Phase 2 for the first time
+		current_phase_instance = phase2_scene.instantiate()
+		phase_container.add_child(current_phase_instance)
 
-	# Connect Phase 2 signals
-	current_phase_instance.rule_applied.connect(_on_rule_applied)
-	current_phase_instance.target_reached.connect(_on_target_reached)
-	current_phase_instance.feedback_message.connect(_on_feedback_message)
+		# Pass score display and patience timer references
+		current_phase_instance.score_display = score_display
+		current_phase_instance.patience_timer = patience_timer
 
-	# Connect tutorial signals if in first-time tutorial
-	if GameManager.is_first_time_tutorial and tutorial_manager:
-		connect_phase2_tutorial_signals()
+		# Connect Phase 2 signals
+		current_phase_instance.rule_applied.connect(_on_rule_applied)
+		current_phase_instance.target_reached.connect(_on_target_reached)
+		current_phase_instance.feedback_message.connect(_on_feedback_message)
 
-	# Pass premises and target to Phase 2
+		# Connect tutorial signals if in first-time tutorial
+		if GameManager.is_first_time_tutorial and tutorial_manager:
+			connect_phase2_tutorial_signals()
+
+	# Update premises and target (whether new scene or existing scene)
 	# For Level 6, also pass natural language conclusion for display
 	if current_customer.is_natural_language:
 		current_phase_instance.set_premises_and_target_with_display(
