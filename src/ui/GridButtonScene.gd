@@ -1,8 +1,11 @@
 extends Control
 
 const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
+const TutorialSelectionDialogScene = preload("res://src/ui/TutorialSelectionDialog.tscn")
 
-@onready var back_button: Button = $MainContainer/BackButton
+@onready var back_button: Button = $MainContainer/HeaderPanel/BackButton
+@onready var button_grid: VBoxContainer = $MainContainer/ScrollContainer/MarginContainer/ButtonGrid
+
 var tutorial_explanation_dialog: Control = null
 
 func _ready() -> void:
@@ -24,7 +27,7 @@ func _ready() -> void:
 func setup_tutorial_buttons() -> void:
 	# Setup all grid buttons with tutorial names and completion status
 	for i in range(1, 19):
-		var button = $MainContainer/ScrollContainer/ButtonGrid.get_node("Button" + str(i)) as Button
+		var button = button_grid.get_node_or_null("Button" + str(i)) as Button
 		if button:
 			update_button_display(button, i)
 			if not button.pressed.is_connected(_on_grid_button_pressed):
@@ -42,28 +45,31 @@ func update_button_display(button: Button, button_index: int) -> void:
 		# Format: "Modus Ponens\n7/10" or "Modus Ponens\n✓"
 		var button_text: String = display_name
 		if is_completed:
-			button_text += "\n✓ Completed"
+			button_text += "\nCompleted"
 		elif progress > 0:
 			button_text += "\n" + str(progress) + "/" + str(total)
-		else:
-			button_text += "\n0/" + str(total)
-
+		
 		button.text = button_text
 
 		# Color code based on completion
 		if is_completed:
-			button.modulate = Color(0.5, 1.0, 0.5)  # Green tint
+			button.modulate = Color(0.8, 1.0, 0.8)  # Light Green tint
 		elif progress > 0:
-			button.modulate = Color(1.0, 1.0, 0.7)  # Yellow tint
+			button.modulate = Color(1.0, 1.0, 0.9)  # Light Yellow tint
 		else:
 			button.modulate = Color(1.0, 1.0, 1.0)  # Normal
+			
+		button.disabled = false
 	else:
-		button.text = "Button " + str(button_index)
+		# Hide unused buttons or style them as "Coming Soon"
+		button.text = "Coming Soon"
+		button.disabled = true
+		button.modulate = Color(1, 1, 1, 0.5)
 
 func _on_progress_updated() -> void:
 	# Refresh all button displays when progress changes
 	for i in range(1, 19):
-		var button = $MainContainer/ScrollContainer/ButtonGrid.get_node("Button" + str(i)) as Button
+		var button = button_grid.get_node_or_null("Button" + str(i)) as Button
 		if button:
 			update_button_display(button, i)
 
@@ -77,89 +83,19 @@ func _on_grid_button_pressed(button_number: int) -> void:
 
 	if tutorial:
 		show_tutorial_explanation(tutorial)
-	else:
-		print("No tutorial found for button: ", button_number)
 
 func show_tutorial_explanation(tutorial: TutorialDataTypes.TutorialData) -> void:
-	# Create explanation dialog
-	tutorial_explanation_dialog = create_explanation_dialog(tutorial)
-	add_child(tutorial_explanation_dialog)
-
-func create_explanation_dialog(tutorial: TutorialDataTypes.TutorialData) -> Control:
-	# Create a modal dialog
-	var dialog: Control = Control.new()
-	dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	dialog.mouse_filter = Control.MOUSE_FILTER_STOP
-
-	# Semi-transparent background
-	var bg: ColorRect = ColorRect.new()
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0, 0, 0, 0.7)
-	dialog.add_child(bg)
-
-	# Content panel
-	var panel: Panel = Panel.new()
-	panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	panel.custom_minimum_size = Vector2(600, 500)
-	panel.position = Vector2(-300, -250)
-	dialog.add_child(panel)
-
-	# VBoxContainer for content
-	var vbox: VBoxContainer = VBoxContainer.new()
-	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	vbox.add_theme_constant_override("separation", 20)
-	panel.add_child(vbox)
-
-	# Title
-	var title: Label = Label.new()
-	title.text = tutorial.rule_name
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 32)
-	vbox.add_child(title)
-
-	# Description with enhanced formatting
-	var desc: RichTextLabel = RichTextLabel.new()
-	desc.bbcode_enabled = true
-	desc.fit_content = true
-	desc.text = "[center][color=cyan][b]═══ HOW IT WORKS ═══[/b][/color][/center]\n\n" + \
-		tutorial.description + \
-		"\n\n[center][color=yellow][b]═══ RULE PATTERN ═══[/b][/color][/center]\n" + \
-		"[center][font_size=24][b]" + tutorial.rule_pattern + "[/b][/font_size][/center]\n\n" + \
-		"[center][color=lime][i]You'll practice this rule through 10 problems of increasing difficulty![/i][/color][/center]"
-	desc.custom_minimum_size = Vector2(0, 300)
-	desc.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	desc.scroll_active = true
-	vbox.add_child(desc)
-
-	# Progress info
-	var progress_label: Label = Label.new()
+	# Create explanation dialog from scene
+	var dialog = TutorialSelectionDialogScene.instantiate()
+	add_child(dialog)
+	tutorial_explanation_dialog = dialog
+	
 	var progress: int = TutorialDataManager.get_tutorial_progress(tutorial.tutorial_key)
 	var total: int = tutorial.problems.size()
-	progress_label.text = "Progress: " + str(progress) + "/" + str(total) + " problems completed"
-	progress_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(progress_label)
-
-	# Buttons container
-	var button_box: HBoxContainer = HBoxContainer.new()
-	button_box.alignment = BoxContainer.ALIGNMENT_CENTER
-	button_box.add_theme_constant_override("separation", 20)
-	vbox.add_child(button_box)
-
-	# Start Tutorial button
-	var start_btn: Button = Button.new()
-	start_btn.text = "Start Tutorial"
-	start_btn.custom_minimum_size = Vector2(200, 50)
-	start_btn.pressed.connect(_on_start_tutorial.bind(tutorial))
-	button_box.add_child(start_btn)
-
-	# Cancel button
-	var cancel_btn: Button = Button.new()
-	cancel_btn.text = "Cancel"
-	cancel_btn.custom_minimum_size = Vector2(200, 50)
-	cancel_btn.pressed.connect(_on_cancel_tutorial)
-	button_box.add_child(cancel_btn)
-
-	return dialog
+	
+	dialog.setup(tutorial, progress, total)
+	dialog.start_requested.connect(_on_start_tutorial)
+	dialog.cancel_requested.connect(_on_cancel_tutorial)
 
 func _on_start_tutorial(tutorial: TutorialDataTypes.TutorialData) -> void:
 	AudioManager.play_button_click()

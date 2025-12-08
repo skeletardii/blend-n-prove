@@ -72,8 +72,8 @@ func _create_blur_overlay() -> void:
 	# Create semi-transparent overlay behind the popup
 	if blur_overlay == null:
 		blur_overlay = ColorRect.new()
-		blur_overlay.color = Color(0, 0, 0, 0.5)  # Semi-transparent black
-		blur_overlay.z_index = 98  # Behind the panel
+		blur_overlay.color = Color(0.05, 0.08, 0.15, 0.7)  # Semi-transparent dark blue for better aesthetics
+		# Removed z_index assignment to rely on tree order (moved before panel below)
 
 		# Make it fullscreen
 		blur_overlay.anchor_left = 0.0

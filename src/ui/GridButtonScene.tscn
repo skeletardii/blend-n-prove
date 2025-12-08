@@ -1,6 +1,52 @@
-[gd_scene load_steps=2 format=3 uid="uid://bpnfuvp2n6kup"]
+[gd_scene load_steps=7 format=3 uid="uid://bpnfuvp2n6kup"]
 
-[ext_resource type="Script" uid="uid://dpgedb6yrtf3q" path="res://src/ui/GridButtonScene.gd" id="1_script"]
+[ext_resource type="Script" path="res://src/ui/GridButtonScene.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.95, 0.95, 0.95, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 4
+border_color = Color(0.8, 0.8, 0.8, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.05)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.98, 0.98, 1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 4
+border_color = Color(0.3, 0.6, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0.4, 1, 0.1)
+shadow_size = 8
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.95, 0.95, 0.95, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.6, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="GridButtonScene" type="Control"]
 layout_mode = 3
@@ -11,6 +57,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
 [node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -18,132 +73,275 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 0
 
-[node name="Title" type="Label" parent="MainContainer"]
+[node name="HeaderPanel" type="ColorRect" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
+color = Color(1, 1, 1, 1)
+
+[node name="Title" type="Label" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 40
 text = "Tutorial Selection"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 30.0
+offset_top = -30.0
+offset_right = 150.0
+offset_bottom = 30.0
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 20
+text = "< Back"
+flat = true
+
 [node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="ButtonGrid" type="VBoxContainer" parent="MainContainer/ScrollContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-separation = 12
+theme_override_constants/margin_left = 150
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 150
+theme_override_constants/margin_bottom = 50
 
-[node name="Button1" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="ButtonGrid" type="VBoxContainer" parent="MainContainer/ScrollContainer/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="Button1" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 1"
 
-[node name="Button2" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button2" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 2"
 
-[node name="Button3" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button3" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 3"
 
-[node name="Button4" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button4" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 4"
 
-[node name="Button5" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button5" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 5"
 
-[node name="Button6" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button6" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 6"
 
-[node name="Button7" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button7" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 7"
 
-[node name="Button8" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button8" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 8"
 
-[node name="Button9" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button9" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 9"
 
-[node name="Button10" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button10" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 10"
 
-[node name="Button11" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button11" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 11"
 
-[node name="Button12" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button12" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 12"
 
-[node name="Button13" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button13" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 13"
 
-[node name="Button14" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button14" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 14"
 
-[node name="Button15" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button15" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 15"
 
-[node name="Button16" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button16" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 16"
 
-[node name="Button17" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button17" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 17"
 
-[node name="Button18" type="Button" parent="MainContainer/ScrollContainer/ButtonGrid"]
+[node name="Button18" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 80)
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 18"
-
-[node name="BackButton" type="Button" parent="MainContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "Back"
