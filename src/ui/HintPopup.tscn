@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dpjc3t8yqr5h1"]
 
 [ext_resource type="Script" path="res://src/ui/HintPopup.gd" id="1_hint_popup"]
-[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="2_font"]
+[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_500_with_fallback.tres" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_panel"]
 bg_color = Color(1, 1, 1, 1)

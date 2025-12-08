@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+WebFontManager="*res://src/game/autoloads/WebFontManager.gd"
 SceneManager="*res://src/game/autoloads/SceneManager.gd"
 AudioManager="*res://src/game/autoloads/AudioManager.gd"
 AppConstants="*res://src/game/autoloads/AppConstants.gd"

@@ -1,0 +1,8 @@
+[gd_resource type="FontVariation" load_steps=3 format=3 uid="uid://b8jflamxp5tqw"]
+
+[ext_resource type="FontFile" uid="uid://cr8pnpks0ggeg" path="res://assets/fonts/TT Octosquares Trial DemiBold.ttf" id="1_main_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/NotoSans-VariableFont_wdth,wght.ttf" id="2_fallback"]
+
+[resource]
+base_font = ExtResource("1_main_font")
+fallbacks = [ExtResource("2_fallback")]

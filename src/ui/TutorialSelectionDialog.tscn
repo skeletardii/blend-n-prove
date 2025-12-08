@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://tutorial_selection_dialog"]
 
 [ext_resource type="Script" path="res://src/ui/TutorialSelectionDialog.gd" id="1_script"]
-[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="2_font"]
-[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="3_font_bold"]
+[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_500_with_fallback.tres" id="2_font"]
+[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_700_with_fallback.tres" id="3_font_bold"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(1, 1, 1, 1)

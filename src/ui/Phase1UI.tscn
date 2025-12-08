@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://csubga53p2pr4" path="res://src/ui/Phase1UI.gd" id="1_phase1"]
 [ext_resource type="Texture2D" uid="uid://5s07bsbpboi0" path="res://assets/sprites/Phase1UIMockup.png" id="2_tgfdk"]
-[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="4_qjtox"]
-[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="5_o5hkq"]
+[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_500_with_fallback.tres" id="4_qjtox"]
+[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_700_with_fallback.tres" id="5_o5hkq"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="6_wbgmg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qjtox"]

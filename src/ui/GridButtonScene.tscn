@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bpnfuvp2n6kup"]
 
 [ext_resource type="Script" path="res://src/ui/GridButtonScene.gd" id="1_script"]
-[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="2_font"]
+[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_700_with_fallback.tres" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0.95, 0.95, 0.95, 1)

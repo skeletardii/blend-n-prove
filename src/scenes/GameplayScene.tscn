@@ -188,9 +188,13 @@ Q"
 
 [node name="TutorialHelpPanel" parent="UI" instance=ExtResource("2_tutorial_help")]
 visible = false
+layout_mode = 0
+anchors_preset = 0
 
 [node name="HintPopup" parent="UI" instance=ExtResource("3_hint_popup")]
 visible = false
+layout_mode = 0
+anchors_preset = 0
 
 [node name="PauseOverlay" type="CanvasLayer" parent="."]
 layer = 100

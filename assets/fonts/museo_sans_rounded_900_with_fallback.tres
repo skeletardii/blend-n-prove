@@ -1,0 +1,8 @@
+[gd_resource type="FontVariation" load_steps=3 format=3]
+
+[ext_resource type="FontFile" uid="uid://bx0fmm2ck5w42" path="res://assets/fonts/MuseoSansRounded900.otf" id="1_base_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/NotoSans-VariableFont_wdth,wght.ttf" id="2_fallback"]
+
+[resource]
+base_font = ExtResource("1_base_font")
+fallbacks = [ExtResource("2_fallback")]

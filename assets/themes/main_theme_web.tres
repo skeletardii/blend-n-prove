@@ -1,0 +1,53 @@
+[gd_resource type="Theme" load_steps=7 format=3 uid="uid://cg1pn06foy65g"]
+
+[ext_resource type="FontVariation" path="res://assets/fonts/main_font_with_fallback.tres" id="1_font_with_fallback"]
+[ext_resource type="Texture2D" uid="uid://bcva1uf6jsef6" path="res://assets/sprites/PNG/CGB01-grey_L_rounded_btn.png" id="2_8gw6x"]
+[ext_resource type="Texture2D" uid="uid://cry2t8ap7ysoo" path="res://assets/sprites/PNG/CGB01-yellow_L_rounded_btn.png" id="2_ydht1"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8gw6x"]
+texture = ExtResource("2_ydht1")
+texture_margin_left = 21.0
+texture_margin_top = 19.8508
+texture_margin_right = 21.0
+texture_margin_bottom = 20.5285
+region_rect = Rect2(0, 0, 512, 128)
+modulate_color = Color(0.74558, 0.74558, 0.74558, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_g21io"]
+texture = ExtResource("2_ydht1")
+texture_margin_left = 21.0
+texture_margin_top = 19.8508
+texture_margin_right = 21.0
+texture_margin_bottom = 20.5285
+region_rect = Rect2(0, 0, 512, 128)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7ceur"]
+texture = ExtResource("2_8gw6x")
+texture_margin_left = 21.0
+texture_margin_top = 19.8508
+texture_margin_right = 21.0
+texture_margin_bottom = 20.5285
+region_rect = Rect2(0, 0, 512, 128)
+
+[resource]
+default_font = ExtResource("1_font_with_fallback")
+default_font_size = 30
+Button/colors/font_color = Color(0, 0, 0, 1)
+Button/font_sizes/font_size = 40
+Button/fonts/font = ExtResource("1_font_with_fallback")
+Button/styles/hover = SubResource("StyleBoxTexture_8gw6x")
+Button/styles/normal = SubResource("StyleBoxTexture_g21io")
+Button/styles/pressed = SubResource("StyleBoxTexture_7ceur")
+CheckBox/fonts/font = ExtResource("1_font_with_fallback")
+CheckButton/fonts/font = ExtResource("1_font_with_fallback")
+ItemList/fonts/font = ExtResource("1_font_with_fallback")
+Label/fonts/font = ExtResource("1_font_with_fallback")
+LineEdit/fonts/font = ExtResource("1_font_with_fallback")
+MenuButton/fonts/font = ExtResource("1_font_with_fallback")
+OptionButton/fonts/font = ExtResource("1_font_with_fallback")
+PopupMenu/fonts/font = ExtResource("1_font_with_fallback")
+RichTextLabel/fonts/font = ExtResource("1_font_with_fallback")
+TabBar/fonts/font = ExtResource("1_font_with_fallback")
+TabContainer/fonts/font = ExtResource("1_font_with_fallback")
+TextEdit/fonts/font = ExtResource("1_font_with_fallback")
+Tree/fonts/font = ExtResource("1_font_with_fallback")
