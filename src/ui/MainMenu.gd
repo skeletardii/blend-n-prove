@@ -263,6 +263,12 @@ func _on_import_progress_button_pressed() -> void:
 	else:
 		show_feedback("Failed to import progress! Check console for details.", Color(0.9, 0.3, 0.3))
 
+func _on_populate_test_data_button_pressed() -> void:
+	AudioManager.play_button_click()
+	ProgressTracker.debug_populate_test_data()
+	update_quick_stats()
+	show_feedback("Test data populated!", Color(0.2, 0.8, 0.2))
+
 func _on_reset_progress_button_pressed() -> void:
 	AudioManager.play_button_click()
 	# Show confirmation dialog

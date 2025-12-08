@@ -75,6 +75,9 @@ func import_progress_data(file_path: String) -> bool:
 func reset_progress_data() -> void:
 	if _impl: _impl.reset_progress_data()
 
+func debug_populate_test_data() -> void:
+	if _impl: _impl.debug_populate_test_data()
+
 func complete_tutorial_problem(tutorial_key: String, problem_index: int) -> void:
 	if _impl: _impl.complete_tutorial_problem(tutorial_key, problem_index)
 

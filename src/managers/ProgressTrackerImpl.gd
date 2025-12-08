@@ -561,6 +561,93 @@ func reset_progress_data() -> void:
 	progress_updated.emit()
 	print("Progress data reset successfully")
 
+func debug_populate_test_data() -> void:
+	# Clear existing data
+	game_sessions.clear()
+	statistics = ProgressTrackerTypes.PlayerStatistics.new()
+	
+	# Create dummy sessions
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	
+	var total_sessions = 20
+	var wins = 0
+	
+	for i in range(total_sessions):
+		var difficulty = rng.randi_range(1, 5)
+		var score = rng.randi_range(100, 5000) * difficulty
+		var lives = rng.randi_range(0, 3)
+		var orders = rng.randi_range(3, 15)
+		var duration = rng.randf_range(60.0, 300.0)
+		var status = "win" if lives > 0 else "loss"
+		
+		if status == "win":
+			wins += 1
+			
+		var session = ProgressTrackerTypes.GameSession.new(score, difficulty, lives, orders, duration, status)
+		game_sessions.append(session)
+		
+	# Calculate statistics manually based on these sessions
+	statistics.total_games_played = total_sessions
+	statistics.total_successful_games = wins
+	
+	var total_score = 0
+	var total_time = 0.0
+	var total_orders = 0
+	
+	for session in game_sessions:
+		total_score += session.final_score
+		total_time += session.session_duration
+		total_orders += session.orders_completed
+		
+		# High scores
+		if session.final_score > statistics.high_score_overall:
+			statistics.high_score_overall = session.final_score
+		
+		if session.final_score > statistics.high_scores_by_difficulty.get(session.difficulty_level, 0):
+			statistics.high_scores_by_difficulty[session.difficulty_level] = session.final_score
+			
+		# Streak (simplified for test data - just make up a streak if last game was win)
+		if session.completion_status == "win":
+			statistics.current_streak += 1
+			if statistics.current_streak > statistics.best_streak:
+				statistics.best_streak = statistics.current_streak
+		else:
+			statistics.current_streak = 0
+			
+	statistics.total_play_time = total_time
+	statistics.total_orders_completed = total_orders
+	statistics.success_rate = float(wins) / float(total_sessions) if total_sessions > 0 else 0.0
+	statistics.average_score_overall = float(total_score) / float(total_sessions) if total_sessions > 0 else 0.0
+	
+	# Average by difficulty
+	for diff in range(1, 6):
+		var diff_sessions = game_sessions.filter(func(s): return s.difficulty_level == diff)
+		if diff_sessions.size() > 0:
+			var diff_total = 0
+			for s in diff_sessions:
+				diff_total += s.final_score
+			statistics.average_scores_by_difficulty[diff] = float(diff_total) / float(diff_sessions.size())
+			
+	# Favorite difficulty
+	statistics.favorite_difficulty = rng.randi_range(1, 5)
+	statistics.highest_difficulty_mastered = rng.randi_range(1, 3)
+	
+	# Add some achievements
+	statistics.achievements_unlocked.append("first_game")
+	if wins >= 5: statistics.achievements_unlocked.append("5_streak")
+	if statistics.high_score_overall > 1000: statistics.achievements_unlocked.append("1000_score")
+	if statistics.high_score_overall > 5000: statistics.achievements_unlocked.append("5000_score")
+	
+	# Tutorial progress
+	statistics.tutorials_completed = 3
+	statistics.tutorial_completions["tutorial_basics"] = [0, 1, 2]
+	statistics.tutorial_completions["tutorial_logic_gates"] = [0, 1]
+	
+	save_progress_data()
+	progress_updated.emit()
+	print("Debug: Populated test data with ", total_sessions, " sessions.")
+
 ## Helper function to print human-readable file error messages
 func _print_file_error(error_code: int) -> void:
 	match error_code:

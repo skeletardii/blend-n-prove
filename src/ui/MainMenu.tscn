@@ -215,9 +215,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -450.0
+offset_left = -300.0
 offset_top = -400.0
-offset_right = 450.0
+offset_right = 300.0
 offset_bottom = 400.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -237,7 +237,7 @@ grow_vertical = 2
 
 [node name="DebugTitle" type="Label" parent="DebugPanel/DebugContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 30
 text = "DEBUG OPTIONS"
 horizontal_alignment = 1
 
@@ -246,11 +246,11 @@ layout_mode = 2
 
 [node name="DifficultyLabel" type="Label" parent="DebugPanel/DebugContainer/DifficultyContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Difficulty:"
 
 [node name="DifficultySlider" type="HSlider" parent="DebugPanel/DebugContainer/DifficultyContainer"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 1.0
@@ -259,37 +259,37 @@ value = 1.0
 
 [node name="DifficultyValue" type="Label" parent="DebugPanel/DebugContainer/DifficultyContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "1"
 
 [node name="InfinitePatienceCheck" type="CheckBox" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Infinite Patience"
 
 [node name="ForceGameOverButton" type="Button" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Force Game Over"
 
 [node name="LogicTestButton" type="Button" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Test Logic Engine"
 
 [node name="IntegrationTestButton" type="Button" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Run Integration Test"
 
 [node name="LaunchTutorialButton" type="Button" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Launch First-Time Tutorial"
 
 [node name="SaveSystemSpacer" type="Control" parent="DebugPanel/DebugContainer"]
@@ -298,45 +298,51 @@ layout_mode = 2
 
 [node name="SaveSystemLabel" type="Label" parent="DebugPanel/DebugContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 30
 text = "--- SAVE SYSTEM ---"
 horizontal_alignment = 1
 
 [node name="SaveProgressButton" type="Button" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Save Progress"
 
 [node name="LoadProgressButton" type="Button" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Load Progress"
 
 [node name="ExportProgressButton" type="Button" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Export Progress"
 
 [node name="ImportProgressButton" type="Button" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Import Progress"
+
+[node name="PopulateTestDataButton" type="Button" parent="DebugPanel/DebugContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Populate Test Data"
 
 [node name="SaveLocationLabel" type="Label" parent="DebugPanel/DebugContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 18
 text = "Save: user://game_progress.json"
 horizontal_alignment = 1
 
 [node name="CloseDebugButton" type="Button" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 30
 text = "CLOSE"
 
 [node name="SettingsPanel" type="Panel" parent="."]
@@ -347,10 +353,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = -150.0
-offset_right = 250.0
-offset_bottom = 150.0
+offset_left = -350.0
+offset_top = -300.0
+offset_right = 350.0
+offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -359,54 +365,62 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="SettingsTitle" type="Label" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 40
 text = "SETTINGS"
 horizontal_alignment = 1
 
 [node name="Spacer1" type="Control" parent="SettingsPanel/SettingsContainer"]
-custom_minimum_size = Vector2(0, 10)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="DifficultyModeLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "Classic Mode Difficulty:"
 
 [node name="DifficultyModeContainer" type="HBoxContainer" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
 
 [node name="DifficultyModeOption" type="OptionButton" parent="SettingsPanel/SettingsContainer/DifficultyModeContainer"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="InfoLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "Auto: Difficulty increases as you play
 1-6: Lock difficulty to specific level"
 autowrap_mode = 3
 
 [node name="Spacer2" type="Control" parent="SettingsPanel/SettingsContainer"]
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
 [node name="ResetProgressButton" type="Button" parent="SettingsPanel/SettingsContainer"]
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 24
 text = "Reset All Progress"
 
 [node name="Spacer3" type="Control" parent="SettingsPanel/SettingsContainer"]
-custom_minimum_size = Vector2(0, 10)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="CloseSettingsButton" type="Button" parent="SettingsPanel/SettingsContainer"]
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
+theme_override_font_sizes/font_size = 30
 text = "CLOSE"
 
 [node name="QuickStatsPanel" type="VBoxContainer" parent="."]
@@ -503,6 +517,7 @@ vertical_alignment = 1
 [connection signal="pressed" from="DebugPanel/DebugContainer/LoadProgressButton" to="." method="_on_load_progress_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/ExportProgressButton" to="." method="_on_export_progress_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/ImportProgressButton" to="." method="_on_import_progress_button_pressed"]
+[connection signal="pressed" from="DebugPanel/DebugContainer/PopulateTestDataButton" to="." method="_on_populate_test_data_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/CloseDebugButton" to="." method="_on_close_debug_button_pressed"]
 [connection signal="item_selected" from="SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption" to="." method="_on_difficulty_mode_option_item_selected"]
 [connection signal="pressed" from="SettingsPanel/SettingsContainer/ResetProgressButton" to="." method="_on_reset_progress_button_pressed"]
