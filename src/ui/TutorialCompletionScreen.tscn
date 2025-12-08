@@ -1,6 +1,44 @@
-[gd_scene load_steps=2 format=3 uid="uid://tutorial_completion_001"]
+[gd_scene load_steps=8 format=3 uid="uid://tutorial_completion_001"]
 
 [ext_resource type="Script" path="res://src/ui/TutorialCompletionScreen.gd" id="1"]
+[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="3_font_bold"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.85, 0.85, 0.85, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 10
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.2, 0.6, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.3, 0.7, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.1, 0.5, 0.9, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="TutorialCompletionScreen" type="Control"]
 layout_mode = 3
@@ -18,7 +56,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.1, 0.15, 1)
+color = Color(0.1, 0.1, 0.15, 0.95)
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -33,6 +71,7 @@ offset_right = 400.0
 offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 1
@@ -53,6 +92,9 @@ alignment = 1
 
 [node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 48
 text = "🎉 Tutorial Complete! 🎉"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -63,13 +105,18 @@ layout_mode = 2
 [node name="CongratsLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
+theme_override_colors/default_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_fonts/normal_font = ExtResource("2_font")
+theme_override_fonts/bold_font = ExtResource("3_font_bold")
+theme_override_font_sizes/normal_font_size = 24
+theme_override_font_sizes/bold_font_size = 24
 bbcode_enabled = true
 text = "[center][b]Congratulations![/b]
 
 You've learned the basics of Logic Café!
 
-[color=yellow]Phase 1:[/color] Enter logical premises using the virtual keyboard
-[color=yellow]Phase 2:[/color] Apply inference rules to prove conclusions
+[color=#c08000]Phase 1:[/color] Enter logical premises using the virtual keyboard
+[color=#c08000]Phase 2:[/color] Apply inference rules to prove conclusions
 
 [i]This was a practice session - no scores or achievements were recorded.[/i][/center]"
 fit_content = true
@@ -80,12 +127,17 @@ layout_mode = 2
 [node name="TipsLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
+theme_override_colors/default_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_fonts/normal_font = ExtResource("2_font")
+theme_override_fonts/bold_font = ExtResource("3_font_bold")
+theme_override_font_sizes/normal_font_size = 20
+theme_override_font_sizes/bold_font_size = 20
 bbcode_enabled = true
 text = "[center][b]Pro Tips:[/b]
 
-• [color=lightblue]Faster solutions[/color] = more bonus points
-• [color=lightblue]Fewer operations[/color] = higher efficiency bonus
-• [color=lightblue]No hints used[/color] = perfect completion bonus
+• [color=#0060a0]Faster solutions[/color] = more bonus points
+• [color=#0060a0]Fewer operations[/color] = higher efficiency bonus
+• [color=#0060a0]No hints used[/color] = perfect completion bonus
 • Watch the patience bar - time pressure increases at higher levels!
 
 Ready to serve some real customers?[/center]"
@@ -95,4 +147,9 @@ fit_content = true
 custom_minimum_size = Vector2(300, 60)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Return to Main Menu"

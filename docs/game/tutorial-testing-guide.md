@@ -144,7 +144,7 @@ To add tests for custom rules or multi-step problems:
 1. Open `test_tutorials.gd`
 2. Add a new test function following the pattern:
 ```gdscript
-func test_my_custom_rule(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_my_custom_rule(premises: Array, conclusion: BooleanExpression) -> bool:
     # Your test logic here
     return result.is_valid and result.equals(conclusion)
 ```

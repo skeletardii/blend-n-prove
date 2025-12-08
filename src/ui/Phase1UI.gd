@@ -1,5 +1,9 @@
 extends Control
 
+# Explicit preload to ensure BooleanExpression type is available
+const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
+const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
+
 # UI References
 @onready var main_container: VBoxContainer = $MainContainer
 @onready var lives_display: Label = $MainContainer/TopStatusBar/StatusContainer/LivesDisplay
@@ -32,8 +36,8 @@ extends Control
 @onready var submit_button: Button = $MainContainer/ActionButtons/ButtonContainer/SubmitButton
 
 # Game State
-var current_customer: GameManager.CustomerData
-var validated_premises: Array[BooleanLogicEngine.BooleanExpression] = []
+var current_customer  # GameManagerTypes.CustomerData (type annotation removed for proxy compatibility)
+var validated_premises: Array[BooleanExpression] = []
 var current_input: String = ""
 var premise_items: Array[Control] = []
 var patience_timer: float = 120.0
@@ -43,8 +47,8 @@ var score: int = 0
 var level: int = 1
 
 # Signals for parent communication
-signal premise_validated(expression: BooleanLogicEngine.BooleanExpression)
-signal premises_completed(premises: Array[BooleanLogicEngine.BooleanExpression])
+signal premise_validated(expression: BooleanExpression)
+signal premises_completed(premises: Array[BooleanExpression])
 signal feedback_message(message: String, color: Color)
 signal patience_expired
 signal life_lost
@@ -93,7 +97,7 @@ func connect_virtual_keyboard() -> void:
 	clear_button.pressed.connect(_on_clear_pressed)
 	submit_button.pressed.connect(_on_submit_pressed)
 
-func set_customer_data(customer: GameManager.CustomerData) -> void:
+func set_customer_data(customer) -> void:  # GameManagerTypes.CustomerData
 	current_customer = customer
 	validated_premises.clear()
 	update_variable_definitions()
@@ -134,7 +138,7 @@ func validate_current_input() -> void:
 		return
 
 	# Validate the expression
-	var expression := BooleanLogicEngine.create_expression(expression_text)
+	var expression: BooleanExpression = BooleanLogicEngine.create_expression(expression_text)
 
 	if expression.is_valid:
 		# Check if this expression matches one of the required premises
@@ -401,5 +405,5 @@ func _process(delta: float) -> void:
 		if current_time >= patience_timer:
 			patience_expired.emit()
 
-func get_validated_premises() -> Array[BooleanLogicEngine.BooleanExpression]:
+func get_validated_premises() -> Array[BooleanExpression]:
 	return validated_premises

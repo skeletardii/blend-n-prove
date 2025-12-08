@@ -1,64 +1,23 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir \"C:\\Users\\X\\documents\\godot-mcp\\docs\")",
-      "mcp__godot__get_project_info",
-      "mcp__godot__create_script",
-      "mcp__godot__create_scene",
-      "mcp__godot__open_scene",
-      "mcp__godot__update_node_property",
-      "mcp__godot__list_nodes",
-      "mcp__godot__get_current_scene",
-      "mcp__godot__create_node",
-      "Bash(find:*)",
-      "mcp__godot__get_node_properties",
-      "mcp__godot__save_scene",
-      "mcp__godot__delete_node",
-      "mcp__godot__execute_editor_script",
-      "Bash(godot:*)",
-      "mcp__godot__create_resource",
-      "Bash(npm run build:*)",
-      "mcp__godot__get_script",
-      "Bash(git push:*)",
-      "Bash(git add:*)",
-      "Read(//c/Portable/Godot/program//**)",
-      "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --script test_final_flow.gd)",
-      "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --script test_all_operations_parens.gd)",
-      "Read(//c/Portable/Godot/program/**)",
-      "Bash(./Godot_v4.4.1-stable_mono_win64_console.exe --headless --path \"C:/Users/X/documents/godot-mcp\" --script test_comprehensive_logic_engine.gd)",
-      "Bash(cat:*)",
-      "Bash(for level in 3 4 5 6)",
-      "Bash(do echo \"Level $level:\")",
-      "Bash(done)",
-      "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --path \"C:/Users/X/documents/godot-mcp\" --script test_pause_feature.gd)",
-      "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --quit --path .)",
-      "Bash(tree:*)",
+      "mcp__godot-mcp__create_scene",
+      "mcp__godot-mcp__create_node",
+      "mcp__godot-mcp__update_node_property",
+      "mcp__godot-mcp__save_scene",
       "Bash(git pull:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nAdd Phase 2 UI improvements and target-reached animation\n\n- Rearrange Phase 2 layout: Target at top (1/3), Inventory below (2/3)\n- Add collapsible rules panel with smooth slide animation\n- Implement animated rules overlay that slides up from bottom\n- Add toggle button that moves with panel during animation\n- Auto-close rules panel when rule selected, reopen on failure\n\n- Add dynamic background system for gameplay phases\n- Phase 1 uses phase1bg.jpg, Phase 2 uses spiralbg.jpg\n- Backgrounds automatically switch during phase transitions\n\n- Implement satisfying target-reached animation:\n  * Newly created matching ingredients fly to target\n  * Randomized curved flight paths (100-200px arc, ±50px horizontal)\n  * All cards fly at same speed (0.8s) for consistency\n  * Circular explosion effect where cards disappear\n  * Golden/white rotating flashes with particle burst\n  * Success sound plays on impact\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git commit:*)",
-      "Bash(findstr /S /R ^[node.*TextureRect *.tscn src***.tscn 2)",
-      "Bash(nul)",
-      "Bash(git checkout:*)",
-      "Bash(python:*)",
-      "Bash(dir \"C:\\Users\\Admin\\Documents\\blend and prove repo\\blend-n-prove\\assets\\sprites\")",
-      "Bash(/c/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --path \".\" --script test_phase2_bg.gd)",
-      "Bash(findstr:*)",
-      "Bash(where:*)",
-      "Bash(./Godot_v4.4.1-stable_mono_win64_console.exe --headless --quit --path \"C:/Users/Admin/Documents/blend and prove repo/blend-n-prove\")",
-      "Bash(git stash:*)",
-      "Bash(C:/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --quit --path \"C:/Users/Admin/Documents/blend and prove repo/blend-n-prove\")"
-    ]
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "godot"
-  ],
+  "enabledMcpjsonServers": ["godot"],
   "mcpServers": {
     "godot-mcp": {
       "command": "node",
-      "args": [
-        "C:/Users/X/Documents/godot-mcp/server/dist/index.js"
-      ],
+      "args": ["C:/Users/X/Documents/godot-mcp/server/dist/index.js"],
       "env": {
         "MCP_TRANSPORT": "stdio"
       }

@@ -1,5 +1,9 @@
 extends Node
 
+# Explicit preload to ensure BooleanExpression type is available
+const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
+const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
+
 # Tutorial Testing Script
 # Tests all tutorial problems to ensure they can be solved with the Boolean Logic Engine
 #
@@ -40,7 +44,7 @@ func run_all_tests() -> void:
 	get_tree().quit()
 
 func test_tutorial(tutorial_key: String) -> void:
-	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(tutorial_key)
+	var tutorial: TutorialDataTypes.TutorialData = TutorialDataManager.get_tutorial_by_name(tutorial_key)
 
 	if not tutorial:
 		print("✗ Failed to load tutorial: ", tutorial_key)
@@ -51,23 +55,23 @@ func test_tutorial(tutorial_key: String) -> void:
 	print("-"*80)
 
 	for i in range(tutorial.problems.size()):
-		var problem: TutorialDataManager.ProblemData = tutorial.problems[i]
+		var problem: TutorialDataTypes.ProblemData = tutorial.problems[i]
 		test_problem(tutorial, problem, i)
 
-func test_problem(tutorial: TutorialDataManager.TutorialData, problem: TutorialDataManager.ProblemData, index: int) -> void:
+func test_problem(tutorial: TutorialDataTypes.TutorialData, problem: TutorialDataTypes.ProblemData, index: int) -> void:
 	var test_name: String = tutorial.rule_name + " - Problem " + str(problem.problem_number) + " (" + problem.difficulty + ")"
 
 	# Create boolean expressions from premises
-	var premise_expressions: Array[BooleanLogicEngine.BooleanExpression] = []
+	var premise_expressions: Array[BooleanExpression] = []
 	for premise_str in problem.premises:
-		var expr: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.create_expression(premise_str)
+		var expr: BooleanExpression = BooleanLogicEngine.create_expression(premise_str)
 		if not expr.is_valid:
 			record_failure(test_name, "Invalid premise: " + premise_str, problem)
 			return
 		premise_expressions.append(expr)
 
 	# Create conclusion expression
-	var conclusion_expr: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.create_expression(problem.conclusion)
+	var conclusion_expr: BooleanExpression = BooleanLogicEngine.create_expression(problem.conclusion)
 	if not conclusion_expr.is_valid:
 		record_failure(test_name, "Invalid conclusion: " + problem.conclusion, problem)
 		return
@@ -81,7 +85,7 @@ func test_problem(tutorial: TutorialDataManager.TutorialData, problem: TutorialD
 	else:
 		record_failure(test_name, "Could not derive conclusion from premises", problem)
 
-func test_derivation(tutorial_key: String, premises: Array[BooleanLogicEngine.BooleanExpression], conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_derivation(tutorial_key: String, premises: Array[BooleanExpression], conclusion: BooleanExpression) -> bool:
 	# Test based on tutorial type
 	match tutorial_key:
 		"modus-ponens":
@@ -124,39 +128,39 @@ func test_derivation(tutorial_key: String, premises: Array[BooleanLogicEngine.Bo
 	return false
 
 # Individual rule tests
-func test_modus_ponens(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_modus_ponens(premises)
+func test_modus_ponens(premises: Array, conclusion: BooleanExpression) -> bool:
+	var result: BooleanExpression = BooleanLogicEngine.apply_modus_ponens(premises)
 	return result.is_valid and result.equals(conclusion)
 
-func test_modus_tollens(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_modus_tollens(premises)
+func test_modus_tollens(premises: Array, conclusion: BooleanExpression) -> bool:
+	var result: BooleanExpression = BooleanLogicEngine.apply_modus_tollens(premises)
 	return result.is_valid and result.equals(conclusion)
 
-func test_hypothetical_syllogism(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_hypothetical_syllogism(premises)
+func test_hypothetical_syllogism(premises: Array, conclusion: BooleanExpression) -> bool:
+	var result: BooleanExpression = BooleanLogicEngine.apply_hypothetical_syllogism(premises)
 	return result.is_valid and result.equals(conclusion)
 
-func test_disjunctive_syllogism(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_disjunctive_syllogism(premises)
+func test_disjunctive_syllogism(premises: Array, conclusion: BooleanExpression) -> bool:
+	var result: BooleanExpression = BooleanLogicEngine.apply_disjunctive_syllogism(premises)
 	return result.is_valid and result.equals(conclusion)
 
-func test_simplification(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_simplification(premises)
+func test_simplification(premises: Array, conclusion: BooleanExpression) -> bool:
+	var result: BooleanExpression = BooleanLogicEngine.apply_simplification(premises)
 	if result.is_valid and result.equals(conclusion):
 		return true
 	# Try right simplification if left didn't work
 	if premises.size() == 1 and premises[0].is_conjunction():
 		var conj_parts = premises[0].get_conjunction_parts()
 		if conj_parts.get("valid", false):
-			var right = conj_parts.get("right") as BooleanLogicEngine.BooleanExpression
+			var right = conj_parts.get("right") as BooleanExpression
 			return right and right.equals(conclusion)
 	return false
 
-func test_conjunction(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_conjunction(premises)
+func test_conjunction(premises: Array, conclusion: BooleanExpression) -> bool:
+	var result: BooleanExpression = BooleanLogicEngine.apply_conjunction(premises)
 	return result.is_valid and result.equals(conclusion)
 
-func test_addition(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_addition(premises: Array, conclusion: BooleanExpression) -> bool:
 	# Addition is tricky - we need to extract what to add from the conclusion
 	if premises.size() != 1 or not conclusion.is_disjunction():
 		return false
@@ -165,75 +169,75 @@ func test_addition(premises: Array, conclusion: BooleanLogicEngine.BooleanExpres
 	if not disj_parts.get("valid", false):
 		return false
 
-	var left = disj_parts.get("left") as BooleanLogicEngine.BooleanExpression
-	var right = disj_parts.get("right") as BooleanLogicEngine.BooleanExpression
+	var left = disj_parts.get("left") as BooleanExpression
+	var right = disj_parts.get("right") as BooleanExpression
 
 	# Check if premise matches either side
 	return (premises[0].equals(left) or premises[0].equals(right))
 
-func test_de_morgans_and(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_de_morgans_and(premises: Array, conclusion: BooleanExpression) -> bool:
 	if premises.size() != 1:
 		return false
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_de_morgan_and(premises[0])
+	var result: BooleanExpression = BooleanLogicEngine.apply_de_morgan_and(premises[0])
 	return result.is_valid and result.equals(conclusion)
 
-func test_de_morgans_or(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_de_morgans_or(premises: Array, conclusion: BooleanExpression) -> bool:
 	if premises.size() != 1:
 		return false
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_de_morgan_or(premises[0])
+	var result: BooleanExpression = BooleanLogicEngine.apply_de_morgan_or(premises[0])
 	return result.is_valid and result.equals(conclusion)
 
-func test_double_negation(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_double_negation(premises: Array, conclusion: BooleanExpression) -> bool:
 	if premises.size() != 1:
 		return false
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_double_negation(premises[0])
+	var result: BooleanExpression = BooleanLogicEngine.apply_double_negation(premises[0])
 	return result.is_valid and result.equals(conclusion)
 
-func test_resolution(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_resolution(premises)
+func test_resolution(premises: Array, conclusion: BooleanExpression) -> bool:
+	var result: BooleanExpression = BooleanLogicEngine.apply_resolution(premises)
 	return result.is_valid and result.equals(conclusion)
 
-func test_biconditional(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_equivalence(premises)
+func test_biconditional(premises: Array, conclusion: BooleanExpression) -> bool:
+	var result: BooleanExpression = BooleanLogicEngine.apply_equivalence(premises)
 	return result.is_valid and result.equals(conclusion)
 
-func test_distributivity(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_distributivity(premises: Array, conclusion: BooleanExpression) -> bool:
 	if premises.size() != 1:
 		return false
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_distributivity(premises[0])
+	var result: BooleanExpression = BooleanLogicEngine.apply_distributivity(premises[0])
 	return result.is_valid and result.equals(conclusion)
 
-func test_commutativity(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_commutativity(premises: Array, conclusion: BooleanExpression) -> bool:
 	if premises.size() != 1:
 		return false
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_commutativity(premises[0])
+	var result: BooleanExpression = BooleanLogicEngine.apply_commutativity(premises[0])
 	return result.is_valid and result.equals(conclusion)
 
-func test_associativity(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_associativity(premises: Array, conclusion: BooleanExpression) -> bool:
 	if premises.size() != 1:
 		return false
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_associativity(premises[0])
+	var result: BooleanExpression = BooleanLogicEngine.apply_associativity(premises[0])
 	return result.is_valid and result.equals(conclusion)
 
-func test_idempotent(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_idempotent(premises: Array, conclusion: BooleanExpression) -> bool:
 	if premises.size() != 1:
 		return false
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_idempotent(premises[0])
+	var result: BooleanExpression = BooleanLogicEngine.apply_idempotent(premises[0])
 	return result.is_valid and result.equals(conclusion)
 
-func test_absorption(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_absorption(premises: Array, conclusion: BooleanExpression) -> bool:
 	if premises.size() != 1:
 		return false
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_absorption(premises[0])
+	var result: BooleanExpression = BooleanLogicEngine.apply_absorption(premises[0])
 	return result.is_valid and result.equals(conclusion)
 
-func test_negation_laws(premises: Array, conclusion: BooleanLogicEngine.BooleanExpression) -> bool:
+func test_negation_laws(premises: Array, conclusion: BooleanExpression) -> bool:
 	if premises.size() != 1:
 		return false
-	var result: BooleanLogicEngine.BooleanExpression = BooleanLogicEngine.apply_negation_laws(premises[0])
+	var result: BooleanExpression = BooleanLogicEngine.apply_negation_laws(premises[0])
 	return result.is_valid and result.equals(conclusion)
 
-func record_failure(test_name: String, reason: String, problem: TutorialDataManager.ProblemData) -> void:
+func record_failure(test_name: String, reason: String, problem: TutorialDataTypes.ProblemData) -> void:
 	tests_failed += 1
 	print("  ✗ Problem ", problem.problem_number, ": ", reason)
 

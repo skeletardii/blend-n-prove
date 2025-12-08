@@ -1,5 +1,10 @@
 extends Control
 
+# Explicit preload to ensure BooleanExpression type is available
+const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
+const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
+const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
+
 # UI References - Persistent Elements
 @onready var main_container: VBoxContainer = $UI/MainContainer
 @onready var score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/CurrentScoreContainer/ScoreDisplay
@@ -32,8 +37,8 @@ var phase1_background: Texture2D = preload("res://assets/sprites/phase1bg.jpg")
 var phase2_background: Texture2D = preload("res://assets/sprites/phase2bg.jpg")
 
 # Game State
-var current_customer: GameManager.CustomerData
-var validated_premises: Array[BooleanLogicEngine.BooleanExpression] = []
+var current_customer  # GameManager.CustomerData (type annotation removed for proxy compatibility)
+var validated_premises: Array[BooleanExpression] = []
 var patience_timer: float = 0.0
 var max_patience: float = 60.0
 var feedback_label: Label = null
@@ -371,16 +376,16 @@ func generate_new_customer() -> void:
 		var tutorial_premises: Array[String] = ["P", "Q"]
 		var tutorial_target: String = "P∧Q"
 		var tutorial_patience: float = 999999.0  # Infinite time
-		current_customer = GameManager.CustomerData.new("Tutorial Guide", tutorial_premises, tutorial_target, tutorial_patience, "")
+		current_customer = GameManagerTypes.CustomerData.new("Tutorial Guide", tutorial_premises, tutorial_target, tutorial_patience, "")
 		print("Loaded first-time tutorial problem")
 
 	# Check if we're in regular tutorial mode
 	elif GameManager.tutorial_mode:
-		var problem: TutorialDataManager.ProblemData = GameManager.get_current_tutorial_problem()
+		var problem: TutorialDataTypes.ProblemData = GameManager.get_current_tutorial_problem()
 		if problem:
 			# Create customer from tutorial problem
 			var base_patience: float = 120.0  # More generous patience for tutorials
-			current_customer = GameManager.CustomerData.new(random_name, problem.premises, problem.conclusion, base_patience, problem.solution)
+			current_customer = GameManagerTypes.CustomerData.new(random_name, problem.premises, problem.conclusion, base_patience, problem.solution)
 
 			print("Loaded tutorial problem ", problem.problem_number, " (", problem.difficulty, ")")
 		else:
@@ -399,7 +404,7 @@ func generate_new_customer() -> void:
 
 		# Get random order template for this level
 		var templates_for_level = GameManager.order_templates[current_level]
-		var random_template: GameManager.OrderTemplate = templates_for_level[randi() % templates_for_level.size()]
+		var random_template = templates_for_level[randi() % templates_for_level.size()]
 
 		# Adjust patience based on difficulty and expected operations
 		var base_patience: float = 90.0 - (current_level * 10.0) + (random_template.expected_operations * 15.0)
@@ -412,7 +417,7 @@ func generate_new_customer() -> void:
 		base_patience = max(30.0, base_patience)  # Minimum 30 seconds
 
 		# Create customer with logical premises (hidden premises for Level 6)
-		current_customer = GameManager.CustomerData.new(random_name, random_template.premises, random_template.conclusion, base_patience, random_template.solution)
+		current_customer = GameManagerTypes.CustomerData.new(random_name, random_template.premises, random_template.conclusion, base_patience, random_template.solution)
 
 		# If this is a Level 6 natural language problem, set the natural language data
 		if random_template.is_natural_language:
@@ -435,7 +440,7 @@ func update_customer_display() -> void:
 
 	# Show tutorial info if in tutorial mode
 	if GameManager.tutorial_mode:
-		var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(GameManager.current_tutorial_key)
+		var tutorial: TutorialDataTypes.TutorialData = TutorialDataManager.get_tutorial_by_name(GameManager.current_tutorial_key)
 		if tutorial:
 			var problem_num: int = GameManager.current_tutorial_problem_index + 1
 			var total_problems: int = tutorial.problems.size()
@@ -533,30 +538,22 @@ func complete_order_successfully() -> void:
 
 
 # Phase 1 Signal Handlers
-func _on_premise_validated(expression: BooleanLogicEngine.BooleanExpression) -> void:
+func _on_premise_validated(expression: BooleanExpression) -> void:
 	validated_premises.append(expression)
 	AudioManager.play_premise_complete()
 
-	# Add fuel for correct premise
-	add_fuel(10.0 + GameManager.difficulty_level * 2.0)  # 12-22 fuel depending on difficulty
-	increment_combo()
-
-func _on_premises_completed(premises: Array[BooleanLogicEngine.BooleanExpression]) -> void:
+func _on_premises_completed(premises: Array[BooleanExpression]) -> void:
 	validated_premises = premises
 	show_feedback_message("✓ All premises ready! Advancing to Phase 2...", Color.CYAN)
 	# Auto-advance to Phase 2 after a short delay
 	get_tree().create_timer(1.5).timeout.connect(switch_to_phase2)
 
 # Phase 2 Signal Handlers
-func _on_rule_applied(result: BooleanLogicEngine.BooleanExpression) -> void:
+func _on_rule_applied(result: BooleanExpression) -> void:
 	validated_premises.append(result)
 	AudioManager.play_logic_success()
 
-	# Add fuel for correct rule application
-	add_fuel(15.0 + GameManager.difficulty_level * 3.0)  # 18-33 fuel depending on difficulty
-	increment_combo()
-
-func _on_target_reached(result: BooleanLogicEngine.BooleanExpression) -> void:
+func _on_target_reached(result: BooleanExpression) -> void:
 	show_feedback_message("✓ Proof complete! Order fulfilled!", Color.CYAN)
 
 	# Massive fuel bonus for completing the proof

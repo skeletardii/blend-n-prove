@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cnm685gopfxtf"]
+[gd_scene load_steps=4 format=3 uid="uid://cnm685gopfxtf"]
 
 [ext_resource type="Script" uid="uid://485fcvl6hdf" path="res://src/ui/ProgressScene.gd" id="1_progress_script"]
 [ext_resource type="FontFile" uid="uid://c1fnar2v6mvb0" path="res://assets/fonts/MuseoSansRounded1000.otf" id="2_font"]
+[ext_resource type="StyleBox" uid="uid://s5te78mum416" path="res://assets/styles/dark_inventory_panel.tres" id="3_panel"]
 
 [node name="ProgressScene" type="Control"]
 layout_mode = 3
@@ -26,98 +27,145 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
+offset_left = 12.0
+offset_top = 16.0
+offset_right = -12.0
 offset_bottom = -80.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_scroll_mode = 0
 
 [node name="StatsContainer" type="VBoxContainer" parent="MainScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/separation = 10
 
 [node name="TitleLabel" type="Label" parent="MainScrollContainer/StatsContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 50
 text = "Your Progress"
 horizontal_alignment = 1
 
-[node name="Separator1" type="HSeparator" parent="MainScrollContainer/StatsContainer"]
-layout_mode = 2
-
 [node name="OverallStatsSection" type="VBoxContainer" parent="MainScrollContainer/StatsContainer"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
 [node name="SectionTitle" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 28
 text = "Overall Statistics"
+horizontal_alignment = 1
+
+[node name="HighScoreHeroPanel" type="PanelContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("3_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection/HighScoreHeroPanel"]
+layout_mode = 2
+alignment = 1
+
+[node name="HighScoreLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/HighScoreHeroPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 16
+text = "High Score"
+horizontal_alignment = 1
+
+[node name="HighScoreValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/HighScoreHeroPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 56
+text = "0"
+horizontal_alignment = 1
 
 [node name="OverallStatsGrid" type="GridContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection"]
 layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 8
 columns = 2
 
-[node name="TotalGamesLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+[node name="TotalGamesPanel" type="PanelContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
-text = "Total Games:"
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("3_panel")
 
-[node name="TotalGamesValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/TotalGamesPanel"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+alignment = 1
+
+[node name="TotalGamesLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/TotalGamesPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 16
+text = "Total Games"
+horizontal_alignment = 1
+
+[node name="TotalGamesValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/TotalGamesPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 40
 text = "0"
+horizontal_alignment = 1
 
-[node name="HighScoreLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+[node name="SuccessRatePanel" type="PanelContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
-text = "High Score:"
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("3_panel")
 
-[node name="HighScoreValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/SuccessRatePanel"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
-text = "0"
+alignment = 1
 
-[node name="SuccessRateLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+[node name="SuccessRateLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/SuccessRatePanel/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
-text = "Success Rate:"
+theme_override_font_sizes/font_size = 16
+text = "Success Rate"
+horizontal_alignment = 1
 
-[node name="SuccessRateValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+[node name="SuccessRateValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/SuccessRatePanel/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 40
 text = "0.0%"
+horizontal_alignment = 1
 
-[node name="CurrentStreakLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+[node name="CurrentStreakPanel" type="PanelContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
-text = "Current Streak:"
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("3_panel")
 
-[node name="CurrentStreakValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainScrollContainer/StatsContainer/OverallStatsSection/CurrentStreakPanel"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+alignment = 1
+
+[node name="CurrentStreakLabel" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/CurrentStreakPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 16
+text = "Current Streak"
+horizontal_alignment = 1
+
+[node name="CurrentStreakValue" type="Label" parent="MainScrollContainer/StatsContainer/OverallStatsSection/CurrentStreakPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 40
 text = "0"
+horizontal_alignment = 1
 
 [node name="ButtonContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -125,7 +173,8 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -60.0
+offset_top = -80.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
 alignment = 1
@@ -134,4 +183,5 @@ alignment = 1
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = ExtResource("3_panel")
 text = "Back to Menu"

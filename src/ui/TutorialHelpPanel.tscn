@@ -1,22 +1,55 @@
-[gd_scene load_steps=4 format=3 uid="uid://cq3k7m5xywb8k"]
+[gd_scene load_steps=8 format=3 uid="uid://cq3k7m5xywb8k"]
 
 [ext_resource type="Script" path="res://src/ui/TutorialHelpPanel.gd" id="1_tutorial_help"]
 [ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="3_font_bold"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_panel"]
-bg_color = Color(1, 1, 1, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.85, 0.85, 0.85, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 10
-shadow_offset = Vector2(0, 5)
+bg_color = Color(0.97, 0.97, 0.99, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.3, 0.6, 0.9, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 20
+shadow_offset = Vector2(0, 8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.25, 0.65, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 2
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.35, 0.75, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.15, 0.55, 0.9, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 1
+shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_transparent"]
 
 [node name="TutorialHelpPanel" type="Panel"]
 anchors_preset = 8
@@ -24,10 +57,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -450.0
-offset_top = -350.0
-offset_right = 450.0
-offset_bottom = 350.0
+offset_left = -300.0
+offset_top = -300.0
+offset_right = 300.0
+offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_white_panel")
@@ -51,11 +84,12 @@ theme_override_constants/separation = 10
 
 [node name="RuleTitleContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 
 [node name="RuleTitle" type="Label" parent="MarginContainer/VBoxContainer/RuleTitleContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_font")
+theme_override_colors/font_color = Color(0.1, 0.2, 0.4, 1)
+theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 35
 text = "Tutorial Rule Name"
 horizontal_alignment = 1
@@ -64,15 +98,16 @@ vertical_alignment = 1
 [node name="RuleDescriptionPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 
 [node name="RuleDescription" type="RichTextLabel" parent="MarginContainer/VBoxContainer/RuleDescriptionPanel"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_fonts/bold_font = ExtResource("2_font")
-theme_override_font_sizes/normal_font_size = 35
-theme_override_font_sizes/bold_font_size = 35
+theme_override_fonts/bold_font = ExtResource("3_font_bold")
+theme_override_font_sizes/normal_font_size = 30
+theme_override_font_sizes/bold_font_size = 30
 bbcode_enabled = true
 text = "Rule description goes here..."
 fit_content = true
@@ -80,24 +115,25 @@ scroll_active = false
 
 [node name="ProblemNumberLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
+theme_override_colors/font_color = Color(0.1, 0.2, 0.4, 1)
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 30
 text = "Problem 1/10 (Easy)"
 horizontal_alignment = 1
 
 [node name="ProblemHintPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 
 [node name="ProblemHint" type="RichTextLabel" parent="MarginContainer/VBoxContainer/ProblemHintPanel"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_fonts/bold_font = ExtResource("2_font")
-theme_override_font_sizes/normal_font_size = 35
-theme_override_font_sizes/bold_font_size = 35
+theme_override_fonts/bold_font = ExtResource("3_font_bold")
+theme_override_font_sizes/normal_font_size = 30
+theme_override_font_sizes/bold_font_size = 30
 bbcode_enabled = true
 text = "Problem-specific hint goes here..."
 fit_content = true
@@ -110,6 +146,9 @@ alignment = 1
 [node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 35
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Close Help"

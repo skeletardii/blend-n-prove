@@ -15,14 +15,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3v9zy")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.77254903, 0.77254903, 0.77254903, 1)
+expand_mode = 1
+stretch_mode = 6
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 1
@@ -187,33 +188,9 @@ Q"
 
 [node name="TutorialHelpPanel" parent="UI" instance=ExtResource("2_tutorial_help")]
 visible = false
-layout_mode = 0
-anchors_preset = 0
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 700.0
-offset_bottom = 500.0
-grow_horizontal = 1
-grow_vertical = 1
 
 [node name="HintPopup" parent="UI" instance=ExtResource("3_hint_popup")]
 visible = false
-layout_mode = 0
-anchors_preset = 0
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 600.0
-offset_bottom = 400.0
-grow_horizontal = 1
-grow_vertical = 1
 
 [node name="PauseOverlay" type="CanvasLayer" parent="."]
 layer = 100
