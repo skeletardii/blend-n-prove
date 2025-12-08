@@ -1,7 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://cq3k7m5xywb8k"]
 
-[ext_resource type="Script" path="res://src/ui/TutorialHelpPanel.gd" id="1_tutorial_help"]
-[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_500_with_fallback.tres" id="2_font"]
+[ext_resource type="Script" uid="uid://dtuwmpn0kw54i" path="res://src/ui/TutorialHelpPanel.gd" id="1_tutorial_help"]
 [ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_700_with_fallback.tres" id="3_font_bold"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_panel"]
@@ -19,6 +18,8 @@ shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 20
 shadow_offset = Vector2(0, 8)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_transparent"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
 bg_color = Color(0.25, 0.65, 1, 1)
 corner_radius_top_left = 12
@@ -28,16 +29,6 @@ corner_radius_bottom_left = 12
 shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 2
 shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0.35, 0.75, 1, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 3
-shadow_offset = Vector2(0, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
 bg_color = Color(0.15, 0.55, 0.9, 1)
@@ -49,7 +40,15 @@ shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 1
 shadow_offset = Vector2(0, 1)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_transparent"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.35, 0.75, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
 
 [node name="TutorialHelpPanel" type="Panel"]
 anchors_preset = 8
@@ -104,8 +103,6 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_fonts/bold_font = ExtResource("3_font_bold")
 theme_override_font_sizes/normal_font_size = 30
 theme_override_font_sizes/bold_font_size = 30
 bbcode_enabled = true
@@ -130,8 +127,6 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_fonts/bold_font = ExtResource("3_font_bold")
 theme_override_font_sizes/normal_font_size = 30
 theme_override_font_sizes/bold_font_size = 30
 bbcode_enabled = true
@@ -149,6 +144,6 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "Close Help"

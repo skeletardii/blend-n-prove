@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
 [ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_occ7e"]
-[ext_resource type="Script" uid="uid://6us7btkgp6wo" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
-[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_500_with_fallback.tres" id="6_eptc2"]
+[ext_resource type="Script" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
+[ext_resource type="FontFile" uid="uid://bjwp288jm42wb" path="res://assets/fonts/DejaVuSans.ttf" id="5_drutf"]
 [ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_700_with_fallback.tres" id="7_d87rg"]
 [ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_900_with_fallback.tres" id="8_gxw17"]
 
@@ -139,7 +139,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("2_occ7e")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("6_eptc2")
+theme_override_fonts/font = ExtResource("5_drutf")
 theme_override_font_sizes/font_size = 30
 text = "Prove: Q"
 horizontal_alignment = 1
@@ -264,7 +264,6 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
-theme_override_fonts/font = ExtResource("8_gxw17")
 theme_override_font_sizes/font_size = 18
 text = "▲"
 
