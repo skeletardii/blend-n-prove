@@ -96,6 +96,16 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
+[node name="PhaseLabel" type="Label" parent="WorkContainer"]
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("7_d87rg")
+theme_override_font_sizes/font_size = 24
+text = "Phase 2: Derive Target"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="TargetArea" type="Control" parent="WorkContainer"]
 custom_minimum_size = Vector2(0, 600)
 layout_mode = 2
