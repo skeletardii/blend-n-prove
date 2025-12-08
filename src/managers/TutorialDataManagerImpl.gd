@@ -1,53 +1,9 @@
 extends Node
 
+const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
+
 signal tutorial_loaded(tutorial_name: String)
 signal all_tutorials_loaded()
-
-class ProblemData:
-	var problem_number: int = 0
-	var difficulty: String = ""
-	var premises: Array[String] = []
-	var conclusion: String = ""
-	var expected_operations: int = 0
-	var solution: String = ""
-	var description: String = ""
-	var problem_title: String = ""
-	var hints: Array[String] = []
-	var hidden_premises: Array[String] = []
-	var hidden_conclusion: String = ""
-	var interpretation_hints: Array[String] = []
-
-	func _init(num: int = 0, diff: String = "", prems: Array[String] = [], concl: String = "", sol: String = "",
-	           desc: String = "", title: String = "", hint_list: Array[String] = [], exp_ops: int = 0,
-	           hidden_prems: Array[String] = [], hidden_concl: String = "", interpret_hints: Array[String] = []) -> void:
-		problem_number = num
-		difficulty = diff
-		premises = prems.duplicate()
-		conclusion = concl
-		expected_operations = exp_ops
-		solution = sol
-		description = desc
-		problem_title = title
-		hints = hint_list.duplicate()
-		hidden_premises = hidden_prems.duplicate()
-		hidden_conclusion = hidden_concl
-		interpretation_hints = interpret_hints.duplicate()
-
-class TutorialData:
-	var rule_name: String = ""
-	var description: String = ""
-	var rule_pattern: String = ""
-	var problems: Array[ProblemData] = []
-	var file_path: String = ""
-	var tutorial_key: String = ""
-
-	func _init(name: String = "", desc: String = "", pattern: String = "", path: String = "", key: String = "") -> void:
-		rule_name = name
-		description = desc
-		rule_pattern = pattern
-		file_path = path
-		tutorial_key = key
-		problems = []
 
 # Dictionary mapping tutorial key to TutorialData
 var tutorials: Dictionary = {}
@@ -107,7 +63,7 @@ func load_all_tutorials() -> void:
 
 	for tutorial_key in button_tutorial_map.values():
 		var file_path: String = "res://data/tutorial/" + tutorial_key + ".json"
-		var tutorial: TutorialData = load_tutorial(file_path, tutorial_key)
+		var tutorial: TutorialDataTypes.TutorialData = load_tutorial(file_path, tutorial_key)
 
 		if tutorial:
 			tutorials[tutorial_key] = tutorial
@@ -120,7 +76,7 @@ func load_all_tutorials() -> void:
 	all_tutorials_loaded.emit()
 	print("All tutorials loaded!")
 
-func load_tutorial(file_path: String, tutorial_key: String) -> TutorialData:
+func load_tutorial(file_path: String, tutorial_key: String) -> TutorialDataTypes.TutorialData:
 	if not FileAccess.file_exists(file_path):
 		print("Tutorial file not found: ", file_path)
 		return null
@@ -135,7 +91,7 @@ func load_tutorial(file_path: String, tutorial_key: String) -> TutorialData:
 
 	return parse_tutorial_json(content, file_path, tutorial_key)
 
-func parse_tutorial_json(content: String, file_path: String, tutorial_key: String) -> TutorialData:
+func parse_tutorial_json(content: String, file_path: String, tutorial_key: String) -> TutorialDataTypes.TutorialData:
 	var json: JSON = JSON.new()
 	var error: Error = json.parse(content)
 
@@ -149,7 +105,7 @@ func parse_tutorial_json(content: String, file_path: String, tutorial_key: Strin
 		return null
 
 	# Create tutorial data from JSON
-	var tutorial: TutorialData = TutorialData.new(
+	var tutorial: TutorialDataTypes.TutorialData = TutorialDataTypes.TutorialData.new(
 		data.get("rule_name", ""),
 		data.get("description", ""),
 		data.get("rule_pattern", ""),
@@ -170,7 +126,7 @@ func parse_tutorial_json(content: String, file_path: String, tutorial_key: Strin
 			premises.append(str(premise))
 
 		# Create problem data
-		var problem: ProblemData = ProblemData.new(
+		var problem: TutorialDataTypes.ProblemData = TutorialDataTypes.ProblemData.new(
 			problem_dict.get("problem_number", 0),
 			problem_dict.get("difficulty", "Easy"),
 			premises,
@@ -182,10 +138,10 @@ func parse_tutorial_json(content: String, file_path: String, tutorial_key: Strin
 
 	return tutorial
 
-func get_tutorial_by_name(tutorial_key: String) -> TutorialData:
+func get_tutorial_by_name(tutorial_key: String) -> TutorialDataTypes.TutorialData:
 	return tutorials.get(tutorial_key, null)
 
-func get_tutorial_by_button_index(button_index: int) -> TutorialData:
+func get_tutorial_by_button_index(button_index: int) -> TutorialDataTypes.TutorialData:
 	var tutorial_key: String = button_tutorial_map.get(button_index, "")
 	if tutorial_key.is_empty():
 		return null
@@ -198,7 +154,7 @@ func get_tutorial_count() -> int:
 	return tutorials.size()
 
 func get_problem_count(tutorial_key: String) -> int:
-	var tutorial: TutorialData = get_tutorial_by_name(tutorial_key)
+	var tutorial: TutorialDataTypes.TutorialData = get_tutorial_by_name(tutorial_key)
 	if tutorial:
 		return tutorial.problems.size()
 	return 0
@@ -226,7 +182,7 @@ func get_all_tutorial_keys() -> Array:
 	return tutorials.keys()
 
 func debug_print_tutorial(tutorial_key: String) -> void:
-	var tutorial: TutorialData = get_tutorial_by_name(tutorial_key)
+	var tutorial: TutorialDataTypes.TutorialData = get_tutorial_by_name(tutorial_key)
 	if not tutorial:
 		print("Tutorial not found: ", tutorial_key)
 		return

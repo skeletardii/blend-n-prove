@@ -1,5 +1,7 @@
 extends Control
 
+const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
+
 @onready var back_button: Button = $MainContainer/BackButton
 var tutorial_explanation_dialog: Control = null
 
@@ -29,7 +31,7 @@ func setup_tutorial_buttons() -> void:
 				button.pressed.connect(_on_grid_button_pressed.bind(i))
 
 func update_button_display(button: Button, button_index: int) -> void:
-	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_button_index(button_index)
+	var tutorial: TutorialDataTypes.TutorialData = TutorialDataManager.get_tutorial_by_button_index(button_index)
 
 	if tutorial:
 		var display_name: String = tutorial.rule_name
@@ -71,19 +73,19 @@ func _on_back_button_pressed() -> void:
 
 func _on_grid_button_pressed(button_number: int) -> void:
 	AudioManager.play_button_click()
-	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_button_index(button_number)
+	var tutorial: TutorialDataTypes.TutorialData = TutorialDataManager.get_tutorial_by_button_index(button_number)
 
 	if tutorial:
 		show_tutorial_explanation(tutorial)
 	else:
 		print("No tutorial found for button: ", button_number)
 
-func show_tutorial_explanation(tutorial: TutorialDataManager.TutorialData) -> void:
+func show_tutorial_explanation(tutorial: TutorialDataTypes.TutorialData) -> void:
 	# Create explanation dialog
 	tutorial_explanation_dialog = create_explanation_dialog(tutorial)
 	add_child(tutorial_explanation_dialog)
 
-func create_explanation_dialog(tutorial: TutorialDataManager.TutorialData) -> Control:
+func create_explanation_dialog(tutorial: TutorialDataTypes.TutorialData) -> Control:
 	# Create a modal dialog
 	var dialog: Control = Control.new()
 	dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -159,7 +161,7 @@ func create_explanation_dialog(tutorial: TutorialDataManager.TutorialData) -> Co
 
 	return dialog
 
-func _on_start_tutorial(tutorial: TutorialDataManager.TutorialData) -> void:
+func _on_start_tutorial(tutorial: TutorialDataTypes.TutorialData) -> void:
 	AudioManager.play_button_click()
 
 	# Close dialog

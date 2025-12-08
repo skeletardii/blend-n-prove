@@ -1,5 +1,7 @@
 extends Control
 
+const ProgressTrackerTypes = preload("res://src/managers/ProgressTrackerTypes.gd")
+
 @onready var total_games_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/TotalGamesValue
 @onready var high_score_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/HighScoreValue
 @onready var success_rate_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/SuccessRateValue
@@ -68,7 +70,7 @@ func update_detailed_stats() -> void:
 	# Add recent sessions
 	add_recent_sessions_section()
 
-func add_achievements_section(stats: ProgressTracker.PlayerStatistics) -> void:
+func add_achievements_section(stats: ProgressTrackerTypes.PlayerStatistics) -> void:
 	var stats_container = $MainScrollContainer/StatsContainer
 
 	var separator = HSeparator.new()
@@ -92,7 +94,7 @@ func add_achievements_section(stats: ProgressTracker.PlayerStatistics) -> void:
 		achievement_label.text = "🏆 " + ProgressTracker.get_achievement_name(achievement_id)
 		achievements_grid.add_child(achievement_label)
 
-func add_difficulty_breakdown_section(stats: ProgressTracker.PlayerStatistics) -> void:
+func add_difficulty_breakdown_section(stats: ProgressTrackerTypes.PlayerStatistics) -> void:
 	var stats_container = $MainScrollContainer/StatsContainer
 
 	var separator = HSeparator.new()

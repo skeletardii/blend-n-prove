@@ -2,6 +2,7 @@ extends Control
 
 # Explicit preload to ensure BooleanExpression type is available
 const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
+const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
 
 # UI References
 @onready var main_container: VBoxContainer = $MainContainer
@@ -33,7 +34,7 @@ const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.
 @onready var submit_button: Button = $MainContainer/ActionButtons/ButtonContainer/SubmitButton
 
 # Game State
-var current_customer  # GameManager.CustomerData (type annotation removed for proxy compatibility)
+var current_customer  # GameManagerTypes.CustomerData (type annotation removed for proxy compatibility)
 var validated_premises: Array[BooleanExpression] = []
 var current_input: String = ""
 var premise_items: Array[Control] = []
@@ -94,7 +95,7 @@ func connect_virtual_keyboard() -> void:
 	clear_button.pressed.connect(_on_clear_pressed)
 	submit_button.pressed.connect(_on_submit_pressed)
 
-func set_customer_data(customer) -> void:  # GameManager.CustomerData
+func set_customer_data(customer) -> void:  # GameManagerTypes.CustomerData
 	current_customer = customer
 	validated_premises.clear()
 	update_premise_checklist()

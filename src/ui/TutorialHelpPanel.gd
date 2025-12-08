@@ -1,5 +1,7 @@
 extends Panel
 
+const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
+
 signal help_panel_closed()
 
 # UI References
@@ -22,7 +24,7 @@ func show_tutorial_help(tutorial_key: String, problem_index: int) -> void:
 	current_problem_index = problem_index
 
 	# Get tutorial data
-	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(tutorial_key)
+	var tutorial: TutorialDataTypes.TutorialData = TutorialDataManager.get_tutorial_by_name(tutorial_key)
 
 	if not tutorial:
 		push_error("Tutorial not found: " + tutorial_key)
@@ -38,7 +40,7 @@ func show_tutorial_help(tutorial_key: String, problem_index: int) -> void:
 
 	# Get problem-specific hint
 	if problem_index >= 0 and problem_index < tutorial.problems.size():
-		var problem: TutorialDataManager.ProblemData = tutorial.problems[problem_index]
+		var problem: TutorialDataTypes.ProblemData = tutorial.problems[problem_index]
 		problem_number_label.text = "Problem " + str(problem.problem_number) + "/10 (" + problem.difficulty + ")"
 
 		problem_hint.bbcode_enabled = true

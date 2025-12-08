@@ -1,5 +1,8 @@
 extends Node
 
+const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
+const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
+
 signal game_state_changed(new_state: GameState)
 signal score_updated(new_score: int)
 
@@ -14,69 +17,6 @@ enum GamePhase {
 	PREPARING_PREMISES,
 	TRANSFORMING_PREMISES
 }
-
-class OrderTemplate:
-	var premises: Array[String] = []
-	var conclusion: String
-	var expected_operations: int
-	var description: String
-	var solution: String
-	# Level 6 natural language fields
-	var is_natural_language: bool = false
-	var natural_language_premises: Array[String] = []
-	var natural_language_conclusion: String = ""
-	var interpretation_hints: Array[String] = []
-
-	func _init(premise_list: Array[String], target: String, ops: int, desc: String = "", sol: String = "") -> void:
-		premises = premise_list
-		conclusion = target
-		expected_operations = ops
-		description = desc
-		solution = sol
-		is_natural_language = false
-
-	# Constructor for natural language problems (Level 6)
-	static func create_natural_language(
-		nl_premises: Array[String],
-		hidden_premises: Array[String],
-		nl_conclusion: String,
-		hidden_conclusion: String,
-		ops: int,
-		desc: String = "",
-		sol: String = "",
-		hints: Array[String] = []
-	) -> OrderTemplate:
-		var template = OrderTemplate.new(hidden_premises, hidden_conclusion, ops, desc, sol)
-		template.is_natural_language = true
-		template.natural_language_premises = nl_premises
-		template.natural_language_conclusion = nl_conclusion
-		template.interpretation_hints = hints
-		return template
-
-class CustomerData:
-	var customer_name: String
-	var required_premises: Array[String] = []
-	var target_conclusion: String
-	var patience_duration: float
-	var solution: String = ""
-	# Level 6 natural language fields
-	var is_natural_language: bool = false
-	var natural_language_premises: Array[String] = []
-	var natural_language_conclusion: String = ""
-
-	func _init(name: String, premises: Array[String], conclusion: String, patience: float = 60.0, sol: String = "") -> void:
-		customer_name = name
-		required_premises = premises
-		target_conclusion = conclusion
-		patience_duration = patience
-		solution = sol
-		is_natural_language = false
-
-	# Set natural language data for Level 6 problems
-	func set_natural_language_data(nl_premises: Array[String], nl_conclusion: String) -> void:
-		is_natural_language = true
-		natural_language_premises = nl_premises
-		natural_language_conclusion = nl_conclusion
 
 var current_state: GameState = GameState.MENU
 var current_phase: GamePhase = GamePhase.PREPARING_PREMISES
@@ -136,7 +76,7 @@ func load_classic_problems() -> void:
 
 		# Parse problems array
 		var problems_array: Array = level_data.get("problems", [])
-		var level_templates: Array[OrderTemplate] = []
+		var level_templates: Array[GameManagerTypes.OrderTemplate] = []
 
 		for problem_dict in problems_array:
 			if not problem_dict is Dictionary:
@@ -162,7 +102,7 @@ func load_classic_problems() -> void:
 				for hint in hints_data:
 					hints.append(str(hint))
 
-				var template: OrderTemplate = OrderTemplate.create_natural_language(
+				var template: GameManagerTypes.OrderTemplate = GameManagerTypes.OrderTemplate.create_natural_language(
 					nl_premises,
 					hidden_premises,
 					problem_dict.get("natural_language_conclusion", ""),
@@ -181,7 +121,7 @@ func load_classic_problems() -> void:
 				for premise in premises_data:
 					premises.append(str(premise))
 
-				var template: OrderTemplate = OrderTemplate.new(
+				var template: GameManagerTypes.OrderTemplate = GameManagerTypes.OrderTemplate.new(
 					premises,
 					problem_dict.get("conclusion", ""),
 					problem_dict.get("expected_operations", 1),
@@ -304,11 +244,11 @@ func complete_game_successfully() -> void:
 	complete_progress_session("win")
 	change_state(GameState.GAME_OVER)
 
-func get_current_tutorial_problem() -> TutorialDataManager.ProblemData:
+func get_current_tutorial_problem() -> TutorialDataTypes.ProblemData:
 	if not tutorial_mode or current_tutorial_key.is_empty():
 		return null
 
-	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(current_tutorial_key)
+	var tutorial: TutorialDataTypes.TutorialData = TutorialDataManager.get_tutorial_by_name(current_tutorial_key)
 	if not tutorial:
 		return null
 
@@ -321,7 +261,7 @@ func advance_to_next_tutorial_problem() -> bool:
 	if not tutorial_mode or current_tutorial_key.is_empty():
 		return false
 
-	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(current_tutorial_key)
+	var tutorial: TutorialDataTypes.TutorialData = TutorialDataManager.get_tutorial_by_name(current_tutorial_key)
 	if not tutorial:
 		return false
 

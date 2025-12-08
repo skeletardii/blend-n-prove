@@ -4,7 +4,10 @@
       "mcp__godot-mcp__create_scene",
       "mcp__godot-mcp__create_node",
       "mcp__godot-mcp__update_node_property",
-      "mcp__godot-mcp__save_scene"
+      "mcp__godot-mcp__save_scene",
+      "Bash(git pull:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

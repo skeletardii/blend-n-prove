@@ -2,6 +2,8 @@ extends Control
 
 # Explicit preload to ensure BooleanExpression type is available
 const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
+const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
+const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
 
 # UI References - Persistent Elements
 @onready var main_container: VBoxContainer = $UI/MainContainer
@@ -234,16 +236,16 @@ func generate_new_customer() -> void:
 		var tutorial_premises: Array[String] = ["P", "Q"]
 		var tutorial_target: String = "P∧Q"
 		var tutorial_patience: float = 999999.0  # Infinite time
-		current_customer = GameManager.CustomerData.new("Tutorial Guide", tutorial_premises, tutorial_target, tutorial_patience, "")
+		current_customer = GameManagerTypes.CustomerData.new("Tutorial Guide", tutorial_premises, tutorial_target, tutorial_patience, "")
 		print("Loaded first-time tutorial problem")
 
 	# Check if we're in regular tutorial mode
 	elif GameManager.tutorial_mode:
-		var problem: TutorialDataManager.ProblemData = GameManager.get_current_tutorial_problem()
+		var problem: TutorialDataTypes.ProblemData = GameManager.get_current_tutorial_problem()
 		if problem:
 			# Create customer from tutorial problem
 			var base_patience: float = 120.0  # More generous patience for tutorials
-			current_customer = GameManager.CustomerData.new(random_name, problem.premises, problem.conclusion, base_patience, problem.solution)
+			current_customer = GameManagerTypes.CustomerData.new(random_name, problem.premises, problem.conclusion, base_patience, problem.solution)
 
 			print("Loaded tutorial problem ", problem.problem_number, " (", problem.difficulty, ")")
 		else:
@@ -275,7 +277,7 @@ func generate_new_customer() -> void:
 		base_patience = max(30.0, base_patience)  # Minimum 30 seconds
 
 		# Create customer with logical premises (hidden premises for Level 6)
-		current_customer = GameManager.CustomerData.new(random_name, random_template.premises, random_template.conclusion, base_patience, random_template.solution)
+		current_customer = GameManagerTypes.CustomerData.new(random_name, random_template.premises, random_template.conclusion, base_patience, random_template.solution)
 
 		# If this is a Level 6 natural language problem, set the natural language data
 		if random_template.is_natural_language:
@@ -298,7 +300,7 @@ func update_customer_display() -> void:
 
 	# Show tutorial info if in tutorial mode
 	if GameManager.tutorial_mode:
-		var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(GameManager.current_tutorial_key)
+		var tutorial: TutorialDataTypes.TutorialData = TutorialDataManager.get_tutorial_by_name(GameManager.current_tutorial_key)
 		if tutorial:
 			var problem_num: int = GameManager.current_tutorial_problem_index + 1
 			var total_problems: int = tutorial.problems.size()

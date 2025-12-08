@@ -2,6 +2,7 @@ extends Node
 
 # Explicit preload to ensure BooleanExpression type is available
 const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
+const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
 
 # Tutorial Testing Script
 # Tests all tutorial problems to ensure they can be solved with the Boolean Logic Engine
@@ -43,7 +44,7 @@ func run_all_tests() -> void:
 	get_tree().quit()
 
 func test_tutorial(tutorial_key: String) -> void:
-	var tutorial: TutorialDataManager.TutorialData = TutorialDataManager.get_tutorial_by_name(tutorial_key)
+	var tutorial: TutorialDataTypes.TutorialData = TutorialDataManager.get_tutorial_by_name(tutorial_key)
 
 	if not tutorial:
 		print("✗ Failed to load tutorial: ", tutorial_key)
@@ -54,10 +55,10 @@ func test_tutorial(tutorial_key: String) -> void:
 	print("-"*80)
 
 	for i in range(tutorial.problems.size()):
-		var problem: TutorialDataManager.ProblemData = tutorial.problems[i]
+		var problem: TutorialDataTypes.ProblemData = tutorial.problems[i]
 		test_problem(tutorial, problem, i)
 
-func test_problem(tutorial: TutorialDataManager.TutorialData, problem: TutorialDataManager.ProblemData, index: int) -> void:
+func test_problem(tutorial: TutorialDataTypes.TutorialData, problem: TutorialDataTypes.ProblemData, index: int) -> void:
 	var test_name: String = tutorial.rule_name + " - Problem " + str(problem.problem_number) + " (" + problem.difficulty + ")"
 
 	# Create boolean expressions from premises
@@ -236,7 +237,7 @@ func test_negation_laws(premises: Array, conclusion: BooleanExpression) -> bool:
 	var result: BooleanExpression = BooleanLogicEngine.apply_negation_laws(premises[0])
 	return result.is_valid and result.equals(conclusion)
 
-func record_failure(test_name: String, reason: String, problem: TutorialDataManager.ProblemData) -> void:
+func record_failure(test_name: String, reason: String, problem: TutorialDataTypes.ProblemData) -> void:
 	tests_failed += 1
 	print("  ✗ Problem ", problem.problem_number, ": ", reason)
 
