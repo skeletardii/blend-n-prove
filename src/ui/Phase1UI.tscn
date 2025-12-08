@@ -112,18 +112,19 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = -10.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 15
 
 [node name="LeftPanel" type="Panel" parent="MainContainer/CustomerArea/PremisePanelsContainer"]
 custom_minimum_size = Vector2(0, 500)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.0
 theme = ExtResource("6_wbgmg")
 
 [node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel"]
@@ -131,9 +132,9 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 15.0
+offset_left = 20.0
 offset_top = 20.0
-offset_right = -15.0
+offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -143,6 +144,7 @@ theme_override_constants/separation = 15
 custom_minimum_size = Vector2(0, 500)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.0
 theme = ExtResource("6_wbgmg")
 
 [node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel"]
@@ -150,9 +152,9 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 15.0
+offset_left = 20.0
 offset_top = 20.0
-offset_right = -15.0
+offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -179,7 +181,7 @@ layout_mode = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_o5hkq")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 28
 text = "Variable Definitions:"
 
 [node name="DefinitionsScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer"]
@@ -195,51 +197,28 @@ size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_constants/separation = 3
 
-[node name="PremiseChecklist" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer"]
+[node name="PremiseChecklist" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/PremiseChecklist"]
+[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/PremiseChecklist"]
 layout_mode = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_o5hkq")
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 30
 text = "Premises to reconstruct:"
 
-[node name="PremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/PremiseChecklist"]
+[node name="PremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/PremiseChecklist"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="LeftPremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/PremiseChecklist/PremiseListScroll"]
+[node name="PremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/PremiseChecklist/PremiseListScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 12
-
-[node name="RightPremiseChecklist" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/RightPremiseChecklist"]
-layout_mode = 2
-theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
-theme_override_font_sizes/font_size = 36
-text = "Premises (continued):"
-
-[node name="RightPremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/RightPremiseChecklist"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="RightPremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/RightPremiseChecklist/RightPremiseListScroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 
 [node name="InputSystem" type="Control" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 80)

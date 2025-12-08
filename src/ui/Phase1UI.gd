@@ -10,8 +10,7 @@ const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
 @onready var score_display: Label = $MainContainer/TopStatusBar/StatusContainer/ScoreDisplay
 @onready var level_display: Label = $MainContainer/TopStatusBar/StatusContainer/LevelDisplay
 @onready var patience_bar: ProgressBar = $MainContainer/TopStatusBar/PatienceBar
-@onready var left_premise_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/PremiseChecklist/PremiseListScroll/LeftPremiseList
-@onready var right_premise_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/RightPremiseChecklist/RightPremiseListScroll/RightPremiseList
+@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/PremiseChecklist/PremiseListScroll/PremiseList
 @onready var input_display: Label = $MainContainer/InputSystem/InputContainer/InputField/InputDisplay
 @onready var variable_definitions_panel: PanelContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel
 @onready var definitions_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer/DefinitionsScroll/DefinitionsList
@@ -280,7 +279,7 @@ func update_variable_definitions() -> void:
 			var def_label = Label.new()
 			def_label.text = "Let " + variable + " be \"" + definitions[variable] + "\""
 			def_label.add_theme_font_override("font", museo_font)
-			def_label.add_theme_font_size_override("font_size", 28)
+			def_label.add_theme_font_size_override("font_size", 24)
 			def_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 			def_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			definitions_list.add_child(def_label)
@@ -296,31 +295,25 @@ func update_premise_checklist() -> void:
 	# Determine which text to display based on problem type
 	var display_premises: Array[String] = []
 	if current_customer.is_natural_language:
-		# Level 6: Show natural language sentences
+		# Level 6: Show natural language sentences without parenthesis tips
 		display_premises = current_customer.natural_language_premises.duplicate()
+		# Remove all parenthesis tips like (P), (¬Q), etc.
+		for i in range(display_premises.size()):
+			# Use regex to remove parenthesis with variable symbols
+			var regex = RegEx.new()
+			regex.compile("\\s*\\([¬]?[A-Z]\\)")
+			display_premises[i] = regex.sub(display_premises[i], "", true)
 	else:
 		# Levels 1-5: Show logical symbols
 		display_premises = current_customer.required_premises.duplicate()
 
-	# Split premises between left and right panels
-	var half_count = ceili(display_premises.size() / 2.0)
-
-	# Create new items for left panel
-	for i in range(min(half_count, display_premises.size())):
+	# Add all premises to the right panel
+	for i in range(display_premises.size()):
 		var premise_text = display_premises[i]
 		var is_completed = is_premise_completed_by_index(i)
 
 		var premise_panel = create_premise_panel(premise_text, is_completed)
-		left_premise_list.add_child(premise_panel)
-		premise_items.append(premise_panel)
-
-	# Create new items for right panel
-	for i in range(half_count, display_premises.size()):
-		var premise_text = display_premises[i]
-		var is_completed = is_premise_completed_by_index(i)
-
-		var premise_panel = create_premise_panel(premise_text, is_completed)
-		right_premise_list.add_child(premise_panel)
+		premise_list.add_child(premise_panel)
 		premise_items.append(premise_panel)
 
 func create_premise_panel(premise_text: String, is_completed: bool) -> PanelContainer:
@@ -351,11 +344,11 @@ func create_premise_panel(premise_text: String, is_completed: bool) -> PanelCont
 	style_box.shadow_size = 4
 	style_box.shadow_offset = Vector2(2, 2)
 
-	# Increased padding for larger panels
-	style_box.content_margin_left = 18
-	style_box.content_margin_right = 18
-	style_box.content_margin_top = 14
-	style_box.content_margin_bottom = 14
+	# Balanced padding for proper content fitting
+	style_box.content_margin_left = 15
+	style_box.content_margin_right = 15
+	style_box.content_margin_top = 12
+	style_box.content_margin_bottom = 12
 
 	panel.add_theme_stylebox_override("panel", style_box)
 
@@ -367,14 +360,14 @@ func create_premise_panel(premise_text: String, is_completed: bool) -> PanelCont
 	var museo_font = load("res://assets/fonts/MuseoSansRounded700.otf")
 	label.add_theme_font_override("font", museo_font)
 
-	# Increased font sizes for better visibility
-	var font_size = 30 if current_customer.is_natural_language else 56
+	# Optimized font sizes for better content fitting
+	var font_size = 26 if current_customer.is_natural_language else 48
 	label.add_theme_font_size_override("font_size", font_size)
 
 	# For natural language text, enable word wrapping
 	if current_customer.is_natural_language:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.custom_minimum_size.x = 280
+		label.custom_minimum_size.x = 250
 
 	if is_completed:
 		# Black text for contrast on white background
