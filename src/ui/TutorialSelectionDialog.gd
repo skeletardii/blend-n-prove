@@ -22,7 +22,7 @@ func setup(tutorial_data, progress: int, total: int) -> void:
 	title_label.text = tutorial_data.rule_name
 	description_label.text = "[center][b]How It Works[/b][/center]\n\n" + tutorial_data.description
 	
-	rule_pattern_label.text = "\n[center][b]" + tutorial_data.rule_pattern + "[/b][/center]"
+	rule_pattern_label.text = "[center][b]" + tutorial_data.rule_pattern + "[/b][/center]"
 	
 	progress_label.text = "Progress: " + str(progress) + "/" + str(total) + " problems completed"
 	
