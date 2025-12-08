@@ -32,14 +32,14 @@ func _set(property: StringName, value: Variant) -> bool:
 	return false
 
 # Method forwarding
-func start_new_session(difficulty: int) -> void:
-	if _impl: _impl.start_new_session(difficulty)
+func start_new_session(difficulty: int, time_limit_seconds: float) -> void:
+	if _impl: _impl.start_new_session(difficulty, time_limit_seconds)
 
 func record_operation_used(operation_name: String, success: bool) -> void:
 	if _impl: _impl.record_operation_used(operation_name, success)
 
-func complete_current_session(final_score: int, lives_remaining: int, orders_completed: int, completion_status: String) -> void:
-	if _impl: _impl.complete_current_session(final_score, lives_remaining, orders_completed, completion_status)
+func complete_current_session(final_score: int, orders_completed: int, completion_status: String, time_remaining_on_quit: float = 0.0, max_active_combo: int = 0, mistakes_count: int = 0) -> void:
+	if _impl: _impl.complete_current_session(final_score, orders_completed, completion_status, time_remaining_on_quit, max_active_combo, mistakes_count)
 
 func update_statistics() -> void:
 	if _impl: _impl.update_statistics()

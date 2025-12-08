@@ -416,12 +416,12 @@ func reset_combo_penalty() -> void:
 			update_combo_effects()
 		)
 	
-	combo_count = 0
+	combo_count = 0 # Reset locally for UI, GameManager handles actual combo value
 	set_rocket_speed(1.0)
 	update_particle_color()
 	
-	# Gameplay Penalty
-	apply_fuel_penalty()
+	# Delegate mistake recording and combo reset to GameManager
+	GameManager.record_mistake()
 	trigger_damage_wobble()
 
 func trigger_damage_wobble() -> void:
@@ -1016,13 +1016,9 @@ func show_feedback(message: String, color: Color, emit_to_parent: bool = true) -
 	)
 
 func apply_fuel_penalty() -> void:
-	"""Apply fuel penalty and reset combo in GameplayScene"""
-	# Get reference to GameplayScene (parent of parent)
-	var gameplay_scene = get_parent().get_parent()
-	if gameplay_scene and gameplay_scene.has_method("apply_fuel_penalty"):
-		gameplay_scene.apply_fuel_penalty(0.20)  # Lose 20% of current fuel
-	if gameplay_scene and gameplay_scene.has_method("reset_combo"):
-		gameplay_scene.reset_combo()
+	"""Records a mistake and triggers visual penalty effects."""
+	# Delegate mistake recording to GameManager
+	GameManager.record_mistake()
 
 func show_score_popup_at_card(card: Control) -> void:
 	"""Show speed boost notification at the card's position"""

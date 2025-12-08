@@ -25,7 +25,7 @@ func set_data(new_data: Dictionary) -> void:
 	queue_redraw()
 
 func get_legend_data() -> Array[Dictionary]:
-	var legend = []
+	var legend: Array[Dictionary] = []
 	var color_index = 0
 	for key in _sorted_keys:
 		legend.append({

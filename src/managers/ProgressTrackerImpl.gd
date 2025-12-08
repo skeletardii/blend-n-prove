@@ -149,8 +149,8 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	load_progress_data()
 
-func start_new_session(difficulty: int) -> void:
-	current_session = ProgressTrackerTypes.GameSession.new(0, difficulty, 3, 0, 0.0, "incomplete")
+func start_new_session(difficulty: int, time_limit_seconds: float) -> void:
+	current_session = ProgressTrackerTypes.GameSession.new(0, difficulty, 0, 0.0, "incomplete", time_limit_seconds)
 	session_start_time = Time.get_time_dict_from_system().hour * 3600 + Time.get_time_dict_from_system().minute * 60 + Time.get_time_dict_from_system().second
 
 func record_operation_used(operation_name: String, success: bool) -> void:
@@ -174,20 +174,28 @@ func record_operation_used(operation_name: String, success: bool) -> void:
 			statistics.operation_proficiency[operation_name]["successes"] += 1
 		statistics.operation_proficiency[operation_name]["rate"] = float(statistics.operation_proficiency[operation_name]["successes"]) / float(statistics.operation_proficiency[operation_name]["total"])
 
-func complete_current_session(final_score: int, lives_remaining: int, orders_completed: int, completion_status: String) -> void:
+func complete_current_session(final_score: int, orders_completed: int, completion_status: String, time_remaining_on_quit: float = 0.0, max_active_combo: int = 0, mistakes_count: int = 0) -> void:
 	if not current_session:
 		return
 
-	var current_time = Time.get_time_dict_from_system().hour * 3600 + Time.get_time_dict_from_system().minute * 60 + Time.get_time_dict_from_system().second
-	var session_duration = current_time - session_start_time
+	var current_time_total_seconds = Time.get_time_dict_from_system().hour * 3600 + Time.get_time_dict_from_system().minute * 60 + Time.get_time_dict_from_system().second
+	var session_duration = current_time_total_seconds - session_start_time
 	if session_duration < 0:
-		session_duration += 24 * 3600  # Handle day rollover
+		session_duration += 24 * 3600  # Handle day rollover (should not happen for short game sessions)
 
 	current_session.final_score = final_score
-	current_session.lives_remaining = lives_remaining
 	current_session.orders_completed = orders_completed
+	
+	# Validate completion_status against allowed values
+	if completion_status != "time_out" and completion_status != "quit":
+		completion_status = "incomplete" # Default to incomplete if invalid status passed
+		
 	current_session.completion_status = completion_status
 	current_session.session_duration = session_duration
+	current_session.time_remaining_on_quit = time_remaining_on_quit
+	current_session.max_active_combo = max_active_combo
+	current_session.mistakes_count = mistakes_count
+
 
 	game_sessions.append(current_session)
 	update_statistics()
@@ -214,32 +222,61 @@ func update_statistics() -> void:
 	if last_session.final_score > statistics.high_scores_by_difficulty.get(difficulty, 0):
 		statistics.high_scores_by_difficulty[difficulty] = last_session.final_score
 
-	# Update success tracking
-	var was_successful = last_session.completion_status == "win"
-	if was_successful:
-		statistics.total_successful_games += 1
-		statistics.current_streak += 1
-		if statistics.current_streak > statistics.best_streak:
-			statistics.best_streak = statistics.current_streak
-	else:
-		statistics.current_streak = 0
+	# Update games ended by time out or quit
+	if last_session.completion_status == "time_out":
+		statistics.games_ended_by_time_out += 1
+	elif last_session.completion_status == "quit":
+		statistics.games_ended_by_quit += 1
+		# Only average time remaining on quit if it was actually a quit (not 0.0)
+		if last_session.time_remaining_on_quit > 0:
+			var current_total_time_remaining = statistics.average_time_remaining_on_quit * (statistics.games_ended_by_quit - 1)
+			statistics.average_time_remaining_on_quit = (current_total_time_remaining + last_session.time_remaining_on_quit) / statistics.games_ended_by_quit
 
-	statistics.success_rate = float(statistics.total_successful_games) / float(statistics.total_games_played)
 
-	# Update averages
-	var total_score = 0
+	# Recalculate global averages based on ALL sessions (excluding incomplete/tutorial, if desired, but for now include all)
+	var total_score_sum = 0
+	var total_duration_sum = 0.0
+	var total_orders_sum = 0
+	var session_count_for_averages = 0
+	var max_combo_overall = 0
+	
 	for session in game_sessions:
-		total_score += session.final_score
-	statistics.average_score_overall = float(total_score) / float(game_sessions.size())
+		# Exclude incomplete sessions from averages
+		if session.completion_status != "incomplete":
+			total_score_sum += session.final_score
+			total_duration_sum += session.session_duration
+			total_orders_sum += session.orders_completed
+			session_count_for_averages += 1
+			
+			if session.max_active_combo > max_combo_overall:
+				max_combo_overall = session.max_active_combo
+
+	if session_count_for_averages > 0:
+		statistics.average_score_overall = float(total_score_sum) / session_count_for_averages
+		statistics.average_session_duration_overall = total_duration_sum / session_count_for_averages
+		statistics.average_orders_per_game_overall = float(total_orders_sum) / session_count_for_averages
+	else:
+		statistics.average_score_overall = 0.0
+		statistics.average_session_duration_overall = 0.0
+		statistics.average_orders_per_game_overall = 0.0
+	
+	statistics.longest_orders_combo_overall = max_combo_overall
+
+	# Update longest session duration
+	if last_session.session_duration > statistics.longest_session_duration_overall:
+		statistics.longest_session_duration_overall = last_session.session_duration
+
 
 	# Update averages by difficulty
 	for diff in range(1, 6):
-		var difficulty_sessions = game_sessions.filter(func(s): return s.difficulty_level == diff)
+		var difficulty_sessions = game_sessions.filter(func(s): return s.difficulty_level == diff and s.completion_status != "incomplete")
 		if difficulty_sessions.size() > 0:
-			var difficulty_total = 0
+			var diff_total_score = 0
 			for session in difficulty_sessions:
-				difficulty_total += session.final_score
-			statistics.average_scores_by_difficulty[diff] = float(difficulty_total) / float(difficulty_sessions.size())
+				diff_total_score += session.final_score
+			statistics.average_scores_by_difficulty[diff] = float(diff_total_score) / float(difficulty_sessions.size())
+		else:
+			statistics.average_scores_by_difficulty[diff] = 0.0
 
 	# Update favorite difficulty (most played)
 	var difficulty_counts = {}
@@ -252,13 +289,19 @@ func update_statistics() -> void:
 		if difficulty_counts[diff] > max_count:
 			max_count = difficulty_counts[diff]
 			statistics.favorite_difficulty = diff
-
-	# Update mastery level (highest difficulty with consistent success)
+	
+	# Update mastery level (highest difficulty with consistent high scores/orders)
+	# Redefine mastery based on achieving a high score threshold or orders completed
 	for diff in range(5, 0, -1):
-		var recent_sessions = game_sessions.slice(-10).filter(func(s): return s.difficulty_level == diff and s.completion_status == "win")
-		if recent_sessions.size() >= 3:
+		# Let's consider a difficulty mastered if the player has achieved a high score of at least 5000 on it.
+		# This is a placeholder and can be refined later.
+		if statistics.high_scores_by_difficulty.get(diff, 0) >= 5000:
 			statistics.highest_difficulty_mastered = diff
 			break
+		# Alternatively, consider a threshold for average score or orders completed if a high score isn't enough.
+		# For example: if statistics.average_scores_by_difficulty.get(diff, 0) >= 2000:
+		# Or if average orders completed is high.
+
 
 func check_achievements() -> void:
 	var new_achievements = []
@@ -267,34 +310,78 @@ func check_achievements() -> void:
 	if statistics.total_games_played == 1 and "first_game" not in statistics.achievements_unlocked:
 		new_achievements.append("first_game")
 
-	# Perfect Game (no lives lost)
-	var last_session = game_sessions[-1]
-	if last_session.lives_remaining == 3 and last_session.completion_status == "win" and "perfect_game" not in statistics.achievements_unlocked:
-		new_achievements.append("perfect_game")
-
-	# Milestone games
+	# Milestone games (games played remains relevant)
+	if statistics.total_games_played >= 3 and "3_games" not in statistics.achievements_unlocked:
+		new_achievements.append("3_games")
 	for milestone in [10, 50, 100]:
 		var achievement_name = str(milestone) + "_games"
 		if statistics.total_games_played >= milestone and achievement_name not in statistics.achievements_unlocked:
 			new_achievements.append(achievement_name)
 
-	# Streak achievements
-	for streak in [5, 10, 20]:
-		var achievement_name = str(streak) + "_streak"
-		if statistics.current_streak >= streak and achievement_name not in statistics.achievements_unlocked:
-			new_achievements.append(achievement_name)
-
-	# High score milestones
+	# High score milestones (more relevant now)
+	if statistics.high_score_overall >= 500 and "500_score" not in statistics.achievements_unlocked:
+		new_achievements.append("500_score")
 	for score in [1000, 5000, 10000]:
 		var achievement_name = str(score) + "_score"
 		if statistics.high_score_overall >= score and achievement_name not in statistics.achievements_unlocked:
 			new_achievements.append(achievement_name)
 
-	# Difficulty mastery
+	# Difficulty mastery (redefined)
 	for diff in range(1, 6):
 		var achievement_name = "master_difficulty_" + str(diff)
-		if statistics.highest_difficulty_mastered >= diff and achievement_name not in statistics.achievements_unlocked:
+		# Mastery could be defined by reaching a certain score on this difficulty
+		if statistics.high_scores_by_difficulty.get(diff, 0) >= 5000 and achievement_name not in statistics.achievements_unlocked: # Placeholder score
 			new_achievements.append(achievement_name)
+
+	# Rule usage achievements (remain relevant)
+	var rules_to_check = {
+		"Modus Ponens": {"5": "rule_modus_ponens_5", "20": "rule_modus_ponens_20"},
+		"Modus Tollens": {"5": "rule_modus_tollens_5", "20": "rule_modus_tollens_20"},
+		"Conjunction": {"5": "rule_conjunction_5", "20": "rule_conjunction_20"},
+		"Addition": {"5": "rule_addition_5", "20": "rule_addition_20"},
+		"Double Negation": {"5": "rule_double_negation_5", "20": "rule_double_negation_20"}
+	}
+
+	for rule_name in rules_to_check:
+		var usage_count = statistics.operation_usage_count.get(rule_name, 0)
+		for target_count_str in rules_to_check[rule_name]:
+			var target_count = int(target_count_str)
+			var achievement_id = rules_to_check[rule_name][target_count_str]
+			if usage_count >= target_count and achievement_id not in statistics.achievements_unlocked:
+				new_achievements.append(achievement_id)
+
+	# New time-based/combo-based achievements (replace old streaks, perfect game)
+	var last_session = game_sessions[-1]
+	
+	# Order combo achievements
+	if last_session.max_active_combo >= 3 and "3_streak" not in statistics.achievements_unlocked:
+		new_achievements.append("3_streak")
+	if last_session.max_active_combo >= 5 and "5_streak" not in statistics.achievements_unlocked:
+		new_achievements.append("5_streak")
+	if last_session.max_active_combo >= 10 and "10_streak" not in statistics.achievements_unlocked:
+		new_achievements.append("10_streak")
+	if last_session.max_active_combo >= 20 and "20_streak" not in statistics.achievements_unlocked:
+		new_achievements.append("20_streak")
+		
+	# No mistakes achievement (replaces perfect game)
+	if last_session.mistakes_count == 0 and last_session.completion_status == "time_out" and "perfect_game" not in statistics.achievements_unlocked:
+		new_achievements.append("perfect_game")
+		
+	# Survival time achievements (example)
+	if last_session.session_duration >= 300 and "survival_5min" not in statistics.achievements_unlocked: # 5 minutes
+		new_achievements.append("survival_5min")
+	if last_session.session_duration >= 600 and "survival_10min" not in statistics.achievements_unlocked: # 10 minutes
+		new_achievements.append("survival_10min")
+		
+	# Tutorial achievements (remain relevant)
+	if statistics.tutorials_completed == 1 and "first_tutorial" not in statistics.achievements_unlocked:
+		new_achievements.append("first_tutorial")
+	if statistics.tutorials_completed >= 5 and "5_tutorials" not in statistics.achievements_unlocked:
+		new_achievements.append("5_tutorials")
+	if statistics.tutorials_completed >= 10 and "10_tutorials" not in statistics.achievements_unlocked:
+		new_achievements.append("10_tutorials")
+	if statistics.tutorials_completed >= 18 and "all_tutorials" not in statistics.achievements_unlocked:
+		new_achievements.append("all_tutorials")
 
 	# Add new achievements and emit signals
 	for achievement in new_achievements:
@@ -439,12 +526,15 @@ func get_achievement_name(achievement_id: String) -> String:
 	var achievement_names = {
 		"first_game": "First Steps",
 		"perfect_game": "Flawless Logic",
+		"3_games": "Warming Up", # New
 		"10_games": "Getting Started",
 		"50_games": "Dedicated Learner",
 		"100_games": "Logic Master",
+		"3_streak": "Hot Hand", # New
 		"5_streak": "On a Roll",
 		"10_streak": "Logic Streak",
 		"20_streak": "Unstoppable",
+		"500_score": "Point Scorer", # New
 		"1000_score": "High Achiever",
 		"5000_score": "Score Crusher",
 		"10000_score": "Logic Legend",
@@ -456,7 +546,19 @@ func get_achievement_name(achievement_id: String) -> String:
 		"first_tutorial": "Tutorial Beginner",
 		"5_tutorials": "Quick Learner",
 		"10_tutorials": "Logic Scholar",
-		"all_tutorials": "Logic Master"
+		"all_tutorials": "Logic Master",
+		"rule_modus_ponens_5": "MP Apprentice", # New
+		"rule_modus_tollens_5": "MT Apprentice", # New
+		"rule_conjunction_5": "Conjunction Crafter", # New
+		"rule_addition_5": "Addition Artist", # New
+		"rule_double_negation_5": "Double Negation Dynamo", # New
+		"rule_modus_ponens_20": "MP Journeyman", # New
+		"rule_modus_tollens_20": "MT Journeyman", # New
+		"rule_conjunction_20": "Conjunction Expert", # New
+		"rule_addition_20": "Addition Adept", # New
+		"rule_double_negation_20": "Double Negation Master", # New
+		"survival_5min": "Five Minute Frenzy", # New
+		"survival_10min": "Ten Minute Triumph" # New
 	}
 	return achievement_names.get(achievement_id, achievement_id)
 
@@ -571,25 +673,22 @@ func debug_populate_test_data() -> void:
 	rng.randomize()
 	
 	var total_sessions = 20
-	var wins = 0
 	
 	for i in range(total_sessions):
 		var difficulty = rng.randi_range(1, 5)
 		var score = rng.randi_range(100, 5000) * difficulty
-		var lives = rng.randi_range(0, 3)
 		var orders = rng.randi_range(3, 15)
 		var duration = rng.randf_range(60.0, 300.0)
-		var status = "win" if lives > 0 else "loss"
+		var status = "time_out"
+		if rng.randf() < 0.2: # 20% chance to quit
+			status = "quit"
 		
-		if status == "win":
-			wins += 1
-			
-		var session = ProgressTrackerTypes.GameSession.new(score, difficulty, lives, orders, duration, status)
+		var session = ProgressTrackerTypes.GameSession.new(score, difficulty, orders, duration, status, 0.0, 0.0, 0, 0)
 		game_sessions.append(session)
 		
 	# Calculate statistics manually based on these sessions
 	statistics.total_games_played = total_sessions
-	statistics.total_successful_games = wins
+	# statistics.total_successful_games = wins # Removed as property no longer exists
 	
 	var total_score = 0
 	var total_time = 0.0
@@ -608,17 +707,28 @@ func debug_populate_test_data() -> void:
 			statistics.high_scores_by_difficulty[session.difficulty_level] = session.final_score
 			
 		# Streak (simplified for test data - just make up a streak if last game was win)
-		if session.completion_status == "win":
-			statistics.current_streak += 1
-			if statistics.current_streak > statistics.best_streak:
-				statistics.best_streak = statistics.current_streak
-		else:
-			statistics.current_streak = 0
+		# Removed current_streak and best_streak updates as they are no longer in PlayerStatistics
 			
 	statistics.total_play_time = total_time
 	statistics.total_orders_completed = total_orders
-	statistics.success_rate = float(wins) / float(total_sessions) if total_sessions > 0 else 0.0
 	statistics.average_score_overall = float(total_score) / float(total_sessions) if total_sessions > 0 else 0.0
+	
+	# Explicitly populate newly added statistics
+	statistics.average_session_duration_overall = total_time / float(total_sessions) if total_sessions > 0 else 0.0
+	statistics.longest_session_duration_overall = 280.0 # Example longest session
+	statistics.average_orders_per_game_overall = float(total_orders) / float(total_sessions) if total_sessions > 0 else 0.0
+	statistics.longest_orders_combo_overall = 12 # Example longest combo
+	statistics.games_ended_by_time_out = 15 # Example
+	statistics.games_ended_by_quit = 5 # Example
+	statistics.average_time_remaining_on_quit = 30.0 # Example
+	
+	# Dummy operation proficiency and usage
+	statistics.operation_usage_count["Modus Ponens"] = 50
+	statistics.operation_proficiency["Modus Ponens"] = {"total": 50, "successes": 45, "rate": 0.9}
+	statistics.operation_usage_count["Conjunction"] = 30
+	statistics.operation_proficiency["Conjunction"] = {"total": 30, "successes": 20, "rate": 0.66}
+	
+	statistics.common_failures["Negation"] = 5
 	
 	# Average by difficulty
 	for diff in range(1, 6):
@@ -635,7 +745,7 @@ func debug_populate_test_data() -> void:
 	
 	# Add some achievements
 	statistics.achievements_unlocked.append("first_game")
-	if wins >= 5: statistics.achievements_unlocked.append("5_streak")
+	# Removed '5_streak' achievement based on 'wins', now driven by combo
 	if statistics.high_score_overall > 1000: statistics.achievements_unlocked.append("1000_score")
 	if statistics.high_score_overall > 5000: statistics.achievements_unlocked.append("5000_score")
 	
