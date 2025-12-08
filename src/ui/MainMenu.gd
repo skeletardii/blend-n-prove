@@ -189,7 +189,7 @@ func update_quick_stats() -> void:
 
 	high_score_quick.text = "High Score: " + str(stats.high_score_overall)
 	games_played_quick.text = "Games Played: " + str(stats.total_games_played)
-	streak_quick.text = "Current Streak: " + str(stats.current_streak)
+	streak_quick.text = "Best Combo: " + str(stats.longest_orders_combo_overall)
 
 	# Update the main high score display below the title
 	high_score_value.text = str(stats.high_score_overall)

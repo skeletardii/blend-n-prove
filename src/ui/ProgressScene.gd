@@ -6,8 +6,13 @@ const CircleGraph = preload("res://src/ui/CircleGraph.gd")
 
 @onready var total_games_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/TotalGamesPanel/VBoxContainer/TotalGamesValue
 @onready var high_score_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/HighScoreHeroPanel/VBoxContainer/HighScoreValue
-@onready var success_rate_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/SuccessRatePanel/VBoxContainer/SuccessRateValue
-@onready var current_streak_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/CurrentStreakPanel/VBoxContainer/CurrentStreakValue
+@onready var longest_combo_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/LongestComboPanel/VBoxContainer/LongestComboValue
+@onready var average_session_duration_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/AverageSessionDurationPanel/VBoxContainer/AverageSessionDurationValue
+@onready var longest_session_duration_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/LongestSessionDurationPanel/VBoxContainer/LongestSessionDurationValue
+@onready var average_orders_per_game_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/AverageOrdersPerGamePanel/VBoxContainer/AverageOrdersPerGameValue
+@onready var games_ended_by_time_out_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/GamesEndedByTimeOutPanel/VBoxContainer/GamesEndedByTimeOutValue
+@onready var games_ended_by_quit_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/GamesEndedByQuitPanel/VBoxContainer/GamesEndedByQuitValue
+@onready var average_time_remaining_on_quit_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/AverageTimeRemainingOnQuitPanel/VBoxContainer/AverageTimeRemainingOnQuitValue
 @onready var back_button: Button = $ButtonContainer/BackButton
 
 const CARD_STYLE = preload("res://assets/styles/dark_inventory_panel.tres")
@@ -43,17 +48,16 @@ func update_statistics() -> void:
 	# Update basic stats
 	total_games_value.text = str(stats.total_games_played)
 	high_score_value.text = str(stats.high_score_overall)
-
-	if stats.total_games_played > 0:
-		success_rate_value.text = "%.1f%%" % (stats.success_rate * 100.0)
-	else:
-		success_rate_value.text = "0.0%"
-
-	current_streak_value.text = str(stats.current_streak)
+	longest_combo_value.text = str(stats.longest_orders_combo_overall)
+	average_session_duration_value.text = "%ds" % int(stats.average_session_duration_overall)
+	longest_session_duration_value.text = "%ds" % int(stats.longest_session_duration_overall)
+	average_orders_per_game_value.text = "%.1f" % stats.average_orders_per_game_overall
+	games_ended_by_time_out_value.text = str(stats.games_ended_by_time_out)
+	games_ended_by_quit_value.text = str(stats.games_ended_by_quit)
+	average_time_remaining_on_quit_value.text = "%ds" % int(stats.average_time_remaining_on_quit)
 
 	# Could add more detailed statistics here
 	update_detailed_stats()
-
 func update_detailed_stats() -> void:
 	var stats = ProgressTracker.statistics
 	var stats_container = $MainScrollContainer/StatsContainer
@@ -350,17 +354,14 @@ func add_recent_sessions_section() -> void:
 
 		var result_label = Label.new()
 		match session.completion_status:
-			"win":
-				result_label.text = "WIN"
-				result_label.modulate = Color.GREEN
-			"loss":
-				result_label.text = "LOSS"
+			"time_out":
+				result_label.text = "TIME OUT"
 				result_label.modulate = Color.RED
 			"quit":
 				result_label.text = "QUIT"
 				result_label.modulate = Color.ORANGE
-			_:
-				result_label.text = "Incomplete"
+			_: # This will catch "incomplete" or any other unexpected status
+				result_label.text = "INCOMPLETE"
 				result_label.modulate = Color.GRAY
 		result_label.add_theme_font_override("font", HEADER_FONT)
 		result_label.add_theme_font_size_override("font_size", 24)
@@ -409,34 +410,6 @@ func add_visual_breakdown_section(stats: ProgressTrackerTypes.PlayerStatistics) 
 	main_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	main_vbox.add_theme_constant_override("separation", 20)
 	margin.add_child(main_vbox)
-
-	# 1. Success Rate Circle (Top)
-	var circle_vbox = VBoxContainer.new()
-	circle_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	main_vbox.add_child(circle_vbox)
-	
-	var circle_label = Label.new()
-	circle_label.text = "Success Rate"
-	circle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	circle_label.add_theme_font_override("font", BODY_FONT)
-	circle_label.add_theme_font_size_override("font_size", 18)
-	circle_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
-	circle_vbox.add_child(circle_label)
-
-	var circle = CircleGraph.new()
-	circle.custom_minimum_size = Vector2(200, 200)
-	circle.line_width = 16.0
-	circle.add_theme_font_override("font", HEADER_FONT)
-	circle.add_theme_font_size_override("font_size", 32)
-	
-	# Determine color based on rate
-	var rate = stats.success_rate
-	var color = Color(0.8, 0.2, 0.2) # Red
-	if rate >= 0.8: color = Color(0.2, 0.8, 0.2) # Green
-	elif rate >= 0.5: color = Color(0.8, 0.8, 0.2) # Yellow
-	
-	circle.set_values(rate * 100, 100.0, "%.1f%%" % (rate * 100), color)
-	circle_vbox.add_child(circle)
 
 	# 2. Operations Pie Chart (if data exists) - Bottom
 	if not stats.operation_usage_count.is_empty():

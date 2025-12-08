@@ -38,6 +38,11 @@ var is_first_time_tutorial: bool = false  # Special flag for first-time interact
 
 # Order Templates organized by difficulty level - loaded from JSON
 var order_templates: Dictionary = {}
+var time_limit_seconds: float = 180.0 # Default to 3 minutes, can be set by game mode/difficulty
+
+var mistakes_count_this_session: int = 0
+var current_combo: int = 0
+var max_combo_this_session: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -176,7 +181,7 @@ func start_new_game() -> void:
 	score_updated.emit(current_score)
 
 	# Start progress tracking session
-	ProgressTracker.start_new_session(difficulty_level)
+	ProgressTracker.start_new_session(difficulty_level, time_limit_seconds)
 
 func start_tutorial_mode(tutorial_key: String = "") -> void:
 	current_score = 0
@@ -225,24 +230,44 @@ func set_debug_difficulty_mode(mode: int) -> void:
 
 func record_order_completed() -> void:
 	orders_completed_this_session += 1
+	current_combo += 1
+	if current_combo > max_combo_this_session:
+		max_combo_this_session = current_combo
 
 func record_operation_used(operation_name: String, success: bool) -> void:
 	ProgressTracker.record_operation_used(operation_name, success)
 
-func complete_progress_session(completion_status: String) -> void:
+func record_mistake() -> void:
+	mistakes_count_this_session += 1
+	current_combo = 0 # Reset combo on mistake
+
+func complete_progress_session(completion_status: String, time_remaining_on_quit: float = 0.0) -> void:
 	if current_state != GameState.PLAYING:
 		return
 
-	ProgressTracker.complete_current_session(
-		current_score,
-		0,  # Lives removed
-		orders_completed_this_session,
-		completion_status
-	)
+	# Reset all session-specific trackers after completion
+	var final_score_this_session = current_score
+	var orders_completed_current_session = orders_completed_this_session
+	var max_combo_achieved = max_combo_this_session
+	var total_mistakes_made = mistakes_count_this_session
 
-func complete_game_successfully() -> void:
-	complete_progress_session("win")
-	change_state(GameState.GAME_OVER)
+	# Reset for next game
+	current_score = 0
+	orders_completed_this_session = 0
+	mistakes_count_this_session = 0
+	current_combo = 0
+	max_combo_this_session = 0
+
+	ProgressTracker.complete_current_session(
+		final_score_this_session,
+		orders_completed_current_session,
+		completion_status,
+		time_remaining_on_quit,
+		max_combo_achieved,
+		total_mistakes_made
+	)
+	change_state(GameState.GAME_OVER) # Always set to GAME_OVER after session completion (quit or time_out)
+
 
 func get_current_tutorial_problem() -> TutorialDataTypes.ProblemData:
 	if not tutorial_mode or current_tutorial_key.is_empty():
@@ -326,9 +351,9 @@ func run_integration_test() -> void:
 	# Test 7: Progress Tracker Integration
 	print("Testing progress tracker integration...")
 	var original_sessions = ProgressTracker.game_sessions.size()
-	ProgressTracker.start_new_session(2)
+	ProgressTracker.start_new_session(2, time_limit_seconds)
 	ProgressTracker.record_operation_used("Modus Ponens", true)
-	ProgressTracker.complete_current_session(500, 2, 3, "win")
+	ProgressTracker.complete_current_session(500, 3, "time_out", 0.0, 3, 0)
 	if ProgressTracker.game_sessions.size() == original_sessions + 1:
 		print("✓ Progress tracker integration test passed")
 	else:
