@@ -3,7 +3,7 @@ class_name CircleGraph
 
 var value: float = 0.0
 var max_value: float = 1.0
-var line_width: float = 10.0
+var line_width: float = 16.0
 var color: Color = Color.GREEN
 var bg_color: Color = Color(0.2, 0.2, 0.2)
 var label_text: String = ""

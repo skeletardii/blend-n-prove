@@ -5,9 +5,9 @@ const PieChart = preload("res://src/ui/PieChart.gd")
 const CircleGraph = preload("res://src/ui/CircleGraph.gd")
 
 @onready var total_games_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/TotalGamesPanel/VBoxContainer/TotalGamesValue
-@onready var high_score_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/HighScorePanel/VBoxContainer/HighScoreValue
+@onready var high_score_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/HighScoreHeroPanel/VBoxContainer/HighScoreValue
 @onready var success_rate_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/SuccessRatePanel/VBoxContainer/SuccessRateValue
-@onready var current_streak_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/CurrentStreakPanel/VBoxContainer/CurrentStreakValue
+@onready var current_streak_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/CurrentStreakPanel/VBoxContainer/CurrentStreakValue
 @onready var back_button: Button = $ButtonContainer/BackButton
 
 const CARD_STYLE = preload("res://assets/styles/dark_inventory_panel.tres")
@@ -65,7 +65,7 @@ func update_detailed_stats() -> void:
 
 	# Add spacing
 	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 20)
+	spacer.custom_minimum_size = Vector2(0, 12)
 	spacer.name = "DetailedSectionSpacer1"
 	stats_container.add_child(spacer)
 	
@@ -87,7 +87,7 @@ func update_detailed_stats() -> void:
 	
 	# Bottom spacer
 	var bottom_spacer = Control.new()
-	bottom_spacer.custom_minimum_size = Vector2(0, 40)
+	bottom_spacer.custom_minimum_size = Vector2(0, 20)
 	bottom_spacer.name = "DetailedSectionSpacerBottom"
 	stats_container.add_child(bottom_spacer)
 
@@ -100,7 +100,7 @@ func _create_section_title(text: String) -> Label:
 	var label = Label.new()
 	label.text = text
 	label.add_theme_font_override("font", HEADER_FONT)
-	label.add_theme_font_size_override("font_size", 24)
+	label.add_theme_font_size_override("font_size", 28)
 	label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	return label
@@ -118,20 +118,23 @@ func add_achievements_section(stats: ProgressTrackerTypes.PlayerStatistics) -> v
 	section.add_child(panel)
 	
 	var margin = MarginContainer.new()
-	margin.add_theme_constant_override("margin_top", 15)
-	margin.add_theme_constant_override("margin_bottom", 15)
-	margin.add_theme_constant_override("margin_left", 15)
-	margin.add_theme_constant_override("margin_right", 15)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_bottom", 10)
+	margin.add_theme_constant_override("margin_left", 10)
+	margin.add_theme_constant_override("margin_right", 10)
 	panel.add_child(margin)
 
 	var achievements_grid = GridContainer.new()
-	achievements_grid.columns = 1
+	achievements_grid.columns = 2
+	achievements_grid.add_theme_constant_override("h_separation", 10)
+	achievements_grid.add_theme_constant_override("v_separation", 8)
 	margin.add_child(achievements_grid)
 
 	for achievement_id in stats.achievements_unlocked:
 		var achievement_label = Label.new()
 		achievement_label.text = "🏆 " + ProgressTracker.get_achievement_name(achievement_id)
 		achievement_label.add_theme_font_override("font", BODY_FONT)
+		achievement_label.add_theme_font_size_override("font_size", 18)
 		achievement_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 		achievements_grid.add_child(achievement_label)
 
@@ -140,7 +143,7 @@ func add_difficulty_breakdown_section(stats: ProgressTrackerTypes.PlayerStatisti
 	
 	# Spacer
 	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 20)
+	spacer.custom_minimum_size = Vector2(0, 12)
 	spacer.name = "DetailedSectionSpacerDiff"
 	stats_container.add_child(spacer)
 
@@ -149,21 +152,22 @@ func add_difficulty_breakdown_section(stats: ProgressTrackerTypes.PlayerStatisti
 	stats_container.add_child(section)
 
 	section.add_child(_create_section_title("Performance by Difficulty"))
-	
+
 	var panel = _create_styled_panel()
 	section.add_child(panel)
-	
+
 	var margin = MarginContainer.new()
-	margin.add_theme_constant_override("margin_top", 15)
-	margin.add_theme_constant_override("margin_bottom", 15)
-	margin.add_theme_constant_override("margin_left", 15)
-	margin.add_theme_constant_override("margin_right", 15)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_bottom", 10)
+	margin.add_theme_constant_override("margin_left", 10)
+	margin.add_theme_constant_override("margin_right", 10)
 	panel.add_child(margin)
 
 	var difficulty_grid = GridContainer.new()
 	difficulty_grid.columns = 3
 	difficulty_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	difficulty_grid.add_theme_constant_override("h_separation", 20)
+	difficulty_grid.add_theme_constant_override("h_separation", 10)
+	difficulty_grid.add_theme_constant_override("v_separation", 8)
 	margin.add_child(difficulty_grid)
 
 	# Headers
@@ -172,6 +176,7 @@ func add_difficulty_breakdown_section(stats: ProgressTrackerTypes.PlayerStatisti
 		var lbl = Label.new()
 		lbl.text = h
 		lbl.add_theme_font_override("font", BODY_FONT)
+		lbl.add_theme_font_size_override("font_size", 16)
 		lbl.modulate = Color(0.2, 0.2, 0.2, 1)
 		difficulty_grid.add_child(lbl)
 
@@ -179,12 +184,14 @@ func add_difficulty_breakdown_section(stats: ProgressTrackerTypes.PlayerStatisti
 		var level_label = Label.new()
 		level_label.text = str(difficulty)
 		level_label.add_theme_font_override("font", HEADER_FONT)
+		level_label.add_theme_font_size_override("font_size", 18)
 		level_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 		difficulty_grid.add_child(level_label)
 
 		var high_score_label = Label.new()
 		high_score_label.text = str(stats.high_scores_by_difficulty.get(difficulty, 0))
 		high_score_label.add_theme_font_override("font", BODY_FONT)
+		high_score_label.add_theme_font_size_override("font_size", 18)
 		high_score_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 		difficulty_grid.add_child(high_score_label)
 
@@ -192,6 +199,7 @@ func add_difficulty_breakdown_section(stats: ProgressTrackerTypes.PlayerStatisti
 		var avg_score = stats.average_scores_by_difficulty.get(difficulty, 0.0)
 		avg_score_label.text = "%.0f" % avg_score if avg_score > 0 else "-"
 		avg_score_label.add_theme_font_override("font", BODY_FONT)
+		avg_score_label.add_theme_font_size_override("font_size", 18)
 		avg_score_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 		difficulty_grid.add_child(avg_score_label)
 
@@ -203,9 +211,9 @@ func add_operation_statistics_section() -> void:
 		return
 
 	var stats_container = $MainScrollContainer/StatsContainer
-	
+
 	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 20)
+	spacer.custom_minimum_size = Vector2(0, 12)
 	spacer.name = "DetailedSectionSpacerOp"
 	stats_container.add_child(spacer)
 
@@ -214,21 +222,22 @@ func add_operation_statistics_section() -> void:
 	stats_container.add_child(section)
 
 	section.add_child(_create_section_title("Operation Statistics"))
-	
+
 	var panel = _create_styled_panel()
 	section.add_child(panel)
-	
+
 	var margin = MarginContainer.new()
-	margin.add_theme_constant_override("margin_top", 15)
-	margin.add_theme_constant_override("margin_bottom", 15)
-	margin.add_theme_constant_override("margin_left", 15)
-	margin.add_theme_constant_override("margin_right", 15)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_bottom", 10)
+	margin.add_theme_constant_override("margin_left", 10)
+	margin.add_theme_constant_override("margin_right", 10)
 	panel.add_child(margin)
 
 	var operations_grid = GridContainer.new()
 	operations_grid.columns = 3
 	operations_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	operations_grid.add_theme_constant_override("h_separation", 20)
+	operations_grid.add_theme_constant_override("h_separation", 8)
+	operations_grid.add_theme_constant_override("v_separation", 8)
 	margin.add_child(operations_grid)
 
 	# Headers
@@ -237,6 +246,7 @@ func add_operation_statistics_section() -> void:
 		var lbl = Label.new()
 		lbl.text = h
 		lbl.add_theme_font_override("font", BODY_FONT)
+		lbl.add_theme_font_size_override("font_size", 16)
 		lbl.modulate = Color(0.2, 0.2, 0.2, 1)
 		operations_grid.add_child(lbl)
 
@@ -251,12 +261,14 @@ func add_operation_statistics_section() -> void:
 		var name_label = Label.new()
 		name_label.text = operation_name
 		name_label.add_theme_font_override("font", HEADER_FONT)
+		name_label.add_theme_font_size_override("font_size", 18)
 		name_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 		operations_grid.add_child(name_label)
 
 		var count_label = Label.new()
 		count_label.text = str(count)
 		count_label.add_theme_font_override("font", BODY_FONT)
+		count_label.add_theme_font_size_override("font_size", 18)
 		count_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 		operations_grid.add_child(count_label)
 
@@ -266,6 +278,7 @@ func add_operation_statistics_section() -> void:
 			var rate = proficiency.get("rate", 0.0)
 			rate_label.text = "%.1f%%" % (rate * 100.0)
 			rate_label.add_theme_font_override("font", BODY_FONT)
+			rate_label.add_theme_font_size_override("font_size", 18)
 
 			# Color code success rate
 			if rate >= 0.8:
@@ -276,14 +289,15 @@ func add_operation_statistics_section() -> void:
 				rate_label.modulate = Color.RED
 		else:
 			rate_label.text = "N/A"
+			rate_label.add_theme_font_size_override("font_size", 18)
 			rate_label.modulate = Color.GRAY
 		operations_grid.add_child(rate_label)
 
 func add_recent_sessions_section() -> void:
 	var stats_container = $MainScrollContainer/StatsContainer
-	
+
 	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 20)
+	spacer.custom_minimum_size = Vector2(0, 12)
 	spacer.name = "DetailedSectionSpacerRecent"
 	stats_container.add_child(spacer)
 
@@ -309,12 +323,12 @@ func add_recent_sessions_section() -> void:
 	for session in recent_sessions:
 		var card = _create_styled_panel()
 		list_container.add_child(card)
-		
+
 		var margin = MarginContainer.new()
 		margin.add_theme_constant_override("margin_top", 10)
 		margin.add_theme_constant_override("margin_bottom", 10)
-		margin.add_theme_constant_override("margin_left", 15)
-		margin.add_theme_constant_override("margin_right", 15)
+		margin.add_theme_constant_override("margin_left", 10)
+		margin.add_theme_constant_override("margin_right", 10)
 		card.add_child(margin)
 		
 		var row = HBoxContainer.new()
@@ -330,9 +344,10 @@ func add_recent_sessions_section() -> void:
 		var date_label = Label.new()
 		date_label.text = date_str
 		date_label.add_theme_font_override("font", BODY_FONT)
+		date_label.add_theme_font_size_override("font_size", 16)
 		date_label.modulate = Color(0.2, 0.2, 0.2, 1)
 		left_vbox.add_child(date_label)
-		
+
 		var result_label = Label.new()
 		match session.completion_status:
 			"win":
@@ -348,22 +363,25 @@ func add_recent_sessions_section() -> void:
 				result_label.text = "Incomplete"
 				result_label.modulate = Color.GRAY
 		result_label.add_theme_font_override("font", HEADER_FONT)
+		result_label.add_theme_font_size_override("font_size", 24)
 		left_vbox.add_child(result_label)
 		
 		# Right side: Score & Difficulty
 		var right_vbox = VBoxContainer.new()
 		row.add_child(right_vbox)
-		
+
 		var score_label = Label.new()
 		score_label.text = "Score: " + str(session.final_score)
 		score_label.add_theme_font_override("font", HEADER_FONT)
+		score_label.add_theme_font_size_override("font_size", 20)
 		score_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 		score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		right_vbox.add_child(score_label)
-		
+
 		var diff_label = Label.new()
 		diff_label.text = "Lvl " + str(session.difficulty_level)
 		diff_label.add_theme_font_override("font", BODY_FONT)
+		diff_label.add_theme_font_size_override("font_size", 16)
 		diff_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 		diff_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		right_vbox.add_child(diff_label)
@@ -381,37 +399,35 @@ func add_visual_breakdown_section(stats: ProgressTrackerTypes.PlayerStatistics) 
 	section.add_child(panel)
 	
 	var margin = MarginContainer.new()
-	margin.add_theme_constant_override("margin_top", 20)
-	margin.add_theme_constant_override("margin_bottom", 20)
-	margin.add_theme_constant_override("margin_left", 20)
-	margin.add_theme_constant_override("margin_right", 20)
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_bottom", 12)
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
 	panel.add_child(margin)
 
-	var h_box = HBoxContainer.new()
-	h_box.alignment = BoxContainer.ALIGNMENT_CENTER
-	h_box.add_theme_constant_override("separation", 50)
-	margin.add_child(h_box)
+	var main_vbox = VBoxContainer.new()
+	main_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	main_vbox.add_theme_constant_override("separation", 20)
+	margin.add_child(main_vbox)
 
-	# 1. Success Rate Circle
+	# 1. Success Rate Circle (Top)
 	var circle_vbox = VBoxContainer.new()
 	circle_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	h_box.add_child(circle_vbox)
+	main_vbox.add_child(circle_vbox)
 	
 	var circle_label = Label.new()
 	circle_label.text = "Success Rate"
 	circle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	circle_label.add_theme_font_override("font", BODY_FONT)
+	circle_label.add_theme_font_size_override("font_size", 18)
 	circle_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 	circle_vbox.add_child(circle_label)
 
 	var circle = CircleGraph.new()
-	circle.custom_minimum_size = Vector2(120, 120)
-	circle.line_width = 12.0
-	# Theme overrides might not propagate to draw without manual handling or theme resource, 
-	# but we passed font in CircleGraph _draw via get_theme_font("font") if set on node.
-	# Let's set the font directly on the node so get_theme_font finds it.
+	circle.custom_minimum_size = Vector2(200, 200)
+	circle.line_width = 16.0
 	circle.add_theme_font_override("font", HEADER_FONT)
-	circle.add_theme_font_size_override("font_size", 24)
+	circle.add_theme_font_size_override("font_size", 32)
 	
 	# Determine color based on rate
 	var rate = stats.success_rate
@@ -422,16 +438,17 @@ func add_visual_breakdown_section(stats: ProgressTrackerTypes.PlayerStatistics) 
 	circle.set_values(rate * 100, 100.0, "%.1f%%" % (rate * 100), color)
 	circle_vbox.add_child(circle)
 
-	# 2. Operations Pie Chart (if data exists)
+	# 2. Operations Pie Chart (if data exists) - Bottom
 	if not stats.operation_usage_count.is_empty():
 		var pie_root_vbox = VBoxContainer.new()
 		pie_root_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-		h_box.add_child(pie_root_vbox)
+		main_vbox.add_child(pie_root_vbox)
 
 		var pie_label = Label.new()
 		pie_label.text = "Operations Used"
 		pie_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		pie_label.add_theme_font_override("font", BODY_FONT)
+		pie_label.add_theme_font_size_override("font_size", 18)
 		pie_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 		pie_root_vbox.add_child(pie_label)
 
@@ -442,28 +459,28 @@ func add_visual_breakdown_section(stats: ProgressTrackerTypes.PlayerStatistics) 
 		pie_root_vbox.add_child(pie_h_box)
 
 		var pie = PieChart.new()
-		pie.custom_minimum_size = Vector2(120, 120)
+		pie.custom_minimum_size = Vector2(180, 180)
 		pie.set_data(stats.operation_usage_count)
 		pie_h_box.add_child(pie)
-		
+
 		# Legend
 		var legend_vbox = VBoxContainer.new()
 		legend_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 		pie_h_box.add_child(legend_vbox)
-		
+
 		var legend_data = pie.get_legend_data()
 		for item in legend_data:
 			var item_hbox = HBoxContainer.new()
 			legend_vbox.add_child(item_hbox)
-			
+
 			var color_rect = ColorRect.new()
 			color_rect.custom_minimum_size = Vector2(15, 15)
 			color_rect.color = item["color"]
 			item_hbox.add_child(color_rect)
-			
+
 			var name_lbl = Label.new()
 			name_lbl.text = item["name"]
 			name_lbl.add_theme_font_override("font", BODY_FONT)
-			name_lbl.add_theme_font_size_override("font_size", 12)
+			name_lbl.add_theme_font_size_override("font_size", 14)
 			name_lbl.add_theme_color_override("font_color", Color(0.2, 0.2, 0.2, 1))
 			item_hbox.add_child(name_lbl)
