@@ -374,7 +374,7 @@ grow_vertical = 2
 
 [node name="SettingsTitle" type="Label" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 48
 text = "SETTINGS"
 horizontal_alignment = 1
 
@@ -382,9 +382,54 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="DifficultyModeLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
+theme_override_font_sizes/font_size = 30
+
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="SettingsPanel/SettingsContainer"]
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="SettingsPanel/SettingsContainer/MusicVolumeContainer"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
+text = "Music"
+
+[node name="MusicSlider" type="HSlider" parent="SettingsPanel/SettingsContainer/MusicVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+value = 0.5
+
+[node name="SFXVolumeContainer" type="HBoxContainer" parent="SettingsPanel/SettingsContainer"]
+layout_mode = 2
+
+[node name="SFXLabel" type="Label" parent="SettingsPanel/SettingsContainer/SFXVolumeContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "SFX"
+
+[node name="SFXSlider" type="HSlider" parent="SettingsPanel/SettingsContainer/SFXVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+value = 0.8
+
+[node name="MuteCheck" type="CheckBox" parent="SettingsPanel/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Mute All"
+
+[node name="SpacerAudio" type="Control" parent="SettingsPanel/SettingsContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="DifficultyModeLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
 text = "Classic Mode Difficulty:"
 
 [node name="DifficultyModeContainer" type="HBoxContainer" parent="SettingsPanel/SettingsContainer"]
@@ -397,7 +442,7 @@ size_flags_horizontal = 3
 
 [node name="InfoLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 22
 text = "Auto: Difficulty increases as you play
 1-6: Lock difficulty to specific level"
 autowrap_mode = 3
@@ -410,7 +455,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 30
 text = "Reset All Progress"
 
 [node name="Spacer3" type="Control" parent="SettingsPanel/SettingsContainer"]
@@ -420,7 +465,7 @@ layout_mode = 2
 [node name="CloseSettingsButton" type="Button" parent="SettingsPanel/SettingsContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 36
 text = "CLOSE"
 
 [node name="QuickStatsPanel" type="VBoxContainer" parent="."]

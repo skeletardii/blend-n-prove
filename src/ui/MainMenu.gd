@@ -6,6 +6,9 @@ extends Control
 @onready var difficulty_value_label: Label = $DebugPanel/DebugContainer/DifficultyContainer/DifficultyValue
 @onready var infinite_patience_check: CheckBox = $DebugPanel/DebugContainer/InfinitePatienceCheck
 @onready var settings_panel: Panel = $SettingsPanel
+@onready var music_slider: HSlider = $SettingsPanel/SettingsContainer/MusicVolumeContainer/MusicSlider
+@onready var sfx_slider: HSlider = $SettingsPanel/SettingsContainer/SFXVolumeContainer/SFXSlider
+@onready var mute_check: CheckBox = $SettingsPanel/SettingsContainer/MuteCheck
 @onready var difficulty_mode_option: OptionButton = $SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption
 @onready var play_button: Button = $MenuContainer/PlayButton
 @onready var progress_button: Button = $MenuContainer/ProgressButton
@@ -23,6 +26,12 @@ func _ready() -> void:
 
 	# Connect to GameManager signals
 	GameManager.game_state_changed.connect(_on_game_state_changed)
+
+	# Web build specific adjustments: Hide Quit and Progress buttons
+	if OS.has_feature("web"):
+		progress_button.visible = false
+		if has_node("MenuContainer/QuitButton"):
+			$MenuContainer/QuitButton.visible = false
 
 	# Check for app updates (Android only) - disabled if UpdateChecker not loaded
 	if has_node("/root/UpdateCheckerService"):
@@ -54,6 +63,7 @@ func _ready() -> void:
 
 	# Setup settings panel
 	setup_difficulty_mode_options()
+	setup_audio_settings()
 
 	# Update quick stats display
 	update_quick_stats()
@@ -215,6 +225,50 @@ func _on_difficulty_mode_option_item_selected(index: int) -> void:
 func _on_close_settings_button_pressed() -> void:
 	AudioManager.play_button_click()
 	settings_panel.visible = false
+
+func setup_audio_settings() -> void:
+	# Initialize UI from AudioManager
+	music_slider.value = AudioManager.music_volume
+	sfx_slider.value = AudioManager.sfx_volume
+	mute_check.button_pressed = AudioManager.is_muted
+	
+	# Connect signals
+	if not music_slider.value_changed.is_connected(_on_music_volume_changed):
+		music_slider.value_changed.connect(_on_music_volume_changed)
+	
+	if not sfx_slider.value_changed.is_connected(_on_sfx_volume_changed):
+		sfx_slider.value_changed.connect(_on_sfx_volume_changed)
+		
+	if not mute_check.toggled.is_connected(_on_mute_check_toggled):
+		mute_check.toggled.connect(_on_mute_check_toggled)
+
+	# Listen for external changes
+	if not AudioManager.audio_settings_changed.is_connected(_on_audio_settings_changed):
+		AudioManager.audio_settings_changed.connect(_on_audio_settings_changed)
+
+func _on_music_volume_changed(value: float) -> void:
+	AudioManager.set_music_volume(value)
+
+func _on_sfx_volume_changed(value: float) -> void:
+	AudioManager.set_sfx_volume(value)
+	# Play test sound if not playing already
+	if not AudioManager.sfx_player.playing:
+		AudioManager.play_button_click()
+
+func _on_mute_check_toggled(toggled_on: bool) -> void:
+	if toggled_on != AudioManager.is_muted:
+		AudioManager.toggle_mute()
+
+func _on_audio_settings_changed() -> void:
+	if abs(music_slider.value - AudioManager.music_volume) > 0.01:
+		music_slider.value = AudioManager.music_volume
+	
+	if abs(sfx_slider.value - AudioManager.sfx_volume) > 0.01:
+		sfx_slider.value = AudioManager.sfx_volume
+		
+	if mute_check.button_pressed != AudioManager.is_muted:
+		mute_check.button_pressed = AudioManager.is_muted
+
 
 # ===== SAVE SYSTEM HANDLERS =====
 
