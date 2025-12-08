@@ -214,10 +214,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = -180.0
-offset_right = 250.0
-offset_bottom = 180.0
+offset_left = -320.0
+offset_top = -240.0
+offset_right = 320.0
+offset_bottom = 240.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -226,33 +226,35 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 40.0
-offset_top = 40.0
-offset_right = -40.0
-offset_bottom = -40.0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = -50.0
+offset_bottom = -50.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 40
 alignment = 1
 
 [node name="PausedLabel" type="Label" parent="PauseOverlay/PauseMenu/MenuContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 64
 text = "PAUSED"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="PauseOverlay/PauseMenu/MenuContainer"]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
 [node name="ResumeButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
-custom_minimum_size = Vector2(300, 60)
+custom_minimum_size = Vector2(380, 75)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
 text = "Resume"
 
 [node name="QuitButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
-custom_minimum_size = Vector2(300, 60)
+custom_minimum_size = Vector2(380, 75)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
 text = "Quit to Menu"

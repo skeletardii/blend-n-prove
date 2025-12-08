@@ -8,9 +8,13 @@
       "Bash(git pull:*)",
       "Bash(git commit:*)",
       "Bash(git add:*)",
+<<<<<<< HEAD
       "Bash(dir:*)",
       "Bash(grep:*)",
       "Bash(ls:*)"
+=======
+      "Bash(git push:*)"
+>>>>>>> ad3cfeb3bada7a5028b9a1ed49f6a4e48b256306
     ],
     "deny": [],
     "ask": []

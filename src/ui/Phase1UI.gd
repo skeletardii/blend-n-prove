@@ -10,10 +10,10 @@ const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
 @onready var score_display: Label = $MainContainer/TopStatusBar/StatusContainer/ScoreDisplay
 @onready var level_display: Label = $MainContainer/TopStatusBar/StatusContainer/LevelDisplay
 @onready var patience_bar: ProgressBar = $MainContainer/TopStatusBar/PatienceBar
-@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/SpeechBubble/ContentContainer/PremiseChecklist/PremiseListScroll/PremiseList
+@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/PremiseChecklist/PremiseListScroll/PremiseList
 @onready var input_display: Label = $MainContainer/InputSystem/InputContainer/InputField/InputDisplay
-@onready var variable_definitions_panel: PanelContainer = $MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel
-@onready var definitions_list: VBoxContainer = $MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer/DefinitionsScroll/DefinitionsList
+@onready var variable_definitions_panel: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/VariableDefinitions
+@onready var definitions_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/VariableDefinitions/DefinitionsScroll/DefinitionsList
 
 # Virtual keyboard buttons
 @onready var var_p: Button = $MainContainer/VirtualKeyboard/VariableRow/VarP
@@ -273,13 +273,30 @@ func update_variable_definitions() -> void:
 	# Display definitions
 	if definitions.size() > 0:
 		variable_definitions_panel.visible = true
+		# Load MuseoSansRounded700 font
+		var museo_font = load("res://assets/fonts/MuseoSansRounded700.otf")
+		var is_first = true
 		for variable in definitions.keys():
+			# Add separator line before each definition (except the first)
+			if not is_first:
+				var separator = HSeparator.new()
+				separator.add_theme_constant_override("separation", 1)
+				# Create a custom StyleBox for subtle line
+				var separator_style = StyleBoxFlat.new()
+				separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)  # Light gray with transparency
+				separator_style.content_margin_top = 2
+				separator_style.content_margin_bottom = 2
+				separator.add_theme_stylebox_override("separator", separator_style)
+				definitions_list.add_child(separator)
+
 			var def_label = Label.new()
 			def_label.text = "Let " + variable + " be \"" + definitions[variable] + "\""
-			def_label.add_theme_font_size_override("font_size", 25)
-			def_label.add_theme_color_override("font_color", Color(1,1,1,1))
+			def_label.add_theme_font_override("font", museo_font)
+			def_label.add_theme_font_size_override("font_size", 24)
+			def_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 			def_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			definitions_list.add_child(def_label)
+			is_first = false
 	else:
 		variable_definitions_panel.visible = false
 
@@ -292,14 +309,32 @@ func update_premise_checklist() -> void:
 	# Determine which text to display based on problem type
 	var display_premises: Array[String] = []
 	if current_customer.is_natural_language:
-		# Level 6: Show natural language sentences
+		# Level 6: Show natural language sentences without parenthesis tips
 		display_premises = current_customer.natural_language_premises.duplicate()
+		# Remove all parenthesis tips like (P), (¬Q), etc.
+		for i in range(display_premises.size()):
+			# Use regex to remove parenthesis with variable symbols
+			var regex = RegEx.new()
+			regex.compile("\\s*\\([¬]?[A-Z]\\)")
+			display_premises[i] = regex.sub(display_premises[i], "", true)
 	else:
 		# Levels 1-5: Show logical symbols
 		display_premises = current_customer.required_premises.duplicate()
 
-	# Create new items
+	# Add all premises to the right panel with separators
 	for i in range(display_premises.size()):
+		# Add separator line before each premise (except the first)
+		if i > 0:
+			var separator = HSeparator.new()
+			separator.add_theme_constant_override("separation", 1)
+			# Create a custom StyleBox for subtle line
+			var separator_style = StyleBoxFlat.new()
+			separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)  # Light gray with transparency
+			separator_style.content_margin_top = 6
+			separator_style.content_margin_bottom = 6
+			separator.add_theme_stylebox_override("separator", separator_style)
+			premise_list.add_child(separator)
+
 		var premise_text = display_premises[i]
 		var is_completed = is_premise_completed_by_index(i)
 
@@ -335,23 +370,30 @@ func create_premise_panel(premise_text: String, is_completed: bool) -> PanelCont
 	style_box.shadow_size = 4
 	style_box.shadow_offset = Vector2(2, 2)
 
-	style_box.content_margin_left = 12
-	style_box.content_margin_right = 12
-	style_box.content_margin_top = 8
-	style_box.content_margin_bottom = 8
+	# Balanced padding for proper content fitting
+	style_box.content_margin_left = 20
+	style_box.content_margin_right = 20
+	style_box.content_margin_top = 18
+	style_box.content_margin_bottom = 18
 
 	panel.add_theme_stylebox_override("panel", style_box)
 
-	# Create label
+	# Create label with MuseoSansRounded700 font
 	var label = Label.new()
 	label.text = premise_text
-	var font_size = 24 if current_customer.is_natural_language else 48
+
+	# Load MuseoSansRounded700 font
+	var museo_font = load("res://assets/fonts/MuseoSansRounded700.otf")
+	label.add_theme_font_override("font", museo_font)
+
+	# Optimized font sizes for better content fitting
+	var font_size = 26 if current_customer.is_natural_language else 48
 	label.add_theme_font_size_override("font_size", font_size)
 
 	# For natural language text, enable word wrapping
 	if current_customer.is_natural_language:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.custom_minimum_size.x = 350
+		label.custom_minimum_size.x = 250
 
 	if is_completed:
 		# Black text for contrast on white background
