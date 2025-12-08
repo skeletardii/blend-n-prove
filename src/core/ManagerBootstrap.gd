@@ -164,11 +164,6 @@ func _load_manager(manager_name: String) -> bool:
 	# Inject implementation into proxy
 	proxy._set_impl(instance)
 
-	# Manually call _ready() on the implementation if it has one
-	# (Since we're loading after scene tree is ready, _ready() won't auto-call)
-	if instance.has_method("_ready"):
-		instance._ready()
-
 	print("ManagerBootstrap: ✓ ", manager_name, " loaded and injected into proxy")
 	return true
 
