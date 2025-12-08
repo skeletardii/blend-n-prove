@@ -10,8 +10,11 @@
 [ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="7_d87rg"]
 [ext_resource type="FontFile" uid="uid://bx0fmm2ck5w42" path="res://assets/fonts/MuseoSansRounded900.otf" id="8_gxw17"]
 
-[sub_resource type="Gradient" id="Gradient_rocket_fuel"]
-colors = PackedColorArray(1, 0.647059, 0, 1, 1, 0.270588, 0, 0)
+[sub_resource type="Gradient" id="Gradient_flame"]
+colors = PackedColorArray(1, 0.9, 0.2, 1, 1, 0.4, 0.0, 0)
+
+[sub_resource type="Gradient" id="Gradient_smoke"]
+colors = PackedColorArray(1, 0.5, 0.0, 0.8, 0.5, 0.5, 0.5, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chat_bubble"]
 bg_color = Color(0, 0, 0, 0.7)
@@ -164,49 +167,36 @@ texture = ExtResource("3_rocketsprite")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="EngineParticles" type="CPUParticles2D" parent="WorkContainer/TargetArea/Rocket"]
+[node name="ExhaustContainer" type="Node2D" parent="WorkContainer/TargetArea/Rocket"]
 position = Vector2(50, 95)
+
+[node name="FlameCore" type="CPUParticles2D" parent="WorkContainer/TargetArea/Rocket/ExhaustContainer"]
+amount = 100
+lifetime = 0.5
+randomness = 0.1
+local_coords = false
+direction = Vector2(0, 1)
+spread = 5.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 600.0
+initial_velocity_max = 800.0
+scale_amount_min = 8.0
+scale_amount_max = 15.0
+color_ramp = SubResource("Gradient_flame")
+
+[node name="SmokeTrail" type="CPUParticles2D" parent="WorkContainer/TargetArea/Rocket/ExhaustContainer"]
+show_behind_parent = true
 amount = 200
 lifetime = 2.0
 local_coords = false
-randomness = 0.2
-lifetime_randomness = 0.3
-emission_shape = 1
-emission_sphere_radius = 5.0
 direction = Vector2(0, 1)
-spread = 15.0
-gravity = Vector2(0, 0)
+spread = 10.0
+gravity = Vector2(-200, 0)
 initial_velocity_min = 400.0
 initial_velocity_max = 600.0
-scale_amount_min = 10.0
-scale_amount_max = 20.0
-color_ramp = SubResource("Gradient_rocket_fuel")
-
-[node name="ComboContainer" type="VBoxContainer" parent="WorkContainer/TargetArea"]
-visible = false
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -150.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = 80.0
-grow_horizontal = 0
-
-[node name="ComboLabel" type="Label" parent="WorkContainer/TargetArea/ComboContainer"]
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("8_gxw17")
-theme_override_font_sizes/font_size = 40
-text = "2x"
-horizontal_alignment = 2
-
-[node name="ComboLine" type="ColorRect" parent="WorkContainer/TargetArea/ComboContainer"]
-custom_minimum_size = Vector2(0, 4)
-layout_mode = 2
-color = Color(1, 1, 1, 1)
+scale_amount_min = 15.0
+scale_amount_max = 30.0
+color_ramp = SubResource("Gradient_smoke")
 
 [node name="ChatBubble" type="Panel" parent="WorkContainer/TargetArea"]
 layout_mode = 1
@@ -630,6 +620,103 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Absorption"
+
+[node name="ComboContainer" type="VBoxContainer" parent="."]
+visible = false
+z_index = 50
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -160.0
+offset_top = 60.0
+offset_right = -30.0
+offset_bottom = 120.0
+grow_horizontal = 0
+
+[node name="ComboLabel" type="Label" parent="ComboContainer"]
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 70
+text = "2x"
+horizontal_alignment = 2
+
+[node name="Sparkles" type="CPUParticles2D" parent="ComboContainer/ComboLabel"]
+position = Vector2(100, 35)
+emitting = false
+amount = 8
+lifetime = 1.5
+preprocess = 0.0
+speed_scale = 1.0
+explosiveness = 0.0
+randomness = 0.0
+lifetime_randomness = 0.0
+fixed_fps = 0
+fract_delta = true
+local_coords = true
+draw_order = 0
+texture = null
+emission_shape = 1
+emission_sphere_radius = 30.0
+direction = Vector2(0, 0)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 0.0
+initial_velocity_max = 0.0
+angular_velocity_min = 0.0
+angular_velocity_max = 0.0
+linear_accel_min = 0.0
+linear_accel_max = 0.0
+radial_accel_min = 0.0
+radial_accel_max = 0.0
+tangential_accel_min = 0.0
+tangential_accel_max = 0.0
+damping_min = 0.0
+damping_max = 0.0
+angle_min = 0.0
+angle_max = 0.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(1, 1, 0, 0.8)
+
+[node name="FallingSparks" type="CPUParticles2D" parent="ComboContainer/ComboLabel"]
+position = Vector2(100, 25)
+emitting = false
+amount = 20
+lifetime = 0.8
+local_coords = false
+emission_shape = 3
+emission_rect_extents = Vector2(30, 10)
+direction = Vector2(0, 1)
+spread = 20.0
+gravity = Vector2(0, 400)
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(1, 0.8, 0.2, 1)
+
+[node name="Fire" type="CPUParticles2D" parent="ComboContainer/ComboLabel"]
+show_behind_parent = true
+position = Vector2(100, 40)
+emitting = false
+amount = 30
+lifetime = 0.6
+direction = Vector2(0, -1)
+spread = 30.0
+gravity = Vector2(0, -200)
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+scale_amount_min = 10.0
+scale_amount_max = 20.0
+color = Color(1, 0.4, 0, 0.8)
+
+[node name="ComboLine" type="ColorRect" parent="ComboContainer"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+color = Color(1, 1, 1, 1)
 
 [node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]
 visible = false

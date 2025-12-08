@@ -13,17 +13,27 @@ const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 @onready var target_expression: Label = $WorkContainer/TargetArea/ChatBubble/TargetContainer/TargetExpression
 @onready var addition_dialog: Panel = $AdditionDialog
 @onready var rocket: TextureRect = $WorkContainer/TargetArea/Rocket
-@onready var engine_particles: CPUParticles2D = $WorkContainer/TargetArea/Rocket/EngineParticles
+@onready var flame_core: CPUParticles2D = $WorkContainer/TargetArea/Rocket/ExhaustContainer/FlameCore
+@onready var smoke_trail: CPUParticles2D = $WorkContainer/TargetArea/Rocket/ExhaustContainer/SmokeTrail
 @onready var feedback_label: Label = $WorkContainer/InventoryArea/InventoryContainer/FeedbackLabel
 @onready var space_bg1: TextureRect = $WorkContainer/TargetArea/SpaceBG1
 @onready var space_bg2: TextureRect = $WorkContainer/TargetArea/SpaceBG2
 
-@onready var combo_container: VBoxContainer = $WorkContainer/TargetArea/ComboContainer
-@onready var combo_label: Label = $WorkContainer/TargetArea/ComboContainer/ComboLabel
-@onready var combo_line: ColorRect = $WorkContainer/TargetArea/ComboContainer/ComboLine
+@onready var combo_container: VBoxContainer = $ComboContainer
+@onready var combo_label: Label = $ComboContainer/ComboLabel
+@onready var combo_line: ColorRect = $ComboContainer/ComboLine
+@onready var combo_sparkles: CPUParticles2D = $ComboContainer/ComboLabel/Sparkles
+@onready var combo_sparks: CPUParticles2D = $ComboContainer/ComboLabel/FallingSparks
+@onready var combo_fire: CPUParticles2D = $ComboContainer/ComboLabel/Fire
+
+# Card Styles
+var card_style_normal: StyleBoxFlat
+var card_style_pressed: StyleBoxFlat
+var card_style_hover: StyleBoxFlat
 
 # Particle State
-var normal_gradient: Gradient
+var normal_flame_gradient: Gradient
+var normal_smoke_gradient: Gradient
 var boost_gradient: Gradient # 3x (Red/Orange)
 var blue_gradient: Gradient # 5x
 var purple_gradient: Gradient # 10x
@@ -31,7 +41,8 @@ var purple_gradient: Gradient # 10x
 # Combo State
 var combo_count: int = 0
 var combo_timer: float = 0.0
-var combo_max_time: float = 8.0 # Generous time to keep combo
+var combo_max_time: float = 20.0 # Generous time to keep combo
+var glow_tween: Tween
 
 # References passed from GameplayScene
 var score_display: Label = null
@@ -164,26 +175,45 @@ func _ready() -> void:
 	single_ops_tab.button_pressed = false
 
 	# Initialize particle gradients
-	if engine_particles:
-		normal_gradient = engine_particles.color_ramp
+	if flame_core:
+		normal_flame_gradient = flame_core.color_ramp
+		flame_core.emitting = true
+	if smoke_trail:
+		normal_smoke_gradient = smoke_trail.color_ramp
+		smoke_trail.emitting = true
 		
-		# Create boost gradient (Reddish-Orange to Transparent)
-		boost_gradient = Gradient.new()
-		boost_gradient.add_point(0.0, Color(1, 0.27, 0, 1))
-		boost_gradient.add_point(1.0, Color(1, 0.27, 0, 0))
-		
-		# Blue Gradient (5x)
-		blue_gradient = Gradient.new()
-		blue_gradient.add_point(0.0, Color(0, 0.5, 1, 1))
-		blue_gradient.add_point(1.0, Color(0, 0.5, 1, 0))
+	# Create boost gradient (Reddish-Orange to Transparent)
+	boost_gradient = Gradient.new()
+	boost_gradient.add_point(0.0, Color(1, 0.27, 0, 1))
+	boost_gradient.add_point(1.0, Color(1, 0.27, 0, 0))
+	
+	# Blue Gradient (5x)
+	blue_gradient = Gradient.new()
+	blue_gradient.add_point(0.0, Color(0, 0.5, 1, 1))
+	blue_gradient.add_point(1.0, Color(0, 0.5, 1, 0))
 
-		# Purple Gradient (10x)
-		purple_gradient = Gradient.new()
-		purple_gradient.add_point(0.0, Color(0.8, 0, 1, 1))
-		purple_gradient.add_point(1.0, Color(0.8, 0, 1, 0))
+	# Purple Gradient (10x)
+	purple_gradient = Gradient.new()
+	purple_gradient.add_point(0.0, Color(0.8, 0, 1, 1))
+	purple_gradient.add_point(1.0, Color(0.8, 0, 1, 0))
 	
 	# Initialize particle size/speed
 	set_rocket_speed(1.0)
+	
+	_init_card_styles()
+
+func _init_card_styles() -> void:
+	card_style_normal = StyleBoxFlat.new()
+	card_style_normal.bg_color = Color(0.9, 0.9, 0.9)
+	card_style_normal.border_color = Color(0.2, 0.2, 0.2)
+	card_style_normal.set_border_width_all(2)
+	card_style_normal.set_corner_radius_all(0)
+	
+	card_style_hover = card_style_normal.duplicate()
+	card_style_hover.bg_color = Color(0.95, 0.95, 0.95)
+	
+	card_style_pressed = card_style_normal.duplicate()
+	card_style_pressed.bg_color = Color(0.8, 0.8, 0.8)
 
 func initialize_parallax_background() -> void:
 	"""Initialize the parallax scrolling background"""
@@ -247,30 +277,42 @@ func set_rocket_speed(speed_multiplier: float) -> void:
 	rocket_speed_multiplier = speed_multiplier
 
 	# Calculate target offset based on speed boost
-	# When speed > 1.0, rocket moves right; when speed returns to 1.0, it returns to base
 	if speed_multiplier > 1.0:
 		# Move right proportional to speed boost (max 100px offset at 3x speed)
 		rocket_target_offset = min((speed_multiplier - 1.0) * 50.0, 100.0)
 		
-		# Boost particles (Intensity)
-		if engine_particles:
-			engine_particles.amount = 400
-			engine_particles.lifetime = 3.0
-			engine_particles.initial_velocity_min = 800.0
-			engine_particles.initial_velocity_max = 1200.0
-			engine_particles.scale_amount_min = 15.0
-			engine_particles.scale_amount_max = 30.0
+		# Boost intensity
+		if flame_core:
+			flame_core.initial_velocity_min = 800.0
+			flame_core.initial_velocity_max = 1000.0
+			flame_core.scale_amount_min = 10.0
+			flame_core.scale_amount_max = 18.0
+			
+		if smoke_trail:
+			# Progressive trail based on combo
+			var intensity_mult = min(float(combo_count) / 10.0, 2.0) # Caps at 20x combo
+			
+			smoke_trail.amount = int(200 + (200 * intensity_mult))
+			smoke_trail.lifetime = 2.5 + (2.5 * intensity_mult) # Max 5.0s lifetime
+			smoke_trail.gravity = Vector2(-600 - (400 * intensity_mult), 0) # Stronger push
+			smoke_trail.initial_velocity_min = 500.0 + (500.0 * intensity_mult)
+			smoke_trail.initial_velocity_max = 800.0 + (800.0 * intensity_mult)
 	else:
 		rocket_target_offset = 0.0
 		
-		# Normal particles (Intensity)
-		if engine_particles:
-			engine_particles.amount = 200
-			engine_particles.lifetime = 2.0
-			engine_particles.initial_velocity_min = 400.0
-			engine_particles.initial_velocity_max = 600.0
-			engine_particles.scale_amount_min = 10.0
-			engine_particles.scale_amount_max = 20.0
+		# Normal intensity (Average/Shorter)
+		if flame_core:
+			flame_core.initial_velocity_min = 600.0
+			flame_core.initial_velocity_max = 800.0
+			flame_core.scale_amount_min = 8.0
+			flame_core.scale_amount_max = 15.0
+			
+		if smoke_trail:
+			smoke_trail.amount = 100
+			smoke_trail.lifetime = 1.2 # Short average tail
+			smoke_trail.gravity = Vector2(-200, 0)
+			smoke_trail.initial_velocity_min = 300.0
+			smoke_trail.initial_velocity_max = 500.0
 	
 	# Update color
 	update_particle_color()
@@ -334,7 +376,8 @@ func increment_combo() -> void:
 	if combo_container:
 		combo_container.visible = true
 		combo_label.text = str(combo_count) + "x"
-		combo_label.modulate = Color.WHITE
+		if not glow_tween or not glow_tween.is_valid():
+			combo_label.modulate = Color.WHITE
 		combo_line.modulate = Color.WHITE
 		combo_line.custom_minimum_size.x = 130.0 # Reset bar
 		
@@ -343,8 +386,9 @@ func increment_combo() -> void:
 		tween.tween_property(combo_label, "scale", Vector2(1.5, 1.5), 0.1)
 		tween.tween_property(combo_label, "scale", Vector2(1.0, 1.0), 0.1)
 	
-	# Update Particle Color
+	# Update Effects
 	update_particle_color()
+	update_combo_effects()
 	
 	# Update Speed
 	var new_speed = 1.0 + (float(combo_count) * 0.1)
@@ -353,6 +397,10 @@ func increment_combo() -> void:
 func reset_combo_penalty() -> void:
 	if combo_count < 2:
 		return # Already reset or low
+		
+	# Kill glow
+	if glow_tween:
+		glow_tween.kill()
 		
 	# Visual fail feedback
 	if combo_container:
@@ -364,10 +412,13 @@ func reset_combo_penalty() -> void:
 		tween.finished.connect(func(): 
 			combo_container.visible = false
 			combo_container.modulate.a = 1.0
+			combo_count = 0 # Reset logic
+			update_combo_effects()
 		)
 	
 	combo_count = 0
 	set_rocket_speed(1.0)
+	update_particle_color()
 	
 	# Gameplay Penalty
 	apply_fuel_penalty()
@@ -383,10 +434,10 @@ func trigger_damage_wobble() -> void:
 	tween.tween_property(self, "rocket_wobble_offset", 0.0, 0.2).set_ease(Tween.EASE_OUT)
 
 func update_particle_color() -> void:
-	if not engine_particles:
+	if not smoke_trail:
 		return
 		
-	var target_gradient = normal_gradient
+	var target_gradient = normal_smoke_gradient
 	
 	if combo_count >= 10:
 		target_gradient = purple_gradient
@@ -395,7 +446,40 @@ func update_particle_color() -> void:
 	elif combo_count >= 3:
 		target_gradient = boost_gradient
 	
-	engine_particles.color_ramp = target_gradient
+	smoke_trail.color_ramp = target_gradient
+
+func update_combo_effects() -> void:
+	if not combo_label: return
+	
+	# Reset all first if combo dropped
+	if combo_count < 2:
+		if combo_sparkles: combo_sparkles.emitting = false
+		if combo_sparks: combo_sparks.emitting = false
+		if combo_fire: combo_fire.emitting = false
+		if glow_tween: glow_tween.kill()
+		combo_label.modulate = Color.WHITE
+		return
+	
+	# Stage 1: Sparkles (2x+)
+	if combo_count >= 2:
+		if combo_sparkles: combo_sparkles.emitting = true
+		
+	# Stage 2: Sparks (5x+)
+	if combo_count >= 5:
+		if combo_sparks: combo_sparks.emitting = true
+		
+	# Stage 3: Glow (10x+)
+	if combo_count >= 10:
+		if not glow_tween or not glow_tween.is_valid():
+			glow_tween = create_tween().set_loops()
+			glow_tween.tween_property(combo_label, "modulate", Color(1, 0.5, 0.5), 0.2)
+			glow_tween.tween_property(combo_label, "modulate", Color(1, 1, 0.5), 0.2)
+			glow_tween.tween_property(combo_label, "modulate", Color(0.5, 1, 1), 0.2)
+			glow_tween.tween_property(combo_label, "modulate", Color(1, 0.5, 1), 0.2)
+	
+	# Stage 4: Fire (15x+)
+	if combo_count >= 15:
+		if combo_fire: combo_fire.emitting = true
 
 func connect_rule_buttons() -> void:
 	# Double operation buttons
@@ -570,19 +654,21 @@ func create_premise_cards() -> void:
 func create_premise_card(premise: BooleanExpression, index: int) -> Control:
 	var card = Button.new()
 	card.text = str(index + 1) + ". " + premise.expression_string
-	card.custom_minimum_size = Vector2(280, 80)
+	card.custom_minimum_size = Vector2(280, 60) # Slightly smaller height for uniformity
 	card.toggle_mode = true
-	# Center the text horizontally (vertical centering is automatic for buttons)
 	card.alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-	# Increase font size
+	
+	# Uniform styling
 	card.add_theme_font_size_override("font_size", 24)
-
-	# Ensure white background color
-	card.modulate = Color.WHITE
-
-	# Use default theme styling (white buttons with gray border and drop shadow from Wenrexa theme)
-	# No custom StyleBox overrides - let the theme handle it
+	card.add_theme_color_override("font_color", Color.BLACK)
+	card.add_theme_color_override("font_pressed_color", Color.BLACK)
+	card.add_theme_color_override("font_hover_color", Color.BLACK)
+	
+	if card_style_normal:
+		card.add_theme_stylebox_override("normal", card_style_normal)
+		card.add_theme_stylebox_override("hover", card_style_hover)
+		card.add_theme_stylebox_override("pressed", card_style_pressed)
+		card.add_theme_stylebox_override("focus", card_style_hover) # Remove focus ring visually
 
 	card.pressed.connect(_on_premise_card_pressed.bind(premise, card))
 	return card

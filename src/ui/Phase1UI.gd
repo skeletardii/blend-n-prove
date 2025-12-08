@@ -160,6 +160,13 @@ func validate_current_input() -> void:
 					break
 
 			if not already_exists:
+				# Trigger text shattering animation
+				for item in premise_items:
+					if item.has_meta("original_index") and item.get_meta("original_index") == matched_index:
+						spawn_shatter_effect(item)
+						AudioManager.play_premise_complete()
+						break
+
 				validated_premises.append(expression)
 				update_premise_checklist()
 				clear_input()
@@ -305,6 +312,10 @@ func update_premise_checklist() -> void:
 	for item in premise_items:
 		item.queue_free()
 	premise_items.clear()
+	
+	# Also clear children of premise_list to be safe (separators etc)
+	for child in premise_list.get_children():
+		child.queue_free()
 
 	# Determine which text to display based on problem type
 	var display_premises: Array[String] = []
@@ -321,64 +332,35 @@ func update_premise_checklist() -> void:
 		# Levels 1-5: Show logical symbols
 		display_premises = current_customer.required_premises.duplicate()
 
-	# Add all premises to the right panel with separators
+	# Add incomplete premises to the right panel
+	var display_count = 0
 	for i in range(display_premises.size()):
+		# Skip if completed (list dynamically shifts)
+		if is_premise_completed_by_index(i):
+			continue
+			
+		var premise_text = display_premises[i]
+		
 		# Add separator line before each premise (except the first)
-		if i > 0:
+		if display_count > 0:
 			var separator = HSeparator.new()
 			separator.add_theme_constant_override("separation", 1)
-			# Create a custom StyleBox for subtle line
 			var separator_style = StyleBoxFlat.new()
-			separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)  # Light gray with transparency
+			separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)
 			separator_style.content_margin_top = 6
 			separator_style.content_margin_bottom = 6
 			separator.add_theme_stylebox_override("separator", separator_style)
 			premise_list.add_child(separator)
 
-		var premise_text = display_premises[i]
-		var is_completed = is_premise_completed_by_index(i)
+		var label = create_premise_item(premise_text)
+		# Store original index for validation mapping
+		label.set_meta("original_index", i)
+		
+		premise_list.add_child(label)
+		premise_items.append(label)
+		display_count += 1
 
-		var premise_panel = create_premise_panel(premise_text, is_completed)
-		premise_list.add_child(premise_panel)
-		premise_items.append(premise_panel)
-
-func create_premise_panel(premise_text: String, is_completed: bool) -> PanelContainer:
-	var panel = PanelContainer.new()
-
-	# Create StyleBox for the panel
-	var style_box = StyleBoxFlat.new()
-	style_box.corner_radius_top_left = 8
-	style_box.corner_radius_top_right = 8
-	style_box.corner_radius_bottom_left = 8
-	style_box.corner_radius_bottom_right = 8
-
-	if is_completed:
-		# Completed: White background with subtle gray border
-		style_box.bg_color = Color(1.0, 1.0, 1.0, 1.0)  # White
-		style_box.border_color = Color(0.7, 0.7, 0.7, 1.0)  # Light gray border
-		style_box.shadow_color = Color(0.0, 0.0, 0.0, 0.3)  # Subtle shadow
-	else:
-		# Unchecked: Dark grey with drop shadow to emphasize hole
-		style_box.bg_color = Color(0.25, 0.25, 0.25, 1.0)  # Dark grey
-		style_box.border_color = Color(0.15, 0.15, 0.15, 1.0)  # Darker grey border
-		style_box.shadow_color = Color(0.0, 0.0, 0.0, 0.8)  # Deep shadow for hole effect
-
-	style_box.border_width_left = 2
-	style_box.border_width_right = 2
-	style_box.border_width_top = 2
-	style_box.border_width_bottom = 2
-	style_box.shadow_size = 4
-	style_box.shadow_offset = Vector2(2, 2)
-
-	# Balanced padding for proper content fitting
-	style_box.content_margin_left = 20
-	style_box.content_margin_right = 20
-	style_box.content_margin_top = 18
-	style_box.content_margin_bottom = 18
-
-	panel.add_theme_stylebox_override("panel", style_box)
-
-	# Create label with MuseoSansRounded700 font
+func create_premise_item(premise_text: String) -> Label:
 	var label = Label.new()
 	label.text = premise_text
 
@@ -386,24 +368,19 @@ func create_premise_panel(premise_text: String, is_completed: bool) -> PanelCont
 	var museo_font = load("res://assets/fonts/MuseoSansRounded700.otf")
 	label.add_theme_font_override("font", museo_font)
 
-	# Optimized font sizes for better content fitting
-	var font_size = 26 if current_customer.is_natural_language else 48
+	# Reduced font sizes for better fit
+	var font_size = 20 if current_customer.is_natural_language else 32
 	label.add_theme_font_size_override("font_size", font_size)
+	
+	# Simple dark text color
+	label.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1, 1.0))
 
 	# For natural language text, enable word wrapping
 	if current_customer.is_natural_language:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		label.custom_minimum_size.x = 250
 
-	if is_completed:
-		# Black text for contrast on white background
-		label.add_theme_color_override("font_color", Color(0.0, 0.0, 0.0, 1.0))  # Black for contrast
-	else:
-		# Dirty white for unchecked
-		label.add_theme_color_override("font_color", Color(0.85, 0.85, 0.8, 1.0))  # Dirty white
-
-	panel.add_child(label)
-	return panel
+	return label
 
 func is_premise_completed(premise_text: String) -> bool:
 	for validated in validated_premises:
@@ -449,3 +426,28 @@ func _process(delta: float) -> void:
 
 func get_validated_premises() -> Array[BooleanExpression]:
 	return validated_premises
+
+func spawn_shatter_effect(target_control: Control) -> void:
+	if not target_control: return
+	
+	var center = target_control.global_position + (target_control.size / 2.0)
+	
+	var particles = CPUParticles2D.new()
+	particles.global_position = center
+	particles.emitting = false
+	particles.amount = 30
+	particles.one_shot = true
+	particles.lifetime = 1.0
+	particles.explosiveness = 1.0
+	particles.spread = 180.0
+	particles.gravity = Vector2(0, 200)
+	particles.initial_velocity_min = 100
+	particles.initial_velocity_max = 200
+	particles.scale_amount_min = 3.0
+	particles.scale_amount_max = 6.0
+	particles.color = Color.BLACK
+	
+	add_child(particles)
+	particles.emitting = true
+	
+	get_tree().create_timer(1.0).timeout.connect(particles.queue_free)

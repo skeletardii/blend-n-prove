@@ -11,7 +11,7 @@ const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
 @onready var high_score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/HighScoreContainer/HighScoreDisplay
 @onready var customer_name: Label = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/CustomerName
 @onready var patience_bar: ProgressBar = $UI/MainContainer/PatienceBar
-var fuel_label: Label = null  # Created dynamically to show fuel emoji
+var fuel_icon: TextureRect = null  # Created dynamically to show fuel icon
 @onready var order_display: RichTextLabel = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/OrderDisplay
 @onready var phase_container: Control = $UI/MainContainer/ScrollContainer/GameContentArea/PhaseContainer
 @onready var tutorial_help_panel: Panel = $UI/TutorialHelpPanel
@@ -73,25 +73,22 @@ func setup_dynamic_spacing() -> void:
 	if main_container:
 		main_container.add_theme_constant_override("separation", dynamic_spacing)
 
-func create_fuel_label() -> void:
-	"""Create a label overlay on the patience bar to show rocket fuel emoji"""
+func create_fuel_icon() -> void:
+	"""Create a fuel canister icon overlay on the patience bar"""
 	if not patience_bar:
 		return
 
-	fuel_label = Label.new()
-	fuel_label.text = "Rocket Fuel"
-	fuel_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	fuel_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	fuel_label.add_theme_font_size_override("font_size", 18)
-	fuel_label.add_theme_color_override("font_color", Color.WHITE)
-	fuel_label.add_theme_color_override("font_outline_color", Color.BLACK)
-	fuel_label.add_theme_constant_override("outline_size", 2)
+	fuel_icon = TextureRect.new()
+	var icon_texture = load("res://assets/sprites/fuelcanister.png")
+	fuel_icon.texture = icon_texture
+	fuel_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	fuel_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 
-	# Make label cover the entire progress bar
-	fuel_label.anchors_preset = Control.PRESET_FULL_RECT
-	fuel_label.mouse_filter = Control.MOUSE_FILTER_IGNORE  # Allow clicks to pass through
+	# Make icon cover the entire progress bar
+	fuel_icon.anchors_preset = Control.PRESET_FULL_RECT
+	fuel_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE  # Allow clicks to pass through
 
-	patience_bar.add_child(fuel_label)
+	patience_bar.add_child(fuel_icon)
 
 func _ready() -> void:
 	# Set dynamic spacing based on viewport size
@@ -107,8 +104,8 @@ func _ready() -> void:
 	update_score_display()
 	update_high_score_display()
 
-	# Create fuel label with rocket emoji
-	create_fuel_label()
+	# Create fuel icon
+	create_fuel_icon()
 
 	# Setup first-time tutorial if active
 	if GameManager.is_first_time_tutorial:

@@ -2,7 +2,7 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://cahxlss4eyd70"
+uid="uid://c12vraq60ixtj"
 path="res://.godot/imported/MuseoSansRounded500.otf-519aa5e103af941c0d3c44b73b496f69.fontdata"
 
 [deps]
@@ -19,7 +19,7 @@ disable_embedded_bitmaps=true
 multichannel_signed_distance_field=false
 msdf_pixel_range=8
 msdf_size=48
-allow_system_fallback=false
+allow_system_fallback=true
 force_autohinter=false
 modulate_color_glyphs=false
 hinting=1
@@ -27,7 +27,7 @@ subpixel_positioning=4
 keep_rounding_remainders=true
 oversampling=0.0
 Fallbacks=null
-fallbacks=[Resource("uid://bjwp288jm42wb", "res://assets/fonts/DejaVuSans.ttf")]
+fallbacks=[]
 Compress=null
 compress=true
 preload=[]
