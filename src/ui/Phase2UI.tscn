@@ -1,17 +1,23 @@
-[gd_scene load_steps=16 format=3 uid="uid://c5oyjk8p0w8x4"]
+[gd_scene load_steps=15 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
 [ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_occ7e"]
 [ext_resource type="Texture2D" uid="uid://jaw4ij5ytu36" path="res://assets/sprites/silhouette.png" id="3_drutf"]
 [ext_resource type="Script" uid="uid://6us7btkgp6wo" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
-[ext_resource type="Texture2D" uid="uid://ddpxvnafn11yi" path="res://assets/sprites/speech.png" id="5_eptc2"]
 [ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="6_eptc2"]
 [ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="7_d87rg"]
 [ext_resource type="FontFile" uid="uid://bx0fmm2ck5w42" path="res://assets/fonts/MuseoSansRounded900.otf" id="8_gxw17"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d87rg"]
-texture = ExtResource("5_eptc2")
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chat_bubble"]
+bg_color = Color(0, 0, 0, 0.7)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="Theme" id="Theme_gxw17"]
 
@@ -41,7 +47,7 @@ shadow_size = 3
 shadow_offset = Vector2(2, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_pressed"]
-bg_color = Color(0.404, 0.404, 0.404, 1)
+bg_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -51,7 +57,7 @@ shadow_size = 3
 shadow_offset = Vector2(2, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_hover"]
-bg_color = Color(0.404, 0.404, 0.404, 1)
+bg_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -72,9 +78,9 @@ script = ExtResource("1_phase2")
 [node name="Silhouette" type="TextureRect" parent="."]
 layout_mode = 0
 offset_left = -124.0
-offset_top = 35.0
+offset_top = -130.0
 offset_right = 882.0
-offset_bottom = 994.0
+offset_bottom = 829.0
 texture = ExtResource("3_drutf")
 
 [node name="WorkContainer" type="VBoxContainer" parent="."]
@@ -94,7 +100,7 @@ theme_override_constants/separation = 10
 custom_minimum_size = Vector2(0, 600)
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.75
+size_flags_stretch_ratio = 0.4
 script = ExtResource("4_speechbubble")
 bubble_color = Color(1, 1, 1, 0)
 
@@ -103,13 +109,13 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -3.0
-offset_top = -54.0
-offset_right = -345.0
-offset_bottom = -372.0
+offset_left = 1.0
+offset_top = 471.0
+offset_right = -5.0
+offset_bottom = 6.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_d87rg")
+theme_override_styles/panel = SubResource("StyleBoxFlat_chat_bubble")
 
 [node name="TargetContainer" type="MarginContainer" parent="WorkContainer/TargetArea/ChatBubble"]
 layout_mode = 1
@@ -126,11 +132,12 @@ theme = SubResource("Theme_gxw17")
 
 [node name="TargetExpression" type="Label" parent="WorkContainer/TargetArea/ChatBubble/TargetContainer"]
 z_index = 10
+custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("2_occ7e")
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_eptc2")
 theme_override_font_sizes/font_size = 30
 text = "Prove: Q"
@@ -140,10 +147,10 @@ autowrap_mode = 3
 text_overrun_behavior = 3
 
 [node name="InventoryArea" type="Panel" parent="WorkContainer"]
-custom_minimum_size = Vector2(720, 0)
+custom_minimum_size = Vector2(720, 1000)
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 2.0
+size_flags_stretch_ratio = 0.6
 
 [node name="InventoryContainer" type="VBoxContainer" parent="WorkContainer/InventoryArea"]
 layout_mode = 1
@@ -184,9 +191,10 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="InventoryScroll" type="ScrollContainer" parent="WorkContainer/InventoryArea/InventoryContainer"]
-modulate = Color(0.46229059, 0.46229059, 0.46229059, 1)
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="WorkContainer/InventoryArea/InventoryContainer/InventoryScroll"]
 layout_mode = 2
@@ -201,7 +209,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
-columns = 3
+columns = 2
 
 [node name="FeedbackLabel" type="Label" parent="WorkContainer/InventoryArea/InventoryContainer"]
 custom_minimum_size = Vector2(0, 40)
@@ -210,372 +218,315 @@ theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DoubleOpsRemote" type="Panel" parent="."]
-custom_minimum_size = Vector2(280, 450)
+[node name="OperationsPanel" type="Panel" parent="."]
+custom_minimum_size = Vector2(700, 800)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -355.0
-offset_top = -205.0
-offset_right = -3.0
-offset_bottom = 386.0
+offset_left = -350.0
+offset_top = -70.0
+offset_right = 350.0
+offset_bottom = 730.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_remote")
 
-[node name="Header" type="HBoxContainer" parent="DoubleOpsRemote"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = 48.0
-grow_horizontal = 2
-theme_override_constants/separation = 8
-
-[node name="ToggleButton" type="Button" parent="DoubleOpsRemote/Header"]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "▲"
-
-[node name="Label" type="Label" parent="DoubleOpsRemote/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("8_gxw17")
-theme_override_font_sizes/font_size = 20
-text = "Double Ops"
-vertical_alignment = 1
-
-[node name="RemoteContainer" type="VBoxContainer" parent="DoubleOpsRemote"]
+[node name="MainContainer" type="VBoxContainer" parent="OperationsPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 12.0
-offset_top = 56.0
+offset_top = 12.0
 offset_right = -12.0
 offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 10
 
-[node name="ButtonsScroll" type="ScrollContainer" parent="DoubleOpsRemote/RemoteContainer"]
+[node name="Header" type="HBoxContainer" parent="OperationsPanel/MainContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="OperationsPanel/MainContainer/Header"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 24
+text = "Operations"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="OperationsPanel/MainContainer/Header"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 18
+text = "▲"
+
+[node name="TabContainer" type="HBoxContainer" parent="OperationsPanel/MainContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_constants/separation = 5
+alignment = 1
+
+[node name="DoubleOpsTab" type="Button" parent="OperationsPanel/MainContainer/TabContainer"]
+custom_minimum_size = Vector2(150, 45)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 18
+toggle_mode = true
+button_pressed = true
+text = "Double"
+
+[node name="SingleOpsTab" type="Button" parent="OperationsPanel/MainContainer/TabContainer"]
+custom_minimum_size = Vector2(150, 45)
+layout_mode = 2
+theme = ExtResource("2_occ7e")
+theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 18
+toggle_mode = true
+text = "Single"
+
+[node name="ButtonsScroll" type="ScrollContainer" parent="OperationsPanel/MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="ButtonsContainer" type="VBoxContainer" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll"]
+[node name="DoubleOpsContainer" type="VBoxContainer" parent="OperationsPanel/MainContainer/ButtonsScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 5
 
-[node name="MPButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="MPButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Modus Ponens"
 
-[node name="MTButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="MTButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Modus Tollens"
 
-[node name="HSButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="HSButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Hypothetical Syllogism"
 
-[node name="DSButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="DSButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Disjunctive Syllogism"
 
-[node name="CDButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="CDButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Constructive Dilemma"
 
-[node name="DNButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="DNButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Double Negation"
 
-[node name="CONJButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="CONJButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Conjunction"
 
-[node name="EQButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="EQButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Equivalence"
 
-[node name="RESButton" type="Button" parent="DoubleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="RESButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "Resolution
-"
+text = "Resolution"
 
-[node name="SingleOpsRemote" type="Panel" parent="."]
-custom_minimum_size = Vector2(280, 600)
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = -207.0
-offset_right = 353.0
-offset_bottom = 533.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_remote")
-
-[node name="Header" type="HBoxContainer" parent="SingleOpsRemote"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = 48.0
-grow_horizontal = 2
-theme_override_constants/separation = 8
-
-[node name="ToggleButton" type="Button" parent="SingleOpsRemote/Header"]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-text = "▲"
-
-[node name="Label" type="Label" parent="SingleOpsRemote/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("8_gxw17")
-theme_override_font_sizes/font_size = 20
-text = "Single Ops"
-vertical_alignment = 1
-
-[node name="RemoteContainer" type="VBoxContainer" parent="SingleOpsRemote"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 56.0
-offset_right = -12.0
-offset_bottom = -12.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 5
-
-[node name="ButtonsScroll" type="ScrollContainer" parent="SingleOpsRemote/RemoteContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="ButtonsContainer" type="VBoxContainer" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll"]
+[node name="SingleOpsContainer" type="VBoxContainer" parent="OperationsPanel/MainContainer/ButtonsScroll"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 5
 
-[node name="SIMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="SIMPButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Simplification"
 
-[node name="IMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="IMPButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Implication"
 
-[node name="CONVButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="CONVButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Conversion"
 
-[node name="ADDButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="ADDButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "Addition
-"
+text = "Addition"
 
-[node name="DMButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="DMButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "De Morgan's Law"
 
-[node name="DNEGButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="DNEGButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Double Negation"
 
-[node name="DISTButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="DISTButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Distribution"
 
-[node name="COMMButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="COMMButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Commutative"
 
-[node name="ASSOCButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="ASSOCButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Associative"
 
-[node name="IDEMPButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="IDEMPButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Idempotent"
 
-[node name="ABSButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
+[node name="ABSButton" type="Button" parent="OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer"]
+custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_fonts/font = ExtResource("8_gxw17")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
 text = "Absorption"
-
-[node name="PAREN_REMOVEButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-theme_override_fonts/font = ExtResource("8_gxw17")
-theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "( )"
-
-[node name="NEGButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "NEG"
-
-[node name="TAUTButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "TAUT"
-
-[node name="CONTRButton" type="Button" parent="SingleOpsRemote/RemoteContainer/ButtonsScroll/ButtonsContainer"]
-custom_minimum_size = Vector2(240, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-theme_override_styles/normal = SubResource("StyleBoxFlat_white_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_white_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_white_hover")
-text = "CONTR"
 
 [node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]
 visible = false

@@ -15,6 +15,9 @@ signal help_panel_closed()
 var current_tutorial_key: String = ""
 var current_problem_index: int = 0
 
+# Blur overlay
+var blur_overlay: ColorRect = null
+
 func _ready() -> void:
 	close_button.pressed.connect(_on_close_button_pressed)
 	hide()
@@ -33,10 +36,10 @@ func show_tutorial_help(tutorial_key: String, problem_index: int) -> void:
 	# Update rule information
 	rule_title.text = tutorial.rule_name
 
-	# Format rule description with pattern
+	# Format rule description with pattern (using black text for contrast on white background)
 	rule_description.bbcode_enabled = true
 	rule_description.text = "[b]Description:[/b]\n" + tutorial.description + \
-		"\n\n[color=cyan][b]Pattern:[/b] " + tutorial.rule_pattern + "[/color]"
+		"\n\n[color=blue][b]Pattern:[/b] " + tutorial.rule_pattern + "[/color]"
 
 	# Get problem-specific hint
 	if problem_index >= 0 and problem_index < tutorial.problems.size():
@@ -44,17 +47,44 @@ func show_tutorial_help(tutorial_key: String, problem_index: int) -> void:
 		problem_number_label.text = "Problem " + str(problem.problem_number) + "/10 (" + problem.difficulty + ")"
 
 		problem_hint.bbcode_enabled = true
-		problem_hint.text = "[color=yellow][b]Hint for this problem:[/b][/color]\n" + problem.solution
+		problem_hint.text = "[color=green][b]Hint for this problem:[/b][/color]\n" + problem.solution
 	else:
 		problem_number_label.text = "Tutorial Overview"
 		problem_hint.bbcode_enabled = true
 		problem_hint.text = "[i]No specific hint available.[/i]"
 
+	_create_blur_overlay()
 	show()
 
 func _on_close_button_pressed() -> void:
+	_remove_blur_overlay()
 	hide()
 	help_panel_closed.emit()
 
 func toggle_visibility() -> void:
+	if visible:
+		_remove_blur_overlay()
+	else:
+		_create_blur_overlay()
 	visible = !visible
+
+func _create_blur_overlay() -> void:
+	# Create semi-transparent overlay behind the popup
+	if blur_overlay == null:
+		blur_overlay = ColorRect.new()
+		blur_overlay.color = Color(0, 0, 0, 0.5)  # Semi-transparent black
+		blur_overlay.z_index = 98  # Behind the panel
+
+		# Make it fullscreen
+		blur_overlay.anchor_left = 0.0
+		blur_overlay.anchor_top = 0.0
+		blur_overlay.anchor_right = 1.0
+		blur_overlay.anchor_bottom = 1.0
+
+		get_parent().add_child(blur_overlay)
+		get_parent().move_child(blur_overlay, get_index())  # Place just before this panel
+
+func _remove_blur_overlay() -> void:
+	if blur_overlay != null:
+		blur_overlay.queue_free()
+		blur_overlay = null

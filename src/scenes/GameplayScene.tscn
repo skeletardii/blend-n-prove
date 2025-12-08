@@ -1,28 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://bji7acucw6pe3"]
+[gd_scene load_steps=6 format=3 uid="uid://bji7acucw6pe3"]
 
 [ext_resource type="Script" uid="uid://cl7fuggwr1kue" path="res://src/ui/GameplayScene.gd" id="1_3v9zy"]
 [ext_resource type="PackedScene" uid="uid://cq3k7m5xywb8k" path="res://src/ui/TutorialHelpPanel.tscn" id="2_tutorial_help"]
 [ext_resource type="PackedScene" uid="uid://dpjc3t8yqr5h1" path="res://src/ui/HintPopup.tscn" id="3_hint_popup"]
-[ext_resource type="FontFile" uid="uid://ce67i1nf8ircd" path="res://assets/fonts/Glowforge.otf" id="3_n1mcv"]
-[ext_resource type="Texture2D" uid="uid://djmqnb3m2u5xr" path="res://assets/sprites/button assets.png" id="4_1yton"]
 [ext_resource type="FontFile" uid="uid://bu186h4gwve1c" path="res://assets/fonts/MuseoSansRounded300.otf" id="4_wxnvq"]
-[ext_resource type="Texture2D" uid="uid://pause_icon_001" path="res://assets/sprites/pause_icon.svg" id="5_pause_icon"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_n1mcv"]
-texture = ExtResource("4_1yton")
-texture_margin_left = 16.816864
-texture_margin_right = 16.421173
-region_rect = Rect2(63, 64, 56, 56)
-modulate_color = Color(0.4351923, 0.43519226, 0.43519226, 1)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hy4gw"]
-texture = ExtResource("4_1yton")
-texture_margin_left = 16.58393
-texture_margin_top = 0.078948975
-texture_margin_right = 16.695608
-texture_margin_bottom = 0.7529297
-region_rect = Rect2(63, 64, 56, 56)
-modulate_color = Color(0.86898494, 0.8689849, 0.8689849, 1)
+[ext_resource type="Texture2D" uid="uid://cugfb5gspi52n" path="res://assets/sprites/pause_icon.svg" id="5_pause_icon"]
 
 [node name="GameplayScene" type="Control"]
 layout_mode = 3
@@ -40,7 +22,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.92, 0.92, 0.92, 1)
+color = Color(0.77254903, 0.77254903, 0.77254903, 1)
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 1
@@ -139,7 +121,7 @@ text = "Hint"
 
 [node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer"]
 texture_filter = 1
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 value = 100.0

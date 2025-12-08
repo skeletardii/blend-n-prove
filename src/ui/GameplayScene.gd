@@ -103,8 +103,13 @@ func _ready() -> void:
 	# Generate first customer
 	generate_new_customer()
 
-	# Start in Phase 1
-	switch_to_phase1()
+	# Check if we should skip Phase 1 for symbol-only problems
+	if should_skip_phase1():
+		# For symbol-only problems, convert premises directly and go to Phase 2
+		convert_premises_and_skip_to_phase2()
+	else:
+		# Start in Phase 1 for natural language problems
+		switch_to_phase1()
 
 	# Start first-time tutorial after phase loads
 	if GameManager.is_first_time_tutorial and tutorial_manager:
@@ -155,6 +160,36 @@ func change_background(phase: GameManager.GamePhase) -> void:
 			background_texture.texture = phase2_background
 			# Phase 2 background at full brightness
 			background_texture.modulate = Color(1.0, 1.0, 1.0, 1.0)
+
+func should_skip_phase1() -> bool:
+	print("skip")
+	"""Check if we should skip Phase 1 for symbol-only problems"""
+	if not current_customer:
+		return false
+
+	# Skip Phase 1 if this is NOT a natural language problem
+	# (i.e., premises are already in symbolic form)
+	return not current_customer.is_natural_language
+
+func convert_premises_and_skip_to_phase2() -> void:
+	"""Convert symbolic premises directly to Phase 2 for symbol-only problems"""
+	if not current_customer:
+		return
+
+	# Convert all premises to BooleanExpression objects
+	validated_premises.clear()
+	for premise_str in current_customer.required_premises:
+		var expr = BooleanLogicEngine.create_expression(premise_str)
+		if expr.is_valid:
+			validated_premises.append(expr)
+
+	# Initialize patience timer (same as Phase 1 would do)
+	patience_timer = current_customer.patience_duration
+	max_patience = current_customer.patience_duration
+	patience_bar.visible = true
+
+	# Go directly to Phase 2
+	switch_to_phase2()
 
 func switch_to_phase1() -> void:
 	GameManager.change_phase(GameManager.GamePhase.PREPARING_PREMISES)
@@ -361,16 +396,8 @@ func complete_order_successfully() -> void:
 	patience_timer += time_reward
 	patience_timer = min(patience_timer, max_patience * 1.5)  # Cap at 1.5x max patience
 
-	# Show score popup animation
-	var popup: CanvasLayer = score_popup_scene.instantiate()
-	add_child(popup)
-	popup.show_score_popup(base_score, time_bonus, score_display, GameManager.current_score)
-
-	# Don't add score immediately - let the popup animation handle the display update
-	# The actual score will be added to GameManager after the animation completes
-	get_tree().create_timer(1.2 + 0.3 + 0.6).timeout.connect(func():
-		GameManager.add_score(total_score)
-	)
+	# Score popup is now shown directly in Phase2UI at the card location
+	# Score is added by Phase2UI after its animation completes
 
 	# Handle tutorial mode completion
 	if GameManager.tutorial_mode:
@@ -407,7 +434,13 @@ func complete_order_successfully() -> void:
 
 		# Generate new customer
 		generate_new_customer()
-		switch_to_phase1()
+		if should_skip_phase1():
+		# For symbol-only problems, convert premises directly and go to Phase 2
+			convert_premises_and_skip_to_phase2()
+		else:
+		# Start in Phase 1 for natural language problems
+			switch_to_phase1()
+
 
 # Phase 1 Signal Handlers
 func _on_premise_validated(expression: BooleanExpression) -> void:
