@@ -333,7 +333,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "∧"
 
@@ -343,7 +342,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "⊕"
 
@@ -353,7 +351,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "↔"
 
@@ -363,7 +360,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "∨"
 
@@ -384,7 +380,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "→"
 
@@ -424,7 +419,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "⌫"
 
