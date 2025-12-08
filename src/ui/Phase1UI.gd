@@ -10,10 +10,10 @@ const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
 @onready var score_display: Label = $MainContainer/TopStatusBar/StatusContainer/ScoreDisplay
 @onready var level_display: Label = $MainContainer/TopStatusBar/StatusContainer/LevelDisplay
 @onready var patience_bar: ProgressBar = $MainContainer/TopStatusBar/PatienceBar
-@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/PremiseChecklist/PremiseListScroll/PremiseList
+@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/PremiseChecklist/PremiseListScroll/PremiseList
 @onready var input_display: Label = $MainContainer/InputSystem/InputContainer/InputField/InputDisplay
-@onready var variable_definitions_panel: PanelContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel
-@onready var definitions_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer/DefinitionsScroll/DefinitionsList
+@onready var variable_definitions_panel: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/VariableDefinitions
+@onready var definitions_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/VariableDefinitions/DefinitionsScroll/DefinitionsList
 
 # Virtual keyboard buttons
 @onready var var_p: Button = $MainContainer/VirtualKeyboard/VariableRow/VarP
@@ -275,7 +275,20 @@ func update_variable_definitions() -> void:
 		variable_definitions_panel.visible = true
 		# Load MuseoSansRounded700 font
 		var museo_font = load("res://assets/fonts/MuseoSansRounded700.otf")
+		var is_first = true
 		for variable in definitions.keys():
+			# Add separator line before each definition (except the first)
+			if not is_first:
+				var separator = HSeparator.new()
+				separator.add_theme_constant_override("separation", 1)
+				# Create a custom StyleBox for subtle line
+				var separator_style = StyleBoxFlat.new()
+				separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)  # Light gray with transparency
+				separator_style.content_margin_top = 8
+				separator_style.content_margin_bottom = 8
+				separator.add_theme_stylebox_override("separator", separator_style)
+				definitions_list.add_child(separator)
+
 			var def_label = Label.new()
 			def_label.text = "Let " + variable + " be \"" + definitions[variable] + "\""
 			def_label.add_theme_font_override("font", museo_font)
@@ -283,6 +296,7 @@ func update_variable_definitions() -> void:
 			def_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 			def_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			definitions_list.add_child(def_label)
+			is_first = false
 	else:
 		variable_definitions_panel.visible = false
 
@@ -307,8 +321,20 @@ func update_premise_checklist() -> void:
 		# Levels 1-5: Show logical symbols
 		display_premises = current_customer.required_premises.duplicate()
 
-	# Add all premises to the right panel
+	# Add all premises to the right panel with separators
 	for i in range(display_premises.size()):
+		# Add separator line before each premise (except the first)
+		if i > 0:
+			var separator = HSeparator.new()
+			separator.add_theme_constant_override("separation", 1)
+			# Create a custom StyleBox for subtle line
+			var separator_style = StyleBoxFlat.new()
+			separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)  # Light gray with transparency
+			separator_style.content_margin_top = 6
+			separator_style.content_margin_bottom = 6
+			separator.add_theme_stylebox_override("separator", separator_style)
+			premise_list.add_child(separator)
+
 		var premise_text = display_premises[i]
 		var is_completed = is_premise_completed_by_index(i)
 

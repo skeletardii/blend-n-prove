@@ -73,21 +73,43 @@ theme_override_constants/separation = 30
 
 [node name="LoadingLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 56
 text = "Loading..."
 horizontal_alignment = 1
 
-[node name="ProgressBar" type="ProgressBar" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(500, 40)
+[node name="LoadingCircles" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
-max_value = 100.0
-value = 0.0
-show_percentage = false
+size_flags_horizontal = 4
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Circle1" type="Panel" parent="CenterContainer/VBoxContainer/LoadingCircles"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="Circle2" type="Panel" parent="CenterContainer/VBoxContainer/LoadingCircles"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="Circle3" type="Panel" parent="CenterContainer/VBoxContainer/LoadingCircles"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="Circle4" type="Panel" parent="CenterContainer/VBoxContainer/LoadingCircles"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="Circle5" type="Panel" parent="CenterContainer/VBoxContainer/LoadingCircles"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
 
 [node name="TipLabel" type="Label" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(600, 0)
+custom_minimum_size = Vector2(700, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
 text = "Tip: Practice makes perfect!"
 horizontal_alignment = 1
 autowrap_mode = 3

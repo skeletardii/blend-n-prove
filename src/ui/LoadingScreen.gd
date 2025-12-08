@@ -1,12 +1,13 @@
 extends Control
 
-@onready var progress_bar: ProgressBar = $CenterContainer/VBoxContainer/ProgressBar
+@onready var loading_circles: HBoxContainer = $CenterContainer/VBoxContainer/LoadingCircles
 @onready var loading_label: Label = $CenterContainer/VBoxContainer/LoadingLabel
 @onready var tip_label: Label = $CenterContainer/VBoxContainer/TipLabel
 @onready var scrolling_bg: TextureRect = $ScrollingBG
 
 var progress: float = 0.0
 var target_scene: String = ""
+var circles: Array[Panel] = []
 
 # Loading tips to display
 var loading_tips: Array[String] = [
@@ -26,14 +27,55 @@ func _ready() -> void:
 	# Show random tip
 	tip_label.text = loading_tips[randi() % loading_tips.size()]
 
-	# Start loading animation
-	progress_bar.value = 0
+	# Setup circles
+	setup_circles()
+
+	# Start circle animation
+	start_circle_animation()
 
 	# Start background breathing animation
 	start_background_breathing()
 
 	# Begin loading process
 	start_loading()
+
+func setup_circles() -> void:
+	"""Setup circular style for loading circles"""
+	# Get all circle panels
+	for child in loading_circles.get_children():
+		if child is Panel:
+			circles.append(child)
+
+			# Create circular style
+			var style_box = StyleBoxFlat.new()
+			style_box.bg_color = Color(1, 1, 1, 1)  # White circles
+			style_box.corner_radius_top_left = 10
+			style_box.corner_radius_top_right = 10
+			style_box.corner_radius_bottom_left = 10
+			style_box.corner_radius_bottom_right = 10
+			child.add_theme_stylebox_override("panel", style_box)
+
+func start_circle_animation() -> void:
+	"""Animate circles in a revolving pattern"""
+	# Stagger the animation for each circle
+	for i in range(circles.size()):
+		animate_circle(circles[i], i * 0.15)  # 0.15 second delay between each
+
+func animate_circle(circle: Panel, delay: float) -> void:
+	"""Animate a single circle with scaling effect"""
+	await get_tree().create_timer(delay).timeout
+
+	var tween = create_tween()
+	tween.set_loops()
+
+	# Pulse animation: scale up and down
+	tween.tween_property(circle, "scale", Vector2(1.5, 1.5), 0.4) \
+		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(circle, "scale", Vector2(1.0, 1.0), 0.4) \
+		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+	# Brief pause before next cycle
+	tween.tween_interval(0.2)
 
 func start_background_breathing() -> void:
 	"""Creates a breathing animation for the scrolling background (same as title screen)"""
@@ -69,18 +111,9 @@ func start_background_breathing() -> void:
 		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
 
 func start_loading() -> void:
-	"""Simulate loading with progress animation"""
-	var tween = create_tween()
-
-	# Animate progress bar from 0 to 100 over 1.5 seconds
-	tween.tween_property(progress_bar, "value", 100, 1.5) \
-		.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-
-	# Wait for animation to complete
-	await tween.finished
-
-	# Small delay before scene change
-	await get_tree().create_timer(0.3).timeout
+	"""Simulate loading with timer"""
+	# Wait for loading animation duration (1.8 seconds total)
+	await get_tree().create_timer(1.8).timeout
 
 	# Change to target scene
 	if target_scene != "":
