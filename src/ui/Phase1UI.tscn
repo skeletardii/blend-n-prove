@@ -107,91 +107,139 @@ offset_top = 20.0
 offset_right = 140.0
 offset_bottom = 180.0
 
-[node name="SpeechBubble" type="Panel" parent="MainContainer/CustomerArea"]
-custom_minimum_size = Vector2(0, 500)
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -276.0
-offset_top = 15.0
-offset_right = 279.0
-offset_bottom = 412.0
-grow_horizontal = 2
-theme = ExtResource("6_wbgmg")
-
-[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble"]
+[node name="PremisePanelsContainer" type="HBoxContainer" parent="MainContainer/CustomerArea"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = 35.0
-offset_right = -35.0
-offset_bottom = -49.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="LeftPanel" type="Panel" parent="MainContainer/CustomerArea/PremisePanelsContainer"]
+custom_minimum_size = Vector2(0, 500)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("6_wbgmg")
+
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 20.0
+offset_right = -15.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
 
-[node name="VariableDefinitionsPanel" type="PanelContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer"]
+[node name="RightPanel" type="Panel" parent="MainContainer/CustomerArea/PremisePanelsContainer"]
+custom_minimum_size = Vector2(0, 500)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("6_wbgmg")
+
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 20.0
+offset_right = -15.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="VariableDefinitionsPanel" type="PanelContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer"]
 visible = false
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer"]
+[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_o5hkq")
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 32
 text = "Variable Definitions:"
 
-[node name="DefinitionsScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer"]
+[node name="DefinitionsScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("6_wbgmg")
 horizontal_scroll_mode = 0
 
-[node name="DefinitionsList" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer/DefinitionsScroll"]
+[node name="DefinitionsList" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer/DefinitionsScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_constants/separation = 3
 
-[node name="PremiseChecklist" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer"]
+[node name="PremiseChecklist" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/PremiseChecklist"]
+[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/PremiseChecklist"]
 layout_mode = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_qjtox")
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("5_o5hkq")
+theme_override_font_sizes/font_size = 36
 text = "Premises to reconstruct:"
 
-[node name="PremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/PremiseChecklist"]
+[node name="PremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/PremiseChecklist"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="PremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/SpeechBubble/ContentContainer/PremiseChecklist/PremiseListScroll"]
+[node name="LeftPremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/PremiseChecklist/PremiseListScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
+
+[node name="RightPremiseChecklist" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/RightPremiseChecklist"]
+layout_mode = 2
+theme = ExtResource("6_wbgmg")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_o5hkq")
+theme_override_font_sizes/font_size = 36
+text = "Premises (continued):"
+
+[node name="RightPremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/RightPremiseChecklist"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="RightPremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/RightPremiseChecklist/RightPremiseListScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
 
 [node name="InputSystem" type="Control" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 80)

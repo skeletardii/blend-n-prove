@@ -7,17 +7,22 @@
       "mcp__godot-mcp__save_scene",
       "Bash(git pull:*)",
       "Bash(git commit:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["godot"],
+  "enabledMcpjsonServers": [
+    "godot"
+  ],
   "mcpServers": {
     "godot-mcp": {
       "command": "node",
-      "args": ["C:/Users/X/Documents/godot-mcp/server/dist/index.js"],
+      "args": [
+        "C:/Users/X/Documents/godot-mcp/server/dist/index.js"
+      ],
       "env": {
         "MCP_TRANSPORT": "stdio"
       }

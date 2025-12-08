@@ -10,10 +10,11 @@ const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
 @onready var score_display: Label = $MainContainer/TopStatusBar/StatusContainer/ScoreDisplay
 @onready var level_display: Label = $MainContainer/TopStatusBar/StatusContainer/LevelDisplay
 @onready var patience_bar: ProgressBar = $MainContainer/TopStatusBar/PatienceBar
-@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/SpeechBubble/ContentContainer/PremiseChecklist/PremiseListScroll/PremiseList
+@onready var left_premise_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/PremiseChecklist/PremiseListScroll/LeftPremiseList
+@onready var right_premise_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/ContentContainer/RightPremiseChecklist/RightPremiseListScroll/RightPremiseList
 @onready var input_display: Label = $MainContainer/InputSystem/InputContainer/InputField/InputDisplay
-@onready var variable_definitions_panel: PanelContainer = $MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel
-@onready var definitions_list: VBoxContainer = $MainContainer/CustomerArea/SpeechBubble/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer/DefinitionsScroll/DefinitionsList
+@onready var variable_definitions_panel: PanelContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel
+@onready var definitions_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/ContentContainer/VariableDefinitionsPanel/MarginContainer/VBoxContainer/DefinitionsScroll/DefinitionsList
 
 # Virtual keyboard buttons
 @onready var var_p: Button = $MainContainer/VirtualKeyboard/VariableRow/VarP
@@ -273,11 +274,14 @@ func update_variable_definitions() -> void:
 	# Display definitions
 	if definitions.size() > 0:
 		variable_definitions_panel.visible = true
+		# Load MuseoSansRounded700 font
+		var museo_font = load("res://assets/fonts/MuseoSansRounded700.otf")
 		for variable in definitions.keys():
 			var def_label = Label.new()
 			def_label.text = "Let " + variable + " be \"" + definitions[variable] + "\""
-			def_label.add_theme_font_size_override("font_size", 25)
-			def_label.add_theme_color_override("font_color", Color(1,1,1,1))
+			def_label.add_theme_font_override("font", museo_font)
+			def_label.add_theme_font_size_override("font_size", 28)
+			def_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 			def_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			definitions_list.add_child(def_label)
 	else:
@@ -298,13 +302,25 @@ func update_premise_checklist() -> void:
 		# Levels 1-5: Show logical symbols
 		display_premises = current_customer.required_premises.duplicate()
 
-	# Create new items
-	for i in range(display_premises.size()):
+	# Split premises between left and right panels
+	var half_count = ceili(display_premises.size() / 2.0)
+
+	# Create new items for left panel
+	for i in range(min(half_count, display_premises.size())):
 		var premise_text = display_premises[i]
 		var is_completed = is_premise_completed_by_index(i)
 
 		var premise_panel = create_premise_panel(premise_text, is_completed)
-		premise_list.add_child(premise_panel)
+		left_premise_list.add_child(premise_panel)
+		premise_items.append(premise_panel)
+
+	# Create new items for right panel
+	for i in range(half_count, display_premises.size()):
+		var premise_text = display_premises[i]
+		var is_completed = is_premise_completed_by_index(i)
+
+		var premise_panel = create_premise_panel(premise_text, is_completed)
+		right_premise_list.add_child(premise_panel)
 		premise_items.append(premise_panel)
 
 func create_premise_panel(premise_text: String, is_completed: bool) -> PanelContainer:
@@ -335,23 +351,30 @@ func create_premise_panel(premise_text: String, is_completed: bool) -> PanelCont
 	style_box.shadow_size = 4
 	style_box.shadow_offset = Vector2(2, 2)
 
-	style_box.content_margin_left = 12
-	style_box.content_margin_right = 12
-	style_box.content_margin_top = 8
-	style_box.content_margin_bottom = 8
+	# Increased padding for larger panels
+	style_box.content_margin_left = 18
+	style_box.content_margin_right = 18
+	style_box.content_margin_top = 14
+	style_box.content_margin_bottom = 14
 
 	panel.add_theme_stylebox_override("panel", style_box)
 
-	# Create label
+	# Create label with MuseoSansRounded700 font
 	var label = Label.new()
 	label.text = premise_text
-	var font_size = 24 if current_customer.is_natural_language else 48
+
+	# Load MuseoSansRounded700 font
+	var museo_font = load("res://assets/fonts/MuseoSansRounded700.otf")
+	label.add_theme_font_override("font", museo_font)
+
+	# Increased font sizes for better visibility
+	var font_size = 30 if current_customer.is_natural_language else 56
 	label.add_theme_font_size_override("font_size", font_size)
 
 	# For natural language text, enable word wrapping
 	if current_customer.is_natural_language:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.custom_minimum_size.x = 350
+		label.custom_minimum_size.x = 280
 
 	if is_completed:
 		# Black text for contrast on white background
