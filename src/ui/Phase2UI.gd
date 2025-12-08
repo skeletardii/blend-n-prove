@@ -21,7 +21,7 @@ const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 
 @onready var combo_container: VBoxContainer = $ComboContainer
 @onready var combo_label: Label = $ComboContainer/ComboLabel
-@onready var combo_line: ColorRect = $ComboContainer/ComboLine
+@onready var combo_line: ProgressBar = $ComboContainer/ComboLine
 @onready var combo_sparkles: CPUParticles2D = $ComboContainer/ComboLabel/Sparkles
 @onready var combo_sparks: CPUParticles2D = $ComboContainer/ComboLabel/FallingSparks
 @onready var combo_fire: CPUParticles2D = $ComboContainer/ComboLabel/Fire
@@ -200,9 +200,10 @@ func _ready() -> void:
 	# Initialize particle size/speed
 	set_rocket_speed(1.0)
 	
-	_init_card_styles()
+	_init_styles()
 
-func _init_card_styles() -> void:
+func _init_styles() -> void:
+	# Card Styles
 	card_style_normal = StyleBoxFlat.new()
 	card_style_normal.bg_color = Color(0.9, 0.9, 0.9)
 	card_style_normal.border_color = Color(0.2, 0.2, 0.2)
@@ -214,6 +215,14 @@ func _init_card_styles() -> void:
 	
 	card_style_pressed = card_style_normal.duplicate()
 	card_style_pressed.bg_color = Color(0.8, 0.8, 0.8)
+	
+	# Combo Bar Styles
+	if combo_line:
+		var bg_style = StyleBoxEmpty.new()
+		var fill_style = StyleBoxFlat.new()
+		fill_style.bg_color = Color.WHITE
+		combo_line.add_theme_stylebox_override("background", bg_style)
+		combo_line.add_theme_stylebox_override("fill", fill_style)
 
 func initialize_parallax_background() -> void:
 	"""Initialize the parallax scrolling background"""
@@ -244,8 +253,7 @@ func _process(delta: float) -> void:
 		else:
 			# Update bar width based on percentage
 			if combo_line:
-				var max_width = 130.0
-				combo_line.custom_minimum_size.x = max_width * (combo_timer / combo_max_time)
+				combo_line.value = (combo_timer / combo_max_time) * 100.0
 
 func update_parallax_background(delta: float) -> void:
 	"""Scroll the background from right to left in a seamless loop"""
@@ -291,9 +299,9 @@ func set_rocket_speed(speed_multiplier: float) -> void:
 		if smoke_trail:
 			# Progressive trail based on combo
 			var intensity_mult = min(float(combo_count) / 10.0, 2.0) # Caps at 20x combo
-			
-			smoke_trail.amount = int(200 + (200 * intensity_mult))
-			smoke_trail.lifetime = 2.5 + (2.5 * intensity_mult) # Max 5.0s lifetime
+
+			smoke_trail.amount = int(80 + (80 * intensity_mult))
+			smoke_trail.lifetime = 0.3 + (0.3 * intensity_mult) # Max 0.6s lifetime
 			smoke_trail.gravity = Vector2(-600 - (400 * intensity_mult), 0) # Stronger push
 			smoke_trail.initial_velocity_min = 500.0 + (500.0 * intensity_mult)
 			smoke_trail.initial_velocity_max = 800.0 + (800.0 * intensity_mult)
@@ -308,8 +316,8 @@ func set_rocket_speed(speed_multiplier: float) -> void:
 			flame_core.scale_amount_max = 15.0
 			
 		if smoke_trail:
-			smoke_trail.amount = 100
-			smoke_trail.lifetime = 1.2 # Short average tail
+			smoke_trail.amount = 50
+			smoke_trail.lifetime = 0.3 # Short average tail
 			smoke_trail.gravity = Vector2(-200, 0)
 			smoke_trail.initial_velocity_min = 300.0
 			smoke_trail.initial_velocity_max = 500.0
@@ -379,7 +387,7 @@ func increment_combo() -> void:
 		if not glow_tween or not glow_tween.is_valid():
 			combo_label.modulate = Color.WHITE
 		combo_line.modulate = Color.WHITE
-		combo_line.custom_minimum_size.x = 130.0 # Reset bar
+		combo_line.value = 100.0 # Reset bar
 		
 		# Pop animation
 		var tween = create_tween()
@@ -653,22 +661,23 @@ func create_premise_cards() -> void:
 
 func create_premise_card(premise: BooleanExpression, index: int) -> Control:
 	var card = Button.new()
-	card.text = str(index + 1) + ". " + premise.expression_string
-	card.custom_minimum_size = Vector2(280, 60) # Slightly smaller height for uniformity
+	# Remove numbering - just show the premise expression
+	card.text = premise.expression_string
+
+	# Use reasonable minimum size - let the theme handle the rest
+	card.custom_minimum_size = Vector2(280, 70)
 	card.toggle_mode = true
 	card.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	
-	# Uniform styling
-	card.add_theme_font_size_override("font_size", 24)
-	card.add_theme_color_override("font_color", Color.BLACK)
-	card.add_theme_color_override("font_pressed_color", Color.BLACK)
-	card.add_theme_color_override("font_hover_color", Color.BLACK)
-	
-	if card_style_normal:
-		card.add_theme_stylebox_override("normal", card_style_normal)
-		card.add_theme_stylebox_override("hover", card_style_hover)
-		card.add_theme_stylebox_override("pressed", card_style_pressed)
-		card.add_theme_stylebox_override("focus", card_style_hover) # Remove focus ring visually
+
+	# Load MuseoSansRounded500 font to match Phase1
+	var museo_font = load("res://assets/fonts/MuseoSansRounded500.otf")
+	card.add_theme_font_override("font", museo_font)
+
+	# Increased font size from 20 to 28 for better readability
+	card.add_theme_font_size_override("font_size", 28)
+
+	# Use default theme styling - don't override colors or styleboxes
+	# This allows the Wenrexa theme to properly style the buttons
 
 	card.pressed.connect(_on_premise_card_pressed.bind(premise, card))
 	return card
@@ -687,6 +696,8 @@ func _on_premise_card_pressed(premise: BooleanExpression, card: Button) -> void:
 			selected_premises.append(premise)
 			# Emit signal for tutorial detection
 			premise_selected.emit(premise.expression_string)
+			# Show explosion effect on selection
+			spawn_premise_explosion(card)
 	else:
 		# Deselect premise
 		if premise in selected_premises:
@@ -694,6 +705,53 @@ func _on_premise_card_pressed(premise: BooleanExpression, card: Button) -> void:
 
 	# Check if we can apply the selected rule
 	check_rule_application()
+
+func spawn_premise_explosion(card: Control) -> void:
+	"""Create an explosion particle effect centered on a premise card"""
+	if not card:
+		return
+
+	# Create particle emitter
+	var explosion = CPUParticles2D.new()
+
+	# Position at card center in global coordinates
+	# CPUParticles2D with local_coords = false uses global space, so we can use global position directly
+	var card_center = card.global_position + card.size / 2
+	explosion.global_position = card_center
+
+	# Explosion settings
+	explosion.amount = 30
+	explosion.lifetime = 0.8
+	explosion.one_shot = true
+	explosion.explosiveness = 1.0
+	explosion.local_coords = false
+
+	# Radial burst
+	explosion.direction = Vector2(0, 0)
+	explosion.spread = 180.0
+	explosion.gravity = Vector2(0, 200)
+	explosion.initial_velocity_min = 100.0
+	explosion.initial_velocity_max = 300.0
+
+	# Particle appearance
+	explosion.scale_amount_min = 8.0
+	explosion.scale_amount_max = 15.0
+
+	# Orange/yellow colors for explosion
+	var explosion_gradient = Gradient.new()
+	explosion_gradient.add_point(0.0, Color(1.0, 0.8, 0.2, 1.0))  # Bright yellow-orange
+	explosion_gradient.add_point(0.5, Color(1.0, 0.4, 0.0, 0.8))  # Orange
+	explosion_gradient.add_point(1.0, Color(0.5, 0.2, 0.0, 0.0))  # Dark orange fade
+	explosion.color_ramp = explosion_gradient
+
+	# Add to scene
+	add_child(explosion)
+	explosion.emitting = true
+
+	# Auto-cleanup after lifetime
+	get_tree().create_timer(explosion.lifetime + 0.1).timeout.connect(func():
+		explosion.queue_free()
+	)
 
 func _on_rule_button_pressed(rule: String) -> void:
 	# If clicking the same rule that's already selected, deselect everything

@@ -280,8 +280,8 @@ func update_variable_definitions() -> void:
 	# Display definitions
 	if definitions.size() > 0:
 		variable_definitions_panel.visible = true
-		# Load MuseoSansRounded700 font
-		var museo_font = load("res://assets/fonts/MuseoSansRounded700.otf")
+		# Load MuseoSansRounded500 font (consistent with Phase2)
+		var museo_font = load("res://assets/fonts/MuseoSansRounded500.otf")
 		var is_first = true
 		for variable in definitions.keys():
 			# Add separator line before each definition (except the first)
@@ -291,15 +291,15 @@ func update_variable_definitions() -> void:
 				# Create a custom StyleBox for subtle line
 				var separator_style = StyleBoxFlat.new()
 				separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)  # Light gray with transparency
-				separator_style.content_margin_top = 2
-				separator_style.content_margin_bottom = 2
+				separator_style.content_margin_top = 10
+				separator_style.content_margin_bottom = 10
 				separator.add_theme_stylebox_override("separator", separator_style)
 				definitions_list.add_child(separator)
 
 			var def_label = Label.new()
 			def_label.text = "Let " + variable + " be \"" + definitions[variable] + "\""
 			def_label.add_theme_font_override("font", museo_font)
-			def_label.add_theme_font_size_override("font_size", 24)
+			def_label.add_theme_font_size_override("font_size", 20)
 			def_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 			def_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			definitions_list.add_child(def_label)
@@ -347,8 +347,8 @@ func update_premise_checklist() -> void:
 			separator.add_theme_constant_override("separation", 1)
 			var separator_style = StyleBoxFlat.new()
 			separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)
-			separator_style.content_margin_top = 6
-			separator_style.content_margin_bottom = 6
+			separator_style.content_margin_top = 10
+			separator_style.content_margin_bottom = 10
 			separator.add_theme_stylebox_override("separator", separator_style)
 			premise_list.add_child(separator)
 
@@ -364,14 +364,13 @@ func create_premise_item(premise_text: String) -> Label:
 	var label = Label.new()
 	label.text = premise_text
 
-	# Load MuseoSansRounded700 font
-	var museo_font = load("res://assets/fonts/MuseoSansRounded700.otf")
+	# Load MuseoSansRounded500 font (consistent with variable definitions)
+	var museo_font = load("res://assets/fonts/MuseoSansRounded500.otf")
 	label.add_theme_font_override("font", museo_font)
 
-	# Reduced font sizes for better fit
-	var font_size = 20 if current_customer.is_natural_language else 32
-	label.add_theme_font_size_override("font_size", font_size)
-	
+	# Uniform font size of 20 for both natural language and symbols
+	label.add_theme_font_size_override("font_size", 20)
+
 	# Simple dark text color
 	label.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1, 1.0))
 
