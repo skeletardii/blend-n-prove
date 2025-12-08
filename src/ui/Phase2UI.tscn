@@ -1,9 +1,8 @@
-[gd_scene load_steps=15 format=3 uid="uid://c5oyjk8p0w8x4"]
+[gd_scene load_steps=14 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
 [ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_occ7e"]
-[ext_resource type="Texture2D" uid="uid://jaw4ij5ytu36" path="res://assets/sprites/silhouette.png" id="3_drutf"]
 [ext_resource type="Script" uid="uid://6us7btkgp6wo" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
 [ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="6_eptc2"]
 [ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="7_d87rg"]
@@ -74,14 +73,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_phase2")
-
-[node name="Silhouette" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = -124.0
-offset_top = -130.0
-offset_right = 882.0
-offset_bottom = 829.0
-texture = ExtResource("3_drutf")
 
 [node name="WorkContainer" type="VBoxContainer" parent="."]
 layout_mode = 1

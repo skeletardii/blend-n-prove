@@ -45,7 +45,8 @@
       "Bash(findstr:*)",
       "Bash(where:*)",
       "Bash(./Godot_v4.4.1-stable_mono_win64_console.exe --headless --quit --path \"C:/Users/Admin/Documents/blend and prove repo/blend-n-prove\")",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(C:/Portable/Godot/program/Godot_v4.4.1-stable_mono_win64_console.exe --headless --quit --path \"C:/Users/Admin/Documents/blend and prove repo/blend-n-prove\")"
     ]
   },
   "enableAllProjectMcpServers": true,

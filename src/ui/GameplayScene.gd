@@ -6,6 +6,7 @@ extends Control
 @onready var high_score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/HighScoreContainer/HighScoreDisplay
 @onready var customer_name: Label = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/CustomerName
 @onready var patience_bar: ProgressBar = $UI/MainContainer/PatienceBar
+var fuel_label: Label = null  # Created dynamically to show fuel emoji
 @onready var order_display: RichTextLabel = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/OrderDisplay
 @onready var phase_container: Control = $UI/MainContainer/ScrollContainer/GameContentArea/PhaseContainer
 @onready var tutorial_help_panel: Panel = $UI/TutorialHelpPanel
@@ -39,6 +40,16 @@ var feedback_label: Label = null
 var feedback_timer: Timer = null
 var is_paused: bool = false
 
+# Fuel System (Rocket Ship)
+var fuel: float = 100.0
+var max_fuel: float = 100.0
+var current_speed: float = 1.0  # Speed multiplier for score gain
+var base_speed: float = 1.0
+var speed_boost: float = 0.0  # Temporary boost from clean solutions
+var combo_count: int = 0  # Consecutive correct answers
+var fuel_consumption_rate: float = 1.0  # Base consumption per second
+var score_accumulator: float = 0.0  # Accumulates score over time
+
 # First-time tutorial
 var tutorial_overlay: CanvasLayer = null
 var tutorial_manager: Node = null
@@ -56,6 +67,26 @@ func setup_dynamic_spacing() -> void:
 	if main_container:
 		main_container.add_theme_constant_override("separation", dynamic_spacing)
 
+func create_fuel_label() -> void:
+	"""Create a label overlay on the patience bar to show rocket fuel emoji"""
+	if not patience_bar:
+		return
+
+	fuel_label = Label.new()
+	fuel_label.text = "🚀 Fuel"
+	fuel_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	fuel_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	fuel_label.add_theme_font_size_override("font_size", 18)
+	fuel_label.add_theme_color_override("font_color", Color.WHITE)
+	fuel_label.add_theme_color_override("font_outline_color", Color.BLACK)
+	fuel_label.add_theme_constant_override("outline_size", 2)
+
+	# Make label cover the entire progress bar
+	fuel_label.anchors_preset = Control.PRESET_FULL_RECT
+	fuel_label.mouse_filter = Control.MOUSE_FILTER_IGNORE  # Allow clicks to pass through
+
+	patience_bar.add_child(fuel_label)
+
 func _ready() -> void:
 	# Set dynamic spacing based on viewport size
 	setup_dynamic_spacing()
@@ -69,6 +100,9 @@ func _ready() -> void:
 	# Initialize UI
 	update_score_display()
 	update_high_score_display()
+
+	# Create fuel label with rocket emoji
+	create_fuel_label()
 
 	# Setup first-time tutorial if active
 	if GameManager.is_first_time_tutorial:
@@ -113,33 +147,92 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if GameManager.current_state == GameManager.GameState.PLAYING and current_customer:
 		update_patience_timer(delta)
+		update_fuel_system(delta)
 
-func update_patience_timer(delta: float) -> void:
+func update_fuel_system(delta: float) -> void:
+	"""Update fuel-based rocket ship system"""
 	if GameManager.infinite_patience:
 		return
 
-	# Calculate timer speed multiplier based on score
-	# Higher score = faster countdown (1.0x at score 0, up to 3.0x at score 5000+)
-	var speed_multiplier: float = 1.0 + (GameManager.current_score / 2500.0)
-	speed_multiplier = min(speed_multiplier, 3.0)  # Cap at 3x speed
+	# Calculate fuel consumption based on score (higher score = faster drain)
+	var score_multiplier: float = 1.0 + (GameManager.current_score / 5000.0)
+	score_multiplier = min(score_multiplier, 2.0)  # Cap at 2x consumption
 
-	patience_timer -= delta * speed_multiplier
+	# Apply speed boost decay
+	if speed_boost > 0.0:
+		speed_boost -= delta * 0.5  # Decay speed boost over time
+		speed_boost = max(0.0, speed_boost)
+
+	# Calculate current speed (base + boost)
+	current_speed = base_speed + speed_boost
+
+	# Consume fuel
+	fuel -= delta * fuel_consumption_rate * score_multiplier
+	fuel = max(0.0, fuel)
+
+	# Gain score over time based on speed
+	score_accumulator += delta * current_speed * 10.0  # 10 points per second at 1x speed
+	var score_to_add: int = int(score_accumulator)
+	if score_to_add > 0:
+		GameManager.add_score(score_to_add)
+		score_accumulator -= score_to_add
+
+	# Update fuel bar display
+	var fuel_percentage: float = (fuel / max_fuel) * 100.0
+	patience_bar.value = fuel_percentage
+
+	# Change color based on fuel level
+	if fuel_percentage > 60:
+		patience_bar.modulate = Color(0.2, 1.0, 0.3)  # Green
+	elif fuel_percentage > 30:
+		patience_bar.modulate = Color(1.0, 0.8, 0.0)  # Yellow
+	else:
+		patience_bar.modulate = Color(1.0, 0.2, 0.2)  # Red
+
+	# Game over if fuel runs out
+	if fuel <= 0.0:
+		customer_leaves()
+
+func update_patience_timer(delta: float) -> void:
+	# Legacy timer for backward compatibility (now unused in favor of fuel)
+	if GameManager.infinite_patience:
+		return
+
+	patience_timer -= delta
 	patience_timer = max(0.0, patience_timer)
 
-	var patience_percentage: float = (patience_timer / max_patience) * 100.0
-	patience_bar.value = patience_percentage
+func add_fuel(amount: float) -> void:
+	"""Add fuel to the rocket ship"""
+	fuel += amount
+	fuel = min(fuel, max_fuel)
 
-	# Change color based on urgency
-	if patience_percentage > 60:
-		patience_bar.modulate = Color.BLACK
-	elif patience_percentage > 30:
-		patience_bar.modulate = Color.BLACK
-	else:
-		patience_bar.modulate = Color.BLACK
+func apply_fuel_penalty(percentage: float) -> void:
+	"""Remove a percentage of current fuel as penalty"""
+	var penalty_amount: float = fuel * percentage
+	fuel -= penalty_amount
+	fuel = max(0.0, fuel)
+	show_feedback_message("Fuel Lost: -" + str(int(percentage * 100)) + "%!", Color.RED)
 
-	# Customer leaves if patience runs out
-	if patience_timer <= 0.0:
-		customer_leaves()
+func add_speed_boost(boost_amount: float, show_message: bool = true) -> void:
+	"""Add a temporary speed boost"""
+	speed_boost += boost_amount
+	speed_boost = min(speed_boost, 5.0)  # Cap at 5x boost
+	if show_message:
+		show_feedback_message("Speed Boost! +" + str(int(boost_amount * 100)) + "%", Color.CYAN)
+
+func increment_combo() -> void:
+	"""Increment combo counter and apply increasing speed boosts"""
+	combo_count += 1
+	# Combo multiplier: 1st = 0.5x, 2nd = 1.0x, 3rd = 1.5x, etc.
+	var combo_boost: float = combo_count * 0.5
+	add_speed_boost(combo_boost, true)
+	show_feedback_message("Combo x" + str(combo_count) + "!", Color.GOLD)
+
+func reset_combo() -> void:
+	"""Reset combo counter on mistake"""
+	if combo_count > 0:
+		show_feedback_message("Combo Lost!", Color.ORANGE_RED)
+	combo_count = 0
 
 func change_background(phase: GameManager.GamePhase) -> void:
 	"""Change the background based on the current game phase"""
@@ -178,9 +271,15 @@ func convert_premises_and_skip_to_phase2() -> void:
 		if expr.is_valid:
 			validated_premises.append(expr)
 
-	# Initialize patience timer (same as Phase 1 would do)
+	# Initialize fuel system (same as Phase 1 would do)
 	patience_timer = current_customer.patience_duration
 	max_patience = current_customer.patience_duration
+	fuel = 100.0  # Start with full fuel
+	max_fuel = 100.0
+	combo_count = 0
+	speed_boost = 0.0
+	current_speed = 1.0
+	score_accumulator = 0.0
 	patience_bar.visible = true
 
 	# Go directly to Phase 2
@@ -212,9 +311,15 @@ func switch_to_phase1() -> void:
 	# Reset validated premises
 	validated_premises.clear()
 
-	# Start patience timer for Phase 1
+	# Start fuel system for Phase 1
 	patience_timer = current_customer.patience_duration
 	max_patience = current_customer.patience_duration
+	fuel = 100.0  # Start with full fuel
+	max_fuel = 100.0
+	combo_count = 0
+	speed_boost = 0.0
+	current_speed = 1.0
+	score_accumulator = 0.0
 	patience_bar.visible = true
 
 func switch_to_phase2() -> void:
@@ -362,17 +467,17 @@ func update_customer_display() -> void:
 	order_display.text = order_text
 
 func customer_leaves() -> void:
-	AudioManager.play_customer_leave()
-
 	# In tutorial mode, just try again
 	if GameManager.tutorial_mode:
+		AudioManager.play_error()
 		show_feedback_message("Time's up! Try this problem again.", Color.RED)
 		# Regenerate same problem
 		generate_new_customer()
 		switch_to_phase1()
 	else:
-		# Time's up = Game Over (no lives system)
-		show_feedback_message("Time's Up! Game Over!", Color.RED)
+		# Out of fuel = Game Over - play error sound
+		AudioManager.play_error()
+		show_feedback_message("Out of Fuel! Game Over!", Color.RED)
 		get_tree().create_timer(2.0).timeout.connect(func():
 			SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
 		)
@@ -380,19 +485,9 @@ func customer_leaves() -> void:
 func complete_order_successfully() -> void:
 	AudioManager.play_logic_success()
 
-	# Calculate score based on speed and efficiency
-	var time_bonus: int = int(patience_timer)
-	var base_score: int = 100 + (GameManager.difficulty_level * 50)
-	var total_score: int = base_score + time_bonus
-
-	# Add time to the patience timer on successful completion
-	# Time bonus scales with difficulty: 15-30 seconds added
-	var time_reward: float = 15.0 + (GameManager.difficulty_level * 2.5)
-	patience_timer += time_reward
-	patience_timer = min(patience_timer, max_patience * 1.5)  # Cap at 1.5x max patience
-
-	# Score popup is now shown directly in Phase2UI at the card location
-	# Score is added by Phase2UI after its animation completes
+	# No longer calculating score in chunks - it's continuous!
+	# Instead, give a big fuel boost for completing the order
+	add_fuel(50.0)  # Big fuel reward for completion
 
 	# Handle tutorial mode completion
 	if GameManager.tutorial_mode:
@@ -425,7 +520,7 @@ func complete_order_successfully() -> void:
 				show_feedback_message("Ultimate Master Level - Incredible!", Color.GOLD)
 		else:
 			# Debug difficulty mode locked - show completion message without level up
-			show_feedback_message("Order Complete! Score: +" + str(total_score), Color.GOLD)
+			show_feedback_message("Order Complete! Fuel Restored!", Color.GOLD)
 
 		# Generate new customer
 		generate_new_customer()
@@ -442,6 +537,10 @@ func _on_premise_validated(expression: BooleanLogicEngine.BooleanExpression) -> 
 	validated_premises.append(expression)
 	AudioManager.play_premise_complete()
 
+	# Add fuel for correct premise
+	add_fuel(10.0 + GameManager.difficulty_level * 2.0)  # 12-22 fuel depending on difficulty
+	increment_combo()
+
 func _on_premises_completed(premises: Array[BooleanLogicEngine.BooleanExpression]) -> void:
 	validated_premises = premises
 	show_feedback_message("✓ All premises ready! Advancing to Phase 2...", Color.CYAN)
@@ -453,8 +552,18 @@ func _on_rule_applied(result: BooleanLogicEngine.BooleanExpression) -> void:
 	validated_premises.append(result)
 	AudioManager.play_logic_success()
 
+	# Add fuel for correct rule application
+	add_fuel(15.0 + GameManager.difficulty_level * 3.0)  # 18-33 fuel depending on difficulty
+	increment_combo()
+
 func _on_target_reached(result: BooleanLogicEngine.BooleanExpression) -> void:
 	show_feedback_message("✓ Proof complete! Order fulfilled!", Color.CYAN)
+
+	# Massive fuel bonus for completing the proof
+	add_fuel(30.0)
+	# Big speed boost for clean completion
+	add_speed_boost(2.0, true)
+
 	# Complete order after a short delay
 	get_tree().create_timer(2.0).timeout.connect(complete_order_successfully)
 

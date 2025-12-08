@@ -457,6 +457,8 @@ func apply_rule() -> void:
 			# No valid results - show error
 			clear_selections()
 			show_feedback("✗ No valid results", Color.RED, false)
+			# Penalty: lose fuel and reset combo
+			apply_fuel_penalty()
 			# Don't auto-open remotes on failure
 		return
 
@@ -492,6 +494,8 @@ func apply_rule() -> void:
 		# Clear selections when rule fails
 		clear_selections()
 		show_feedback("✗ Cannot apply " + rule_def.name, Color.RED, false)
+		# Penalty: lose fuel and reset combo
+		apply_fuel_penalty()
 		# Don't auto-open remotes on failure
 
 func apply_logical_rule_multi(rule: String, premises: Array[BooleanLogicEngine.BooleanExpression]) -> Array:
@@ -662,28 +666,33 @@ func show_feedback(message: String, color: Color, emit_to_parent: bool = true) -
 			feedback_label.text = ""
 	)
 
+func apply_fuel_penalty() -> void:
+	"""Apply fuel penalty and reset combo in GameplayScene"""
+	# Get reference to GameplayScene (parent of parent)
+	var gameplay_scene = get_parent().get_parent()
+	if gameplay_scene and gameplay_scene.has_method("apply_fuel_penalty"):
+		gameplay_scene.apply_fuel_penalty(0.20)  # Lose 20% of current fuel
+	if gameplay_scene and gameplay_scene.has_method("reset_combo"):
+		gameplay_scene.reset_combo()
+
 func show_score_popup_at_card(card: Control) -> void:
-	"""Show score popup at the card's position"""
+	"""Show speed boost notification at the card's position"""
 	if not score_display:
 		return
-
-	# Calculate score based on speed and efficiency
-	var time_bonus: int = int(patience_timer)
-	var base_score: int = 100 + (GameManager.difficulty_level * 50)
-	var total_score: int = base_score + time_bonus
 
 	# Get card center position
 	var card_pos: Vector2 = card.global_position + card.size / 2
 
-	# Show score popup animation at card position
-	var popup: CanvasLayer = score_popup_scene.instantiate()
-	get_tree().root.add_child(popup)
-	popup.show_score_popup_phase2(total_score, time_bonus, base_score, card_pos, score_display, GameManager.current_score)
+	# Show speed boost popup animation at card position
+	# (Score is now gained continuously over time, not in chunks)
+	# This popup now just shows the speed boost being applied
+	var gameplay_scene = get_parent().get_parent()
+	if gameplay_scene and gameplay_scene.has_method("add_speed_boost"):
+		# Clean solution gives speed boost
+		gameplay_scene.add_speed_boost(2.0, false)
 
-	# Add score to GameManager after animation completes
-	get_tree().create_timer(0.6 + 0.5).timeout.connect(func():
-		GameManager.add_score(total_score)
-	)
+		# Show visual feedback
+		show_feedback("🚀 Speed Boost Activated!", Color.CYAN, true)
 
 func clear_selections() -> void:
 	selected_premises.clear()
@@ -791,6 +800,8 @@ func _on_addition_dialog_confirmed(expr_text: String) -> void:
 	else:
 		clear_selections()
 		show_feedback("✗ Addition failed", Color.RED, false)
+		# Penalty: lose fuel and reset combo
+		apply_fuel_penalty()
 
 func _on_addition_dialog_cancelled() -> void:
 	# User cancelled the Addition dialog
