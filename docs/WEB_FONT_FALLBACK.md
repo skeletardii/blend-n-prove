@@ -10,19 +10,13 @@ The `WebFontManager` autoload automatically detects when the game is running on 
 
 ### Font Resources
 
-1. **NotoSans-VariableFont_wdth,wght.ttf** - Open-source font with comprehensive Unicode support
-   - Includes mathematical symbols: ∧ (AND), ∨ (OR), ¬ (NOT), →, ↔, ⊕ (XOR), etc.
-   - Variable font with adjustable weight and width
-   - Works reliably on all web browsers
-2. **main_font_with_fallback.tres** - FontVariation combining custom font with Noto Sans fallback
+1. **main_font_with_fallback.tres** - FontVariation (currently configured with custom font only)
    - Primary: TT Octosquares Trial DemiBold
-   - Fallback: Noto Sans (for missing glyphs/mathematical symbols)
-3. **main_theme_web.tres** - Web-specific theme using fonts with fallback
+2. **main_theme_web.tres** - Web-specific theme using fonts with fallback
 
 ### Files Added
 
-- `assets/fonts/NotoSans-VariableFont_wdth,wght.ttf` - Unicode font with mathematical symbols
-- `assets/fonts/main_font_with_fallback.tres` - Custom font with Noto Sans fallback
+- `assets/fonts/main_font_with_fallback.tres` - Custom font resource
 - `assets/themes/main_theme_web.tres` - Web-optimized theme
 - `src/game/autoloads/WebFontManager.gd` - Automatic platform detection
 

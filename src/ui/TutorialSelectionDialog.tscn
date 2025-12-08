@@ -1,8 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://bj8bn2wrfa8f1"]
 
 [ext_resource type="Script" uid="uid://ca3kel5dkd111" path="res://src/ui/TutorialSelectionDialog.gd" id="1_script"]
-[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_500_with_fallback.tres" id="2_font"]
-[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_700_with_fallback.tres" id="3_font_bold"]
+
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(1, 1, 1, 1)
@@ -92,7 +91,6 @@ theme_override_constants/separation = 20
 [node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 40
 text = "Tutorial Title"
 horizontal_alignment = 1
@@ -134,7 +132,6 @@ alignment = 1
 [node name="ProgressLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ProgressContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 20
 text = "Progress: 0/10 Completed"
 
@@ -146,7 +143,6 @@ alignment = 1
 [node name="CancelButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cancel_normal")
 text = "Cancel"
@@ -154,7 +150,6 @@ text = "Cancel"
 [node name="StartButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(250, 60)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_start_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_start_hover")

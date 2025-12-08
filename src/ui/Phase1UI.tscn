@@ -2,8 +2,6 @@
 
 [ext_resource type="Script" uid="uid://csubga53p2pr4" path="res://src/ui/Phase1UI.gd" id="1_phase1"]
 [ext_resource type="Texture2D" uid="uid://5s07bsbpboi0" path="res://assets/sprites/Phase1UIMockup.png" id="2_tgfdk"]
-[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_500_with_fallback.tres" id="4_qjtox"]
-[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_700_with_fallback.tres" id="5_o5hkq"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="6_wbgmg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qjtox"]
@@ -165,7 +163,6 @@ theme_override_constants/separation = 15
 layout_mode = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 22
 text = "Variable Definitions:"
 
@@ -185,7 +182,6 @@ theme_override_constants/separation = 0
 layout_mode = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "Premises to reconstruct:"
 
@@ -248,7 +244,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
-theme_override_fonts/font = ExtResource("4_qjtox")
 theme_override_font_sizes/font_size = 35
 text = "Type your premise here..."
 horizontal_alignment = 1
@@ -279,7 +274,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "P"
 
@@ -289,7 +283,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "Q"
 
@@ -299,7 +292,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "R"
 
@@ -309,7 +301,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "S"
 
@@ -319,7 +310,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "T"
 
@@ -396,7 +386,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "("
 
@@ -406,7 +395,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = ")"
 
@@ -416,7 +404,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "¬"
 
@@ -451,7 +438,6 @@ custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "CLEAR"
 
@@ -460,6 +446,5 @@ custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
-theme_override_fonts/font = ExtResource("5_o5hkq")
 theme_override_font_sizes/font_size = 30
 text = "SUBMIT"

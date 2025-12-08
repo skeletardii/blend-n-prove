@@ -1,7 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://cq3k7m5xywb8k"]
 
 [ext_resource type="Script" uid="uid://dtuwmpn0kw54i" path="res://src/ui/TutorialHelpPanel.gd" id="1_tutorial_help"]
-[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_700_with_fallback.tres" id="3_font_bold"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_panel"]
 bg_color = Color(0.97, 0.97, 0.99, 1)
@@ -88,7 +87,6 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 [node name="RuleTitle" type="Label" parent="MarginContainer/VBoxContainer/RuleTitleContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.2, 0.4, 1)
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 35
 text = "Tutorial Rule Name"
 horizontal_alignment = 1
@@ -113,7 +111,6 @@ scroll_active = false
 [node name="ProblemNumberLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.2, 0.4, 1)
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 30
 text = "Problem 1/10 (Easy)"
 horizontal_alignment = 1
@@ -141,7 +138,6 @@ alignment = 1
 [node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")

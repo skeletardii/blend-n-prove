@@ -5,7 +5,6 @@
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_occ7e"]
 [ext_resource type="Script" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
 [ext_resource type="FontFile" uid="uid://bjwp288jm42wb" path="res://assets/fonts/DejaVuSans.ttf" id="5_drutf"]
-[ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_700_with_fallback.tres" id="7_d87rg"]
 [ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_900_with_fallback.tres" id="8_gxw17"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chat_bubble"]
@@ -91,7 +90,6 @@ theme_override_constants/separation = 10
 layout_mode = 2
 theme = ExtResource("2_occ7e")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("7_d87rg")
 theme_override_font_sizes/font_size = 24
 text = "Phase 2: Derive Target"
 horizontal_alignment = 1
@@ -185,7 +183,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("7_d87rg")
 theme_override_font_sizes/font_size = 50
 text = "Inventory"
 horizontal_alignment = 1
