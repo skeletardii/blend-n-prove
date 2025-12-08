@@ -273,18 +273,24 @@ func check_achievements() -> void:
 		new_achievements.append("perfect_game")
 
 	# Milestone games
+	if statistics.total_games_played >= 3 and "3_games" not in statistics.achievements_unlocked: # New
+		new_achievements.append("3_games")
 	for milestone in [10, 50, 100]:
 		var achievement_name = str(milestone) + "_games"
 		if statistics.total_games_played >= milestone and achievement_name not in statistics.achievements_unlocked:
 			new_achievements.append(achievement_name)
 
 	# Streak achievements
+	if statistics.current_streak >= 3 and "3_streak" not in statistics.achievements_unlocked: # New
+		new_achievements.append("3_streak")
 	for streak in [5, 10, 20]:
 		var achievement_name = str(streak) + "_streak"
 		if statistics.current_streak >= streak and achievement_name not in statistics.achievements_unlocked:
 			new_achievements.append(achievement_name)
 
 	# High score milestones
+	if statistics.high_score_overall >= 500 and "500_score" not in statistics.achievements_unlocked: # New
+		new_achievements.append("500_score")
 	for score in [1000, 5000, 10000]:
 		var achievement_name = str(score) + "_score"
 		if statistics.high_score_overall >= score and achievement_name not in statistics.achievements_unlocked:
@@ -295,6 +301,23 @@ func check_achievements() -> void:
 		var achievement_name = "master_difficulty_" + str(diff)
 		if statistics.highest_difficulty_mastered >= diff and achievement_name not in statistics.achievements_unlocked:
 			new_achievements.append(achievement_name)
+
+	# Rule usage achievements (New)
+	var rules_to_check = {
+		"Modus Ponens": {"5": "rule_modus_ponens_5", "20": "rule_modus_ponens_20"},
+		"Modus Tollens": {"5": "rule_modus_tollens_5", "20": "rule_modus_tollens_20"},
+		"Conjunction": {"5": "rule_conjunction_5", "20": "rule_conjunction_20"},
+		"Addition": {"5": "rule_addition_5", "20": "rule_addition_20"},
+		"Double Negation": {"5": "rule_double_negation_5", "20": "rule_double_negation_20"}
+	}
+
+	for rule_name in rules_to_check:
+		var usage_count = statistics.operation_usage_count.get(rule_name, 0)
+		for target_count_str in rules_to_check[rule_name]:
+			var target_count = int(target_count_str)
+			var achievement_id = rules_to_check[rule_name][target_count_str]
+			if usage_count >= target_count and achievement_id not in statistics.achievements_unlocked:
+				new_achievements.append(achievement_id)
 
 	# Add new achievements and emit signals
 	for achievement in new_achievements:
@@ -439,12 +462,15 @@ func get_achievement_name(achievement_id: String) -> String:
 	var achievement_names = {
 		"first_game": "First Steps",
 		"perfect_game": "Flawless Logic",
+		"3_games": "Warming Up", # New
 		"10_games": "Getting Started",
 		"50_games": "Dedicated Learner",
 		"100_games": "Logic Master",
+		"3_streak": "Hot Hand", # New
 		"5_streak": "On a Roll",
 		"10_streak": "Logic Streak",
 		"20_streak": "Unstoppable",
+		"500_score": "Point Scorer", # New
 		"1000_score": "High Achiever",
 		"5000_score": "Score Crusher",
 		"10000_score": "Logic Legend",
@@ -456,7 +482,17 @@ func get_achievement_name(achievement_id: String) -> String:
 		"first_tutorial": "Tutorial Beginner",
 		"5_tutorials": "Quick Learner",
 		"10_tutorials": "Logic Scholar",
-		"all_tutorials": "Logic Master"
+		"all_tutorials": "Logic Master",
+		"rule_modus_ponens_5": "MP Apprentice", # New
+		"rule_modus_tollens_5": "MT Apprentice", # New
+		"rule_conjunction_5": "Conjunction Crafter", # New
+		"rule_addition_5": "Addition Artist", # New
+		"rule_double_negation_5": "Double Negation Dynamo", # New
+		"rule_modus_ponens_20": "MP Journeyman", # New
+		"rule_modus_tollens_20": "MT Journeyman", # New
+		"rule_conjunction_20": "Conjunction Expert", # New
+		"rule_addition_20": "Addition Adept", # New
+		"rule_double_negation_20": "Double Negation Master" # New
 	}
 	return achievement_names.get(achievement_id, achievement_id)
 
