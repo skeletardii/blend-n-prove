@@ -284,8 +284,8 @@ func update_variable_definitions() -> void:
 				# Create a custom StyleBox for subtle line
 				var separator_style = StyleBoxFlat.new()
 				separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)  # Light gray with transparency
-				separator_style.content_margin_top = 8
-				separator_style.content_margin_bottom = 8
+				separator_style.content_margin_top = 2
+				separator_style.content_margin_bottom = 2
 				separator.add_theme_stylebox_override("separator", separator_style)
 				definitions_list.add_child(separator)
 
