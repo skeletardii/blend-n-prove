@@ -371,10 +371,10 @@ func create_premise_panel(premise_text: String, is_completed: bool) -> PanelCont
 	style_box.shadow_offset = Vector2(2, 2)
 
 	# Balanced padding for proper content fitting
-	style_box.content_margin_left = 15
-	style_box.content_margin_right = 15
-	style_box.content_margin_top = 12
-	style_box.content_margin_bottom = 12
+	style_box.content_margin_left = 20
+	style_box.content_margin_right = 20
+	style_box.content_margin_top = 18
+	style_box.content_margin_bottom = 18
 
 	panel.add_theme_stylebox_override("panel", style_box)
 

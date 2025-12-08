@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://k7rdb8uuwufw" path="res://src/ui/MainMenu.gd" id="1_2v8qy"]
 [ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_2wh52"]
+[ext_resource type="Script" uid="uid://c8j6y3q5x2v8l" path="res://src/ui/BooleanAsteroidField.gd" id="2_asteroid"]
 [ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_ihbld"]
 [ext_resource type="Texture2D" uid="uid://onbkto0umar" path="res://assets/sprites/newlogo.png" id="4_ihbld"]
 [ext_resource type="FontFile" uid="uid://c1fnar2v6mvb0" path="res://assets/fonts/MuseoSansRounded1000.otf" id="5_dbyr8"]
@@ -60,6 +61,15 @@ grow_vertical = 2
 texture = ExtResource("3_ihbld")
 expand_mode = 2
 stretch_mode = 1
+
+[node name="BooleanAsteroidField" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_asteroid")
 
 [node name="MenuContainer" type="VBoxContainer" parent="."]
 layout_mode = 1

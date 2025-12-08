@@ -139,7 +139,7 @@ offset_right = -25.0
 offset_bottom = -25.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 30
 
 [node name="RightPanel" type="Panel" parent="MainContainer/CustomerArea/PremisePanelsContainer"]
 custom_minimum_size = Vector2(0, 500)
@@ -166,7 +166,7 @@ layout_mode = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_o5hkq")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 22
 text = "Variable Definitions:"
 
 [node name="DefinitionsScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/VariableDefinitions"]
