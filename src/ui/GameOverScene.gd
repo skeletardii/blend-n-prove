@@ -62,22 +62,6 @@ func add_progress_context() -> void:
 		high_score_comparison.modulate = Color.BLACK
 	progress_info.add_child(high_score_comparison)
 
-	# Streak Information
-	var streak_info = Label.new()
-	streak_info.add_theme_font_size_override("font_size", 24)
-	streak_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	if stats.current_streak > 0:
-		streak_info.text = "Streak: " + str(stats.current_streak) + " games"
-		if stats.current_streak == stats.best_streak:
-			streak_info.text += " (Your Best!)"
-			streak_info.modulate = Color.BLACK
-		else:
-			streak_info.modulate = Color.BLACK
-	else:
-		streak_info.text = "Your best streak: " + str(stats.best_streak) + " games"
-		streak_info.modulate = Color.BLACK
-	progress_info.add_child(streak_info)
-
 	# Games Played
 	var games_info = Label.new()
 	games_info.add_theme_font_size_override("font_size", 24)

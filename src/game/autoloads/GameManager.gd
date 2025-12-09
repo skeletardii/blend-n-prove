@@ -116,3 +116,6 @@ func exit_tutorial_mode() -> void:
 
 func run_integration_test() -> void:
 	if _impl: _impl.run_integration_test()
+
+func record_mistake() -> void:
+	if _impl: _impl.record_mistake()

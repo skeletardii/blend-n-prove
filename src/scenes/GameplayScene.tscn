@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bji7acucw6pe3"]
+[gd_scene load_steps=7 format=3 uid="uid://bji7acucw6pe3"]
 
 [ext_resource type="Script" uid="uid://cl7fuggwr1kue" path="res://src/ui/GameplayScene.gd" id="1_3v9zy"]
 [ext_resource type="PackedScene" uid="uid://cq3k7m5xywb8k" path="res://src/ui/TutorialHelpPanel.tscn" id="2_tutorial_help"]
 [ext_resource type="PackedScene" uid="uid://dpjc3t8yqr5h1" path="res://src/ui/HintPopup.tscn" id="3_hint_popup"]
 [ext_resource type="FontFile" uid="uid://bu186h4gwve1c" path="res://assets/fonts/MuseoSansRounded300.otf" id="4_wxnvq"]
 [ext_resource type="Texture2D" uid="uid://cugfb5gspi52n" path="res://assets/sprites/pause_icon.svg" id="5_pause_icon"]
+[ext_resource type="Texture2D" path="res://assets/sprites/fuelcanister.png" id="6_fuel_canister"]
 
 [node name="GameplayScene" type="Control"]
 layout_mode = 3
@@ -122,11 +123,29 @@ text = "Hint"
 
 [node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer"]
 texture_filter = 1
-custom_minimum_size = Vector2(0, 25)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 value = 100.0
 show_percentage = false
+
+[node name="FuelIcon" type="TextureRect" parent="UI/MainContainer/PatienceBar"]
+modulate = Color(1, 1, 1, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -13.0
+offset_top = -13.0
+offset_right = 13.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_fuel_canister")
+expand_mode = 1
+stretch_mode = 4
 
 [node name="ScrollContainer" type="ScrollContainer" parent="UI/MainContainer"]
 layout_mode = 2
