@@ -28,6 +28,8 @@ ProgressTracker="*res://src/game/autoloads/ProgressTracker.gd"
 TutorialManager="*res://src/game/autoloads/TutorialManager.gd"
 TutorialDataManager="*res://src/game/autoloads/TutorialDataManager.gd"
 UpdateCheckerService="*res://src/game/autoloads/UpdateCheckerService.gd"
+SupabaseService="*res://src/game/autoloads/SupabaseService.gd"
+LeaderboardData="*res://src/game/autoloads/LeaderboardData.gd"
 ManagerBootstrap="*res://src/core/ManagerBootstrap.gd"
 WebFontManager="*res://src/game/autoloads/WebFontManager.gd"
 

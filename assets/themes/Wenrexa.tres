@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=11 format=3 uid="uid://b2fedi5eycrnx"]
 
-[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="1_xg0kf"]
+[ext_resource type="FontFile" uid="uid://c12vraq60ixtj" path="res://assets/fonts/MuseoSansRounded500.otf" id="1_xg0kf"]
 [ext_resource type="Texture2D" uid="uid://cprib5ycelxp" path="res://assets/sprites/Pixel UI pack 3/04.png" id="3_2yqly"]
 [ext_resource type="FontFile" uid="uid://bkxsms4t0m2yk" path="res://assets/fonts/Glowforge.ttf" id="4_61da5"]
 

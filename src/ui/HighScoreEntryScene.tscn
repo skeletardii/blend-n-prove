@@ -1,0 +1,260 @@
+[gd_scene load_steps=10 format=3 uid="uid://bqshk6qot03os"]
+
+[ext_resource type="Script" uid="uid://ytdog2oofd4w" path="res://src/ui/HighScoreEntryScene.gd" id="1_script"]
+[ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_shader"]
+[ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_spiral"]
+[ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="4_theme"]
+
+[sub_resource type="Gradient" id="Gradient_bg"]
+offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
+colors = PackedColorArray(0.976471, 0.662745, 0.835294, 1, 0.982758, 0.720592, 0.78625, 1, 0.775179, 0.41666, 0.945561, 1, 0.0630186, 0.104642, 0.416814, 1, 0.996078, 0.843137, 0.682353, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_bg"]
+gradient = SubResource("Gradient_bg")
+fill_to = Vector2(1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_spiral"]
+shader = ExtResource("2_shader")
+shader_parameter/speed = 0.05
+shader_parameter/opacity = 0.467
+shader_parameter/rotation_speed = 1.0
+shader_parameter/shaking = true
+shader_parameter/amplitude = 1.0
+shader_parameter/noise_scale = 20.0
+shader_parameter/noise_speed = 20.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.95, 0.95, 0.95, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3, 0.3, 0.3, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 8
+shadow_offset = Vector2(4, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_letter"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.5, 0.5, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="HighScoreEntryScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_bg")
+
+[node name="ScrollingBG" type="TextureRect" parent="."]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_spiral")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_spiral")
+expand_mode = 2
+stretch_mode = 1
+
+[node name="EntryPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -400.0
+offset_right = 300.0
+offset_bottom = 400.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="EntryContainer" type="VBoxContainer" parent="EntryPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -42.5
+offset_top = -117.0
+offset_right = 42.5
+offset_bottom = 117.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="NewHighScoreTitle" type="Label" parent="EntryPanel/EntryContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "NEW HIGH SCORE!"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="EntryPanel/EntryContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ScoreDisplay" type="Label" parent="EntryPanel/EntryContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 56
+text = "0"
+horizontal_alignment = 1
+
+[node name="InstructionsLabel" type="Label" parent="EntryPanel/EntryContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Enter your name (3 letters)"
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="EntryPanel/EntryContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="NameDisplay" type="PanelContainer" parent="EntryPanel/EntryContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="LetterContainer" type="HBoxContainer" parent="EntryPanel/EntryContainer/NameDisplay"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Letter1Panel" type="Panel" parent="EntryPanel/EntryContainer/NameDisplay/LetterContainer"]
+custom_minimum_size = Vector2(80, 100)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_letter")
+
+[node name="Letter1" type="Label" parent="EntryPanel/EntryContainer/NameDisplay/LetterContainer/Letter1Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 80
+text = "A"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Letter2Panel" type="Panel" parent="EntryPanel/EntryContainer/NameDisplay/LetterContainer"]
+custom_minimum_size = Vector2(80, 100)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_letter")
+
+[node name="Letter2" type="Label" parent="EntryPanel/EntryContainer/NameDisplay/LetterContainer/Letter2Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 80
+text = "A"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Letter3Panel" type="Panel" parent="EntryPanel/EntryContainer/NameDisplay/LetterContainer"]
+custom_minimum_size = Vector2(80, 100)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_letter")
+
+[node name="Letter3" type="Label" parent="EntryPanel/EntryContainer/NameDisplay/LetterContainer/Letter3Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 80
+text = "A"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Spacer3" type="Control" parent="EntryPanel/EntryContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="VirtualKeyboard" type="Control" parent="EntryPanel/EntryContainer"]
+custom_minimum_size = Vector2(0, 420)
+layout_mode = 2
+
+[node name="LetterRows" type="VBoxContainer" parent="EntryPanel/EntryContainer/VirtualKeyboard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="Row1" type="HBoxContainer" parent="EntryPanel/EntryContainer/VirtualKeyboard/LetterRows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Row2" type="HBoxContainer" parent="EntryPanel/EntryContainer/VirtualKeyboard/LetterRows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Row3" type="HBoxContainer" parent="EntryPanel/EntryContainer/VirtualKeyboard/LetterRows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Row4" type="HBoxContainer" parent="EntryPanel/EntryContainer/VirtualKeyboard/LetterRows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Row5" type="HBoxContainer" parent="EntryPanel/EntryContainer/VirtualKeyboard/LetterRows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Spacer4" type="Control" parent="EntryPanel/EntryContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ActionButtons" type="HBoxContainer" parent="EntryPanel/EntryContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="BackspaceButton" type="Button" parent="EntryPanel/EntryContainer/ActionButtons"]
+custom_minimum_size = Vector2(240, 60)
+layout_mode = 2
+theme = ExtResource("4_theme")
+theme_override_font_sizes/font_size = 28
+text = "⌫ DELETE"
+
+[node name="SubmitButton" type="Button" parent="EntryPanel/EntryContainer/ActionButtons"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+theme = ExtResource("4_theme")
+theme_override_font_sizes/font_size = 28
+text = "SUBMIT"

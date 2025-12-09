@@ -12,7 +12,7 @@ signal managers_ready()
 signal manager_load_failed(manager_name: String, error: String)
 
 ## Mapping of manager names to their implementation script paths in the PCK
-## Note: SceneManager, AudioManager, and AppConstants are full autoloads (not proxied)
+## Note: SceneManager, AudioManager, AppConstants, and LeaderboardData are full autoloads (not proxied)
 const MANAGER_PATHS = {
 	"GameManager": "res://src/managers/GameManagerImpl.gd",
 	"BooleanLogicEngine": "res://src/managers/BooleanLogicEngineImpl.gd",
@@ -20,13 +20,15 @@ const MANAGER_PATHS = {
 	"ProgressTracker": "res://src/managers/ProgressTrackerImpl.gd",
 	"TutorialDataManager": "res://src/managers/TutorialDataManagerImpl.gd",
 	"UpdateCheckerService": "res://src/managers/UpdateCheckerServiceImpl.gd",
+	"SupabaseService": "res://src/managers/SupabaseServiceImpl.gd",
 }
 
 ## Order in which managers are loaded (respects dependencies)
-## Note: SceneManager, AudioManager, and AppConstants remain full autoloads
+## Note: SceneManager, AudioManager, AppConstants, and LeaderboardData remain full autoloads
 const MANAGER_LOAD_ORDER = [
 	"ProgressTracker",        # No dependencies
 	"BooleanLogicEngine",     # No dependencies
+	"SupabaseService",        # No dependencies
 	"TutorialDataManager",    # Depends on ProgressTracker
 	"UpdateCheckerService",   # Depends on AppConstants (full autoload)
 	"TutorialManager",        # No hard dependencies

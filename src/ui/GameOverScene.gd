@@ -13,8 +13,8 @@ func _ready() -> void:
 	# Connect to game manager for state changes
 	GameManager.game_state_changed.connect(_on_game_state_changed)
 
-	# Add progress context
-	add_progress_context()
+	# Check for leaderboard qualification FIRST
+	await check_leaderboard_qualification()
 
 func _on_play_again_button_pressed() -> void:
 	AudioManager.play_button_click()
@@ -121,3 +121,54 @@ func get_recent_achievements() -> Array[String]:
 			var latest_achievement = stats.achievements_unlocked[-1]
 			return [ProgressTracker.get_achievement_name(latest_achievement)]
 	return []
+
+func check_leaderboard_qualification() -> void:
+	var current_score = GameManager.current_score
+
+	# Skip leaderboard check if score is 0
+	if current_score <= 0:
+		add_progress_context()
+		return
+
+	# Add checking message
+	var game_over_container = $GameOverPanel/GameOverContainer
+	var checking_label = Label.new()
+	checking_label.text = "Checking leaderboard..."
+	checking_label.add_theme_font_size_override("font_size", 24)
+	checking_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	checking_label.modulate = Color(0.7, 0.7, 0.7, 1)
+	game_over_container.add_child(checking_label)
+
+	# Check if score qualifies for top 10
+	var qualifies = await SupabaseService.check_qualifies_for_top_10(current_score)
+
+	# Remove checking label
+	checking_label.queue_free()
+
+	if qualifies:
+		# Transition to high score entry scene
+		transition_to_high_score_entry()
+	else:
+		# Show normal game over
+		add_progress_context()
+
+func transition_to_high_score_entry() -> void:
+	# Get session data
+	var session_duration = 0.0
+	var difficulty = GameManager.difficulty_level if GameManager else 1
+
+	# Try to get session duration from ProgressTracker
+	var recent_sessions = ProgressTracker.get_recent_sessions(1)
+	if recent_sessions.size() > 0:
+		session_duration = recent_sessions[0].session_duration
+
+	# Store pending entry data
+	LeaderboardData.set_pending_entry(
+		GameManager.current_score,
+		session_duration,
+		difficulty
+	)
+
+	# Transition to high score entry scene
+	await get_tree().create_timer(0.3).timeout
+	SceneManager.change_scene("res://src/ui/HighScoreEntryScene.tscn")

@@ -695,8 +695,10 @@ func _on_quit_button_pressed() -> void:
 	# Stop background music
 	AudioManager.stop_music()
 
-	# Return to main menu
-	SceneManager.change_scene("res://src/ui/MainMenu.tscn")
+	# End the game and show game over screen
+	show_feedback_message("Game Ended!", Color.ORANGE)
+	await get_tree().create_timer(1.0).timeout
+	SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
 
 # ============================================================================
 # FIRST-TIME TUTORIAL FUNCTIONS

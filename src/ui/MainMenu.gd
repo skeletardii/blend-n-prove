@@ -13,6 +13,7 @@ extends Control
 @onready var play_button: Button = $MenuContainer/PlayButton
 @onready var progress_button: Button = $MenuContainer/ProgressButton
 @onready var grid_button: Button = $MenuContainer/GridButton
+@onready var leaderboard_button: Button = $MenuContainer/LeaderboardButton
 @onready var high_score_quick: Label = $QuickStatsPanel/HighScoreQuick
 @onready var games_played_quick: Label = $QuickStatsPanel/GamesPlayedQuick
 @onready var streak_quick: Label = $QuickStatsPanel/StreakQuick
@@ -52,6 +53,10 @@ func _ready() -> void:
 	if not grid_button.pressed.is_connected(_on_grid_button_pressed):
 		grid_button.pressed.connect(_on_grid_button_pressed)
 		print("Grid button connected!")
+
+	if not leaderboard_button.pressed.is_connected(_on_leaderboard_button_pressed):
+		leaderboard_button.pressed.connect(_on_leaderboard_button_pressed)
+		print("Leaderboard button connected!")
 
 	# Connect to progress updates
 	ProgressTracker.progress_updated.connect(_on_progress_updated)
@@ -180,6 +185,10 @@ func _on_progress_button_pressed() -> void:
 func _on_grid_button_pressed() -> void:
 	AudioManager.play_button_click()
 	SceneManager.change_scene("res://src/ui/GridButtonScene.tscn")
+
+func _on_leaderboard_button_pressed() -> void:
+	AudioManager.play_button_click()
+	SceneManager.change_scene("res://src/ui/LeaderboardScene.tscn")
 
 func _on_progress_updated() -> void:
 	update_quick_stats()

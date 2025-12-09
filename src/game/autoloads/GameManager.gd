@@ -97,8 +97,11 @@ func record_order_completed() -> void:
 func record_operation_used(operation_name: String, success: bool) -> void:
 	if _impl: _impl.record_operation_used(operation_name, success)
 
-func complete_progress_session(completion_status: String) -> void:
-	if _impl: _impl.complete_progress_session(completion_status)
+func record_mistake() -> void:
+	if _impl: _impl.record_mistake()
+
+func complete_progress_session(completion_status: String, time_remaining_on_quit: float = 0.0) -> void:
+	if _impl: _impl.complete_progress_session(completion_status, time_remaining_on_quit)
 
 func complete_game_successfully() -> void:
 	if _impl: _impl.complete_game_successfully()

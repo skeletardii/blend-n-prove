@@ -1,0 +1,206 @@
+[gd_scene load_steps=9 format=3 uid="uid://clej2u4747l38"]
+
+[ext_resource type="Script" uid="uid://qwjbj810yvek" path="res://src/ui/LeaderboardScene.gd" id="1_script"]
+[ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_shader"]
+[ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_spiral"]
+[ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="4_theme"]
+
+[sub_resource type="Gradient" id="Gradient_bg"]
+offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
+colors = PackedColorArray(0.976471, 0.662745, 0.835294, 1, 0.982758, 0.720592, 0.78625, 1, 0.775179, 0.41666, 0.945561, 1, 0.0630186, 0.104642, 0.416814, 1, 0.996078, 0.843137, 0.682353, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_bg"]
+gradient = SubResource("Gradient_bg")
+fill_to = Vector2(1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_spiral"]
+shader = ExtResource("2_shader")
+shader_parameter/speed = 0.05
+shader_parameter/opacity = 0.467
+shader_parameter/rotation_speed = 1.0
+shader_parameter/shaking = true
+shader_parameter/amplitude = 1.0
+shader_parameter/noise_scale = 20.0
+shader_parameter/noise_speed = 20.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.9, 0.9, 0.9, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.2, 0.2, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 5
+shadow_offset = Vector2(2, 3)
+
+[node name="LeaderboardScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_bg")
+
+[node name="ScrollingBG" type="TextureRect" parent="."]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_spiral")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_spiral")
+expand_mode = 2
+stretch_mode = 1
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -318.0
+offset_top = -466.0
+offset_right = 460.0
+offset_bottom = 714.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.8, 0.8)
+theme_override_constants/separation = 20
+
+[node name="Spacer1" type="Control" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MainContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 72
+text = "DAILY LEADERBOARD"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="MainContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 33
+text = "Top 10 - Last 24 Hours"
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="LeaderboardPanel" type="PanelContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/LeaderboardPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="LeaderboardContainer" type="VBoxContainer" parent="MainContainer/LeaderboardPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderRow" type="HBoxContainer" parent="MainContainer/LeaderboardPanel/MarginContainer/LeaderboardContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="RankHeader" type="Label" parent="MainContainer/LeaderboardPanel/MarginContainer/LeaderboardContainer/HeaderRow"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "#"
+horizontal_alignment = 1
+
+[node name="NameHeader" type="Label" parent="MainContainer/LeaderboardPanel/MarginContainer/LeaderboardContainer/HeaderRow"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "NAME"
+horizontal_alignment = 1
+
+[node name="ScoreHeader" type="Label" parent="MainContainer/LeaderboardPanel/MarginContainer/LeaderboardContainer/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "SCORE"
+horizontal_alignment = 2
+
+[node name="Separator" type="HSeparator" parent="MainContainer/LeaderboardPanel/MarginContainer/LeaderboardContainer"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+
+[node name="EntriesContainer" type="VBoxContainer" parent="MainContainer/LeaderboardPanel/MarginContainer/LeaderboardContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Spacer3" type="Control" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="LoadingLabel" type="Label" parent="MainContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Loading..."
+horizontal_alignment = 1
+
+[node name="EmptyLabel" type="Label" parent="MainContainer"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "No scores yet today!
+Play a game to get started."
+horizontal_alignment = 1
+
+[node name="ErrorLabel" type="Label" parent="MainContainer"]
+visible = false
+modulate = Color(1, 0.3, 0.3, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Error loading leaderboard"
+horizontal_alignment = 1
+
+[node name="Spacer4" type="Control" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ButtonContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="RefreshButton" type="Button" parent="MainContainer/ButtonContainer"]
+custom_minimum_size = Vector2(280, 70)
+layout_mode = 2
+theme = ExtResource("4_theme")
+theme_override_font_sizes/font_size = 24
+text = "REFRESH"
+
+[node name="BackButton" type="Button" parent="MainContainer/ButtonContainer"]
+custom_minimum_size = Vector2(280, 70)
+layout_mode = 2
+theme = ExtResource("4_theme")
+theme_override_font_sizes/font_size = 24
+text = "BACK"

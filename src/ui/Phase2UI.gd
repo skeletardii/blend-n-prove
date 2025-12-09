@@ -21,7 +21,7 @@ const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 
 @onready var combo_container: VBoxContainer = $ComboContainer
 @onready var combo_label: Label = $ComboContainer/ComboLabel
-@onready var combo_line: ProgressBar = $ComboContainer/ComboLine
+@onready var combo_line: ColorRect = $ComboContainer/ComboLine
 @onready var combo_sparkles: CPUParticles2D = $ComboContainer/ComboLabel/Sparkles
 @onready var combo_sparks: CPUParticles2D = $ComboContainer/ComboLabel/FallingSparks
 @onready var combo_fire: CPUParticles2D = $ComboContainer/ComboLabel/Fire
@@ -217,12 +217,8 @@ func _init_styles() -> void:
 	card_style_pressed.bg_color = Color(0.8, 0.8, 0.8)
 	
 	# Combo Bar Styles
-	if combo_line:
-		var bg_style = StyleBoxEmpty.new()
-		var fill_style = StyleBoxFlat.new()
-		fill_style.bg_color = Color.WHITE
-		combo_line.add_theme_stylebox_override("background", bg_style)
-		combo_line.add_theme_stylebox_override("fill", fill_style)
+	# Combo line uses scale.x animation (ColorRect approach)
+	# No need for ProgressBar-specific theme overrides
 
 func initialize_parallax_background() -> void:
 	"""Initialize the parallax scrolling background"""
@@ -253,7 +249,7 @@ func _process(delta: float) -> void:
 		else:
 			# Update bar width based on percentage
 			if combo_line:
-				combo_line.value = (combo_timer / combo_max_time) * 100.0
+				combo_line.scale.x = combo_timer / combo_max_time
 
 func update_parallax_background(delta: float) -> void:
 	"""Scroll the background from right to left in a seamless loop"""
@@ -387,7 +383,7 @@ func increment_combo() -> void:
 		if not glow_tween or not glow_tween.is_valid():
 			combo_label.modulate = Color.WHITE
 		combo_line.modulate = Color.WHITE
-		combo_line.value = 100.0 # Reset bar
+		combo_line.scale.x = 1.0 # Reset bar to full width
 		
 		# Pop animation
 		var tween = create_tween()

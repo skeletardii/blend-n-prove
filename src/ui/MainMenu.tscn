@@ -181,6 +181,17 @@ theme_override_font_sizes/font_size = 24
 text = "TUTORIALS
 "
 
+[node name="Spacer9" type="Control" parent="MenuContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="LeaderboardButton" type="Button" parent="MenuContainer"]
+custom_minimum_size = Vector2(400, 70)
+layout_mode = 2
+theme = ExtResource("5_u6542")
+theme_override_font_sizes/font_size = 24
+text = "LEADERBOARD"
+
 [node name="Spacer8" type="Control" parent="MenuContainer"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
