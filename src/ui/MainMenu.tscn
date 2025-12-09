@@ -1,8 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://dvdwtisv5ow7b"]
+[gd_scene load_steps=11 format=3 uid="uid://dvdwtisv5ow7b"]
 
 [ext_resource type="Script" uid="uid://k7rdb8uuwufw" path="res://src/ui/MainMenu.gd" id="1_2v8qy"]
 [ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_2wh52"]
-[ext_resource type="Script" uid="uid://c8j6y3q5x2v8l" path="res://src/ui/BooleanAsteroidField.gd" id="2_asteroid"]
+[ext_resource type="Script" uid="uid://c03es3s5m6ago" path="res://src/ui/BooleanAsteroidField.gd" id="2_asteroid"]
 [ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_ihbld"]
 [ext_resource type="Texture2D" uid="uid://onbkto0umar" path="res://assets/sprites/newlogo.png" id="4_ihbld"]
 [ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_1000_with_fallback.tres" id="5_dbyr8"]
@@ -138,6 +138,7 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="DebugButton" type="Button" parent="MenuContainer"]
+visible = false
 custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 theme = ExtResource("5_u6542")
@@ -145,6 +146,7 @@ theme_override_font_sizes/font_size = 24
 text = "DEBUG OPTIONS"
 
 [node name="Spacer3" type="Control" parent="MenuContainer"]
+visible = false
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
@@ -209,6 +211,7 @@ layout_mode = 2
 
 [node name="DebugBlurOverlay" type="ColorRect" parent="."]
 visible = false
+z_index = 98
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -216,7 +219,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.5)
-z_index = 98
 
 [node name="DebugPanel" type="Panel" parent="."]
 visible = false
