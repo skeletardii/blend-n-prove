@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://tutorial_overlay_001"]
+[gd_scene load_steps=6 format=3 uid="uid://blmrxb8jyuv17"]
 
-[ext_resource type="Script" path="res://src/ui/TutorialOverlay.gd" id="1"]
+[ext_resource type="Script" uid="uid://b3umhi00qfc7s" path="res://src/ui/TutorialOverlay.gd" id="1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(1, 1, 1, 0.95)
@@ -24,15 +24,15 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0.3, 0.7, 1, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.1, 0.5, 0.9, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
-bg_color = Color(0.1, 0.5, 0.9, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.3, 0.7, 1, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -53,6 +53,7 @@ mouse_filter = 2
 color = Color(0, 0, 0, 0.75)
 
 [node name="SpotlightContainer" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -67,15 +68,14 @@ color = Color(1, 0.8, 0.2, 0.95)
 
 [node name="Circle" type="Line2D" parent="."]
 visible = false
-width = 4.0
-default_color = Color(1, 0.8, 0.2, 0.95)
+width = 7.0
+default_color = Color(1, 0.19999999, 0.19999999, 0.9490196)
 
 [node name="ExplanationPanel" type="Panel" parent="."]
-visible = false
 offset_left = 200.0
 offset_top = 50.0
-offset_right = 1080.0
-offset_bottom = 450.0
+offset_right = 800.11
+offset_bottom = 470.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="ExplanationPanel"]
@@ -93,8 +93,8 @@ theme_override_constants/margin_bottom = 80
 [node name="ExplanationLabel" type="RichTextLabel" parent="ExplanationPanel/MarginContainer"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0.15, 0.15, 0.15, 1)
-theme_override_font_sizes/normal_font_size = 32
-theme_override_font_sizes/bold_font_size = 34
+theme_override_font_sizes/normal_font_size = 30
+theme_override_font_sizes/bold_font_size = 32
 bbcode_enabled = true
 text = "Tutorial explanation text goes here"
 fit_content = true
@@ -115,8 +115,8 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "Next →"
 
 [node name="SkipButton" type="Button" parent="."]
@@ -131,6 +131,6 @@ grow_horizontal = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "Skip Tutorial"

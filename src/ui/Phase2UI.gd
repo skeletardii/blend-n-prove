@@ -21,7 +21,7 @@ const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 
 @onready var combo_container: VBoxContainer = $ComboContainer
 @onready var combo_label: Label = $ComboContainer/ComboLabel
-@onready var combo_line: ColorRect = $ComboContainer/ComboLine
+@onready var combo_line: ProgressBar = $ComboContainer/ComboLine
 @onready var combo_sparkles: CPUParticles2D = $ComboContainer/ComboLabel/Sparkles
 @onready var combo_sparks: CPUParticles2D = $ComboContainer/ComboLabel/FallingSparks
 @onready var combo_fire: CPUParticles2D = $ComboContainer/ComboLabel/Fire

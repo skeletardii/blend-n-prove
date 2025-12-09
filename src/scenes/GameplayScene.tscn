@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dpjc3t8yqr5h1" path="res://src/ui/HintPopup.tscn" id="3_hint_popup"]
 [ext_resource type="FontFile" uid="uid://bu186h4gwve1c" path="res://assets/fonts/MuseoSansRounded300.otf" id="4_wxnvq"]
 [ext_resource type="Texture2D" uid="uid://cugfb5gspi52n" path="res://assets/sprites/pause_icon.svg" id="5_pause_icon"]
-[ext_resource type="Texture2D" path="res://assets/sprites/fuelcanister.png" id="6_fuel_canister"]
+[ext_resource type="Texture2D" uid="uid://bdypoli18j5ih" path="res://assets/sprites/fuelcanister.png" id="6_fuel_canister"]
 
 [node name="GameplayScene" type="Control"]
 layout_mode = 3
@@ -130,7 +130,6 @@ value = 100.0
 show_percentage = false
 
 [node name="FuelIcon" type="TextureRect" parent="UI/MainContainer/PatienceBar"]
-modulate = Color(1, 1, 1, 1)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -206,17 +205,16 @@ Conclusion:
 Q"
 
 [node name="TutorialHelpPanel" parent="UI" instance=ExtResource("2_tutorial_help")]
-visible = false
 layout_mode = 0
 anchors_preset = 0
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 600.0
-offset_bottom = 600.0
+offset_left = 54.0
+offset_top = 138.0
+offset_right = 654.0
+offset_bottom = 738.0
 grow_horizontal = 1
 grow_vertical = 1
 
@@ -228,10 +226,10 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 500.0
-offset_bottom = 600.0
+offset_left = 101.0
+offset_top = 136.0
+offset_right = 601.0
+offset_bottom = 736.0
 grow_horizontal = 1
 grow_vertical = 1
 

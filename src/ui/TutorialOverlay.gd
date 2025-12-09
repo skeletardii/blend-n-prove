@@ -27,7 +27,7 @@ func _ready() -> void:
 
 	# Add semi-transparent background to explanation panel for contrast
 	var panel_bg := ColorRect.new()
-	panel_bg.color = Color(0.1, 0.1, 0.15, 0.85)  # Dark semi-transparent background
+	#panel_bg.color = Color(0.1, 0.1, 0.15, 0.85)  # Dark semi-transparent background
 	explanation_panel.add_child(panel_bg)
 	explanation_panel.move_child(panel_bg, 0)  # Move to back
 	panel_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
