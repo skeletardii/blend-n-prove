@@ -171,31 +171,31 @@ stretch_mode = 5
 position = Vector2(50, 95)
 
 [node name="FlameCore" type="CPUParticles2D" parent="WorkContainer/TargetArea/Rocket/ExhaustContainer"]
-amount = 100
-lifetime = 0.5
+amount = 80
+lifetime = 0.4
 randomness = 0.1
 local_coords = false
 direction = Vector2(0, 1)
 spread = 5.0
 gravity = Vector2(0, 0)
-initial_velocity_min = 600.0
-initial_velocity_max = 800.0
-scale_amount_min = 8.0
-scale_amount_max = 15.0
+initial_velocity_min = 500.0
+initial_velocity_max = 700.0
+scale_amount_min = 6.0
+scale_amount_max = 12.0
 color_ramp = SubResource("Gradient_flame")
 
 [node name="SmokeTrail" type="CPUParticles2D" parent="WorkContainer/TargetArea/Rocket/ExhaustContainer"]
 show_behind_parent = true
-amount = 200
-lifetime = 2.0
+amount = 60
+lifetime = 0.5
 local_coords = false
 direction = Vector2(0, 1)
-spread = 10.0
-gravity = Vector2(-200, 0)
-initial_velocity_min = 400.0
-initial_velocity_max = 600.0
-scale_amount_min = 15.0
-scale_amount_max = 30.0
+spread = 8.0
+gravity = Vector2(-300, 0)
+initial_velocity_min = 350.0
+initial_velocity_max = 500.0
+scale_amount_min = 10.0
+scale_amount_max = 20.0
 color_ramp = SubResource("Gradient_smoke")
 
 [node name="ChatBubble" type="Panel" parent="WorkContainer/TargetArea"]
@@ -713,10 +713,11 @@ scale_amount_min = 10.0
 scale_amount_max = 20.0
 color = Color(1, 0.4, 0, 0.8)
 
-[node name="ComboLine" type="ColorRect" parent="ComboContainer"]
+[node name="ComboLine" type="ProgressBar" parent="ComboContainer"]
 custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
-color = Color(1, 1, 1, 1)
+show_percentage = false
+value = 100.0
 
 [node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]
 visible = false

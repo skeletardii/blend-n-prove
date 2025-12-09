@@ -41,7 +41,7 @@ var purple_gradient: Gradient # 10x
 # Combo State
 var combo_count: int = 0
 var combo_timer: float = 0.0
-var combo_max_time: float = 20.0 # Generous time to keep combo
+var combo_max_time: float = 30.0 # Generous time to keep combo
 var glow_tween: Tween
 
 # References passed from GameplayScene
@@ -284,39 +284,44 @@ func set_rocket_speed(speed_multiplier: float) -> void:
 	if speed_multiplier > 1.0:
 		# Move right proportional to speed boost (max 100px offset at 3x speed)
 		rocket_target_offset = min((speed_multiplier - 1.0) * 50.0, 100.0)
-		
-		# Boost intensity
-		if flame_core:
-			flame_core.initial_velocity_min = 800.0
-			flame_core.initial_velocity_max = 1000.0
-			flame_core.scale_amount_min = 10.0
-			flame_core.scale_amount_max = 18.0
-			
-		if smoke_trail:
-			# Progressive trail based on combo
-			var intensity_mult = min(float(combo_count) / 10.0, 2.0) # Caps at 20x combo
 
-			smoke_trail.amount = int(80 + (80 * intensity_mult))
-			smoke_trail.lifetime = 0.3 + (0.3 * intensity_mult) # Max 0.6s lifetime
-			smoke_trail.gravity = Vector2(-600 - (400 * intensity_mult), 0) # Stronger push
-			smoke_trail.initial_velocity_min = 500.0 + (500.0 * intensity_mult)
-			smoke_trail.initial_velocity_max = 800.0 + (800.0 * intensity_mult)
+		# Progressive trail based on combo - extends as rocket speeds up
+		var intensity_mult = min(float(combo_count) / 10.0, 1.5) # Caps at 15x combo for 2.5x intensity
+
+		# Flame core boost
+		if flame_core:
+			flame_core.initial_velocity_min = 500.0 + (400.0 * intensity_mult)  # 500-1100
+			flame_core.initial_velocity_max = 700.0 + (500.0 * intensity_mult)  # 700-1450
+			flame_core.scale_amount_min = 6.0 + (6.0 * intensity_mult)  # 6-15
+			flame_core.scale_amount_max = 12.0 + (8.0 * intensity_mult)  # 12-24
+
+		# Smoke trail boost - extends tail length progressively
+		if smoke_trail:
+			smoke_trail.amount = int(60 + (100 * intensity_mult))  # 60-210 particles
+			smoke_trail.lifetime = 0.5 + (1.0 * intensity_mult)  # 0.5s-1.5s lifetime
+			smoke_trail.gravity = Vector2(-300 - (500 * intensity_mult), 0)  # Stronger leftward push
+			smoke_trail.initial_velocity_min = 350.0 + (450.0 * intensity_mult)  # 350-1025
+			smoke_trail.initial_velocity_max = 500.0 + (600.0 * intensity_mult)  # 500-1400
+			smoke_trail.scale_amount_min = 10.0 + (8.0 * intensity_mult)  # 10-22
+			smoke_trail.scale_amount_max = 20.0 + (15.0 * intensity_mult)  # 20-42.5
 	else:
 		rocket_target_offset = 0.0
-		
-		# Normal intensity (Average/Shorter)
+
+		# Normal speed - moderate base trail
 		if flame_core:
-			flame_core.initial_velocity_min = 600.0
-			flame_core.initial_velocity_max = 800.0
-			flame_core.scale_amount_min = 8.0
-			flame_core.scale_amount_max = 15.0
-			
+			flame_core.initial_velocity_min = 500.0
+			flame_core.initial_velocity_max = 700.0
+			flame_core.scale_amount_min = 6.0
+			flame_core.scale_amount_max = 12.0
+
 		if smoke_trail:
-			smoke_trail.amount = 50
-			smoke_trail.lifetime = 0.3 # Short average tail
-			smoke_trail.gravity = Vector2(-200, 0)
-			smoke_trail.initial_velocity_min = 300.0
+			smoke_trail.amount = 60
+			smoke_trail.lifetime = 0.5  # Moderate base trail
+			smoke_trail.gravity = Vector2(-300, 0)
+			smoke_trail.initial_velocity_min = 350.0
 			smoke_trail.initial_velocity_max = 500.0
+			smoke_trail.scale_amount_min = 10.0
+			smoke_trail.scale_amount_max = 20.0
 	
 	# Update color
 	update_particle_color()

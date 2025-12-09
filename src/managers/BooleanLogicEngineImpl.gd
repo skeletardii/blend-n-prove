@@ -51,7 +51,8 @@ func create_conjunction_expression(left: BooleanExpression, right: BooleanExpres
 		left_str = "(" + left_str + ")"
 	if _has_operator(right_str) and not (right_str.begins_with("(") and right_str.ends_with(")")):
 		right_str = "(" + right_str + ")"
-	var conjunction = "(" + left_str + " ∧ " + right_str + ")"
+	# Don't wrap the whole expression in extra parentheses
+	var conjunction = left_str + " ∧ " + right_str
 	return BooleanExpression.new(conjunction)
 
 func create_disjunction_expression(left: BooleanExpression, right: BooleanExpression) -> BooleanExpression:
@@ -63,7 +64,8 @@ func create_disjunction_expression(left: BooleanExpression, right: BooleanExpres
 		left_str = "(" + left_str + ")"
 	if _has_operator(right_str) and not (right_str.begins_with("(") and right_str.ends_with(")")):
 		right_str = "(" + right_str + ")"
-	var disjunction = "(" + left_str + " ∨ " + right_str + ")"
+	# Don't wrap the whole expression in extra parentheses
+	var disjunction = left_str + " ∨ " + right_str
 	return BooleanExpression.new(disjunction)
 
 func create_implication_expression(antecedent: BooleanExpression, consequent: BooleanExpression) -> BooleanExpression:
@@ -674,6 +676,7 @@ func apply_associativity(premise: BooleanExpression) -> BooleanExpression:
 			var left = parts.get("left") as BooleanExpression
 			var right = parts.get("right") as BooleanExpression
 
+			# Direction 1: (A ∧ B) ∧ C → A ∧ (B ∧ C)
 			if left.normalized_string.begins_with("(") and left.normalized_string.ends_with(")"):
 				var inner = left.normalized_string.substr(1, left.normalized_string.length() - 2).strip_edges()
 				var inner_expr = BooleanExpression.new(inner)
@@ -687,12 +690,27 @@ func apply_associativity(premise: BooleanExpression) -> BooleanExpression:
 						var b_and_c = create_conjunction_expression(b, right)
 						return create_conjunction_expression(a, b_and_c)
 
+			# Direction 2: A ∧ (B ∧ C) → (A ∧ B) ∧ C
+			if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
+				var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
+				var inner_expr = BooleanExpression.new(inner)
+
+				if inner_expr.is_conjunction():
+					var inner_parts = inner_expr.get_conjunction_parts()
+					if inner_parts.get("valid", false):
+						var b = inner_parts.get("left") as BooleanExpression
+						var c = inner_parts.get("right") as BooleanExpression
+
+						var a_and_b = create_conjunction_expression(left, b)
+						return create_conjunction_expression(a_and_b, c)
+
 	elif premise.is_disjunction():
 		var parts = premise.get_disjunction_parts()
 		if parts.get("valid", false):
 			var left = parts.get("left") as BooleanExpression
 			var right = parts.get("right") as BooleanExpression
 
+			# Direction 1: (A ∨ B) ∨ C → A ∨ (B ∨ C)
 			if left.normalized_string.begins_with("(") and left.normalized_string.ends_with(")"):
 				var inner = left.normalized_string.substr(1, left.normalized_string.length() - 2).strip_edges()
 				var inner_expr = BooleanExpression.new(inner)
@@ -705,6 +723,20 @@ func apply_associativity(premise: BooleanExpression) -> BooleanExpression:
 
 						var b_or_c = create_disjunction_expression(b, right)
 						return create_disjunction_expression(a, b_or_c)
+
+			# Direction 2: A ∨ (B ∨ C) → (A ∨ B) ∨ C
+			if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
+				var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
+				var inner_expr = BooleanExpression.new(inner)
+
+				if inner_expr.is_disjunction():
+					var inner_parts = inner_expr.get_disjunction_parts()
+					if inner_parts.get("valid", false):
+						var b = inner_parts.get("left") as BooleanExpression
+						var c = inner_parts.get("right") as BooleanExpression
+
+						var a_or_b = create_disjunction_expression(left, b)
+						return create_disjunction_expression(a_or_b, c)
 
 	return BooleanExpression.new("")
 
