@@ -6,6 +6,29 @@
 [ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="5_o5hkq"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="6_wbgmg"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Card"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Header"]
+bg_color = Color(0.9, 0.9, 0.9, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+content_margin_top = 15.0
+content_margin_bottom = 15.0
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_Divider"]
+color = Color(0, 0, 0, 1)
+thickness = 2
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qjtox"]
 
 [node name="Phase1UI" type="Control"]
@@ -31,10 +54,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
@@ -107,95 +130,83 @@ offset_top = 20.0
 offset_right = 140.0
 offset_bottom = 180.0
 
-[node name="PremisePanelsContainer" type="HBoxContainer" parent="MainContainer/CustomerArea"]
+[node name="CardArea" type="Control" parent="MainContainer/CustomerArea"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 15
 
-[node name="LeftPanel" type="Panel" parent="MainContainer/CustomerArea/PremisePanelsContainer"]
-custom_minimum_size = Vector2(0, 500)
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Card" type="PanelContainer" parent="MainContainer/CustomerArea/CardArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_right = -20.0
+grow_horizontal = 2
+grow_vertical = 2
 theme = ExtResource("6_wbgmg")
+theme_override_styles/panel = SubResource("StyleBoxFlat_Card")
 
-[node name="VariableDefinitions" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel"]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 25.0
-offset_top = 25.0
-offset_right = -25.0
-offset_bottom = -25.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 30
+[node name="MainLayout" type="VBoxContainer" parent="MainContainer/CustomerArea/CardArea/Card"]
+layout_mode = 2
+theme_override_constants/separation = 0
 
-[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/VariableDefinitions"]
+[node name="HeaderPanel" type="PanelContainer" parent="MainContainer/CustomerArea/CardArea/Card/MainLayout"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_Header")
+
+[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/CardArea/Card/MainLayout/HeaderPanel"]
 layout_mode = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_museo500")
-theme_override_font_sizes/font_size = 26
-text = "Variable Definitions:"
+theme_override_font_sizes/font_size = 32
+text = "Variable Definitions"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="DefinitionsScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/VariableDefinitions"]
+[node name="Divider" type="HSeparator" parent="MainContainer/CustomerArea/CardArea/Card/MainLayout"]
+layout_mode = 2
+theme_override_constants/separation = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_Divider")
+
+[node name="ContentMargin" type="MarginContainer" parent="MainContainer/CustomerArea/CardArea/Card/MainLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VariableDefinitions" type="ScrollContainer" parent="MainContainer/CustomerArea/CardArea/Card/MainLayout/ContentMargin"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("6_wbgmg")
 horizontal_scroll_mode = 0
 
-[node name="DefinitionsList" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/VariableDefinitions/DefinitionsScroll"]
+[node name="DefinitionsList" type="VBoxContainer" parent="MainContainer/CustomerArea/CardArea/Card/MainLayout/ContentMargin/VariableDefinitions"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("6_wbgmg")
 theme_override_constants/separation = 0
 
-[node name="RightPanel" type="Panel" parent="MainContainer/CustomerArea/PremisePanelsContainer"]
-custom_minimum_size = Vector2(0, 500)
-layout_mode = 2
-size_flags_horizontal = 3
-theme = ExtResource("6_wbgmg")
-
-[node name="PremiseChecklist" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 25.0
-offset_top = 25.0
-offset_right = -25.0
-offset_bottom = -25.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 15
-
-[node name="HeaderLabel" type="Label" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/PremiseChecklist"]
-layout_mode = 2
-theme = ExtResource("6_wbgmg")
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_museo500")
-theme_override_font_sizes/font_size = 26
-text = "Premises to reconstruct:"
-
-[node name="PremiseListScroll" type="ScrollContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/PremiseChecklist"]
+[node name="PremiseChecklist" type="ScrollContainer" parent="MainContainer/CustomerArea/CardArea/Card/MainLayout/ContentMargin"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="PremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/PremiseChecklist/PremiseListScroll"]
+[node name="PremiseList" type="VBoxContainer" parent="MainContainer/CustomerArea/CardArea/Card/MainLayout/ContentMargin/PremiseChecklist"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
 [node name="InputSystem" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
 [node name="Panel" type="Panel" parent="MainContainer/InputSystem"]
@@ -242,13 +253,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_wbgmg")
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 24
 text = "Type your premise here..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="KeyboardSpacer" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 70)
+custom_minimum_size = Vector2(0, 90)
 layout_mode = 2
 
 [node name="VirtualKeyboard" type="Control" parent="MainContainer"]
