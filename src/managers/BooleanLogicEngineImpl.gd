@@ -392,6 +392,50 @@ func apply_de_morgan_or(premise: BooleanExpression) -> BooleanExpression:
 
 	return BooleanExpression.new("")
 
+func apply_de_morgan_reverse_and(premise: BooleanExpression) -> BooleanExpression:
+	# Converts ¬P ∨ ¬Q → ¬(P ∧ Q)
+	if not premise or not premise.is_valid:
+		return BooleanExpression.new("")
+
+	if premise.is_disjunction():
+		var parts = premise.get_disjunction_parts()
+		if parts.get("valid", false):
+			var left = parts.get("left") as BooleanExpression
+			var right = parts.get("right") as BooleanExpression
+
+			# Check if both sides are negations
+			if left.normalized_string.begins_with("¬") and right.normalized_string.begins_with("¬"):
+				var left_inner = create_expression(left.normalized_string.substr(1).strip_edges())
+				var right_inner = create_expression(right.normalized_string.substr(1).strip_edges())
+
+				if left_inner.is_valid and right_inner.is_valid:
+					var conjunction = create_conjunction_expression(left_inner, right_inner)
+					return create_negation_expression(conjunction)
+
+	return BooleanExpression.new("")
+
+func apply_de_morgan_reverse_or(premise: BooleanExpression) -> BooleanExpression:
+	# Converts ¬P ∧ ¬Q → ¬(P ∨ Q)
+	if not premise or not premise.is_valid:
+		return BooleanExpression.new("")
+
+	if premise.is_conjunction():
+		var parts = premise.get_conjunction_parts()
+		if parts.get("valid", false):
+			var left = parts.get("left") as BooleanExpression
+			var right = parts.get("right") as BooleanExpression
+
+			# Check if both sides are negations
+			if left.normalized_string.begins_with("¬") and right.normalized_string.begins_with("¬"):
+				var left_inner = create_expression(left.normalized_string.substr(1).strip_edges())
+				var right_inner = create_expression(right.normalized_string.substr(1).strip_edges())
+
+				if left_inner.is_valid and right_inner.is_valid:
+					var disjunction = create_disjunction_expression(left_inner, right_inner)
+					return create_negation_expression(disjunction)
+
+	return BooleanExpression.new("")
+
 func apply_double_negation(premise: BooleanExpression) -> BooleanExpression:
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
@@ -970,6 +1014,31 @@ func get_applicable_single_operations(premise: BooleanExpression) -> Array:
 	elif premise.normalized_string.begins_with("¬(") and premise.is_disjunction():
 		operations.append("De Morgan's (OR)")
 
+	# Check for reverse De Morgan's applicability
+	if premise.is_disjunction():
+		var parts = premise.get_disjunction_parts()
+		if parts.get("valid", false):
+			var left = parts.get("left") as BooleanExpression
+			var right = parts.get("right") as BooleanExpression
+			if left.normalized_string.begins_with("¬") and right.normalized_string.begins_with("¬"):
+				operations.append("De Morgan's Reverse (AND)")
+
+	if premise.is_conjunction():
+		var parts = premise.get_conjunction_parts()
+		if parts.get("valid", false):
+			var left = parts.get("left") as BooleanExpression
+			var right = parts.get("right") as BooleanExpression
+			if left.normalized_string.begins_with("¬") and right.normalized_string.begins_with("¬"):
+				operations.append("De Morgan's Reverse (OR)")
+
+	# Check for reverse implication applicability
+	if premise.is_disjunction():
+		var parts = premise.get_disjunction_parts()
+		if parts.get("valid", false):
+			var left = parts.get("left") as BooleanExpression
+			if left.normalized_string.begins_with("¬"):
+				operations.append("Implication Reverse")
+
 	if premise.is_xor():
 		operations.append("XOR Elimination")
 
@@ -1032,6 +1101,25 @@ func apply_contrapositive(premise: BooleanExpression) -> BooleanExpression:
 			var neg_consequent = create_negation_expression(consequent)
 			var neg_antecedent = create_negation_expression(antecedent)
 			return create_implication_expression(neg_consequent, neg_antecedent)
+
+	return BooleanExpression.new("")
+
+func apply_implication_reverse(premise: BooleanExpression) -> BooleanExpression:
+	# Converts ¬P ∨ Q → P → Q
+	if not premise or not premise.is_valid:
+		return BooleanExpression.new("")
+
+	if premise.is_disjunction():
+		var parts = premise.get_disjunction_parts()
+		if parts.get("valid", false):
+			var left = parts.get("left") as BooleanExpression
+			var right = parts.get("right") as BooleanExpression
+
+			# Check if left is a negation
+			if left.normalized_string.begins_with("¬"):
+				var p = create_expression(left.normalized_string.substr(1).strip_edges())
+				if p.is_valid:
+					return create_implication_expression(p, right)
 
 	return BooleanExpression.new("")
 
@@ -1110,6 +1198,49 @@ func _has_operator(expr: String) -> bool:
 		if expr.find(op) != -1:
 			return true
 	return false
+
+func are_semantically_equivalent(expr1: BooleanExpression, expr2: BooleanExpression) -> bool:
+	# Check if two expressions are logically equivalent using truth tables
+	if not expr1.is_valid or not expr2.is_valid:
+		return false
+
+	# Quick syntactic check first
+	if expr1.equals(expr2):
+		return true
+
+	# Get all variables from both expressions
+	var vars1 = expr1.get_variables()
+	var vars2 = expr2.get_variables()
+	var all_vars = []
+
+	for v in vars1:
+		if v not in all_vars:
+			all_vars.append(v)
+	for v in vars2:
+		if v not in all_vars:
+			all_vars.append(v)
+
+	# Limit: only check equivalence for expressions with ≤8 variables
+	# Beyond 8 variables, truth table has 256+ rows which is too expensive
+	if all_vars.size() > 8:
+		push_warning("Too many variables for equivalence check (>8)")
+		return false
+
+	# Generate all possible truth assignments
+	var num_combinations = int(pow(2, all_vars.size()))
+
+	for i in range(num_combinations):
+		var assignment = {}
+		for j in range(all_vars.size()):
+			assignment[all_vars[j]] = bool((i >> j) & 1)
+
+		var result1 = expr1.evaluate(assignment)
+		var result2 = expr2.evaluate(assignment)
+
+		if result1 != result2:
+			return false  # Found a counterexample
+
+	return true  # All truth assignments match - expressions are equivalent
 
 func test_logic_engine() -> bool:
 	print("Testing Boolean Logic Engine...")
@@ -1469,6 +1600,79 @@ func test_logic_engine() -> bool:
 	else:
 		print("✗ Constants handling test failed")
 
+	print("\n--- New Feature Tests (Operator Detection & Reverse Laws) ---")
+
+	tests_total += 1
+	var mixed_expr = create_expression("(P ∧ Q) ∨ R")
+	if mixed_expr.is_disjunction() and not mixed_expr.is_conjunction():
+		print("✓ Top-level operator detection test passed")
+		tests_passed += 1
+	else:
+		print("✗ Top-level operator detection test failed")
+
+	tests_total += 1
+	var neg_complex = create_expression("¬(P ∧ Q)")
+	var base_complex = create_expression("P ∧ Q")
+	if neg_complex.is_negation_of(base_complex):
+		print("✓ Complex negation handling test passed")
+		tests_passed += 1
+	else:
+		print("✗ Complex negation handling test failed")
+
+	tests_total += 1
+	var rev_dm_and_expr = create_expression("¬P ∨ ¬Q")
+	var rev_dm_and_result = apply_de_morgan_reverse_and(rev_dm_and_expr)
+	if rev_dm_and_result.is_valid and "¬" in rev_dm_and_result.normalized_string and "∧" in rev_dm_and_result.normalized_string:
+		print("✓ Reverse De Morgan (AND) test passed")
+		tests_passed += 1
+	else:
+		print("✗ Reverse De Morgan (AND) test failed")
+
+	tests_total += 1
+	var rev_dm_or_expr = create_expression("¬P ∧ ¬Q")
+	var rev_dm_or_result = apply_de_morgan_reverse_or(rev_dm_or_expr)
+	if rev_dm_or_result.is_valid and "¬" in rev_dm_or_result.normalized_string and "∨" in rev_dm_or_result.normalized_string:
+		print("✓ Reverse De Morgan (OR) test passed")
+		tests_passed += 1
+	else:
+		print("✗ Reverse De Morgan (OR) test failed")
+
+	tests_total += 1
+	var rev_impl_expr = create_expression("¬P ∨ Q")
+	var rev_impl_result = apply_implication_reverse(rev_impl_expr)
+	if rev_impl_result.is_valid and rev_impl_result.is_implication():
+		print("✓ Reverse implication test passed")
+		tests_passed += 1
+	else:
+		print("✗ Reverse implication test failed")
+
+	tests_total += 1
+	var equiv_expr1 = create_expression("P ∧ Q")
+	var equiv_expr2 = create_expression("Q ∧ P")
+	if are_semantically_equivalent(equiv_expr1, equiv_expr2):
+		print("✓ Semantic equivalence (commutativity) test passed")
+		tests_passed += 1
+	else:
+		print("✗ Semantic equivalence (commutativity) test failed")
+
+	tests_total += 1
+	var equiv_expr3 = create_expression("P → Q")
+	var equiv_expr4 = create_expression("¬P ∨ Q")
+	if are_semantically_equivalent(equiv_expr3, equiv_expr4):
+		print("✓ Semantic equivalence (implication) test passed")
+		tests_passed += 1
+	else:
+		print("✗ Semantic equivalence (implication) test failed")
+
+	tests_total += 1
+	var non_equiv_expr1 = create_expression("P ∧ Q")
+	var non_equiv_expr2 = create_expression("P ∨ Q")
+	if not are_semantically_equivalent(non_equiv_expr1, non_equiv_expr2):
+		print("✓ Semantic non-equivalence test passed")
+		tests_passed += 1
+	else:
+		print("✗ Semantic non-equivalence test failed")
+
 	print("==================================================")
 	print("Tests completed: %d/%d passed" % [tests_passed, tests_total])
 
@@ -1501,7 +1705,13 @@ func test_logic_engine() -> bool:
 		print("✅ Robust expression parsing and normalization")
 		print("✅ ASCII conversion: ^ → ⊕, <-> → ↔, -> → →, etc.")
 		print("✅ All Phase 2 UI operations now fully connected")
-		print("✅ Comprehensive test suite with 34 test cases")
+		print("✅ NEW: Reverse transformation laws:")
+		print("   • Reverse De Morgan's: ¬P∨¬Q ↔ ¬(P∧Q), ¬P∧¬Q ↔ ¬(P∨Q)")
+		print("   • Reverse Implication: ¬P∨Q ↔ P→Q")
+		print("✅ NEW: Top-level operator detection (fixes mixed operator bugs)")
+		print("✅ NEW: Improved negation handling for complex expressions")
+		print("✅ NEW: Semantic equivalence checker (truth table-based)")
+		print("✅ Comprehensive test suite with 42 test cases (34 original + 8 new)")
 	else:
 		print("⚠️  Some tests failed. Engine needs further debugging.")
 

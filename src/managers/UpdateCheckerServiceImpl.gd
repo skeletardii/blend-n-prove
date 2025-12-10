@@ -140,7 +140,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 		no_update_available.emit()
 
 func _validate_json_data(data) -> bool:
-	"""Enhanced validation requiring pck_url"""
+	"""Enhanced validation with optional pck_hash field"""
 	if typeof(data) != TYPE_DICTIONARY:
 		print("UpdateChecker: Data is not a Dictionary")
 		return false
@@ -160,6 +160,23 @@ func _validate_json_data(data) -> bool:
 	if not data["pck_url"].ends_with(".pck"):
 		print("UpdateChecker: pck_url must end with .pck")
 		return false
+
+	# Optional: pck_hash validation
+	if data.has("pck_hash") and data["pck_hash"] != "":
+		var hash_str = data["pck_hash"]
+		if typeof(hash_str) != TYPE_STRING:
+			print("UpdateChecker: pck_hash must be a String")
+			return false
+
+		if hash_str.length() != 64:
+			print("UpdateChecker: pck_hash must be exactly 64 hex characters")
+			return false
+
+		# Validate hex format
+		for char in hash_str:
+			if not char.to_lower() in "0123456789abcdef":
+				print("UpdateChecker: pck_hash contains invalid characters")
+				return false
 
 	return true
 
@@ -261,6 +278,35 @@ func _on_pck_download_completed(result: int, response_code: int, headers: Packed
 		DirAccess.remove_absolute(AppConstants.PCK_TEMP_PATH)
 		return
 
+	# Hash verification before atomic swap
+	var expected_hash = current_version_info.get("pck_hash", "")
+
+	if expected_hash != "":
+		print("UpdateChecker: Verifying PCK hash...")
+
+		var computed_hash = _compute_file_hash(AppConstants.PCK_TEMP_PATH)
+
+		if computed_hash == "":
+			print("UpdateChecker ERROR: Failed to compute file hash")
+			pck_download_completed.emit(false)
+			DirAccess.remove_absolute(AppConstants.PCK_TEMP_PATH)
+			return
+
+		print("UpdateChecker: Expected: ", expected_hash)
+		print("UpdateChecker: Computed: ", computed_hash)
+
+		if computed_hash.to_lower() != expected_hash.to_lower():
+			print("UpdateChecker ERROR: Hash mismatch! File may be corrupted or tampered.")
+			pck_download_completed.emit(false)
+			DirAccess.remove_absolute(AppConstants.PCK_TEMP_PATH)
+			return
+
+		print("UpdateChecker: Hash verification PASSED ✓")
+		# Save hash for future verification
+		_save_pck_hash(computed_hash)
+	else:
+		print("UpdateChecker WARNING: No hash in version.json - skipping verification")
+
 	print("UpdateChecker: PCK file verified (", file_size, " bytes), performing atomic swap...")
 
 	# ATOMIC UPDATE: Rename temp to final
@@ -327,6 +373,53 @@ func load_pck() -> bool:
 		return false
 
 # ===== UTILITY FUNCTIONS (Keep existing) =====
+
+func _compute_file_hash(file_path: String) -> String:
+	"""Compute SHA-256 hash of a file and return as hex string"""
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	if not file:
+		print("UpdateChecker ERROR: Cannot open file for hashing: ", file_path)
+		return ""
+
+	var hash_ctx = HashingContext.new()
+	hash_ctx.start(HashingContext.HASH_SHA256)
+
+	# Read file in chunks (1 MB) to handle large PCK files efficiently
+	var chunk_size = 1024 * 1024
+	var total_read = 0
+	var file_size = file.get_length()
+
+	while total_read < file_size:
+		var chunk = file.get_buffer(chunk_size)
+		if chunk.size() == 0:
+			break
+		hash_ctx.update(chunk)
+		total_read += chunk.size()
+
+	file.close()
+
+	# Convert hash bytes to hex string
+	var hash_bytes = hash_ctx.finish()
+	var hash_hex = ""
+	for byte in hash_bytes:
+		hash_hex += "%02x" % byte
+
+	return hash_hex
+
+func _save_pck_hash(hash: String) -> void:
+	"""Save PCK hash to preferences for future verification"""
+	var config = ConfigFile.new()
+	config.load("user://preferences.cfg")
+	config.set_value("app", "pck_hash", hash)
+	config.save("user://preferences.cfg")
+
+func _get_saved_pck_hash() -> String:
+	"""Retrieve saved PCK hash from preferences"""
+	var config = ConfigFile.new()
+	var err = config.load("user://preferences.cfg")
+	if err != OK:
+		return ""
+	return config.get_value("app", "pck_hash", "")
 
 func _is_newer_version(remote_version: String, current_version: String) -> bool:
 	var remote_parts = _parse_version(remote_version)

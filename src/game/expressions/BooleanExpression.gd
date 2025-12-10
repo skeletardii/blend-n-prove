@@ -190,6 +190,8 @@ func is_negation_of(other: BooleanExpression) -> bool:
 	return false
 
 func is_implication() -> bool:
+	# Keep original implementation - implications are often wrapped in parentheses
+	# and get_implication_parts() handles proper parsing
 	return "→" in normalized_string
 
 func get_implication_parts() -> Dictionary:
@@ -393,3 +395,100 @@ func get_disjunction_parts() -> Dictionary:
 				}
 
 	return {"valid": false}
+
+func get_variables() -> Array:
+	# Extract all unique variables from the expression
+	var tokens = tokenize_expression()
+	var variables = []
+
+	for token in tokens:
+		# Check if token is a variable (not operator, not constant)
+		if token.length() > 0 and ((token[0] >= "A" and token[0] <= "Z") or (token[0] >= "a" and token[0] <= "z")):
+			if token not in ["TRUE", "FALSE", "true", "false"]:
+				if token not in variables:
+					variables.append(token)
+
+	variables.sort()
+	return variables
+
+func evaluate(variable_values: Dictionary) -> bool:
+	# Evaluate the expression with given variable assignments
+	# Returns true/false based on the boolean evaluation
+	if not is_valid:
+		push_warning("Cannot evaluate invalid expression")
+		return false
+
+	var eval_string = normalized_string
+
+	# Replace variables with TRUE/FALSE
+	for var_name in variable_values:
+		var value_str = "TRUE" if variable_values[var_name] else "FALSE"
+		# Use word boundaries to avoid partial replacements
+		# Replace whole words only
+		var regex = RegEx.new()
+		regex.compile("\\b" + var_name + "\\b")
+		eval_string = regex.sub(eval_string, value_str, true)
+
+	# Now evaluate the boolean expression
+	return _evaluate_boolean_string(eval_string)
+
+func _evaluate_boolean_string(expr: String) -> bool:
+	# Recursively evaluate a boolean expression string
+	expr = expr.strip_edges()
+
+	# Handle TRUE/FALSE constants
+	if expr == "TRUE" or expr == "true":
+		return true
+	if expr == "FALSE" or expr == "false":
+		return false
+
+	# Strip outer parentheses if present
+	if expr.begins_with("(") and expr.ends_with(")"):
+		var paren_count = 0
+		var can_strip = true
+		for i in range(1, expr.length() - 1):
+			if expr[i] == '(':
+				paren_count += 1
+			elif expr[i] == ')':
+				paren_count -= 1
+				if paren_count < 0:
+					can_strip = false
+					break
+		if can_strip and paren_count == 0:
+			expr = expr.substr(1, expr.length() - 2).strip_edges()
+
+	# Handle negation
+	if expr.begins_with("¬"):
+		var inner = expr.substr(1).strip_edges()
+		return not _evaluate_boolean_string(inner)
+
+	# Find top-level operator and evaluate
+	var operators_to_check = [
+		{"op": "↔", "eval": func(l, r): return l == r},
+		{"op": "→", "eval": func(l, r): return not l or r},
+		{"op": "⊕", "eval": func(l, r): return l != r},
+		{"op": "∨", "eval": func(l, r): return l or r},
+		{"op": "∧", "eval": func(l, r): return l and r}
+	]
+
+	for op_data in operators_to_check:
+		var op = op_data["op"]
+		var eval_func = op_data["eval"]
+
+		var paren_depth = 0
+		for i in range(expr.length()):
+			if expr[i] == '(':
+				paren_depth += 1
+			elif expr[i] == ')':
+				paren_depth -= 1
+			elif paren_depth == 0 and expr.substr(i, op.length()) == op:
+				var left_str = expr.substr(0, i).strip_edges()
+				var right_str = expr.substr(i + op.length()).strip_edges()
+				if not left_str.is_empty() and not right_str.is_empty():
+					var left_val = _evaluate_boolean_string(left_str)
+					var right_val = _evaluate_boolean_string(right_str)
+					return eval_func.call(left_val, right_val)
+
+	# If no operator found, this should be an atomic value (already handled above)
+	push_warning("Unable to evaluate expression: " + expr)
+	return false
