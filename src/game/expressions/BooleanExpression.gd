@@ -123,6 +123,37 @@ func is_valid_token(token: String) -> bool:
 
 	return false
 
+func _get_top_level_operator() -> String:
+	# Returns the main operator at parenthesis depth 0
+	# Checks operators in precedence order (lowest to highest): ↔, →, ⊕, ∨, ∧
+	# This ensures we identify the "top-level" operator that splits the expression
+
+	if not is_valid or normalized_string.is_empty():
+		return ""
+
+	# Check for each operator type, starting with lowest precedence
+	var operators_to_check = ["↔", "→", "⊕", "∨", "∧"]
+
+	for op in operators_to_check:
+		var paren_depth = 0
+		for i in range(normalized_string.length()):
+			var c = normalized_string[i]
+			if c == '(':
+				paren_depth += 1
+			elif c == ')':
+				paren_depth -= 1
+			elif paren_depth == 0:
+				# Check if we found this operator at depth 0
+				if normalized_string.substr(i, op.length()) == op:
+					return op
+
+	# Check for negation as top-level operator
+	if normalized_string.begins_with("¬"):
+		return "¬"
+
+	# No operator found - this is an atomic expression (variable or constant)
+	return ""
+
 func equals(other: BooleanExpression) -> bool:
 	if not is_valid or not other.is_valid:
 		return false
@@ -175,7 +206,7 @@ func get_implication_parts() -> Dictionary:
 	return {"valid": false}
 
 func is_biconditional() -> bool:
-	return "↔" in normalized_string
+	return _get_top_level_operator() == "↔"
 
 func get_biconditional_parts() -> Dictionary:
 	if not is_biconditional():
@@ -216,7 +247,7 @@ func get_biconditional_parts() -> Dictionary:
 	return {"valid": false}
 
 func is_xor() -> bool:
-	return "⊕" in normalized_string
+	return _get_top_level_operator() == "⊕"
 
 func get_xor_parts() -> Dictionary:
 	if not is_xor():
@@ -257,7 +288,7 @@ func get_xor_parts() -> Dictionary:
 	return {"valid": false}
 
 func is_conjunction() -> bool:
-	return "∧" in normalized_string
+	return _get_top_level_operator() == "∧"
 
 func get_conjunction_parts() -> Dictionary:
 	if not is_conjunction():
@@ -298,7 +329,7 @@ func get_conjunction_parts() -> Dictionary:
 	return {"valid": false}
 
 func is_disjunction() -> bool:
-	return "∨" in normalized_string
+	return _get_top_level_operator() == "∨"
 
 func get_disjunction_parts() -> Dictionary:
 	if not is_disjunction():
