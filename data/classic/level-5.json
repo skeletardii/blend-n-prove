@@ -9,7 +9,7 @@
         "R → T",
         "P"
       ],
-      "conclusion": "(S ∧ T)",
+      "conclusion": "S ∧ T",
       "expected_operations": 5,
       "description": "Complex branching chain",
       "solution": "Apply Modus Ponens to get \"Q ∧ R\", extract \"Q\" and \"R\", apply Modus Ponens to each to get \"S\" and \"T\", combine via Conjunction."
@@ -21,7 +21,7 @@
         "R → T",
         "P"
       ],
-      "conclusion": "(S ∧ T)",
+      "conclusion": "S ∧ T",
       "expected_operations": 4,
       "description": "Multi-branch convergence",
       "solution": "Apply Modus Ponens on \"P → (Q ∧ R)\" with \"P\" to get \"Q ∧ R\". Extract \"Q\" and \"R\" via Simplification. Apply Modus Ponens on \"Q → S\" to get \"S\" and on \"R → T\" to get \"T\". Finally, combine \"S\" and \"T\" via Conjunction."
@@ -55,7 +55,7 @@
         "¬Q ∨ ¬S",
         "P ∨ R"
       ],
-      "conclusion": "(¬P ∨ ¬R)",
+      "conclusion": "¬P ∨ ¬R",
       "expected_operations": 5,
       "description": "Complex Modus Tollens",
       "solution": "Extract the implications, use De Morgan's logic with \"¬Q ∨ ¬S\" to derive that at least one antecedent must be false."
@@ -79,7 +79,7 @@
         "P → R",
         "Q → S"
       ],
-      "conclusion": "(R ∧ S)",
+      "conclusion": "R ∧ S",
       "expected_operations": 5,
       "description": "Double negation + parallel inference",
       "solution": "Apply Double Negation to get \"P ∧ Q\", extract \"P\" and \"Q\", apply Modus Ponens to each to get \"R\" and \"S\", combine via Conjunction."
@@ -104,7 +104,7 @@
         "¬R → T",
         "¬T"
       ],
-      "conclusion": "(R ∧ S)",
+      "conclusion": "R ∧ S",
       "expected_operations": 5,
       "description": "Proof by contradiction",
       "solution": "Use Addition to get \"P ∨ Q\", apply Modus Ponens to get \"R ∧ S\". The premises about \"T\" help verify \"R\" must be true."
@@ -150,7 +150,7 @@
         "¬Q ∨ S",
         "¬R ∨ T"
       ],
-      "conclusion": "(S ∨ T)",
+      "conclusion": "S ∨ T",
       "expected_operations": 5,
       "description": "Advanced Resolution Chain",
       "solution": "Resolve \"P ∨ Q\" with \"¬P ∨ R\" to get \"Q ∨ R\", then with \"¬Q ∨ S\" to get \"R ∨ S\", finally with \"¬R ∨ T\" to get \"S ∨ T\"."

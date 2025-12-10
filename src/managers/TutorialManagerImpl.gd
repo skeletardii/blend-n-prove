@@ -5,13 +5,14 @@ signal tutorial_step_completed(step_index: int)
 var is_tutorial_mode: bool = false
 var current_step: int = 0
 var tutorial_steps: Array[String] = [
-	"Welcome to Boolean Logic Bartender! You'll learn formal logic by serving customers.",
-	"Phase 1: Look at the customer's order. You need to recreate their premises using ingredients.",
-	"Click the ingredient buttons (P, Q, operators) to build logical expressions.",
-	"Press 'Validate' when you've built a premise. It will be added to your tray.",
+	"Welcome! You'll learn formal logic through puzzles.",
+	"There are two types of problems:\n• Word Problems: Translate natural language to logic symbols (has Phase 1)\n• Direct Symbol Problems: Symbols already given, skip to Phase 2\n\nThis tutorial uses a Word Problem.",
+	"Phase 1 (Word Problems Only): Translate the natural language statements into logical notation.",
+	"Click the buttons (P, Q, operators) to build logical expressions that match the meaning of each sentence.",
+	"Press 'Validate' when you've built a premise. It will be added to your premises list.",
 	"Phase 2: Use inference rules to transform premises and reach the conclusion.",
 	"Select premises with checkboxes, then click an inference rule to apply it.",
-	"Complete all tutorials by serving your first customer successfully!"
+	"Complete the tutorial to finish your first puzzle!"
 ]
 
 var tutorial_overlay: Control = null

@@ -9,19 +9,21 @@
     {
       "customer_name": "Tutorial Guide",
       "customer_flavor": "Welcome! Let me show you how to solve logic puzzles.",
-      "required_premises_input": [
-        "P",
-        "Q"
+      "natural_language_premises": [
+        "If the cat is hungry (P), then it meows (Q).",
+        "The cat is hungry (P)."
       ],
-      "target_expression": "P∧Q",
-      "solution_steps": [
-        {
-          "rule": "CONJ",
-          "premises": ["P", "Q"],
-          "result": "P∧Q"
-        }
+      "hidden_logical_premises": ["P → Q", "P"],
+      "natural_language_conclusion": "The cat meows (Q).",
+      "hidden_logical_conclusion": "Q",
+      "expected_operations": 1,
+      "description": "Modus Ponens with natural language",
+      "solution": "Translate: P = 'The cat is hungry', Q = 'The cat meows'. Apply Modus Ponens: from \"P → Q\" and \"P\", conclude \"Q\".",
+      "interpretation_hints": [
+        "Identify the condition and what follows from it",
+        "The condition is met, so the consequence is true"
       ],
-      "hint": "Use the CONJ (Conjunction) rule to combine P and Q together.",
+      "hint": "First, translate the natural language statements into logical notation. Then use the Modus Ponens (MP) rule.",
       "tutorial_mode": true
     }
   ]

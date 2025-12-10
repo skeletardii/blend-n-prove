@@ -1,20 +1,19 @@
-[gd_scene load_steps=17 format=3 uid="uid://c5oyjk8p0w8x4"]
+[gd_scene load_steps=18 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
 [ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_occ7e"]
 [ext_resource type="Texture2D" uid="uid://uaewt5lwfaa6" path="res://assets/sprites/rocketsprite.png" id="3_rocketsprite"]
 [ext_resource type="Texture2D" uid="uid://b4vqkomx2ejnw" path="res://assets/sprites/spacebg.jpg" id="3_spacebg"]
-[ext_resource type="Script" uid="uid://6us7btkgp6wo" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
-[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="6_eptc2"]
-[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="7_d87rg"]
+[ext_resource type="Script" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
+[ext_resource type="FontFile" uid="uid://c12vraq60ixtj" path="res://assets/fonts/MuseoSansRounded500.otf" id="6_eptc2"]
 [ext_resource type="FontFile" uid="uid://bx0fmm2ck5w42" path="res://assets/fonts/MuseoSansRounded900.otf" id="8_gxw17"]
 
 [sub_resource type="Gradient" id="Gradient_flame"]
-colors = PackedColorArray(1, 0.9, 0.2, 1, 1, 0.4, 0.0, 0)
+colors = PackedColorArray(1, 0.9, 0.2, 1, 1, 0.4, 0, 0)
 
 [sub_resource type="Gradient" id="Gradient_smoke"]
-colors = PackedColorArray(1, 0.5, 0.0, 0.8, 0.5, 0.5, 0.5, 0)
+colors = PackedColorArray(1, 0.5, 0, 0.8, 0.5, 0.5, 0.5, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chat_bubble"]
 bg_color = Color(0, 0, 0, 0.7)
@@ -27,6 +26,17 @@ shadow_size = 8
 shadow_offset = Vector2(0, 4)
 
 [sub_resource type="Theme" id="Theme_gxw17"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_inventory"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.5, 0.5, 1)
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 5
+shadow_offset = Vector2(2, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_remote"]
 bg_color = Color(1, 1, 1, 1)
@@ -72,17 +82,6 @@ corner_radius_bottom_left = 12
 shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 3
 shadow_offset = Vector2(2, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_inventory"]
-bg_color = Color(1, 1, 1, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.5, 0.5, 0.5, 1)
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 5
-shadow_offset = Vector2(2, 3)
 
 [node name="Phase2UI" type="Control"]
 layout_mode = 3
@@ -174,7 +173,6 @@ position = Vector2(50, 95)
 amount = 80
 lifetime = 0.4
 randomness = 0.1
-local_coords = false
 direction = Vector2(0, 1)
 spread = 5.0
 gravity = Vector2(0, 0)
@@ -188,7 +186,6 @@ color_ramp = SubResource("Gradient_flame")
 show_behind_parent = true
 amount = 60
 lifetime = 0.5
-local_coords = false
 direction = Vector2(0, 1)
 spread = 8.0
 gravity = Vector2(-300, 0)
@@ -241,11 +238,11 @@ autowrap_mode = 3
 text_overrun_behavior = 3
 
 [node name="InventoryArea" type="Panel" parent="WorkContainer"]
-theme_override_styles/panel = SubResource("StyleBoxFlat_inventory")
 custom_minimum_size = Vector2(720, 1000)
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.6
+theme_override_styles/panel = SubResource("StyleBoxFlat_inventory")
 
 [node name="InventoryContainer" type="VBoxContainer" parent="WorkContainer/InventoryArea"]
 layout_mode = 1
@@ -646,37 +643,13 @@ horizontal_alignment = 2
 [node name="Sparkles" type="CPUParticles2D" parent="ComboContainer/ComboLabel"]
 position = Vector2(100, 35)
 emitting = false
-amount = 8
 lifetime = 1.5
-preprocess = 0.0
-speed_scale = 1.0
-explosiveness = 0.0
-randomness = 0.0
-lifetime_randomness = 0.0
-fixed_fps = 0
-fract_delta = true
 local_coords = true
-draw_order = 0
-texture = null
 emission_shape = 1
 emission_sphere_radius = 30.0
 direction = Vector2(0, 0)
 spread = 180.0
 gravity = Vector2(0, 0)
-initial_velocity_min = 0.0
-initial_velocity_max = 0.0
-angular_velocity_min = 0.0
-angular_velocity_max = 0.0
-linear_accel_min = 0.0
-linear_accel_max = 0.0
-radial_accel_min = 0.0
-radial_accel_max = 0.0
-tangential_accel_min = 0.0
-tangential_accel_max = 0.0
-damping_min = 0.0
-damping_max = 0.0
-angle_min = 0.0
-angle_max = 0.0
 scale_amount_min = 2.0
 scale_amount_max = 4.0
 color = Color(1, 1, 0, 0.8)
@@ -686,7 +659,6 @@ position = Vector2(100, 25)
 emitting = false
 amount = 20
 lifetime = 0.8
-local_coords = false
 emission_shape = 3
 emission_rect_extents = Vector2(30, 10)
 direction = Vector2(0, 1)
@@ -716,8 +688,8 @@ color = Color(1, 0.4, 0, 0.8)
 [node name="ComboLine" type="ProgressBar" parent="ComboContainer"]
 custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
-show_percentage = false
 value = 100.0
+show_percentage = false
 
 [node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]
 visible = false

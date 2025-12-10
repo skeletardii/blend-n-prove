@@ -151,7 +151,7 @@ func show_welcome_step() -> void:
 	var customer_area := find_node_by_path("CustomerArea")
 	if customer_area:
 		overlay.show_step(
-			"[b]Welcome to Logic Café![/b]\n\nYour job is to solve logic puzzles for customers. This customer wants you to prove [b]P∧Q[/b].\n\nLet's learn how!",
+			"[b]Welcome![/b]\n\nYou'll solve logic puzzles by translating statements into logical form and proving conclusions.\n\nYour goal is to prove: [b]The cat meows (Q)[/b]\n\nLet's learn how!",
 			customer_area,
 			Vector2.ZERO,
 			Vector2.DOWN,
@@ -184,7 +184,7 @@ func show_keyboard_basics_step() -> void:
 	var keyboard := find_node_by_path("VirtualKeyboard")
 	if keyboard:
 		overlay.show_step(
-			"[b]Virtual Keyboard[/b]\n\nUse these buttons to build logical expressions. The letters [b]P, Q, R, S, T[/b] are variables.\n\nFor this puzzle, you need to enter [b]P[/b] and [b]Q[/b] as separate premises.",
+			"[b]Virtual Keyboard[/b]\n\nUse these buttons to build logical expressions.\n\nGiven: \"If the cat is hungry (P), then it meows (Q).\"\n\nYou need to translate this to: [b]P → Q[/b]",
 			keyboard,
 			Vector2.ZERO,
 			Vector2.DOWN,
@@ -200,7 +200,7 @@ func show_operators_step() -> void:
 	var keyboard := find_node_by_path("VirtualKeyboard")
 	if keyboard:
 		overlay.show_step(
-			"[b]Logical Operators[/b]\n\n[b]∧[/b] = AND\n[b]∨[/b] = OR\n[b]→[/b] = Implies\n[b]¬[/b] = NOT\n\nYou'll use these later. For now, just type [b]P[/b].",
+			"[b]Logical Operators[/b]\n\n[b]∧[/b] = AND\n[b]∨[/b] = OR\n[b]→[/b] = Implies (\"If...then\")\n[b]¬[/b] = NOT\n\nFor \"If P then Q\", use the → operator: [b]P → Q[/b]",
 			keyboard,
 			Vector2.ZERO,
 			Vector2.DOWN,
@@ -216,7 +216,7 @@ func show_type_premise_step() -> void:
 	var keyboard := find_node_by_path("VirtualKeyboard")
 	if keyboard:
 		overlay.show_step(
-			"[b]Try it now![/b]\n\nClick the [b]P[/b] button on the keyboard to type your first premise.",
+			"[b]Try it now![/b]\n\nTranslate \"If the cat is hungry (P), then it meows (Q)\" into logical form.\n\nClick: [b]P → Q[/b]",
 			keyboard,
 			Vector2.ZERO,
 			Vector2.DOWN,
@@ -249,7 +249,7 @@ func show_complete_premises_step() -> void:
 	var keyboard := find_node_by_path("VirtualKeyboard")
 	if keyboard:
 		overlay.show_step(
-			"[b]Excellent![/b]\n\nYou entered your first premise. Now enter the second premise: [b]Q[/b].\n\nType [b]Q[/b] and submit it the same way.",
+			"[b]Excellent![/b]\n\nYou translated the first statement. Now translate the second: \"The cat is hungry (P)\".\n\nThis is just: [b]P[/b]",
 			keyboard,
 			Vector2.ZERO,
 			Vector2.DOWN,
@@ -267,7 +267,7 @@ func show_complete_premises_step() -> void:
 
 func show_phase2_intro_step() -> void:
 	overlay.show_step(
-		"[b]Phase 2: Transformation![/b]\n\nNow you have your premises [b]P[/b] and [b]Q[/b]. Your goal is to combine them to create [b]P∧Q[/b].\n\nLet's learn how to use logic rules!",
+		"[b]Phase 2: Transformation![/b]\n\nGreat! You translated both statements:\n• [b]P → Q[/b] (If hungry, then meows)\n• [b]P[/b] (The cat is hungry)\n\nNow use logic rules to prove: [b]Q[/b] (The cat meows)!",
 		null,
 		Vector2.ZERO,
 		Vector2.DOWN,
@@ -302,7 +302,7 @@ func show_rule_buttons_step() -> void:
 	if page_toggle:
 		var toggle_center := page_toggle.get_global_rect().get_center()
 		overlay.show_step(
-			"[b]Page Toggle[/b]\n\nThis button switches between Single and Double operations.\n\nThe [b]CONJ[/b] (Conjunction) rule is on the Double Operations page (shown by default).",
+			"[b]Page Toggle[/b]\n\nThis button switches between Single and Double operations.\n\nThe [b]MP[/b] (Modus Ponens) rule is on the Double Operations page (shown by default).",
 			page_toggle,
 			toggle_center + Vector2(-100, 0),
 			Vector2.RIGHT,
@@ -319,7 +319,7 @@ func show_page_toggle_step() -> void:
 	var rule_panel := find_node_by_path("RuleButtonsContainer")
 	if rule_panel:
 		overlay.show_step(
-			"[b]Select Operation First[/b]\n\nClick the [b]CONJ[/b] button to select this operation. It combines two premises with AND (∧).\n\n[i]Important: Always select the operation BEFORE selecting premises![/i]",
+			"[b]Select Operation First[/b]\n\nClick the [b]MP[/b] button to select this operation. Modus Ponens: from \"P → Q\" and \"P\", conclude \"Q\".\n\n[i]Important: Always select the operation BEFORE selecting premises![/i]",
 			rule_panel,
 			Vector2.ZERO,
 			Vector2.DOWN,
@@ -336,7 +336,7 @@ func show_apply_rule_step() -> void:
 	var premise_inventory := find_node_by_path("PremiseInventory")
 	if premise_inventory:
 		overlay.show_step(
-			"[b]Now Select Premises[/b]\n\nAfter clicking CONJ, select your premises:\n\n1. Click [b]P[/b]\n2. Click [b]Q[/b]\n\nThe rule will apply automatically when you have both premises selected!",
+			"[b]Now Select Premises[/b]\n\nAfter clicking MP (Modus Ponens), select:\n\n1. [b]P → Q[/b]\n2. [b]P[/b]\n\nThe rule will automatically conclude [b]Q[/b]!",
 			premise_inventory,
 			Vector2.ZERO,
 			Vector2.DOWN,
@@ -372,7 +372,7 @@ func show_reach_target_step() -> void:
 		return
 
 	overlay.show_step(
-		"[b]Almost there![/b]\n\nApply the CONJ rule to [b]P[/b] and [b]Q[/b] to create [b]P∧Q[/b] and complete the puzzle!",
+		"[b]Almost there![/b]\n\nApply the MP (Modus Ponens) rule to prove that the cat meows!\n\nSelect [b]P → Q[/b] and [b]P[/b] to conclude [b]Q[/b].",
 		null,
 		Vector2.ZERO,
 		Vector2.DOWN,

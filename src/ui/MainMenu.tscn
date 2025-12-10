@@ -137,6 +137,17 @@ text = "PLAY GAME"
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
+[node name="HowToPlayButton" type="Button" parent="MenuContainer"]
+custom_minimum_size = Vector2(400, 70)
+layout_mode = 2
+theme = ExtResource("5_u6542")
+theme_override_font_sizes/font_size = 24
+text = "HOW TO PLAY"
+
+[node name="Spacer2b" type="Control" parent="MenuContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
 [node name="DebugButton" type="Button" parent="MenuContainer"]
 visible = false
 custom_minimum_size = Vector2(400, 70)

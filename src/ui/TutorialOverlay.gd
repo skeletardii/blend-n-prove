@@ -104,8 +104,8 @@ func calculate_panel_position(viewport_size: Vector2, highlight: Control) -> Vec
 			elif highlight_top - explanation_panel.size.y - 20.0 > 0:
 				panel_y = highlight_top - explanation_panel.size.y - 20.0
 	else:
-		# No highlight - use center position
-		panel_y = (viewport_size.y - explanation_panel.size.y) / 2.0 - 50.0
+		# No highlight - position at top to avoid blocking lower buttons
+		panel_y = 50.0
 
 	return Vector2(panel_x, panel_y)
 

@@ -386,12 +386,29 @@ func generate_new_customer() -> void:
 
 	# Special handling for first-time tutorial
 	if GameManager.is_first_time_tutorial:
-		# Create a simple tutorial problem: prove P∧Q from premises P and Q
-		var tutorial_premises: Array[String] = ["P", "Q"]
-		var tutorial_target: String = "P∧Q"
+		# Word problem: Cat meowing example (Modus Ponens)
+		var tutorial_nl_premises: Array[String] = [
+			"If the cat is hungry (P), then it meows (Q).",
+			"The cat is hungry (P)."
+		]
+		var tutorial_logical_premises: Array[String] = ["P → Q", "P"]
+		var tutorial_nl_conclusion: String = "The cat meows (Q)."
+		var tutorial_logical_conclusion: String = "Q"
 		var tutorial_patience: float = 999999.0  # Infinite time
-		current_customer = GameManagerTypes.CustomerData.new("Tutorial Guide", tutorial_premises, tutorial_target, tutorial_patience, "")
-		print("Loaded first-time tutorial problem")
+		var tutorial_solution: String = "Translate: P = 'The cat is hungry', Q = 'The cat meows'. Apply Modus Ponens."
+
+		current_customer = GameManagerTypes.CustomerData.new(
+			"Tutorial Guide",
+			tutorial_logical_premises,
+			tutorial_logical_conclusion,
+			tutorial_patience,
+			tutorial_solution
+		)
+
+		# CRITICAL: Set natural language data to enable Phase 1
+		current_customer.set_natural_language_data(tutorial_nl_premises, tutorial_nl_conclusion)
+
+		print("Loaded first-time tutorial word problem")
 
 	# Check if we're in regular tutorial mode
 	elif GameManager.tutorial_mode:

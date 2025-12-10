@@ -18,7 +18,7 @@
         "P ∧ Q",
         "R"
       ],
-      "conclusion": "(P ∧ R)",
+      "conclusion": "P ∧ R",
       "expected_operations": 2,
       "description": "Simplification + Conjunction",
       "solution": "Apply Simplification to extract \"P\" from \"P ∧ Q\", then Conjunction to combine \"P\" and \"R\"."
@@ -58,7 +58,7 @@
         "¬(P ∨ Q)",
         "R → S"
       ],
-      "conclusion": "(¬P ∧ ¬Q)",
+      "conclusion": "¬P ∧ ¬Q",
       "expected_operations": 1,
       "description": "De Morgan's Law with unused premise",
       "solution": "Apply De Morgan's Law to \"¬(P ∨ Q)\" to get \"(¬P ∧ ¬Q)\". The premise \"R → S\" is not needed."
@@ -100,7 +100,7 @@
         "P ∨ (Q ∧ R)",
         "¬P"
       ],
-      "conclusion": "(Q ∧ R)",
+      "conclusion": "Q ∧ R",
       "expected_operations": 1,
       "description": "Disjunctive Syllogism",
       "solution": "Apply Disjunctive Syllogism: from \"P ∨ (Q ∧ R)\" and \"¬P\", conclude \"(Q ∧ R)\"."
@@ -127,7 +127,7 @@
       "premises": [
         "P → Q"
       ],
-      "conclusion": "(¬P ∨ Q)",
+      "conclusion": "¬P ∨ Q",
       "expected_operations": 1,
       "description": "Implication Conversion",
       "solution": "Apply Implication Conversion (IMP) to convert \"P → Q\" into its equivalent disjunctive form \"(¬P ∨ Q)\"."
@@ -136,7 +136,7 @@
       "premises": [
         "P → Q"
       ],
-      "conclusion": "(¬Q → ¬P)",
+      "conclusion": "¬Q → ¬P",
       "expected_operations": 1,
       "description": "Contrapositive",
       "solution": "Apply Contrapositive transformation (CONV): \"P → Q\" is logically equivalent to \"(¬Q → ¬P)\"."
@@ -146,7 +146,7 @@
         "P ∨ Q",
         "¬P ∨ R"
       ],
-      "conclusion": "(Q ∨ R)",
+      "conclusion": "Q ∨ R",
       "expected_operations": 2,
       "description": "Resolution",
       "solution": "Apply Resolution: from \"P ∨ Q\" and \"¬P ∨ R\", resolve on P to get \"(Q ∨ R)\"."
@@ -156,7 +156,7 @@
         "P ∨ (P ∧ Q)",
         "R"
       ],
-      "conclusion": "(P ∧ R)",
+      "conclusion": "P ∧ R",
       "expected_operations": 2,
       "description": "Absorption + Conjunction",
       "solution": "Apply Absorption to simplify \"P ∨ (P ∧ Q)\" to \"P\", then Conjunction with \"R\" to get \"(P ∧ R)\"."
@@ -166,7 +166,7 @@
         "P ∧ (Q ∨ R)",
         "¬Q"
       ],
-      "conclusion": "(P ∧ R)",
+      "conclusion": "P ∧ R",
       "expected_operations": 2,
       "description": "Simplification + Disjunctive Syllogism + Conjunction",
       "solution": "Apply Simplification to extract \"P\" and \"Q ∨ R\", then Disjunctive Syllogism with \"¬Q\" to get \"R\", finally Conjunction to combine \"P\" and \"R\"."
@@ -197,7 +197,7 @@
         "R ∧ (R ∨ S)",
         "T"
       ],
-      "conclusion": "(R ∧ T)",
+      "conclusion": "R ∧ T",
       "expected_operations": 2,
       "description": "Absorption + Conjunction",
       "solution": "Apply Absorption to simplify \"R ∧ (R ∨ S)\" to \"R\", then Conjunction with \"T\" to get \"R ∧ T\"."

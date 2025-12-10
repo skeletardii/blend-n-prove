@@ -19,7 +19,7 @@
         "P ∧ Q",
         "R ∧ S"
       ],
-      "conclusion": "(P ∧ R)",
+      "conclusion": "P ∧ R",
       "expected_operations": 3,
       "description": "Multiple Simplifications + Conjunction",
       "solution": "Apply Simplification to extract \"P\" from \"P ∧ Q\" and \"R\" from \"R ∧ S\", then Conjunction to combine them."
@@ -94,7 +94,7 @@
       "premises": [
         "¬¬P ∧ ¬¬Q"
       ],
-      "conclusion": "(P ∧ Q)",
+      "conclusion": "P ∧ Q",
       "expected_operations": 5,
       "description": "Simplifications + Double Negations + Conjunction",
       "solution": "Apply Simplification to extract \"¬¬P\", then Simplification again to extract \"¬¬Q\", then Double Negation on each to get \"P\" and \"Q\", finally Conjunction to combine them."
@@ -104,7 +104,7 @@
         "(P ∨ Q) ∧ R",
         "¬P"
       ],
-      "conclusion": "(Q ∧ R)",
+      "conclusion": "Q ∧ R",
       "expected_operations": 4,
       "description": "Double Simplification + Disj Syll + Conjunction",
       "solution": "Apply Simplification twice: first to extract \"P ∨ Q\", then to extract \"R\". Apply Disjunctive Syllogism with \"¬P\" to get \"Q\", then Conjunction to combine \"Q\" and \"R\"."
@@ -170,7 +170,7 @@
       "premises": [
         "¬((P ∧ Q) ∨ (R ∧ S))"
       ],
-      "conclusion": "(¬P ∨ ¬Q)",
+      "conclusion": "¬P ∨ ¬Q",
       "expected_operations": 3,
       "description": "Complex De Morgan's",
       "solution": "Apply De Morgan's to get \"¬(P ∧ Q) ∧ ¬(R ∧ S)\", then Simplification to extract \"¬(P ∧ Q)\", then De Morgan's again to get \"¬P ∨ ¬Q\"."

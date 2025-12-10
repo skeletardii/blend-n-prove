@@ -19,7 +19,7 @@
         "¬(P ∨ Q)",
         "R ∧ S"
       ],
-      "conclusion": "(¬P ∧ S)",
+      "conclusion": "¬P ∧ S",
       "expected_operations": 4,
       "description": "De Morgan's + Simplification + Conjunction",
       "solution": "Apply De Morgan's to get \"¬P ∧ ¬Q\", extract \"¬P\", extract \"S\" from \"R ∧ S\", then combine with Conjunction."
@@ -31,7 +31,7 @@
         "S ∨ T",
         "¬S"
       ],
-      "conclusion": "(Q ∧ T)",
+      "conclusion": "Q ∧ T",
       "expected_operations": 4,
       "description": "Multiple Disjunctive Syllogisms",
       "solution": "Apply Disjunctive Syllogism twice: get \"Q ∧ R\" and \"T\", then extract \"Q\" and combine with \"T\" via Conjunction."
@@ -89,7 +89,7 @@
         "¬P",
         "¬R"
       ],
-      "conclusion": "(Q ∧ S)",
+      "conclusion": "Q ∧ S",
       "expected_operations": 4,
       "description": "Multiple simplifications + syllogisms",
       "solution": "Extract \"P ∨ Q\" and \"R ∨ S\" via Simplification, then apply Disjunctive Syllogism twice to get \"Q\" and \"S\", combine via Conjunction."
@@ -110,7 +110,7 @@
       "premises": [
         "¬(P ∨ Q) ∧ ¬(R ∨ S)"
       ],
-      "conclusion": "(¬P ∧ ¬R)",
+      "conclusion": "¬P ∧ ¬R",
       "expected_operations": 4,
       "description": "Complex De Morgan's + Simplifications",
       "solution": "Apply Simplification to separate conjuncts, then De Morgan's on each to get \"¬P ∧ ¬Q\" and \"¬R ∧ ¬S\", extract \"¬P\" and \"¬R\", combine via Conjunction."
@@ -120,7 +120,7 @@
         "(P → Q) ∧ (R → S)",
         "¬Q ∨ ¬S"
       ],
-      "conclusion": "(¬P ∨ ¬R)",
+      "conclusion": "¬P ∨ ¬R",
       "expected_operations": 1,
       "description": "Destructive Dilemma",
       "solution": "Apply Destructive Dilemma (DN) with premises \"(P → Q) ∧ (R → S)\" and \"¬Q ∨ ¬S\" to directly conclude \"¬P ∨ ¬R\"."
@@ -162,7 +162,7 @@
         "¬P ∨ R",
         "¬Q ∨ S"
       ],
-      "conclusion": "(R ∨ S)",
+      "conclusion": "R ∨ S",
       "expected_operations": 4,
       "description": "Multiple Resolution",
       "solution": "Apply Resolution on \"P ∨ Q\" and \"¬P ∨ R\" to get \"Q ∨ R\", then Resolution with \"¬Q ∨ S\" to get \"R ∨ S\"."
@@ -173,7 +173,7 @@
         "¬Q",
         "R → S"
       ],
-      "conclusion": "(P ∧ S)",
+      "conclusion": "P ∧ S",
       "expected_operations": 4,
       "description": "Distributivity + Disjunctive Syllogism + Modus Ponens",
       "solution": "Use Distributivity or extract components: get \"P\" and \"Q ∨ R\", apply Disjunctive Syllogism to get \"R\", Modus Ponens to get \"S\", then Conjunction."
@@ -185,7 +185,7 @@
         "Q → S",
         "R → T"
       ],
-      "conclusion": "(S ∧ T)",
+      "conclusion": "S ∧ T",
       "expected_operations": 4,
       "description": "Disjunctive Syllogism with Parallel Inferences",
       "solution": "Apply Disjunctive Syllogism to get \"Q ∧ R\", then Simplification twice to extract \"Q\" and \"R\", apply Modus Ponens on each to get \"S\" and \"T\", finally Conjunction to combine them."
@@ -218,7 +218,7 @@
         "P ⊕ Q",
         "¬P"
       ],
-      "conclusion": "(Q ∧ ¬P)",
+      "conclusion": "Q ∧ ¬P",
       "expected_operations": 4,
       "description": "XOR with Negation",
       "solution": "Expand \"P ⊕ Q\" to \"(P ∨ Q) ∧ ¬(P ∧ Q)\", use \"¬P\" with Disjunctive Syllogism to get \"Q\", then Conjunction with \"¬P\"."

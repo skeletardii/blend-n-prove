@@ -11,6 +11,7 @@ extends Control
 @onready var mute_check: CheckBox = $SettingsPanel/SettingsContainer/MuteCheck
 @onready var difficulty_mode_option: OptionButton = $SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption
 @onready var play_button: Button = $MenuContainer/PlayButton
+@onready var how_to_play_button: Button = $MenuContainer/HowToPlayButton
 @onready var progress_button: Button = $MenuContainer/ProgressButton
 @onready var grid_button: Button = $MenuContainer/GridButton
 @onready var leaderboard_button: Button = $MenuContainer/LeaderboardButton
@@ -45,6 +46,10 @@ func _ready() -> void:
 		print("Play button connected!")
 	else:
 		print("Play button already connected")
+
+	if not how_to_play_button.pressed.is_connected(_on_how_to_play_button_pressed):
+		how_to_play_button.pressed.connect(_on_how_to_play_button_pressed)
+		print("How to Play button connected!")
 
 	if not progress_button.pressed.is_connected(_on_progress_button_pressed):
 		progress_button.pressed.connect(_on_progress_button_pressed)
@@ -158,6 +163,15 @@ func _on_logic_test_button_pressed() -> void:
 func _on_integration_test_button_pressed() -> void:
 	AudioManager.play_button_click()
 	GameManager.run_integration_test()
+
+func _on_how_to_play_button_pressed() -> void:
+	AudioManager.play_button_click()
+
+	# Start first-time tutorial mode in GameManager
+	GameManager.start_first_time_tutorial()
+
+	# Load gameplay scene with tutorial
+	SceneManager.change_scene("res://src/scenes/GameplayScene.tscn")
 
 func _on_launch_tutorial_button_pressed() -> void:
 	AudioManager.play_button_click()
