@@ -1,9 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://b0ebagu0ts5p1"]
+[gd_scene load_steps=8 format=3 uid="uid://b0ebagu0ts5p1"]
 
 [ext_resource type="Script" uid="uid://csubga53p2pr4" path="res://src/ui/Phase1UI.gd" id="1_phase1"]
-[ext_resource type="Texture2D" uid="uid://5s07bsbpboi0" path="res://assets/sprites/Phase1UIMockup.png" id="2_tgfdk"]
-[ext_resource type="FontFile" uid="uid://cahxlss4eyd70" path="res://assets/fonts/MuseoSansRounded500.otf" id="4_museo500"]
-[ext_resource type="FontFile" uid="uid://bdpcbypqk7uop" path="res://assets/fonts/MuseoSansRounded700.otf" id="5_o5hkq"]
+[ext_resource type="FontFile" uid="uid://c12vraq60ixtj" path="res://assets/fonts/MuseoSansRounded500.otf" id="4_museo500"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="6_wbgmg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Card"]
@@ -19,14 +17,13 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Header"]
+content_margin_top = 15.0
+content_margin_bottom = 15.0
 bg_color = Color(0.9, 0.9, 0.9, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
-content_margin_top = 15.0
-content_margin_bottom = 15.0
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_Divider"]
-color = Color(0, 0, 0, 1)
 thickness = 2
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qjtox"]
@@ -119,16 +116,13 @@ grow_horizontal = 2
 grow_vertical = 0
 value = 100.0
 
+[node name="RocketSpacer" type="Control" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+
 [node name="CustomerArea" type="Control" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 520)
 layout_mode = 2
-
-[node name="CustomerCharacter" type="Control" parent="MainContainer/CustomerArea"]
-anchors_preset = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 140.0
-offset_bottom = 180.0
 
 [node name="CardArea" type="Control" parent="MainContainer/CustomerArea"]
 layout_mode = 1
@@ -205,6 +199,14 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
+[node name="TipLabel" type="Label" parent="MainContainer/CustomerArea/CardArea/Card/MainLayout"]
+layout_mode = 2
+theme = ExtResource("6_wbgmg")
+theme_override_colors/font_color = Color(0, 0, 0, 0.4)
+theme_override_font_sizes/font_size = 24
+text = "(press card to flip)"
+horizontal_alignment = 2
+
 [node name="InputSystem" type="Control" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
@@ -216,10 +218,10 @@ anchor_left = 0.501
 anchor_top = 0.162
 anchor_right = 0.501
 anchor_bottom = 0.162
-offset_left = -295.68
-offset_top = 8.04
-offset_right = 291.32
-offset_bottom = 124.04
+offset_left = -300.71
+offset_top = 32.899986
+offset_right = 286.29
+offset_bottom = 148.89998
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -245,10 +247,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 87.0
-offset_top = 14.0
-offset_right = -79.0
-offset_bottom = 17.0
+offset_left = 74.0
+offset_top = 41.0
+offset_right = -92.0
+offset_bottom = 44.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_wbgmg")
@@ -271,9 +273,10 @@ layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.501
 anchor_right = 0.501
-offset_left = -232.68
-offset_right = 232.32
-offset_bottom = 91.0
+offset_left = -235.70999
+offset_top = 105.0
+offset_right = 229.29001
+offset_bottom = 196.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -327,10 +330,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -194.0
-offset_top = 98.0
-offset_right = 188.0
-offset_bottom = 193.0
+offset_left = -191.0
+offset_top = 211.0
+offset_right = 191.0
+offset_bottom = 306.0
 grow_horizontal = 2
 
 [node name="AndButton" type="Button" parent="MainContainer/VirtualKeyboard/OperatorRow"]
@@ -374,10 +377,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -227.0
-offset_top = 197.0
-offset_right = 228.0
-offset_bottom = 292.0
+offset_left = -222.0
+offset_top = 320.0
+offset_right = 233.0
+offset_bottom = 415.0
 grow_horizontal = 2
 
 [node name="ImpliesButton" type="Button" parent="MainContainer/VirtualKeyboard/MixedRow"]
@@ -437,9 +440,9 @@ anchor_top = 2.467
 anchor_right = 0.5
 anchor_bottom = 2.467
 offset_left = -351.0
-offset_top = -102.02
+offset_top = 19.979996
 offset_right = 355.0
-offset_bottom = -11.02
+offset_bottom = 110.979996
 grow_horizontal = 2
 
 [node name="ClearButton" type="Button" parent="MainContainer/ActionButtons/ButtonContainer"]
