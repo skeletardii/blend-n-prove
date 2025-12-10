@@ -38,7 +38,14 @@ func create_expression(expr_string: String) -> BooleanExpression:
 func create_negation_expression(expr: BooleanExpression) -> BooleanExpression:
 	if not expr.is_valid:
 		return BooleanExpression.new("")
-	var negated = "¬" + expr.normalized_string
+
+	var expr_str = expr.normalized_string
+
+	# If expression has operators, wrap in parentheses to avoid ambiguity
+	if _has_operator(expr_str) and not (expr_str.begins_with("(") and expr_str.ends_with(")")):
+		expr_str = "(" + expr_str + ")"
+
+	var negated = "¬" + expr_str
 	return BooleanExpression.new(negated)
 
 func create_conjunction_expression(left: BooleanExpression, right: BooleanExpression) -> BooleanExpression:
@@ -766,39 +773,39 @@ func apply_absorption(premise: BooleanExpression) -> BooleanExpression:
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
-	if premise.is_conjunction():
-		var parts = premise.get_conjunction_parts()
-		if parts.get("valid", false):
-			var left = parts.get("left") as BooleanExpression
-			var right = parts.get("right") as BooleanExpression
+	# Try disjunction form FIRST: P ∨ (P ∧ Q) → P
+	var disj_parts = premise.get_disjunction_parts()
+	if disj_parts.get("valid", false):
+		var left = disj_parts.get("left") as BooleanExpression
+		var right = disj_parts.get("right") as BooleanExpression
 
-			if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
-				var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
-				var inner_expr = BooleanExpression.new(inner)
+		if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
+			var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
+			var inner_expr = BooleanExpression.new(inner)
 
-				if inner_expr.is_disjunction():
-					var disj_parts = inner_expr.get_disjunction_parts()
-					if disj_parts.get("valid", false):
-						var inner_left = disj_parts.get("left") as BooleanExpression
-						if left.equals(inner_left):
-							return left
+			if inner_expr.is_conjunction():
+				var conj_parts = inner_expr.get_conjunction_parts()
+				if conj_parts.get("valid", false):
+					var inner_left = conj_parts.get("left") as BooleanExpression
+					if left.equals(inner_left):
+						return left
 
-	elif premise.is_disjunction():
-		var parts = premise.get_disjunction_parts()
-		if parts.get("valid", false):
-			var left = parts.get("left") as BooleanExpression
-			var right = parts.get("right") as BooleanExpression
+	# Try conjunction form SECOND: P ∧ (P ∨ Q) → P
+	var conj_parts = premise.get_conjunction_parts()
+	if conj_parts.get("valid", false):
+		var left = conj_parts.get("left") as BooleanExpression
+		var right = conj_parts.get("right") as BooleanExpression
 
-			if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
-				var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
-				var inner_expr = BooleanExpression.new(inner)
+		if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
+			var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
+			var inner_expr = BooleanExpression.new(inner)
 
-				if inner_expr.is_conjunction():
-					var conj_parts = inner_expr.get_conjunction_parts()
-					if conj_parts.get("valid", false):
-						var inner_left = conj_parts.get("left") as BooleanExpression
-						if left.equals(inner_left):
-							return left
+			if inner_expr.is_disjunction():
+				var disj_inner_parts = inner_expr.get_disjunction_parts()
+				if disj_inner_parts.get("valid", false):
+					var inner_left = disj_inner_parts.get("left") as BooleanExpression
+					if left.equals(inner_left):
+						return left
 
 	return BooleanExpression.new("")
 
@@ -1227,10 +1234,19 @@ func test_logic_engine() -> bool:
 	var abs_test = create_expression("A ∧ (A ∨ B)")
 	var abs_result = apply_absorption(abs_test)
 	if abs_result.is_valid and abs_result.normalized_string == "A":
-		print("✓ Absorption test passed")
+		print("✓ Absorption (conjunction) test passed")
 		tests_passed += 1
 	else:
-		print("✗ Absorption test failed")
+		print("✗ Absorption (conjunction) test failed")
+
+	tests_total += 1
+	var abs_test_disj = create_expression("P ∨ (P ∧ Q)")
+	var abs_result_disj = apply_absorption(abs_test_disj)
+	if abs_result_disj.is_valid and abs_result_disj.normalized_string == "P":
+		print("✓ Absorption (disjunction) test passed")
+		tests_passed += 1
+	else:
+		print("✗ Absorption (disjunction) test failed")
 
 	tests_total += 1
 	var neg_test = create_expression("P ∧ ¬P")

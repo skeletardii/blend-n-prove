@@ -162,7 +162,32 @@ func equals(other: BooleanExpression) -> bool:
 func is_negation_of(other: BooleanExpression) -> bool:
 	if not is_valid or not other.is_valid:
 		return false
-	return (normalized_string.begins_with("¬") and normalized_string.substr(1).strip_edges() == other.normalized_string) or (other.normalized_string.begins_with("¬") and other.normalized_string.substr(1).strip_edges() == normalized_string)
+
+	# Check if this is ¬other
+	if normalized_string.begins_with("¬"):
+		var inner = normalized_string.substr(1).strip_edges()
+		# Strip outer parens if present
+		if inner.begins_with("(") and inner.ends_with(")"):
+			var stripped = inner.substr(1, inner.length() - 2).strip_edges()
+			if stripped == other.normalized_string:
+				return true
+		# Also check without stripping parens
+		if inner == other.normalized_string:
+			return true
+
+	# Check if other is ¬this
+	if other.normalized_string.begins_with("¬"):
+		var other_inner = other.normalized_string.substr(1).strip_edges()
+		# Strip outer parens if present
+		if other_inner.begins_with("(") and other_inner.ends_with(")"):
+			var stripped = other_inner.substr(1, other_inner.length() - 2).strip_edges()
+			if stripped == normalized_string:
+				return true
+		# Also check without stripping parens
+		if other_inner == normalized_string:
+			return true
+
+	return false
 
 func is_implication() -> bool:
 	return "→" in normalized_string
