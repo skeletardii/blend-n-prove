@@ -238,3 +238,4 @@ func transition_to_high_score_entry() -> void:
 	# Transition to high score entry scene
 	await get_tree().create_timer(0.3).timeout
 	SceneManager.change_scene("res://src/ui/HighScoreEntryScene.tscn")
+

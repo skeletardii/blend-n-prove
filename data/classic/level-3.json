@@ -206,6 +206,13 @@
       "expected_operations": 3,
       "description": "Chain of three implications with Modus Ponens",
       "solution": "Translate: P = 'Coffee is hot', Q = 'Freshly brewed', R = 'Tastes good', S = 'Customers return', T = 'Shop crowded'. Chain conditionals using Hypothetical Syllogism twice to get P → S, then apply Modus Ponens with P to conclude S.",
+      "variable_definitions": {
+        "P": "the coffee is hot",
+        "Q": "it is freshly brewed",
+        "R": "it tastes good",
+        "S": "customers return",
+        "T": "the shop is crowded"
+      },
       "interpretation_hints": [
         "Build a complete chain through three steps",
         "Apply the known fact through the entire chain",
@@ -232,6 +239,13 @@
       "expected_operations": 3,
       "description": "XOR with two-step implication chain",
       "solution": "Translate: P = 'Package arrived', Q = 'Package lost', R = 'Start assembly', S = 'Project on schedule', T = 'Budget approved'. From XOR P ⊕ Q and ¬Q, deduce P. Chain P → R and R → S to get P → S, then apply Modus Ponens to conclude S.",
+      "variable_definitions": {
+        "P": "the package arrived",
+        "Q": "it is lost",
+        "R": "we can start assembly",
+        "S": "the project is on schedule",
+        "T": "the budget is approved"
+      },
       "interpretation_hints": [
         "Use the exclusivity to determine which option is true",
         "Then follow the chain of implications",
@@ -258,6 +272,13 @@
       "expected_operations": 3,
       "description": "Conjunction leading to compound antecedent",
       "solution": "Translate: P = 'Flour', Q = 'Sugar', R = 'Cake rises', S = 'Cake fluffy', T = 'Correct temp'. Apply Conjunction to P and Q to get P ∧ Q. Apply Modus Ponens to (P ∧ Q) → R to get R. Apply Modus Ponens to R → S to get S.",
+      "variable_definitions": {
+        "P": "the recipe calls for flour",
+        "Q": "the recipe calls for sugar",
+        "R": "the cake will rise",
+        "S": "it will be fluffy",
+        "T": "the oven temperature is correct"
+      },
       "interpretation_hints": [
         "Combine premises to satisfy compound antecedent",
         "Follow the chain through multiple steps"
@@ -283,6 +304,13 @@
       "expected_operations": 2,
       "description": "Constructive Dilemma branch selection",
       "solution": "Translate: P = 'Work overtime', Q = 'Miss deadline', R = 'Team exhausted', S = 'Clients angry', T = 'Budget limited'. Since P is true, apply Modus Ponens to P → R to get R.",
+      "variable_definitions": {
+        "P": "we work overtime",
+        "Q": "we miss the deadline",
+        "R": "the team is exhausted",
+        "S": "clients are angry",
+        "T": "the project budget is limited"
+      },
       "interpretation_hints": [
         "When one branch of a dilemma is true, follow that path",
         "Apply the corresponding conditional"
@@ -308,6 +336,13 @@
       "expected_operations": 3,
       "description": "Disjunctive Syllogism with chain",
       "solution": "Translate: P = 'Email received', Q = 'Email lost', R = 'In inbox', S = 'Email read', T = 'Notifications on'. From P ∨ Q and ¬Q, deduce P. Apply Modus Ponens to P → R to get R. Apply Modus Ponens to R → S to get S.",
+      "variable_definitions": {
+        "P": "the email was received",
+        "Q": "it was lost",
+        "R": "it is in the inbox",
+        "S": "it was read",
+        "T": "the inbox has notifications enabled"
+      },
       "interpretation_hints": [
         "Eliminate one option from the disjunction",
         "Use the result to start a chain"
@@ -333,6 +368,14 @@
       "expected_operations": 3,
       "description": "Compound consequent with selective path",
       "solution": "Translate: P = 'Server running', Q = 'Website online', R = 'Database accessible', S = 'Browse products', T = 'Inventory updated', U = 'Connection stable'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Extract Q using Simplification. Apply Modus Ponens to Q → S to get S.",
+      "variable_definitions": {
+        "P": "the server is running",
+        "Q": "the website is online",
+        "R": "the database is accessible",
+        "S": "users can browse products",
+        "T": "inventory is updated",
+        "U": "the internet connection is stable"
+      },
       "interpretation_hints": [
         "Extract the needed component from compound result",
         "Follow one path from the compound structure",
@@ -357,6 +400,12 @@
       "expected_operations": 2,
       "description": "Backward chain with Modus Tollens",
       "solution": "Translate: P = 'Alarm set', Q = 'Wake on time', R = 'Have breakfast', S = 'Have energy'. Apply Modus Tollens to P → Q and ¬Q to get ¬P.",
+      "variable_definitions": {
+        "P": "the alarm is set",
+        "Q": "we wake up on time",
+        "R": "we have breakfast",
+        "S": "we have energy"
+      },
       "interpretation_hints": [
         "Work backwards from a false consequence",
         "Use Modus Tollens to trace back the chain"
@@ -384,6 +433,14 @@
       "expected_operations": 3,
       "description": "Disjunctive Syllogism with three-step chain",
       "solution": "Translate: P = 'Promotion active', Q = 'Promotion expired', R = 'Discount applies', S = 'Save money', T = 'Satisfied', U = 'Membership card'. From P ∨ Q and ¬Q, deduce P. Chain P → R → S → T using Hypothetical Syllogism to get P → T, then apply Modus Ponens with P to get T.",
+      "variable_definitions": {
+        "P": "the promotion is active",
+        "Q": "it has expired",
+        "R": "the discount applies",
+        "S": "the customer saves money",
+        "T": "they are satisfied",
+        "U": "the customer has a membership card"
+      },
       "interpretation_hints": [
         "Determine truth from the disjunction",
         "Build a complete chain of consequences"
@@ -411,6 +468,14 @@
       "expected_operations": 3,
       "description": "Four-step implication chain",
       "solution": "Translate: P = 'Meeting important', Q = 'Needs prep', R = 'Need agenda', S = 'Document created', T = 'Shared with attendees', U = 'Room available'. Chain all four conditionals: P → Q → R → S → T. Apply Hypothetical Syllogism three times to build P → T, then apply Modus Ponens with P to get T.",
+      "variable_definitions": {
+        "P": "the meeting is important",
+        "Q": "it requires preparation",
+        "R": "we need an agenda",
+        "S": "a document is created",
+        "T": "it is shared with attendees",
+        "U": "the conference room is available"
+      },
       "interpretation_hints": [
         "Build the entire chain step-by-step",
         "Each step leads directly to the next",

@@ -12,6 +12,7 @@ class OrderTemplate:
 	# Level 6 natural language fields
 	var is_natural_language: bool = false
 	var natural_language_premises: Array[String] = []
+	var variable_definitions: Dictionary = {}
 	var natural_language_conclusion: String = ""
 	var interpretation_hints: Array[String] = []
 
@@ -32,13 +33,15 @@ class OrderTemplate:
 		ops: int,
 		desc: String = "",
 		sol: String = "",
-		hints: Array[String] = []
+		hints: Array[String] = [],
+		var_defs: Dictionary = {}
 	) -> OrderTemplate:
 		var template = OrderTemplate.new(hidden_premises, hidden_conclusion, ops, desc, sol)
 		template.is_natural_language = true
 		template.natural_language_premises = nl_premises
 		template.natural_language_conclusion = nl_conclusion
 		template.interpretation_hints = hints
+		template.variable_definitions = var_defs
 		return template
 
 class CustomerData:
@@ -50,6 +53,7 @@ class CustomerData:
 	# Level 6 natural language fields
 	var is_natural_language: bool = false
 	var natural_language_premises: Array[String] = []
+	var variable_definitions: Dictionary = {}
 	var natural_language_conclusion: String = ""
 
 	func _init(name: String, premises: Array[String], conclusion: String, patience: float = 60.0, sol: String = "") -> void:
@@ -61,7 +65,8 @@ class CustomerData:
 		is_natural_language = false
 
 	# Set natural language data for Level 6 problems
-	func set_natural_language_data(nl_premises: Array[String], nl_conclusion: String) -> void:
+	func set_natural_language_data(nl_premises: Array[String], nl_conclusion: String, var_defs: Dictionary = {}) -> void:
 		is_natural_language = true
 		natural_language_premises = nl_premises
 		natural_language_conclusion = nl_conclusion
+		variable_definitions = var_defs

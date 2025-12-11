@@ -308,40 +308,7 @@ func update_variable_definitions() -> void:
 	for child in definitions_list.get_children():
 		child.queue_free()
 
-	# Extract variable definitions from natural language premises
-	# Pattern: "text (X)" or "text (¬X)" where X is a variable letter
-	var regex = RegEx.new()
-	regex.compile("\\(\\s*([¬]?[A-Z])\\s*\\)")
-
-	var definitions: Dictionary = {}
-	for premise in current_customer.natural_language_premises:
-		var matches = regex.search_all(premise)
-		var last_end_pos = 0
-		
-		for match_result in matches:
-			var variable = match_result.get_string(1)
-			# Extract the text between last match end and current match start
-			var start_pos = match_result.get_start(0)
-			var text_segment = premise.substr(last_end_pos, start_pos - last_end_pos).strip_edges()
-			
-			# Update last_end_pos for next iteration
-			last_end_pos = match_result.get_end(0)
-
-			# Clean up common prefixes from text_segment
-			text_segment = text_segment.trim_prefix("If ")
-			text_segment = text_segment.trim_prefix("Then ") # Handle "Then" which might appear in the middle
-			text_segment = text_segment.trim_prefix("Either ")
-			text_segment = text_segment.trim_prefix("There are no ")
-			text_segment = text_segment.trim_prefix("The ")
-			text_segment = text_segment.trim_suffix(" is")
-			text_segment = text_segment.trim_suffix(" are")
-			text_segment = text_segment.trim_suffix(",")
-			text_segment = text_segment.trim_suffix(" then")
-			text_segment = text_segment.strip_edges()
-			
-			# Only store if valid text found and not a negation
-			if not variable.begins_with("¬") and not text_segment.is_empty():
-				definitions[variable] = text_segment
+	var definitions: Dictionary = current_customer.variable_definitions
 
 	# Display definitions
 	if definitions.size() > 0:
