@@ -5,7 +5,7 @@
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_occ7e"]
 [ext_resource type="Texture2D" uid="uid://uaewt5lwfaa6" path="res://assets/sprites/rocketsprite.png" id="3_rocketsprite"]
 [ext_resource type="Texture2D" uid="uid://b4vqkomx2ejnw" path="res://assets/sprites/spacebg.jpg" id="3_spacebg"]
-[ext_resource type="Script" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
+[ext_resource type="Script" uid="uid://6us7btkgp6wo" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
 [ext_resource type="FontFile" uid="uid://c12vraq60ixtj" path="res://assets/fonts/MuseoSansRounded500.otf" id="6_eptc2"]
 [ext_resource type="FontFile" uid="uid://bx0fmm2ck5w42" path="res://assets/fonts/MuseoSansRounded900.otf" id="8_gxw17"]
 

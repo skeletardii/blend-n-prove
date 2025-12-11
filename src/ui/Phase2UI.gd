@@ -98,6 +98,7 @@ var current_tab: String = "double"  # "double" or "single"
 var bg_scroll_speed: float = 20.0  # Base scroll speed in pixels per second
 var bg_offset1: float = 0.0
 var bg_offset2: float = 0.0
+var blur_shader = preload("res://src/shaders/motion_blur.gdshader")
 var rocket_speed_multiplier: float = 1.0  # Syncs with rocket ship speed
 
 # Rocket Animation State
@@ -200,6 +201,18 @@ func _ready() -> void:
 	# Initialize particle size/speed
 	set_rocket_speed(1.0)
 	
+	# Initialize combo timer color
+	if combo_line:
+		combo_line.modulate = Color.WHITE
+
+	# Setup blur shader
+	if space_bg1:
+		space_bg1.material = ShaderMaterial.new()
+		space_bg1.material.shader = blur_shader
+	if space_bg2:
+		space_bg2.material = ShaderMaterial.new()
+		space_bg2.material.shader = blur_shader
+	
 	_init_styles()
 
 func _init_styles() -> void:
@@ -278,50 +291,92 @@ func update_parallax_background(delta: float) -> void:
 
 func set_rocket_speed(speed_multiplier: float) -> void:
 	"""Update the background scroll speed based on rocket ship velocity"""
-	rocket_speed_multiplier = speed_multiplier
+	# Apply artificial visual speed boost for higher impact
+	var visual_multiplier = speed_multiplier
+	if combo_count >= 10: visual_multiplier *= 3.0
+	elif combo_count >= 8: visual_multiplier *= 2.5
+	elif combo_count >= 5: visual_multiplier *= 2.0
+	elif combo_count >= 3: visual_multiplier *= 1.5
+	
+	rocket_speed_multiplier = visual_multiplier
+	
+	# Update Motion Blur strength based on speed/combo
+	var blur_strength: float = 0.0
+	if combo_count >= 10: blur_strength = 0.12 # Intense
+	elif combo_count >= 8: blur_strength = 0.08
+	elif combo_count >= 5: blur_strength = 0.05
+	elif combo_count >= 3: blur_strength = 0.02
+	
+	if space_bg1 and space_bg1.material:
+		space_bg1.material.set_shader_parameter("strength", blur_strength)
+	if space_bg2 and space_bg2.material:
+		space_bg2.material.set_shader_parameter("strength", blur_strength)
 
-	# Calculate target offset based on speed boost
+	# Calculate target offset based on speed boost (visual)
 	if speed_multiplier > 1.0:
-		# Move right proportional to speed boost (max 100px offset at 3x speed)
-		rocket_target_offset = min((speed_multiplier - 1.0) * 50.0, 100.0)
-
-		# Progressive trail based on combo - extends as rocket speeds up
-		var intensity_mult = min(float(combo_count) / 10.0, 1.5) # Caps at 15x combo for 2.5x intensity
-
-		# Flame core boost
-		if flame_core:
-			flame_core.initial_velocity_min = 500.0 + (400.0 * intensity_mult)  # 500-1100
-			flame_core.initial_velocity_max = 700.0 + (500.0 * intensity_mult)  # 700-1450
-			flame_core.scale_amount_min = 6.0 + (6.0 * intensity_mult)  # 6-15
-			flame_core.scale_amount_max = 12.0 + (8.0 * intensity_mult)  # 12-24
-
-		# Smoke trail boost - extends tail length progressively
-		if smoke_trail:
-			smoke_trail.amount = int(60 + (100 * intensity_mult))  # 60-210 particles
-			smoke_trail.lifetime = 0.5 + (1.0 * intensity_mult)  # 0.5s-1.5s lifetime
-			smoke_trail.gravity = Vector2(-300 - (500 * intensity_mult), 0)  # Stronger leftward push
-			smoke_trail.initial_velocity_min = 350.0 + (450.0 * intensity_mult)  # 350-1025
-			smoke_trail.initial_velocity_max = 500.0 + (600.0 * intensity_mult)  # 500-1400
-			smoke_trail.scale_amount_min = 10.0 + (8.0 * intensity_mult)  # 10-22
-			smoke_trail.scale_amount_max = 20.0 + (15.0 * intensity_mult)  # 20-42.5
+		rocket_target_offset = min((speed_multiplier - 1.0) * 80.0, 150.0) # More movement
 	else:
 		rocket_target_offset = 0.0
 
-		# Normal speed - moderate base trail
-		if flame_core:
-			flame_core.initial_velocity_min = 500.0
-			flame_core.initial_velocity_max = 700.0
-			flame_core.scale_amount_min = 6.0
-			flame_core.scale_amount_max = 12.0
-
-		if smoke_trail:
-			smoke_trail.amount = 60
-			smoke_trail.lifetime = 0.5  # Moderate base trail
-			smoke_trail.gravity = Vector2(-300, 0)
-			smoke_trail.initial_velocity_min = 350.0
-			smoke_trail.initial_velocity_max = 500.0
+	# Update Smoke Trail Logic - Drastic Changes
+	if smoke_trail:
+		if combo_count >= 10: # Purple (Laser Beam)
+			smoke_trail.amount = 300
+			smoke_trail.lifetime = 0.8
+			smoke_trail.gravity = Vector2(0, 0)
+			smoke_trail.spread = 0.0 # Perfectly straight
+			smoke_trail.initial_velocity_min = 1500.0
+			smoke_trail.initial_velocity_max = 1800.0
+			smoke_trail.scale_amount_min = 5.0
+			smoke_trail.scale_amount_max = 8.0
+			
+		elif combo_count >= 8: # Blue (High Speed Stream)
+			smoke_trail.amount = 200
+			smoke_trail.lifetime = 1.5
+			smoke_trail.gravity = Vector2(-50, 0)
+			smoke_trail.spread = 5.0 # Very tight
+			smoke_trail.initial_velocity_min = 1000.0
+			smoke_trail.initial_velocity_max = 1200.0
 			smoke_trail.scale_amount_min = 10.0
-			smoke_trail.scale_amount_max = 20.0
+			smoke_trail.scale_amount_max = 15.0
+
+		elif combo_count >= 5: # Blue (Engine Boost)
+			smoke_trail.amount = 150
+			smoke_trail.lifetime = 1.0
+			smoke_trail.gravity = Vector2(-100, 0)
+			smoke_trail.spread = 15.0
+			smoke_trail.initial_velocity_min = 600.0
+			smoke_trail.initial_velocity_max = 800.0
+			smoke_trail.scale_amount_min = 15.0
+			smoke_trail.scale_amount_max = 25.0
+			
+		elif combo_count >= 3: # Red (Big Chaotic Puffs)
+			smoke_trail.amount = 100
+			smoke_trail.lifetime = 0.8
+			smoke_trail.gravity = Vector2(-200, 0)
+			smoke_trail.spread = 45.0 # Wide
+			smoke_trail.initial_velocity_min = 400.0
+			smoke_trail.initial_velocity_max = 500.0
+			smoke_trail.scale_amount_min = 25.0
+			smoke_trail.scale_amount_max = 40.0
+			
+		else: # Normal (Weak Drift)
+			smoke_trail.amount = 40
+			smoke_trail.lifetime = 0.4
+			smoke_trail.gravity = Vector2(-100, 100) # Drifts down
+			smoke_trail.spread = 30.0
+			smoke_trail.initial_velocity_min = 200.0
+			smoke_trail.initial_velocity_max = 300.0
+			smoke_trail.scale_amount_min = 5.0
+			smoke_trail.scale_amount_max = 10.0
+
+	# Flame core logic
+	if flame_core:
+		var intensity_mult = min(float(combo_count) / 10.0, 1.5)
+		flame_core.initial_velocity_min = 500.0 + (400.0 * intensity_mult)
+		flame_core.initial_velocity_max = 700.0 + (500.0 * intensity_mult)
+		flame_core.scale_amount_min = 6.0 + (6.0 * intensity_mult)
+		flame_core.scale_amount_max = 12.0 + (8.0 * intensity_mult)
 	
 	# Update color
 	update_particle_color()
@@ -373,6 +428,20 @@ func update_rocket_animation(delta: float) -> void:
 		var total_offset = center_to_base + bobbing_offset + rocket_current_offset + rocket_wobble_offset
 		rocket.offset_left = total_offset - 50.0
 		rocket.offset_right = total_offset + 50.0
+		
+		# Vertical Shaking
+		var shake_y = 0.0
+		var shake_intensity = 0.0
+		if combo_count >= 10: shake_intensity = 5.0
+		elif combo_count >= 8: shake_intensity = 4.0
+		elif combo_count >= 5: shake_intensity = 3.0
+		elif combo_count >= 3: shake_intensity = 1.0
+		
+		if shake_intensity > 0.0:
+			shake_y = randf_range(-shake_intensity, shake_intensity)
+			
+		rocket.offset_top = -50.0 + shake_y
+		rocket.offset_bottom = 50.0 + shake_y
 
 func increment_combo() -> void:
 	combo_count += 1
@@ -402,6 +471,19 @@ func increment_combo() -> void:
 	# Update Speed
 	var new_speed = 1.0 + (float(combo_count) * 0.1)
 	set_rocket_speed(new_speed)
+	
+	# Notify GameplayScene to update global multiplier
+	var root = get_tree().current_scene
+	if root.has_method("increment_combo"):
+		root.increment_combo()
+	else:
+		# Fallback search up the tree
+		var p = get_parent()
+		while p:
+			if p.has_method("increment_combo"):
+				p.increment_combo()
+				break
+			p = p.get_parent()
 
 func reset_combo_penalty() -> void:
 	if combo_count < 2:
@@ -418,12 +500,12 @@ func reset_combo_penalty() -> void:
 		
 		var tween = create_tween()
 		tween.tween_property(combo_container, "modulate:a", 0.0, 0.5)
-		tween.finished.connect(func(): 
+		var on_finished = func(): 
 			combo_container.visible = false
 			combo_container.modulate.a = 1.0
 			combo_count = 0 # Reset logic
 			update_combo_effects()
-		)
+		tween.finished.connect(on_finished)
 	
 	combo_count = 0 # Reset locally for UI, GameManager handles actual combo value
 	set_rocket_speed(1.0)
@@ -469,16 +551,16 @@ func update_combo_effects() -> void:
 		combo_label.modulate = Color.WHITE
 		return
 	
-	# Stage 1: Sparkles (2x+)
-	if combo_count >= 2:
+	# Stage 1: Sparkles (3x+)
+	if combo_count >= 3:
 		if combo_sparkles: combo_sparkles.emitting = true
 		
 	# Stage 2: Sparks (5x+)
 	if combo_count >= 5:
 		if combo_sparks: combo_sparks.emitting = true
 		
-	# Stage 3: Glow (10x+)
-	if combo_count >= 10:
+	# Stage 3: Glow (8x+)
+	if combo_count >= 8:
 		if not glow_tween or not glow_tween.is_valid():
 			glow_tween = create_tween().set_loops()
 			glow_tween.tween_property(combo_label, "modulate", Color(1, 0.5, 0.5), 0.2)
@@ -486,8 +568,8 @@ func update_combo_effects() -> void:
 			glow_tween.tween_property(combo_label, "modulate", Color(0.5, 1, 1), 0.2)
 			glow_tween.tween_property(combo_label, "modulate", Color(1, 0.5, 1), 0.2)
 	
-	# Stage 4: Fire (15x+)
-	if combo_count >= 15:
+	# Stage 4: Fire (10x+)
+	if combo_count >= 10:
 		if combo_fire: combo_fire.emitting = true
 
 func connect_rule_buttons() -> void:
@@ -558,7 +640,8 @@ func open_operations_panel() -> void:
 	tween.set_ease(Tween.EASE_IN_OUT)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(operations_panel, "offset_top", -panel_height, 0.3)
-	tween.finished.connect(func(): is_animating_panel = false)
+	var on_finished = func(): is_animating_panel = false
+	tween.finished.connect(on_finished)
 
 func close_operations_panel() -> void:
 	if is_animating_panel:
@@ -572,7 +655,8 @@ func close_operations_panel() -> void:
 	tween.set_ease(Tween.EASE_IN_OUT)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(operations_panel, "offset_top", -panel_closed_height, 0.3)
-	tween.finished.connect(func(): is_animating_panel = false)
+	var on_finished = func(): is_animating_panel = false
+	tween.finished.connect(on_finished)
 
 func switch_to_tab(tab: String) -> void:
 	current_tab = tab
@@ -750,9 +834,9 @@ func spawn_premise_explosion(card: Control) -> void:
 	explosion.emitting = true
 
 	# Auto-cleanup after lifetime
-	get_tree().create_timer(explosion.lifetime + 0.1).timeout.connect(func():
+	var on_timeout = func():
 		explosion.queue_free()
-	)
+	get_tree().create_timer(explosion.lifetime + 0.1).timeout.connect(on_timeout)
 
 func _on_rule_button_pressed(rule: String) -> void:
 	# If clicking the same rule that's already selected, deselect everything
@@ -842,7 +926,8 @@ func apply_rule() -> void:
 					# Find the card that matches the result and animate it
 					animate_target_reached(cleaned_result)
 					# Emit signal after animation delay
-					get_tree().create_timer(1.0).timeout.connect(func(): target_reached.emit(cleaned_result))
+					var on_timeout = func(): target_reached.emit(cleaned_result)
+					get_tree().create_timer(1.0).timeout.connect(on_timeout)
 		else:
 			# No valid results - show error
 			clear_selections()
@@ -1053,10 +1138,10 @@ func animate_target_reached(result: BooleanExpression) -> void:
 	tween.tween_property(winning_card, "modulate", Color.WHITE, 0.3)
 
 	# Show score popup at the card's position after glow animation
-	tween.finished.connect(func():
+	var on_finished = func():
 		winning_card.modulate = Color.GREEN  # Keep final green color
 		show_score_popup_at_card(winning_card)
-	)
+	tween.finished.connect(on_finished)
 
 
 func show_feedback(message: String, color: Color, emit_to_parent: bool = true) -> void:
@@ -1069,10 +1154,10 @@ func show_feedback(message: String, color: Color, emit_to_parent: bool = true) -
 		feedback_message.emit(message, color)
 
 	# Auto-clear feedback after 3 seconds
-	get_tree().create_timer(3.0).timeout.connect(func():
+	var on_timeout = func():
 		if feedback_label.text == message:  # Only clear if message hasn't changed
 			feedback_label.text = ""
-	)
+	get_tree().create_timer(3.0).timeout.connect(on_timeout)
 
 func apply_fuel_penalty() -> void:
 	"""Records a mistake and triggers visual penalty effects."""
