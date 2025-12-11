@@ -16,10 +16,12 @@ class ProblemData:
 	var hidden_premises: Array[String] = []
 	var hidden_conclusion: String = ""
 	var interpretation_hints: Array[String] = []
+	var variable_definitions: Dictionary = {}
 
 	func _init(num: int = 0, diff: String = "", prems: Array[String] = [], concl: String = "", sol: String = "",
-	           desc: String = "", title: String = "", hint_list: Array[String] = [], exp_ops: int = 0,
-	           hidden_prems: Array[String] = [], hidden_concl: String = "", interpret_hints: Array[String] = []) -> void:
+			   desc: String = "", title: String = "", hint_list: Array[String] = [], exp_ops: int = 0,
+			   hidden_prems: Array[String] = [], hidden_concl: String = "", interpret_hints: Array[String] = [],
+			   var_defs: Dictionary = {}) -> void:
 		problem_number = num
 		difficulty = diff
 		premises = prems.duplicate()
@@ -32,6 +34,7 @@ class ProblemData:
 		hidden_premises = hidden_prems.duplicate()
 		hidden_conclusion = hidden_concl
 		interpretation_hints = interpret_hints.duplicate()
+		variable_definitions = var_defs
 
 class TutorialData:
 	var rule_name: String = ""

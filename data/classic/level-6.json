@@ -44,6 +44,12 @@
       "expected_operations": 3,
       "description": "Chained Modus Tollens with natural language",
       "solution": "Translate: P = 'Alarm rings', Q = 'There is a fire', R = 'Sprinklers activate', S = 'Building is occupied'. Apply Modus Tollens on Q → R with ¬R to get ¬Q, then apply Modus Tollens on P → Q with ¬Q to conclude ¬P.",
+      "variable_definitions": {
+        "P": "the alarm rings",
+        "Q": "there is a fire",
+        "R": "the sprinklers activate",
+        "S": "the building is occupied"
+      },
       "interpretation_hints": [
         "Work backwards through the chain of conditionals",
         "Negate each condition using Modus Tollens"
@@ -67,6 +73,12 @@
       "expected_operations": 2,
       "description": "Disjunctive Syllogism followed by Modus Ponens",
       "solution": "Translate: P = 'Door is open', Q = 'Window is open', R = 'There is a breeze', S = 'Curtains are drawn'. Apply Disjunctive Syllogism with P ∨ Q and ¬P to get Q, then apply Modus Ponens with Q → R and Q to conclude R.",
+      "variable_definitions": {
+        "P": "the door is open",
+        "Q": "the window is open",
+        "R": "there is a breeze",
+        "S": "the curtains are drawn"
+      },
       "interpretation_hints": [
         "Use 'either...or' with negation to determine truth",
         "Then apply the conditional"
@@ -90,6 +102,12 @@
       "expected_operations": 2,
       "description": "Conjunction and Modus Ponens",
       "solution": "Translate: P = 'Alice is tall', Q = 'Bob is smart', R = 'The team wins', S = 'Charlie is friendly'. Apply Conjunction to P and Q to get P ∧ Q, then apply Modus Ponens with (P ∧ Q) → R to conclude R.",
+      "variable_definitions": {
+        "P": "Alice is tall",
+        "Q": "Bob is smart",
+        "R": "the team wins",
+        "S": "Charlie is friendly"
+      },
       "interpretation_hints": [
         "Combine the individual facts first",
         "Then use the compound condition"
@@ -115,6 +133,13 @@
       "expected_operations": 4,
       "description": "Long chain of implications",
       "solution": "Translate: P = 'You study', Q = 'You pass', R = 'You graduate', S = 'You get a job', T = 'You afford apartment'. Chain all conditionals using Hypothetical Syllogism three times to get P → T, then apply Modus Ponens with P to conclude T.",
+      "variable_definitions": {
+        "P": "you study",
+        "Q": "you pass the exam",
+        "R": "you graduate",
+        "S": "you get a job",
+        "T": "you can afford an apartment"
+      },
       "interpretation_hints": [
         "Build the entire chain step by step",
         "Multiple conditional statements leading to final conclusion"
@@ -138,6 +163,12 @@
       "expected_operations": 3,
       "description": "De Morgan's Law and Modus Ponens",
       "solution": "Translate: P = 'Car is red', Q = 'Car is new', R = 'Car has leather seats', S = 'Car has depreciated'. Use De Morgan's Law on ¬(P ∧ Q) to get ¬P ∨ ¬Q, apply Disjunctive Syllogism with P to get ¬Q, then apply Modus Ponens with ¬Q → S to conclude S.",
+      "variable_definitions": {
+        "P": "the car is red",
+        "Q": "the car is new",
+        "R": "the car has leather seats",
+        "S": "the car has depreciated"
+      },
       "interpretation_hints": [
         "Transform 'not both' using De Morgan's Law",
         "Continue reasoning with the result"
@@ -161,6 +192,13 @@
       "expected_operations": 3,
       "description": "Complex consequent with extraction and continuation",
       "solution": "Translate: P = 'Power is on', Q = 'Lights work', R = 'Computer works', S = 'Router is connected', T = 'We can see clearly'. Apply Modus Ponens to get Q ∧ R, use Simplification to extract Q, then apply Modus Ponens with Q → T to conclude T.",
+      "variable_definitions": {
+        "P": "the power is on",
+        "Q": "the lights work",
+        "R": "the computer works",
+        "S": "the router is connected",
+        "T": "we can see clearly"
+      },
       "interpretation_hints": [
         "Extract component from compound consequent",
         "Continue reasoning with extracted component"
@@ -186,6 +224,13 @@
       "expected_operations": 4,
       "description": "Extended chain of implications",
       "solution": "Translate: P = 'Sunny', Q = 'Go to beach', R = 'Swim', S = 'Happy', T = 'Feel relaxed'. Chain implications using Hypothetical Syllogism three times to get P → T, then apply Modus Ponens with P to conclude T.",
+      "variable_definitions": {
+        "P": "it is sunny",
+        "Q": "we go to the beach",
+        "R": "we swim",
+        "S": "we are happy",
+        "T": "we feel relaxed"
+      },
       "interpretation_hints": [
         "Build the complete chain through all steps",
         "Apply the starting fact through the entire chain"
@@ -211,6 +256,13 @@
       "expected_operations": 4,
       "description": "Long chain of natural language implications",
       "solution": "Translate: P = 'Temperature drops below freezing', Q = 'Water freezes', R = 'Pipes burst', S = 'Water damage', T = 'Repairs needed'. Chain all conditionals: apply Hypothetical Syllogism three times to build P → Q → R → S → T into P → T, then apply Modus Ponens with P to conclude T.",
+      "variable_definitions": {
+        "P": "the temperature drops below freezing",
+        "Q": "the water freezes",
+        "R": "the pipes may burst",
+        "S": "there will be water damage",
+        "T": "repairs are needed"
+      },
       "interpretation_hints": [
         "Build the entire causal chain step by step",
         "Some premises may be red herrings"
@@ -236,6 +288,13 @@
       "expected_operations": 4,
       "description": "XOR with conditional elimination",
       "solution": "Translate: P = 'Movie is comedy', Q = 'Movie is drama', R = 'Happy ending', S = 'Sad ending', T = 'Movie is popular'. Use Modus Tollens on Q → S with ¬S to get ¬Q. From XOR P ⊕ Q and ¬Q, deduce P. Apply Modus Ponens on P → R to get R.",
+      "variable_definitions": {
+        "P": "the movie is a comedy",
+        "Q": "the movie is a drama",
+        "R": "the movie has a happy ending",
+        "S": "the movie has a sad ending",
+        "T": "the movie is popular"
+      },
       "interpretation_hints": [
         "Use the exclusive or to narrow down options",
         "Eliminate impossible cases with negation"
@@ -259,6 +318,13 @@
       "expected_operations": 3,
       "description": "Neither/nor with chained implications",
       "solution": "Translate: P = 'Bus running', Q = 'Subway operating', R = 'People walk', S = 'Arrive late', T = 'Office open'. Extract ¬P from ¬P ∧ ¬Q, apply Modus Ponens on ¬P → R to get R, then Modus Ponens on R → S to get S.",
+      "variable_definitions": {
+        "P": "the bus is running",
+        "Q": "the subway is operating",
+        "R": "people walk",
+        "S": "people arrive late",
+        "T": "the office is open"
+      },
       "interpretation_hints": [
         "'Neither...nor' means both are false",
         "Chain the implications from the negation"
@@ -282,6 +348,13 @@
       "expected_operations": 3,
       "description": "Complex consequent with multiple paths",
       "solution": "Translate: P = 'Store open', Q = 'Lights on', R = 'Door unlocked', S = 'Can see products', T = 'Can enter'. Apply Modus Ponens to get Q ∧ R, extract R, then Modus Ponens on R → T to get T.",
+      "variable_definitions": {
+        "P": "the store is open",
+        "Q": "the lights are on",
+        "R": "the door is unlocked",
+        "S": "customers can see products",
+        "T": "customers can enter"
+      },
       "interpretation_hints": [
         "Extract the needed component from the compound result",
         "Follow the specific path to the conclusion"
@@ -305,6 +378,12 @@
       "expected_operations": 3,
       "description": "Negated conjunction with Modus Ponens",
       "solution": "Translate: P = 'Alice studies', Q = 'Bob studies', R = 'Carol studies', S = 'Diana in class'. Combine P and ¬Q: since ¬Q, then ¬(P ∧ Q) is true. Apply Modus Ponens on ¬(P ∧ Q) → R to get R.",
+      "variable_definitions": {
+        "P": "Alice studies",
+        "Q": "Bob studies",
+        "R": "Carol studies",
+        "S": "Diana is in class"
+      },
       "interpretation_hints": [
         "Not both means at least one is false",
         "If the condition holds, the consequence follows"
@@ -330,6 +409,13 @@
       "expected_operations": 4,
       "description": "Long chain of natural language implications",
       "solution": "Translate: P = 'It snows', Q = 'Roads are icy', R = 'Schools closed', S = 'Children stay home', T = 'Parents need childcare'. Chain all implications using Hypothetical Syllogism three times to build P → T, then apply Modus Ponens with P to conclude T.",
+      "variable_definitions": {
+        "P": "it snows",
+        "Q": "the roads are icy",
+        "R": "schools are closed",
+        "S": "children stay home",
+        "T": "parents need childcare"
+      },
       "interpretation_hints": [
         "Build the complete chain through all steps",
         "Apply the starting fact through the entire chain"
@@ -355,6 +441,13 @@
       "expected_operations": 4,
       "description": "Chained biconditionals",
       "solution": "Translate: P = 'Concert starts', Q = 'Band arrives', R = 'Tour bus working', S = 'Venue prepared', T = 'Tickets sold out'. Extract R → Q from Q ↔ R, apply Modus Ponens to get Q. Extract Q → P from P ↔ Q, apply Modus Ponens to get P.",
+      "variable_definitions": {
+        "P": "the concert starts",
+        "Q": "the band arrives",
+        "R": "the tour bus is working",
+        "S": "the venue is prepared",
+        "T": "tickets are sold out"
+      },
       "interpretation_hints": [
         "Chain the biconditionals by extracting implications",
         "Work forward from the known fact"
@@ -380,6 +473,13 @@
       "expected_operations": 3,
       "description": "Disjunctive consequent with elimination",
       "solution": "Translate: P = 'Alarm sounds', Q = 'Fire', R = 'Drill', S = 'Evacuate building', T = 'Guard present'. Apply Modus Ponens on P → (Q ∨ R) to get Q ∨ R. Use Disjunctive Syllogism with ¬R to get Q. Apply Modus Ponens on Q → S to get S.",
+      "variable_definitions": {
+        "P": "the alarm sounds",
+        "Q": "there is a fire",
+        "R": "it is a drill",
+        "S": "the building must be evacuated",
+        "T": "the security guard is present"
+      },
       "interpretation_hints": [
         "Extract the disjunction from the implication",
         "Eliminate the false option"
@@ -403,6 +503,13 @@
       "expected_operations": 3,
       "description": "Branching with specific path selection",
       "solution": "Translate: P = 'Experiment succeeds', Q = 'Hypothesis correct', R = 'Data reliable', S = 'Theory supported', T = 'Results published'. Apply Modus Ponens to get Q ∧ R, extract Q, apply Modus Ponens on Q → S to get S.",
+      "variable_definitions": {
+        "P": "the experiment succeeds",
+        "Q": "the hypothesis is correct",
+        "R": "the data is reliable",
+        "S": "the theory is supported",
+        "T": "the results can be published"
+      },
       "interpretation_hints": [
         "Focus on the path to the specific conclusion",
         "Not all given information is needed"
@@ -428,6 +535,13 @@
       "expected_operations": 4,
       "description": "XOR with backward chaining",
       "solution": "Translate: P = 'Proposal accepted', Q = 'Proposal rejected', R = 'Project begins', S = 'Plan new proposal', T = 'Need funding'. Given T and R → T, use backward reasoning to infer R. Given R and P → R, infer P. Verify with XOR: if P then ¬Q, which is consistent.",
+      "variable_definitions": {
+        "P": "the proposal is accepted",
+        "Q": "the proposal is rejected",
+        "R": "the project begins",
+        "S": "we start planning a new proposal",
+        "T": "we need funding"
+      },
       "interpretation_hints": [
         "Work backwards from the known conclusion",
         "Use XOR to verify the result"

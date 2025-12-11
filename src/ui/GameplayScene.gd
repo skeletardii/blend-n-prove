@@ -396,6 +396,10 @@ func generate_new_customer() -> void:
 		var tutorial_logical_conclusion: String = "Q"
 		var tutorial_patience: float = 999999.0  # Infinite time
 		var tutorial_solution: String = "Translate: P = 'The cat is hungry', Q = 'The cat meows'. Apply Modus Ponens."
+		var tutorial_var_defs: Dictionary = {
+			"P": "the cat is hungry",
+			"Q": "the cat meows"
+		}
 
 		current_customer = GameManagerTypes.CustomerData.new(
 			"Tutorial Guide",
@@ -406,7 +410,7 @@ func generate_new_customer() -> void:
 		)
 
 		# CRITICAL: Set natural language data to enable Phase 1
-		current_customer.set_natural_language_data(tutorial_nl_premises, tutorial_nl_conclusion)
+		current_customer.set_natural_language_data(tutorial_nl_premises, tutorial_nl_conclusion, tutorial_var_defs)
 
 		print("Loaded first-time tutorial word problem")
 
@@ -416,7 +420,22 @@ func generate_new_customer() -> void:
 		if problem:
 			# Create customer from tutorial problem
 			var base_patience: float = 120.0  # More generous patience for tutorials
-			current_customer = GameManagerTypes.CustomerData.new(random_name, problem.premises, problem.conclusion, base_patience, problem.solution)
+			
+			# Determine if this is a natural language problem
+			var is_nl = not problem.variable_definitions.is_empty()
+			
+			# If NL, use hidden premises for logic, otherwise use standard premises
+			var logical_premises = problem.hidden_premises if is_nl and not problem.hidden_premises.is_empty() else problem.premises
+			var logical_conclusion = problem.hidden_conclusion if is_nl and not problem.hidden_conclusion.is_empty() else problem.conclusion
+			
+			current_customer = GameManagerTypes.CustomerData.new(random_name, logical_premises, logical_conclusion, base_patience, problem.solution)
+
+			if is_nl:
+				current_customer.set_natural_language_data(
+					problem.premises, # Display text
+					problem.conclusion, # Display conclusion
+					problem.variable_definitions
+				)
 
 			print("Loaded tutorial problem ", problem.problem_number, " (", problem.difficulty, ")")
 		else:
@@ -454,7 +473,8 @@ func generate_new_customer() -> void:
 		if random_template.is_natural_language:
 			current_customer.set_natural_language_data(
 				random_template.natural_language_premises,
-				random_template.natural_language_conclusion
+				random_template.natural_language_conclusion,
+				random_template.variable_definitions
 			)
 
 	# Update UI

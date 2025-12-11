@@ -107,6 +107,8 @@ func load_classic_problems() -> void:
 				for hint in hints_data:
 					hints.append(str(hint))
 
+				var var_defs: Dictionary = problem_dict.get("variable_definitions", {})
+
 				var template: GameManagerTypes.OrderTemplate = GameManagerTypes.OrderTemplate.create_natural_language(
 					nl_premises,
 					hidden_premises,
@@ -115,7 +117,8 @@ func load_classic_problems() -> void:
 					problem_dict.get("expected_operations", 1),
 					problem_dict.get("description", ""),
 					problem_dict.get("solution", ""),
-					hints
+					hints,
+					var_defs
 				)
 
 				level_templates.append(template)

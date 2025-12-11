@@ -131,7 +131,15 @@ func parse_tutorial_json(content: String, file_path: String, tutorial_key: Strin
 			problem_dict.get("difficulty", "Easy"),
 			premises,
 			problem_dict.get("conclusion", ""),
-			problem_dict.get("solution", "")
+			problem_dict.get("solution", ""),
+			"", # desc
+			"", # title
+			[], # hint_list
+			0,  # exp_ops
+			[], # hidden_prems
+			"", # hidden_concl
+			[], # interpret_hints
+			problem_dict.get("variable_definitions", {})
 		)
 
 		tutorial.problems.append(problem)

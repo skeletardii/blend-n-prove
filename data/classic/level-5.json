@@ -252,34 +252,33 @@
       "natural_language_premises": [
         "If the architect approves the design (P), then both construction permits are obtained (Q) and materials are ordered (R).",
         "If construction permits are obtained (Q), then site preparation begins (S).",
-        "If materials are ordered (R), then they arrive at the site (T).",
         "If site preparation begins (S), then equipment is set up (U).",
         "If equipment is set up (U), then workers begin building (V).",
-        "If they arrive at the site (T), then inspection occurs (W).",
-        "If workers begin building (V) and inspection occurs (W), then construction officially starts (X).",
-        "The architect approves the design (P).",
-        "The neighborhood is zoned for construction (Y)."
+        "The architect approves the design (P)."
       ],
       "hidden_logical_premises": [
         "P → (Q ∧ R)",
         "Q → S",
-        "R → T",
         "S → U",
         "U → V",
-        "T → W",
-        "(V ∧ W) → X",
-        "P",
-        "Y"
+        "P"
       ],
-      "natural_language_conclusion": "Construction officially starts (X).",
-      "hidden_logical_conclusion": "X",
-      "expected_operations": 5,
+      "natural_language_conclusion": "Workers begin building (V).",
+      "hidden_logical_conclusion": "V",
+      "expected_operations": 4,
       "description": "Complex multi-branch convergence",
-      "solution": "Translate: P = 'Design approved', Q = 'Permits obtained', R = 'Materials ordered', S = 'Site prep begins', T = 'Materials arrive', U = 'Equipment set up', V = 'Workers building', W = 'Inspection occurs', X = 'Construction starts', Y = 'Zoned correctly'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Extract Q and R separately. Chain Q → S → U → V using Hypothetical Syllogism to get Q → V, apply to get V. Chain R → T → W to get W. Apply Modus Ponens to (V ∧ W) → X with V ∧ W to conclude X.",
+      "solution": "Translate: P = 'Design approved', Q = 'Permits obtained', R = 'Materials ordered', S = 'Site prep begins', U = 'Equipment set up', V = 'Workers building'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Extract Q. Chain Q → S → U → V using Hypothetical Syllogism to get Q → V, apply to get V.",
+      "variable_definitions": {
+        "P": "the architect approves the design",
+        "Q": "construction permits are obtained",
+        "R": "materials are ordered",
+        "S": "site preparation begins",
+        "U": "equipment is set up",
+        "V": "workers begin building"
+      },
       "interpretation_hints": [
         "Handle compound consequents carefully",
-        "Build two separate chains that eventually converge",
-        "Multiple paths must all be satisfied for final conclusion"
+        "Follow the path that leads to the conclusion"
       ]
     },
     {
@@ -287,32 +286,33 @@
         "Either the patent application is approved (P) or denied (Q).",
         "If the patent is approved (P), then both the invention is protected (R) and licensing opportunities arise (S).",
         "If the invention is protected (R), then competitors cannot copy (T).",
-        "If licensing opportunities arise (S), then revenue is generated (U).",
         "If competitors cannot copy (T), then market share is preserved (V).",
-        "If market share is preserved (V) and revenue is generated (U), then the company thrives (W).",
-        "The patent is not denied (¬Q).",
-        "The invention is novel (X)."
+        "The patent is not denied (¬Q)."
       ],
       "hidden_logical_premises": [
         "P ∨ Q",
         "P → (R ∧ S)",
         "R → T",
-        "S → U",
         "T → V",
-        "(V ∧ U) → W",
-        "¬Q",
-        "X"
+        "¬Q"
       ],
-      "natural_language_conclusion": "The company thrives (W).",
-      "hidden_logical_conclusion": "W",
-      "expected_operations": 5,
+      "natural_language_conclusion": "Market share is preserved (V).",
+      "hidden_logical_conclusion": "V",
+      "expected_operations": 4,
       "description": "Disjunctive entry with branching convergence",
-      "solution": "Translate: P = 'Patent approved', Q = 'Patent denied', R = 'Invention protected', S = 'License opportunities', T = 'No copying', U = 'Revenue generated', V = 'Market share preserved', W = 'Company thrives', X = 'Invention novel'. From P ∨ Q and ¬Q, deduce P. Apply Modus Ponens to P → (R ∧ S) to get R ∧ S. Extract both: R → T → V and S → U. Apply Modus Ponens to (V ∧ U) → W to conclude W.",
+      "solution": "Translate: P = 'Patent approved', Q = 'Patent denied', R = 'Invention protected', S = 'License opportunities', T = 'No copying', V = 'Market share preserved'. From P ∨ Q and ¬Q, deduce P. Apply Modus Ponens to P → (R ∧ S) to get R ∧ S. Extract R. Apply Modus Ponens to R → T and T → V to conclude V.",
+      "variable_definitions": {
+        "P": "the patent application is approved",
+        "Q": "it is denied",
+        "R": "the invention is protected",
+        "S": "licensing opportunities arise",
+        "T": "competitors cannot copy",
+        "V": "market share is preserved"
+      },
       "interpretation_hints": [
         "Eliminate one option from disjunction",
         "Handle compound consequent",
-        "Build two convergent paths",
-        "Combine paths for final conclusion"
+        "Follow the relevant path to the conclusion"
       ]
     },
     {
@@ -320,34 +320,32 @@
         "If the software team is hired (P), then both development begins (Q) and testing framework is set up (R).",
         "If development begins (Q), then features are coded (S).",
         "If features are coded (S), then the application is built (T).",
-        "If testing framework is set up (R), then automated tests are created (U).",
         "If the application is built (T), then performance optimization occurs (V).",
-        "If automated tests are created (U), then code quality is verified (W).",
-        "If performance optimization occurs (V) and code quality is verified (W), then the product is ready (X).",
-        "The software team is hired (P).",
-        "The deadline is flexible (Y)."
+        "The software team is hired (P)."
       ],
       "hidden_logical_premises": [
         "P → (Q ∧ R)",
         "Q → S",
         "S → T",
-        "R → U",
         "T → V",
-        "U → W",
-        "(V ∧ W) → X",
-        "P",
-        "Y"
+        "P"
       ],
-      "natural_language_conclusion": "The product is ready (X).",
-      "hidden_logical_conclusion": "X",
+      "natural_language_conclusion": "Performance optimization occurs (V).",
+      "hidden_logical_conclusion": "V",
       "expected_operations": 5,
       "description": "Parallel development chains converging",
-      "solution": "Translate: P = 'Team hired', Q = 'Development begins', R = 'Testing set up', S = 'Features coded', T = 'App built', U = 'Tests created', V = 'Optimization done', W = 'Quality verified', X = 'Product ready', Y = 'Deadline flexible'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Build chain Q → S → T → V. Build chain R → U → W. Apply Modus Ponens to (V ∧ W) → X to conclude X.",
+      "solution": "Translate: P = 'Team hired', Q = 'Development begins', R = 'Testing set up', S = 'Features coded', T = 'App built', V = 'Optimization done'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Build chain Q → S → T → V. Apply Modus Ponens through the chain to conclude V.",
+      "variable_definitions": {
+        "P": "the software team is hired",
+        "Q": "development begins",
+        "R": "the testing framework is set up",
+        "S": "features are coded",
+        "T": "the application is built",
+        "V": "performance optimization occurs"
+      },
       "interpretation_hints": [
-        "Two parallel development tracks must complete",
         "Extract components from compound consequent",
-        "Each track requires multiple steps",
-        "Both tracks converge at final step"
+        "Follow the main development track"
       ]
     },
     {
@@ -355,69 +353,63 @@
         "Either the manufacturing process is optimized (P) or costs remain high (Q).",
         "If the manufacturing process is optimized (P), then both waste is reduced (R) and efficiency improves (S).",
         "If waste is reduced (R), then material costs decrease (T).",
-        "If efficiency improves (S), then production speed increases (U).",
         "If material costs decrease (T), then the company's expenses drop (V).",
-        "If production speed increases (U), then output capacity expands (W).",
-        "If the company's expenses drop (V) and output capacity expands (W), then competitive advantage emerges (X).",
-        "The manufacturing process is optimized (P).",
-        "Industry regulations are relaxed (Y)."
+        "The manufacturing process is optimized (P)."
       ],
       "hidden_logical_premises": [
         "P ∨ Q",
         "P → (R ∧ S)",
         "R → T",
-        "S → U",
         "T → V",
-        "U → W",
-        "(V ∧ W) → X",
-        "P",
-        "Y"
+        "P"
       ],
-      "natural_language_conclusion": "Competitive advantage emerges (X).",
-      "hidden_logical_conclusion": "X",
-      "expected_operations": 5,
+      "natural_language_conclusion": "The company's expenses drop (V).",
+      "hidden_logical_conclusion": "V",
+      "expected_operations": 4,
       "description": "Disjunctive optimization with competitive outcome",
-      "solution": "Translate: P = 'Process optimized', Q = 'Costs high', R = 'Waste reduced', S = 'Efficiency improves', T = 'Material costs drop', U = 'Speed increases', V = 'Expenses drop', W = 'Capacity expands', X = 'Competitive advantage', Y = 'Regulations relaxed'. P is true, so follow P → (R ∧ S) to get R ∧ S. Build R → T → V and S → U → W separately. Apply Modus Ponens to (V ∧ W) → X to conclude X.",
+      "solution": "Translate: P = 'Process optimized', Q = 'Costs high', R = 'Waste reduced', S = 'Efficiency improves', T = 'Material costs drop', V = 'Expenses drop'. P is true, so follow P → (R ∧ S) to get R ∧ S. Build R → T → V. Apply Modus Ponens to conclude V.",
+      "variable_definitions": {
+        "P": "the manufacturing process is optimized",
+        "Q": "costs remain high",
+        "R": "waste is reduced",
+        "S": "efficiency improves",
+        "T": "material costs decrease",
+        "V": "the company's expenses drop"
+      },
       "interpretation_hints": [
         "Confirm disjunction path is satisfied",
         "Extract compound consequences",
-        "Develop two parallel improvement streams",
-        "Converge both streams for competitive benefit"
+        "Follow the cost reduction path"
       ]
     },
     {
       "natural_language_premises": [
         "If the environmental sustainability initiative is launched (P), then both green technologies are adopted (Q) and employee engagement increases (R).",
-        "If green technologies are adopted (Q), then energy consumption decreases (S).",
         "If employee engagement increases (R), then talent retention improves (T).",
-        "If energy consumption decreases (S), then operational costs reduce (U).",
         "If talent retention improves (T), then institutional knowledge grows (V).",
-        "If operational costs reduce (U), then profitability increases (W).",
-        "If profitability increases (W) and institutional knowledge grows (V), then long-term success is secured (X).",
-        "The environmental sustainability initiative is launched (P).",
-        "Government incentives are available (Y)."
+        "The environmental sustainability initiative is launched (P)."
       ],
       "hidden_logical_premises": [
         "P → (Q ∧ R)",
-        "Q → S",
         "R → T",
-        "S → U",
         "T → V",
-        "U → W",
-        "(W ∧ V) → X",
-        "P",
-        "Y"
+        "P"
       ],
-      "natural_language_conclusion": "Long-term success is secured (X).",
-      "hidden_logical_conclusion": "X",
-      "expected_operations": 5,
-      "description": "Sustainability-driven dual outcome convergence",
-      "solution": "Translate: P = 'Launch initiative', Q = 'Green tech adopted', R = 'Engagement increases', S = 'Energy decreases', T = 'Retention improves', U = 'Costs reduce', V = 'Knowledge grows', W = 'Profitability increases', X = 'Long-term success', Y = 'Incentives available'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Chain Q → S → U → W and R → T → V. Apply Modus Ponens to (W ∧ V) → X to conclude X.",
+      "natural_language_conclusion": "Institutional knowledge grows (V).",
+      "hidden_logical_conclusion": "V",
+      "expected_operations": 4,
+      "description": "Sustainability-driven outcome",
+      "solution": "Translate: P = 'Launch initiative', Q = 'Green tech adopted', R = 'Engagement increases', T = 'Retention improves', V = 'Knowledge grows'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Extract R. Chain R → T → V. Apply Modus Ponens to conclude V.",
+      "variable_definitions": {
+        "P": "the environmental sustainability initiative is launched",
+        "Q": "green technologies are adopted",
+        "R": "employee engagement increases",
+        "T": "talent retention improves",
+        "V": "institutional knowledge grows"
+      },
       "interpretation_hints": [
         "Extract both components from compound consequent",
-        "One path leads to profitability",
-        "Another path develops organizational capability",
-        "Both must converge for long-term security"
+        "One path develops organizational capability"
       ]
     }
   ]

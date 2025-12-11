@@ -208,6 +208,11 @@
       "expected_operations": 2,
       "description": "Disjunctive Syllogism followed by Modus Ponens",
       "solution": "Translate: P = 'Door is locked', Q = 'Window is open', R = 'Need to close window'. Apply Disjunctive Syllogism with P ∨ Q and ¬P to get Q, then apply Modus Ponens with Q → R to conclude R.",
+      "variable_definitions": {
+        "P": "the door is locked",
+        "Q": "the window is open",
+        "R": "we need to close the window"
+      },
       "interpretation_hints": [
         "Eliminate the false option from the disjunction first",
         "Then use the remaining option with the conditional"
@@ -229,6 +234,11 @@
       "expected_operations": 2,
       "description": "Hypothetical Syllogism followed by Modus Ponens",
       "solution": "Translate: P = 'It rains', Q = 'Ground gets wet', R = 'Plants thrive'. Apply Hypothetical Syllogism with P → Q and Q → R to get P → R, then apply Modus Ponens with P to conclude R.",
+      "variable_definitions": {
+        "P": "it rains",
+        "Q": "the ground gets wet",
+        "R": "the plants thrive"
+      },
       "interpretation_hints": [
         "Chain the conditionals together first",
         "Then apply the known condition"
@@ -250,6 +260,11 @@
       "expected_operations": 2,
       "description": "Modus Ponens twice in sequence",
       "solution": "Translate: P = 'Package fragile', Q = 'Handle carefully', R = 'Wear gloves'. Apply Modus Ponens to P → Q and P to get Q. Apply Modus Ponens to Q → R and Q to get R.",
+      "variable_definitions": {
+        "P": "the package is fragile",
+        "Q": "it must be handled carefully",
+        "R": "workers wear gloves"
+      },
       "interpretation_hints": [
         "First conclusion becomes a premise for next step",
         "Chain the applications together"
@@ -271,6 +286,11 @@
       "expected_operations": 2,
       "description": "Two-step implication from consequence",
       "solution": "Translate: P = 'Battery dead', Q = 'Phone broken', R = 'Cannot call help'. Apply Modus Ponens to Q → R and Q to get R.",
+      "variable_definitions": {
+        "P": "the battery is dead",
+        "Q": "the phone does not work",
+        "R": "we cannot call for help"
+      },
       "interpretation_hints": [
         "The second conditional follows from the first consequence",
         "Apply implications in sequence"
@@ -292,6 +312,11 @@
       "expected_operations": 2,
       "description": "Disjunctive Syllogism then Modus Ponens",
       "solution": "Translate: P = 'Document lost', Q = 'Filed correctly', R = 'Can be found'. Apply Disjunctive Syllogism to P ∨ Q and ¬P to get Q. Apply Modus Ponens to Q → R and Q to get R.",
+      "variable_definitions": {
+        "P": "the document is lost",
+        "Q": "the document is filed correctly",
+        "R": "the document can be found"
+      },
       "interpretation_hints": [
         "Determine which option is true from disjunction",
         "Then apply that option to the conditional"
@@ -313,6 +338,11 @@
       "expected_operations": 2,
       "description": "Hypothetical Syllogism with nature scenario",
       "solution": "Translate: P = 'Plants need water', Q = 'Soil is dry', R = 'Leaves wilt'. Apply Hypothetical Syllogism to get P → R, then apply Modus Ponens with P to get R.",
+      "variable_definitions": {
+        "P": "the plants need water",
+        "Q": "the soil is dry",
+        "R": "the leaves wilt"
+      },
       "interpretation_hints": [
         "Build the complete chain through two implications",
         "Apply the initial fact through the chain"
@@ -336,6 +366,12 @@
       "expected_operations": 2,
       "description": "Chained Modus Ponens with disjunction",
       "solution": "Translate: P = 'Contract signed', Q = 'Work begins', R = 'Team assembled', S = 'Project postponed'. Apply Modus Ponens to P → Q and P to get Q. Apply Modus Ponens to Q → R to get R. R already satisfies R ∨ S.",
+      "variable_definitions": {
+        "P": "the contract is signed",
+        "Q": "work begins",
+        "R": "the team is assembled",
+        "S": "the project is postponed"
+      },
       "interpretation_hints": [
         "Chain implications to reach R",
         "R makes the final disjunction true"
@@ -357,6 +393,11 @@
       "expected_operations": 2,
       "description": "Disjunctive Syllogism with conditional",
       "solution": "Translate: P = 'Game forfeited', Q = 'Game played', R = 'Tickets sold'. Apply Disjunctive Syllogism to P ∨ Q and ¬P to get Q. Apply Modus Ponens to Q → R and Q to get R.",
+      "variable_definitions": {
+        "P": "the game is forfeited",
+        "Q": "the game is played",
+        "R": "tickets are sold"
+      },
       "interpretation_hints": [
         "Eliminate the false option",
         "Use result to trigger next conditional"
@@ -378,6 +419,11 @@
       "expected_operations": 2,
       "description": "Chain with negated condition (red herring)",
       "solution": "Translate: P = 'Software updated', Q = 'Bugs fixed', R = 'Program smooth'. We have ¬P, so we cannot use P → Q with Modus Ponens. The chain is broken; no conclusion can be drawn about R.",
+      "variable_definitions": {
+        "P": "the software is updated",
+        "Q": "bugs are fixed",
+        "R": "the program runs smoothly"
+      },
       "interpretation_hints": [
         "Not all premises lead to a conclusion",
         "The negated condition breaks the forward chain",
