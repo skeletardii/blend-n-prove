@@ -36,6 +36,7 @@ var normal_flame_gradient: Gradient
 var normal_smoke_gradient: Gradient
 var boost_gradient: Gradient # 3x (Red/Orange)
 var blue_gradient: Gradient # 5x
+var cyan_gradient: Gradient # 8x
 var purple_gradient: Gradient # 10x
 
 # Combo State
@@ -95,7 +96,7 @@ var is_animating_panel: bool = false
 var current_tab: String = "double"  # "double" or "single"
 
 # Parallax Background State
-var bg_scroll_speed: float = 20.0  # Base scroll speed in pixels per second
+var bg_scroll_speed: float = 60.0  # Base scroll speed in pixels per second
 var bg_offset1: float = 0.0
 var bg_offset2: float = 0.0
 var blur_shader = preload("res://src/shaders/motion_blur.gdshader")
@@ -192,6 +193,11 @@ func _ready() -> void:
 	blue_gradient = Gradient.new()
 	blue_gradient.add_point(0.0, Color(0, 0.5, 1, 1))
 	blue_gradient.add_point(1.0, Color(0, 0.5, 1, 0))
+
+	# Cyan Gradient (8x)
+	cyan_gradient = Gradient.new()
+	cyan_gradient.add_point(0.0, Color(0, 1, 1, 1))
+	cyan_gradient.add_point(1.0, Color(0, 1, 1, 0))
 
 	# Purple Gradient (10x)
 	purple_gradient = Gradient.new()
@@ -440,8 +446,10 @@ func update_rocket_animation(delta: float) -> void:
 		if shake_intensity > 0.0:
 			shake_y = randf_range(-shake_intensity, shake_intensity)
 			
-		rocket.offset_top = -50.0 + shake_y
-		rocket.offset_bottom = 50.0 + shake_y
+		# Lower rocket by 50px
+		var base_y_offset = 50.0
+		rocket.offset_top = -50.0 + base_y_offset + shake_y
+		rocket.offset_bottom = 50.0 + base_y_offset + shake_y
 
 func increment_combo() -> void:
 	combo_count += 1
@@ -532,6 +540,8 @@ func update_particle_color() -> void:
 	
 	if combo_count >= 10:
 		target_gradient = purple_gradient
+	elif combo_count >= 8:
+		target_gradient = cyan_gradient
 	elif combo_count >= 5:
 		target_gradient = blue_gradient
 	elif combo_count >= 3:
@@ -781,8 +791,7 @@ func _on_premise_card_pressed(premise: BooleanExpression, card: Button) -> void:
 			selected_premises.append(premise)
 			# Emit signal for tutorial detection
 			premise_selected.emit(premise.expression_string)
-			# Show explosion effect on selection
-			spawn_premise_explosion(card)
+			# spawn_premise_explosion(card) # Removed per user request
 	else:
 		# Deselect premise
 		if premise in selected_premises:
