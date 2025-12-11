@@ -51,6 +51,7 @@ var max_fuel: float = 100.0
 var current_speed: float = 1.0  # Speed multiplier for score gain
 var base_speed: float = 1.0
 var speed_boost: float = 0.0  # Temporary boost from clean solutions
+var gameplay_multiplier: float = 1.0 # Global score multiplier from successful answers
 var combo_count: int = 0  # Consecutive correct answers
 var fuel_consumption_rate: float = 1.0  # Base consumption per second
 var score_accumulator: float = 0.0  # Accumulates score over time
@@ -178,7 +179,7 @@ func update_fuel_system(delta: float) -> void:
 	fuel = max(0.0, fuel)
 
 	# Gain score over time based on speed
-	score_accumulator += delta * current_speed * 10.0  # 10 points per second at 1x speed
+	score_accumulator += delta * current_speed * 10.0 * gameplay_multiplier  # 10 points per second at 1x speed
 	var score_to_add: int = int(score_accumulator)
 	if score_to_add > 0:
 		GameManager.add_score(score_to_add)
@@ -190,11 +191,13 @@ func update_fuel_system(delta: float) -> void:
 
 	# Change color based on fuel level
 	if fuel_percentage > 60:
-		patience_bar.modulate = Color(0.2, 1.0, 0.3)  # Green
+		patience_bar.self_modulate = Color(0.2, 1.0, 0.3)  # Green
 	elif fuel_percentage > 30:
-		patience_bar.modulate = Color(1.0, 0.8, 0.0)  # Yellow
+		patience_bar.self_modulate = Color(1.0, 0.9, 0.0)  # Yellow
+	elif fuel_percentage > 15:
+		patience_bar.self_modulate = Color(1.0, 0.65, 0.0)  # Orange
 	else:
-		patience_bar.modulate = Color(1.0, 0.2, 0.2)  # Red
+		patience_bar.self_modulate = Color(1.0, 0.0, 0.0)  # Red
 
 	# Game over if fuel runs out
 	if fuel <= 0.0:
@@ -219,6 +222,7 @@ func apply_fuel_penalty(percentage: float) -> void:
 	fuel -= penalty_amount
 	fuel = max(0.0, fuel)
 	show_feedback_message("Fuel Lost: -" + str(int(percentage * 100)) + "%!", Color.RED)
+	reset_combo()
 
 func add_speed_boost(boost_amount: float, show_message: bool = true) -> void:
 	"""Add a temporary speed boost"""
@@ -230,16 +234,21 @@ func add_speed_boost(boost_amount: float, show_message: bool = true) -> void:
 func increment_combo() -> void:
 	"""Increment combo counter and apply increasing speed boosts"""
 	combo_count += 1
+	
+	# Increase global multiplier
+	gameplay_multiplier = min(gameplay_multiplier + 0.5, 10.0)
+	
 	# Combo multiplier: 1st = 0.5x, 2nd = 1.0x, 3rd = 1.5x, etc.
 	var combo_boost: float = combo_count * 0.5
-	add_speed_boost(combo_boost, true)
-	show_feedback_message("Combo x" + str(combo_count) + "!", Color.GOLD)
+	add_speed_boost(combo_boost, false)
+	show_feedback_message("MULTIPLIER x" + str(gameplay_multiplier) + "!", Color.GOLD)
 
 func reset_combo() -> void:
 	"""Reset combo counter on mistake"""
-	if combo_count > 0:
-		show_feedback_message("Combo Lost!", Color.ORANGE_RED)
+	if combo_count > 0 or gameplay_multiplier > 1.0:
+		show_feedback_message("Multiplier Reset!", Color.ORANGE_RED)
 	combo_count = 0
+	gameplay_multiplier = 1.0
 
 func change_background(phase: GameManager.GamePhase) -> void:
 	"""Change the background based on the current game phase"""
