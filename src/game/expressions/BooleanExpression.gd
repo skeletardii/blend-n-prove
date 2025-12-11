@@ -30,6 +30,26 @@ func parse_expression():
 	normalized_string = normalized_string.replace("~", "¬")
 	normalized_string = normalized_string.replace("!", "¬")
 
+	# Strip redundant outer parentheses
+	while normalized_string.begins_with("(") and normalized_string.ends_with(")"):
+		var paren_count = 0
+		var is_matching_pair = true
+		for i in range(normalized_string.length() - 1):
+			if normalized_string[i] == '(':
+				paren_count += 1
+			elif normalized_string[i] == ')':
+				paren_count -= 1
+			
+			if paren_count == 0:
+				# Found a closing paren before the end -> not a single wrapping pair
+				is_matching_pair = false
+				break
+		
+		if is_matching_pair:
+			normalized_string = normalized_string.substr(1, normalized_string.length() - 2).strip_edges()
+		else:
+			break
+
 	is_valid = validate_expression()
 
 func validate_expression() -> bool:

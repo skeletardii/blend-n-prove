@@ -127,15 +127,6 @@
     },
     {
       "premises": [
-        "P ↔ Q"
-      ],
-      "conclusion": "(P ∧ Q) ∨ (¬P ∧ ¬Q)",
-      "expected_operations": 1,
-      "description": "Biconditional to Equivalence",
-      "solution": "Apply Biconditional to Equivalence conversion: \"P ↔ Q\" is equivalent to \"(P ∧ Q) ∨ (¬P ∧ ¬Q)\", meaning both are true or both are false."
-    },
-    {
-      "premises": [
         "P ⊕ Q",
         "P → R",
         "Q → R"
@@ -232,13 +223,24 @@
         "The recipe includes eggs (P).",
         "The bakery opens at 6 AM (U)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "S → T", "P", "U"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "Q → R",
+        "R → S",
+        "S → T",
+        "P",
+        "U"
+      ],
       "natural_language_conclusion": "Sales increase (T).",
       "hidden_logical_conclusion": "T",
       "expected_operations": 4,
       "description": "Long chain of implications through four steps",
       "solution": "Translate: P = 'Recipe includes eggs', Q = 'Cake is moist', R = 'Tastes rich', S = 'Guests request again', T = 'Sales increase', U = 'Opens at 6 AM'. Build chain P → T using Hypothetical Syllogism three times, then apply Modus Ponens with P to conclude T.",
-      "interpretation_hints": ["Chain four implications together step by step", "Each conclusion becomes the condition for the next", "U is irrelevant to reaching the conclusion"]
+      "interpretation_hints": [
+        "Chain four implications together step by step",
+        "Each conclusion becomes the condition for the next",
+        "U is irrelevant to reaching the conclusion"
+      ]
     },
     {
       "natural_language_premises": [
@@ -249,13 +251,24 @@
         "The server is in the cloud (U).",
         "System upgrades are pending (V)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → R", "R → (S ∧ T)", "P", "U", "V"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "Q → R",
+        "R → (S ∧ T)",
+        "P",
+        "U",
+        "V"
+      ],
       "natural_language_conclusion": "Backups must be restored (T).",
       "hidden_logical_conclusion": "T",
       "expected_operations": 4,
       "description": "Complex chain with compound consequence extraction",
       "solution": "Translate: P = 'Alarm fails', Q = 'Not secure', R = 'Hackers enter', S = 'Data compromised', T = 'Restore backups', U = 'Cloud server', V = 'Upgrades pending'. Chain P → Q → R, apply Modus Ponens to get S ∧ T, extract T using Simplification.",
-      "interpretation_hints": ["Follow the chain carefully through multiple steps", "Extract the needed component from compound consequent", "Multiple irrelevant facts are provided"]
+      "interpretation_hints": [
+        "Follow the chain carefully through multiple steps",
+        "Extract the needed component from compound consequent",
+        "Multiple irrelevant facts are provided"
+      ]
     },
     {
       "natural_language_premises": [
@@ -267,13 +280,25 @@
         "The defendant has legal representation (U).",
         "The courtroom is available (V)."
       ],
-      "hidden_logical_premises": ["P ∨ Q", "P → R", "R → S", "S → T", "¬Q", "U", "V"],
+      "hidden_logical_premises": [
+        "P ∨ Q",
+        "P → R",
+        "R → S",
+        "S → T",
+        "¬Q",
+        "U",
+        "V"
+      ],
       "natural_language_conclusion": "Justice is served (T).",
       "hidden_logical_conclusion": "T",
       "expected_operations": 4,
       "description": "Disjunctive Syllogism with three-step chain",
       "solution": "Translate: P = 'Find evidence', Q = 'Dismiss case', R = 'File charges', S = 'Schedule trial', T = 'Justice served', U = 'Legal representation', V = 'Courtroom available'. From P ∨ Q and ¬Q, deduce P. Chain P → R → S → T using Hypothetical Syllogism to build P → T, then apply Modus Ponens to conclude T.",
-      "interpretation_hints": ["Determine which option is true from the disjunction", "Build the complete chain through three steps", "Multiple facts are irrelevant"]
+      "interpretation_hints": [
+        "Determine which option is true from the disjunction",
+        "Build the complete chain through three steps",
+        "Multiple facts are irrelevant"
+      ]
     },
     {
       "natural_language_premises": [
@@ -285,13 +310,25 @@
         "The proposal is accepted (P).",
         "The stakeholders are satisfied (W)."
       ],
-      "hidden_logical_premises": ["P → (Q ∧ R)", "Q → S", "R → T", "S → U", "U → V", "P", "W"],
+      "hidden_logical_premises": [
+        "P → (Q ∧ R)",
+        "Q → S",
+        "R → T",
+        "S → U",
+        "U → V",
+        "P",
+        "W"
+      ],
       "natural_language_conclusion": "The project launches (V).",
       "hidden_logical_conclusion": "V",
       "expected_operations": 4,
       "description": "Compound consequent with one-path follow-through",
       "solution": "Translate: P = 'Proposal accepted', Q = 'Funding allocated', R = 'Team hired', S = 'Equipment purchased', T = 'Training', U = 'Setup completed', V = 'Project launches', W = 'Stakeholders satisfied'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Extract Q, apply Modus Ponens to Q → S to get S. Chain S → U → V using Hypothetical Syllogism, then apply Modus Ponens to get V.",
-      "interpretation_hints": ["Extract one component from compound consequent", "Follow that single path to the conclusion", "Other paths are irrelevant"]
+      "interpretation_hints": [
+        "Extract one component from compound consequent",
+        "Follow that single path to the conclusion",
+        "Other paths are irrelevant"
+      ]
     },
     {
       "natural_language_premises": [
@@ -303,13 +340,25 @@
         "The chemical reaction does occur (P).",
         "The lab is evacuated (V)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "S → T", "T → U", "P", "V"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "Q → R",
+        "R → S",
+        "S → T",
+        "T → U",
+        "P",
+        "V"
+      ],
       "natural_language_conclusion": "Gas is released (U).",
       "hidden_logical_conclusion": "U",
       "expected_operations": 4,
       "description": "Five-step implication chain",
       "solution": "Translate: P = 'Reaction occurs', Q = 'Heat generated', R = 'Container expands', S = 'Pressure increases', T = 'Valve opens', U = 'Gas released', V = 'Lab evacuated'. Chain all five conditionals using Hypothetical Syllogism four times to get P → U, then apply Modus Ponens with P to conclude U.",
-      "interpretation_hints": ["Build the entire chain through five implications", "Each step depends on the previous", "One fact is not needed"]
+      "interpretation_hints": [
+        "Build the entire chain through five implications",
+        "Each step depends on the previous",
+        "One fact is not needed"
+      ]
     },
     {
       "natural_language_premises": [
@@ -320,13 +369,24 @@
         "The manager approves the transfer (P).",
         "The company headquarters is in another state (V)."
       ],
-      "hidden_logical_premises": ["P ∨ Q", "P → R", "R → (S ∧ T)", "S → U", "P", "V"],
+      "hidden_logical_premises": [
+        "P ∨ Q",
+        "P → R",
+        "R → (S ∧ T)",
+        "S → U",
+        "P",
+        "V"
+      ],
       "natural_language_conclusion": "Productivity increases (U).",
       "hidden_logical_conclusion": "U",
       "expected_operations": 4,
       "description": "Disjunctive option with compound intermediate result",
       "solution": "Translate: P = 'Manager approves', Q = 'Employee stays', R = 'Employee relocates', S = 'Position filled', T = 'Training occurs', U = 'Productivity increases', V = 'HQ elsewhere'. From P ∨ Q and P being true, follow P → R to get R. Apply Modus Ponens to R → (S ∧ T) to get S ∧ T. Extract S, apply Modus Ponens to S → U to get U.",
-      "interpretation_hints": ["Follow one branch of the disjunction", "Handle compound consequences properly", "Extract only needed components"]
+      "interpretation_hints": [
+        "Follow one branch of the disjunction",
+        "Handle compound consequences properly",
+        "Extract only needed components"
+      ]
     },
     {
       "natural_language_premises": [
@@ -338,13 +398,25 @@
         "The IT team is on-call (V).",
         "The office is closed (W)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → R", "R → (S ∧ T)", "S → U", "P", "V", "W"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "Q → R",
+        "R → (S ∧ T)",
+        "S → U",
+        "P",
+        "V",
+        "W"
+      ],
       "natural_language_conclusion": "Normal operations resume (U).",
       "hidden_logical_conclusion": "U",
       "expected_operations": 4,
       "description": "Chain with compound middle result",
       "solution": "Translate: P = 'Virus detected', Q = 'Antivirus runs', R = 'Files quarantined', S = 'System cleaned', T = 'Backup restored', U = 'Operations resume', V = 'IT on-call', W = 'Office closed'. Chain P → Q → R using Hypothetical Syllogism to get P → R. Apply Modus Ponens to get R. Apply Modus Ponens to R → (S ∧ T) to get S ∧ T. Extract S, apply Modus Ponens to S → U to get U.",
-      "interpretation_hints": ["Chain implications efficiently", "Handle compound results correctly", "Multiple irrelevant premises provided"]
+      "interpretation_hints": [
+        "Chain implications efficiently",
+        "Handle compound results correctly",
+        "Multiple irrelevant premises provided"
+      ]
     },
     {
       "natural_language_premises": [
@@ -355,13 +427,24 @@
         "The performance is excellent (P).",
         "The budget includes raises (V)."
       ],
-      "hidden_logical_premises": ["P ⊕ Q", "P → R", "R → (S ∧ T)", "T → U", "P", "V"],
+      "hidden_logical_premises": [
+        "P ⊕ Q",
+        "P → R",
+        "R → (S ∧ T)",
+        "T → U",
+        "P",
+        "V"
+      ],
       "natural_language_conclusion": "The employee needs training (U).",
       "hidden_logical_conclusion": "U",
       "expected_operations": 4,
       "description": "XOR with compound consequence handling",
       "solution": "Translate: P = 'Excellent performance', Q = 'Adequate performance', R = 'Promotion offered', S = 'Salary increases', T = 'Responsibilities expand', U = 'Needs training', V = 'Budget includes raises'. From P being true and P ⊕ Q, we confirm the path. Apply Modus Ponens through P → R → (S ∧ T) to get S ∧ T. Extract T, apply Modus Ponens to T → U to get U.",
-      "interpretation_hints": ["Use XOR to confirm the chosen path", "Extract the needed component from compound result", "Follow through to the final conclusion"]
+      "interpretation_hints": [
+        "Use XOR to confirm the chosen path",
+        "Extract the needed component from compound result",
+        "Follow through to the final conclusion"
+      ]
     },
     {
       "natural_language_premises": [
@@ -373,13 +456,25 @@
         "The student studies consistently (P).",
         "The student has tutoring support (W)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → (R ∧ S)", "R → T", "T → U", "U → V", "P", "W"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "Q → (R ∧ S)",
+        "R → T",
+        "T → U",
+        "U → V",
+        "P",
+        "W"
+      ],
       "natural_language_conclusion": "They enter the job market sooner (V).",
       "hidden_logical_conclusion": "V",
       "expected_operations": 4,
       "description": "Complex chain with compound intermediate step",
       "solution": "Translate: P = 'Studies consistently', Q = 'Understands material', R = 'Passes exam', S = 'Feels confident', T = 'Earns credit', U = 'Graduates on time', V = 'Enters job market', W = 'Has tutoring'. Apply Modus Ponens to P → Q to get Q. Apply Modus Ponens to Q → (R ∧ S) to get R ∧ S. Extract R, then chain R → T → U → V using Hypothetical Syllogism to get R → V. Apply Modus Ponens to conclude V.",
-      "interpretation_hints": ["Navigate through compound intermediate results", "Extract the needed component to continue the chain", "Build a complete logical path"]
+      "interpretation_hints": [
+        "Navigate through compound intermediate results",
+        "Extract the needed component to continue the chain",
+        "Build a complete logical path"
+      ]
     }
   ]
 }

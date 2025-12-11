@@ -173,16 +173,6 @@
     },
     {
       "premises": [
-        "P ↔ Q",
-        "P"
-      ],
-      "conclusion": "Q",
-      "expected_operations": 2,
-      "description": "Biconditional Elimination + Modus Ponens",
-      "solution": "Apply Biconditional Elimination to extract \"P → Q\" from \"P ↔ Q\", then Modus Ponens with \"P\" to conclude \"Q\"."
-    },
-    {
-      "premises": [
         "P ∨ Q",
         "P → R",
         "Q → R"
@@ -208,13 +198,20 @@
         "The door is not locked (¬P).",
         "If the window is open (Q), then we need to close it (R)."
       ],
-      "hidden_logical_premises": ["P ∨ Q", "¬P", "Q → R"],
+      "hidden_logical_premises": [
+        "P ∨ Q",
+        "¬P",
+        "Q → R"
+      ],
       "natural_language_conclusion": "We need to close the window (R).",
       "hidden_logical_conclusion": "R",
       "expected_operations": 2,
       "description": "Disjunctive Syllogism followed by Modus Ponens",
       "solution": "Translate: P = 'Door is locked', Q = 'Window is open', R = 'Need to close window'. Apply Disjunctive Syllogism with P ∨ Q and ¬P to get Q, then apply Modus Ponens with Q → R to conclude R.",
-      "interpretation_hints": ["Eliminate the false option from the disjunction first", "Then use the remaining option with the conditional"]
+      "interpretation_hints": [
+        "Eliminate the false option from the disjunction first",
+        "Then use the remaining option with the conditional"
+      ]
     },
     {
       "natural_language_premises": [
@@ -222,13 +219,20 @@
         "If the ground is wet (Q), then the plants thrive (R).",
         "It is raining (P)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → R", "P"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "Q → R",
+        "P"
+      ],
       "natural_language_conclusion": "The plants thrive (R).",
       "hidden_logical_conclusion": "R",
       "expected_operations": 2,
       "description": "Hypothetical Syllogism followed by Modus Ponens",
       "solution": "Translate: P = 'It rains', Q = 'Ground gets wet', R = 'Plants thrive'. Apply Hypothetical Syllogism with P → Q and Q → R to get P → R, then apply Modus Ponens with P to conclude R.",
-      "interpretation_hints": ["Chain the conditionals together first", "Then apply the known condition"]
+      "interpretation_hints": [
+        "Chain the conditionals together first",
+        "Then apply the known condition"
+      ]
     },
     {
       "natural_language_premises": [
@@ -236,13 +240,20 @@
         "The package is fragile (P).",
         "If something must be handled carefully (Q), then workers wear gloves (R)."
       ],
-      "hidden_logical_premises": ["P → Q", "P", "Q → R"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "P",
+        "Q → R"
+      ],
       "natural_language_conclusion": "Workers wear gloves (R).",
       "hidden_logical_conclusion": "R",
       "expected_operations": 2,
       "description": "Modus Ponens twice in sequence",
       "solution": "Translate: P = 'Package fragile', Q = 'Handle carefully', R = 'Wear gloves'. Apply Modus Ponens to P → Q and P to get Q. Apply Modus Ponens to Q → R and Q to get R.",
-      "interpretation_hints": ["First conclusion becomes a premise for next step", "Chain the applications together"]
+      "interpretation_hints": [
+        "First conclusion becomes a premise for next step",
+        "Chain the applications together"
+      ]
     },
     {
       "natural_language_premises": [
@@ -250,13 +261,20 @@
         "The phone does not work (Q).",
         "If the phone does not work (Q), then we cannot call for help (R)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q", "Q → R"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "Q",
+        "Q → R"
+      ],
       "natural_language_conclusion": "We cannot call for help (R).",
       "hidden_logical_conclusion": "R",
       "expected_operations": 2,
       "description": "Two-step implication from consequence",
       "solution": "Translate: P = 'Battery dead', Q = 'Phone broken', R = 'Cannot call help'. Apply Modus Ponens to Q → R and Q to get R.",
-      "interpretation_hints": ["The second conditional follows from the first consequence", "Apply implications in sequence"]
+      "interpretation_hints": [
+        "The second conditional follows from the first consequence",
+        "Apply implications in sequence"
+      ]
     },
     {
       "natural_language_premises": [
@@ -264,13 +282,20 @@
         "The document is not lost (¬P).",
         "If the document is filed correctly (Q), then it can be found (R)."
       ],
-      "hidden_logical_premises": ["P ∨ Q", "¬P", "Q → R"],
+      "hidden_logical_premises": [
+        "P ∨ Q",
+        "¬P",
+        "Q → R"
+      ],
       "natural_language_conclusion": "The document can be found (R).",
       "hidden_logical_conclusion": "R",
       "expected_operations": 2,
       "description": "Disjunctive Syllogism then Modus Ponens",
       "solution": "Translate: P = 'Document lost', Q = 'Filed correctly', R = 'Can be found'. Apply Disjunctive Syllogism to P ∨ Q and ¬P to get Q. Apply Modus Ponens to Q → R and Q to get R.",
-      "interpretation_hints": ["Determine which option is true from disjunction", "Then apply that option to the conditional"]
+      "interpretation_hints": [
+        "Determine which option is true from disjunction",
+        "Then apply that option to the conditional"
+      ]
     },
     {
       "natural_language_premises": [
@@ -278,13 +303,20 @@
         "If the soil is dry (Q), then the leaves wilt (R).",
         "The plants need water (P)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → R", "P"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "Q → R",
+        "P"
+      ],
       "natural_language_conclusion": "The leaves wilt (R).",
       "hidden_logical_conclusion": "R",
       "expected_operations": 2,
       "description": "Hypothetical Syllogism with nature scenario",
       "solution": "Translate: P = 'Plants need water', Q = 'Soil is dry', R = 'Leaves wilt'. Apply Hypothetical Syllogism to get P → R, then apply Modus Ponens with P to get R.",
-      "interpretation_hints": ["Build the complete chain through two implications", "Apply the initial fact through the chain"]
+      "interpretation_hints": [
+        "Build the complete chain through two implications",
+        "Apply the initial fact through the chain"
+      ]
     },
     {
       "natural_language_premises": [
@@ -293,13 +325,21 @@
         "If work begins (Q), then the team is assembled (R).",
         "The team is assembled (R) or the project is postponed (S)."
       ],
-      "hidden_logical_premises": ["P → Q", "P", "Q → R", "R ∨ S"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "P",
+        "Q → R",
+        "R ∨ S"
+      ],
       "natural_language_conclusion": "Either the team is assembled or the project is postponed (R ∨ S).",
       "hidden_logical_conclusion": "R ∨ S",
       "expected_operations": 2,
       "description": "Chained Modus Ponens with disjunction",
       "solution": "Translate: P = 'Contract signed', Q = 'Work begins', R = 'Team assembled', S = 'Project postponed'. Apply Modus Ponens to P → Q and P to get Q. Apply Modus Ponens to Q → R to get R. R already satisfies R ∨ S.",
-      "interpretation_hints": ["Chain implications to reach R", "R makes the final disjunction true"]
+      "interpretation_hints": [
+        "Chain implications to reach R",
+        "R makes the final disjunction true"
+      ]
     },
     {
       "natural_language_premises": [
@@ -307,13 +347,20 @@
         "The game is not forfeited (¬P).",
         "If the game is played (Q), then tickets are sold (R)."
       ],
-      "hidden_logical_premises": ["P ∨ Q", "¬P", "Q → R"],
+      "hidden_logical_premises": [
+        "P ∨ Q",
+        "¬P",
+        "Q → R"
+      ],
       "natural_language_conclusion": "Tickets are sold (R).",
       "hidden_logical_conclusion": "R",
       "expected_operations": 2,
       "description": "Disjunctive Syllogism with conditional",
       "solution": "Translate: P = 'Game forfeited', Q = 'Game played', R = 'Tickets sold'. Apply Disjunctive Syllogism to P ∨ Q and ¬P to get Q. Apply Modus Ponens to Q → R and Q to get R.",
-      "interpretation_hints": ["Eliminate the false option", "Use result to trigger next conditional"]
+      "interpretation_hints": [
+        "Eliminate the false option",
+        "Use result to trigger next conditional"
+      ]
     },
     {
       "natural_language_premises": [
@@ -321,13 +368,21 @@
         "If bugs are fixed (Q), then the program runs smoothly (R).",
         "The software is not updated (¬P)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → R", "¬P"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "Q → R",
+        "¬P"
+      ],
       "natural_language_conclusion": "We cannot conclude the program runs smoothly (we need P to be true).",
       "hidden_logical_conclusion": "None",
       "expected_operations": 2,
       "description": "Chain with negated condition (red herring)",
       "solution": "Translate: P = 'Software updated', Q = 'Bugs fixed', R = 'Program smooth'. We have ¬P, so we cannot use P → Q with Modus Ponens. The chain is broken; no conclusion can be drawn about R.",
-      "interpretation_hints": ["Not all premises lead to a conclusion", "The negated condition breaks the forward chain", "This is a test of understanding when rules apply"]
+      "interpretation_hints": [
+        "Not all premises lead to a conclusion",
+        "The negated condition breaks the forward chain",
+        "This is a test of understanding when rules apply"
+      ]
     }
   ]
 }

@@ -578,26 +578,21 @@ func apply_distributivity(premise: BooleanExpression) -> BooleanExpression:
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
-	var normalized = premise.normalized_string
 	if premise.is_conjunction():
 		var conj_parts = premise.get_conjunction_parts()
 		if conj_parts.get("valid", false):
 			var left = conj_parts.get("left") as BooleanExpression
 			var right = conj_parts.get("right") as BooleanExpression
 
-			if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
-				var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
-				var inner_expr = BooleanExpression.new(inner)
+			if right.is_disjunction():
+				var disj_parts = right.get_disjunction_parts()
+				if disj_parts.get("valid", false):
+					var b = disj_parts.get("left") as BooleanExpression
+					var c = disj_parts.get("right") as BooleanExpression
 
-				if inner_expr.is_disjunction():
-					var disj_parts = inner_expr.get_disjunction_parts()
-					if disj_parts.get("valid", false):
-						var b = disj_parts.get("left") as BooleanExpression
-						var c = disj_parts.get("right") as BooleanExpression
-
-						var a_and_b = create_conjunction_expression(left, b)
-						var a_and_c = create_conjunction_expression(left, c)
-						return create_disjunction_expression(a_and_b, a_and_c)
+					var a_and_b = create_conjunction_expression(left, b)
+					var a_and_c = create_conjunction_expression(left, c)
+					return create_disjunction_expression(a_and_b, a_and_c)
 
 	elif premise.is_disjunction():
 		var disj_parts = premise.get_disjunction_parts()
@@ -605,19 +600,15 @@ func apply_distributivity(premise: BooleanExpression) -> BooleanExpression:
 			var left = disj_parts.get("left") as BooleanExpression
 			var right = disj_parts.get("right") as BooleanExpression
 
-			if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
-				var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
-				var inner_expr = BooleanExpression.new(inner)
+			if right.is_conjunction():
+				var conj_parts = right.get_conjunction_parts()
+				if conj_parts.get("valid", false):
+					var b = conj_parts.get("left") as BooleanExpression
+					var c = conj_parts.get("right") as BooleanExpression
 
-				if inner_expr.is_conjunction():
-					var conj_parts = inner_expr.get_conjunction_parts()
-					if conj_parts.get("valid", false):
-						var b = conj_parts.get("left") as BooleanExpression
-						var c = conj_parts.get("right") as BooleanExpression
-
-						var a_or_b = create_disjunction_expression(left, b)
-						var a_or_c = create_disjunction_expression(left, c)
-						return create_conjunction_expression(a_or_b, a_or_c)
+					var a_or_b = create_disjunction_expression(left, b)
+					var a_or_c = create_disjunction_expression(left, c)
+					return create_conjunction_expression(a_or_b, a_or_c)
 
 	return BooleanExpression.new("")
 
@@ -631,27 +622,19 @@ func apply_reverse_distributivity(premise: BooleanExpression) -> BooleanExpressi
 			var left_expr = disj_parts.get("left") as BooleanExpression
 			var right_expr = disj_parts.get("right") as BooleanExpression
 
-			if left_expr.normalized_string.begins_with("(") and left_expr.normalized_string.ends_with(")") and \
-			   right_expr.normalized_string.begins_with("(") and right_expr.normalized_string.ends_with(")"):
-				var left_inner = left_expr.normalized_string.substr(1, left_expr.normalized_string.length() - 2).strip_edges()
-				var right_inner = right_expr.normalized_string.substr(1, right_expr.normalized_string.length() - 2).strip_edges()
+			if left_expr.is_conjunction() and right_expr.is_conjunction():
+				var left_parts = left_expr.get_conjunction_parts()
+				var right_parts = right_expr.get_conjunction_parts()
 
-				var left_conj = BooleanExpression.new(left_inner)
-				var right_conj = BooleanExpression.new(right_inner)
+				if left_parts.get("valid", false) and right_parts.get("valid", false):
+					var a1 = left_parts.get("left") as BooleanExpression
+					var b = left_parts.get("right") as BooleanExpression
+					var a2 = right_parts.get("left") as BooleanExpression
+					var c = right_parts.get("right") as BooleanExpression
 
-				if left_conj.is_conjunction() and right_conj.is_conjunction():
-					var left_parts = left_conj.get_conjunction_parts()
-					var right_parts = right_conj.get_conjunction_parts()
-
-					if left_parts.get("valid", false) and right_parts.get("valid", false):
-						var a1 = left_parts.get("left") as BooleanExpression
-						var b = left_parts.get("right") as BooleanExpression
-						var a2 = right_parts.get("left") as BooleanExpression
-						var c = right_parts.get("right") as BooleanExpression
-
-						if a1.equals(a2):
-							var b_or_c = create_disjunction_expression(b, c)
-							return create_conjunction_expression(a1, b_or_c)
+					if a1.equals(a2):
+						var b_or_c = create_disjunction_expression(b, c)
+						return create_conjunction_expression(a1, b_or_c)
 
 	elif premise.is_conjunction():
 		var conj_parts = premise.get_conjunction_parts()
@@ -659,27 +642,19 @@ func apply_reverse_distributivity(premise: BooleanExpression) -> BooleanExpressi
 			var left_expr = conj_parts.get("left") as BooleanExpression
 			var right_expr = conj_parts.get("right") as BooleanExpression
 
-			if left_expr.normalized_string.begins_with("(") and left_expr.normalized_string.ends_with(")") and \
-			   right_expr.normalized_string.begins_with("(") and right_expr.normalized_string.ends_with(")"):
-				var left_inner = left_expr.normalized_string.substr(1, left_expr.normalized_string.length() - 2).strip_edges()
-				var right_inner = right_expr.normalized_string.substr(1, right_expr.normalized_string.length() - 2).strip_edges()
+			if left_expr.is_disjunction() and right_expr.is_disjunction():
+				var left_parts = left_expr.get_disjunction_parts()
+				var right_parts = right_expr.get_disjunction_parts()
 
-				var left_disj = BooleanExpression.new(left_inner)
-				var right_disj = BooleanExpression.new(right_inner)
+				if left_parts.get("valid", false) and right_parts.get("valid", false):
+					var a1 = left_parts.get("left") as BooleanExpression
+					var b = left_parts.get("right") as BooleanExpression
+					var a2 = right_parts.get("left") as BooleanExpression
+					var c = right_parts.get("right") as BooleanExpression
 
-				if left_disj.is_disjunction() and right_disj.is_disjunction():
-					var left_parts = left_disj.get_disjunction_parts()
-					var right_parts = right_disj.get_disjunction_parts()
-
-					if left_parts.get("valid", false) and right_parts.get("valid", false):
-						var a1 = left_parts.get("left") as BooleanExpression
-						var b = left_parts.get("right") as BooleanExpression
-						var a2 = right_parts.get("left") as BooleanExpression
-						var c = right_parts.get("right") as BooleanExpression
-
-						if a1.equals(a2):
-							var b_and_c = create_conjunction_expression(b, c)
-							return create_disjunction_expression(a1, b_and_c)
+					if a1.equals(a2):
+						var b_and_c = create_conjunction_expression(b, c)
+						return create_disjunction_expression(a1, b_and_c)
 
 	return BooleanExpression.new("")
 
@@ -1009,10 +984,13 @@ func get_applicable_single_operations(premise: BooleanExpression) -> Array:
 		operations.append("Simplification (Left)")
 		operations.append("Simplification (Right)")
 
-	if premise.normalized_string.begins_with("¬(") and premise.is_conjunction():
-		operations.append("De Morgan's (AND)")
-	elif premise.normalized_string.begins_with("¬(") and premise.is_disjunction():
-		operations.append("De Morgan's (OR)")
+	if premise.normalized_string.begins_with("¬(") and premise.normalized_string.ends_with(")"):
+		var inner = premise.normalized_string.substr(2, premise.normalized_string.length() - 3)
+		var inner_expr = BooleanExpression.new(inner)
+		if inner_expr.is_conjunction():
+			operations.append("De Morgan's (AND)")
+		elif inner_expr.is_disjunction():
+			operations.append("De Morgan's (OR)")
 
 	# Check for reverse De Morgan's applicability
 	if premise.is_disjunction():
