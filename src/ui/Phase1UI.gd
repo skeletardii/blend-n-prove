@@ -10,10 +10,15 @@ const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
 @onready var score_display: Label = $MainContainer/TopStatusBar/StatusContainer/ScoreDisplay
 @onready var level_display: Label = $MainContainer/TopStatusBar/StatusContainer/LevelDisplay
 @onready var patience_bar: ProgressBar = $MainContainer/TopStatusBar/PatienceBar
-@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/RightPanel/PremiseChecklist/PremiseListScroll/PremiseList
 @onready var input_display: Label = $MainContainer/InputSystem/InputContainer/InputField/InputDisplay
-@onready var variable_definitions_panel: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/VariableDefinitions
-@onready var definitions_list: VBoxContainer = $MainContainer/CustomerArea/PremisePanelsContainer/LeftPanel/VariableDefinitions/DefinitionsScroll/DefinitionsList
+
+# Card UI References
+@onready var card_panel: PanelContainer = $MainContainer/CustomerArea/CardArea/Card
+@onready var header_label: Label = $MainContainer/CustomerArea/CardArea/Card/MainLayout/HeaderPanel/HeaderLabel
+@onready var variable_definitions_panel: ScrollContainer = $MainContainer/CustomerArea/CardArea/Card/MainLayout/ContentMargin/VariableDefinitions
+@onready var definitions_list: VBoxContainer = $MainContainer/CustomerArea/CardArea/Card/MainLayout/ContentMargin/VariableDefinitions/DefinitionsList
+@onready var premise_checklist_panel: ScrollContainer = $MainContainer/CustomerArea/CardArea/Card/MainLayout/ContentMargin/PremiseChecklist
+@onready var premise_list: VBoxContainer = $MainContainer/CustomerArea/CardArea/Card/MainLayout/ContentMargin/PremiseChecklist/PremiseList
 
 # Virtual keyboard buttons
 @onready var var_p: Button = $MainContainer/VirtualKeyboard/VariableRow/VarP
@@ -46,6 +51,10 @@ var lives: int = 3
 var score: int = 0
 var level: int = 1
 
+# Card Flip State
+var is_showing_variables: bool = false
+var is_flipping: bool = false
+
 # Signals for parent communication
 signal premise_validated(expression: BooleanExpression)
 signal premises_completed(premises: Array[BooleanExpression])
@@ -71,6 +80,54 @@ func _ready() -> void:
 	connect_virtual_keyboard()
 	update_input_display()
 	update_status_display()
+	
+	# Setup card flipping
+	if card_panel:
+		card_panel.gui_input.connect(_on_card_gui_input)
+	
+	# Defer pivot setup to ensure size is calculated
+	call_deferred("setup_pivot")
+	
+	# Initial view state
+	update_view_visibility()
+
+func setup_pivot() -> void:
+	if card_panel:
+		card_panel.pivot_offset = card_panel.size / 2
+
+func _on_card_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		flip_card()
+
+func flip_card() -> void:
+	if is_flipping: return
+	is_flipping = true
+	
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN_OUT)
+	
+	# First half of flip (scale down to 0 width)
+	tween.tween_property(card_panel, "scale:x", 0.0, 0.2)
+	tween.tween_callback(_swap_views)
+	
+	# Second half of flip (scale back up to full width)
+	tween.tween_property(card_panel, "scale:x", 1.0, 0.2)
+	tween.tween_callback(func(): is_flipping = false)
+
+func _swap_views() -> void:
+	is_showing_variables = !is_showing_variables
+	update_view_visibility()
+
+func update_view_visibility() -> void:
+	if variable_definitions_panel:
+		variable_definitions_panel.visible = is_showing_variables
+	if premise_checklist_panel:
+		premise_checklist_panel.visible = !is_showing_variables
+		
+	# Update header text
+	if header_label:
+		header_label.text = "Variable Definitions" if is_showing_variables else "Premises to Reconstruct"
 
 func connect_virtual_keyboard() -> void:
 	# Variable buttons
@@ -238,11 +295,13 @@ func update_status_display() -> void:
 func update_variable_definitions() -> void:
 	"""Extract and display variable definitions from natural language premises"""
 	if not current_customer:
-		variable_definitions_panel.visible = false
+		is_showing_variables = false
+		update_view_visibility()
 		return
 
 	if not current_customer.is_natural_language:
-		variable_definitions_panel.visible = false
+		is_showing_variables = false
+		update_view_visibility()
 		return
 
 	# Clear existing definitions
@@ -257,29 +316,39 @@ func update_variable_definitions() -> void:
 	var definitions: Dictionary = {}
 	for premise in current_customer.natural_language_premises:
 		var matches = regex.search_all(premise)
+		var last_end_pos = 0
+		
 		for match_result in matches:
 			var variable = match_result.get_string(1)
-			# Extract the text before the variable definition
+			# Extract the text between last match end and current match start
 			var start_pos = match_result.get_start(0)
-			var text_before = premise.substr(0, start_pos).strip_edges()
-			# Clean up common prefixes
-			text_before = text_before.trim_prefix("If ")
-			text_before = text_before.trim_prefix("Either ")
-			text_before = text_before.trim_prefix("There are no ")
-			text_before = text_before.trim_prefix("The ")
-			text_before = text_before.trim_suffix(" is")
-			text_before = text_before.trim_suffix(" are")
-			text_before = text_before.trim_suffix(",")
-			text_before = text_before.trim_suffix(" then")
-			text_before = text_before.strip_edges()
+			var text_segment = premise.substr(last_end_pos, start_pos - last_end_pos).strip_edges()
+			
+			# Update last_end_pos for next iteration
+			last_end_pos = match_result.get_end(0)
 
-			# Only store if not a negation (we'll handle those separately)
-			if not variable.begins_with("¬"):
-				definitions[variable] = text_before
+			# Clean up common prefixes from text_segment
+			text_segment = text_segment.trim_prefix("If ")
+			text_segment = text_segment.trim_prefix("Then ") # Handle "Then" which might appear in the middle
+			text_segment = text_segment.trim_prefix("Either ")
+			text_segment = text_segment.trim_prefix("There are no ")
+			text_segment = text_segment.trim_prefix("The ")
+			text_segment = text_segment.trim_suffix(" is")
+			text_segment = text_segment.trim_suffix(" are")
+			text_segment = text_segment.trim_suffix(",")
+			text_segment = text_segment.trim_suffix(" then")
+			text_segment = text_segment.strip_edges()
+			
+			# Only store if valid text found and not a negation
+			if not variable.begins_with("¬") and not text_segment.is_empty():
+				definitions[variable] = text_segment
 
 	# Display definitions
 	if definitions.size() > 0:
-		variable_definitions_panel.visible = true
+		# Default to showing variables for new natural language problems
+		is_showing_variables = true
+		update_view_visibility()
+		
 		# Load MuseoSansRounded500 font (consistent with Phase2)
 		var museo_font = load("res://assets/fonts/MuseoSansRounded500.otf")
 		var is_first = true
@@ -287,25 +356,27 @@ func update_variable_definitions() -> void:
 			# Add separator line before each definition (except the first)
 			if not is_first:
 				var separator = HSeparator.new()
-				separator.add_theme_constant_override("separation", 1)
-				# Create a custom StyleBox for subtle line
-				var separator_style = StyleBoxFlat.new()
-				separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)  # Light gray with transparency
-				separator_style.content_margin_top = 10
-				separator_style.content_margin_bottom = 10
+				separator.add_theme_constant_override("separation", 30) # Increased spacing
+				
+				# Create a thin, crisp divider line
+				var separator_style = StyleBoxLine.new()
+				separator_style.color = Color(0.8, 0.8, 0.8, 0.5)
+				separator_style.thickness = 1
+				
 				separator.add_theme_stylebox_override("separator", separator_style)
 				definitions_list.add_child(separator)
 
 			var def_label = Label.new()
 			def_label.text = "Let " + variable + " be \"" + definitions[variable] + "\""
 			def_label.add_theme_font_override("font", museo_font)
-			def_label.add_theme_font_size_override("font_size", 20)
+			def_label.add_theme_font_size_override("font_size", 28)
 			def_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 			def_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			definitions_list.add_child(def_label)
 			is_first = false
 	else:
-		variable_definitions_panel.visible = false
+		is_showing_variables = false
+		update_view_visibility()
 
 func update_premise_checklist() -> void:
 	# Clear existing items
@@ -344,11 +415,13 @@ func update_premise_checklist() -> void:
 		# Add separator line before each premise (except the first)
 		if display_count > 0:
 			var separator = HSeparator.new()
-			separator.add_theme_constant_override("separation", 1)
-			var separator_style = StyleBoxFlat.new()
-			separator_style.bg_color = Color(0.7, 0.7, 0.7, 0.4)
-			separator_style.content_margin_top = 10
-			separator_style.content_margin_bottom = 10
+			separator.add_theme_constant_override("separation", 30) # Increased spacing
+			
+			# Create a thin, crisp divider line
+			var separator_style = StyleBoxLine.new()
+			separator_style.color = Color(0.8, 0.8, 0.8, 0.5)
+			separator_style.thickness = 1
+			
 			separator.add_theme_stylebox_override("separator", separator_style)
 			premise_list.add_child(separator)
 
@@ -368,8 +441,8 @@ func create_premise_item(premise_text: String) -> Label:
 	var museo_font = load("res://assets/fonts/MuseoSansRounded500.otf")
 	label.add_theme_font_override("font", museo_font)
 
-	# Uniform font size of 20 for both natural language and symbols
-	label.add_theme_font_size_override("font_size", 20)
+	# Uniform font size of 28 for both natural language and symbols
+	label.add_theme_font_size_override("font_size", 28)
 
 	# Simple dark text color
 	label.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1, 1.0))
