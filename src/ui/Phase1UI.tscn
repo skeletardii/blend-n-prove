@@ -53,12 +53,12 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 5.0
-offset_top = 5.0
+offset_top = 0.0
 offset_right = -5.0
 offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 5
 metadata/_edit_lock_ = true
 
 [node name="TopStatusBar" type="Control" parent="MainContainer"]
@@ -118,11 +118,11 @@ grow_vertical = 0
 value = 100.0
 
 [node name="RocketSpacer" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 250)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
 [node name="CustomerArea" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 520)
+custom_minimum_size = Vector2(0, 450)
 layout_mode = 2
 
 [node name="CardArea" type="Control" parent="MainContainer/CustomerArea"]
@@ -209,7 +209,7 @@ text = "(press card to flip)"
 horizontal_alignment = 2
 
 [node name="InputSystem" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
 [node name="Panel" type="Panel" parent="MainContainer/InputSystem"]
@@ -262,7 +262,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="KeyboardSpacer" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 90)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="VirtualKeyboard" type="Control" parent="MainContainer"]
