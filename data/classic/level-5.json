@@ -62,19 +62,6 @@
     },
     {
       "premises": [
-        "P ↔ Q",
-        "Q → (R ∧ S)",
-        "R → T",
-        "S → T",
-        "P"
-      ],
-      "conclusion": "T",
-      "expected_operations": 5,
-      "description": "Biconditional elimination + convergence",
-      "solution": "Use Biconditional to get \"Q\", apply Modus Ponens to get \"R ∧ S\", extract either \"R\" or \"S\", then Modus Ponens to get \"T\"."
-    },
-    {
-      "premises": [
         "¬¬(P ∧ Q)",
         "P → R",
         "Q → S"
@@ -220,18 +207,6 @@
     },
     {
       "premises": [
-        "P ↔ Q",
-        "Q ↔ R",
-        "R → S",
-        "¬P"
-      ],
-      "conclusion": "¬S",
-      "expected_operations": 5,
-      "description": "Chained Biconditionals with Negation",
-      "solution": "Use biconditionals to establish P ↔ R through transitivity. Since ¬P, we get ¬R via Modus Tollens on the extracted implication. Then apply Modus Tollens on R → S to get ¬S."
-    },
-    {
-      "premises": [
         "(P ∧ Q) → R",
         "(R ∧ S) → T",
         "P",
@@ -253,32 +228,25 @@
         "The meeting is scheduled (P).",
         "The office has projector equipment (V)."
       ],
-      "hidden_logical_premises": ["P → Q", "Q → R", "R → S", "S → T", "T → U", "P", "V"],
+      "hidden_logical_premises": [
+        "P → Q",
+        "Q → R",
+        "R → S",
+        "S → T",
+        "T → U",
+        "P",
+        "V"
+      ],
       "natural_language_conclusion": "Executives approve the presentation (U).",
       "hidden_logical_conclusion": "U",
       "expected_operations": 5,
       "description": "Five-step implication chain with multiple dependencies",
       "solution": "Translate: P = 'Meeting scheduled', Q = 'Presentation prepared', R = 'Slides created', S = 'Graphics designed', T = 'Professional', U = 'Executives approve', V = 'Has projector'. Chain all five conditionals using Hypothetical Syllogism four times to build P → U, then apply Modus Ponens with P to conclude U.",
-      "interpretation_hints": ["Build the complete five-step chain", "Each step leads to the next", "One fact is irrelevant to the final conclusion"]
-    },
-    {
-      "natural_language_premises": [
-        "The manager approves the budget (P) if and only if the project is viable (Q).",
-        "If the project is viable (Q), then resources can be allocated (R).",
-        "If resources can be allocated (R), then hiring begins (S).",
-        "If hiring begins (S), then the team expands (T).",
-        "If the team expands (T), then production increases (U).",
-        "The manager approves the budget (P).",
-        "The market is favorable (V).",
-        "Competitors are not active (W)."
-      ],
-      "hidden_logical_premises": ["P ↔ Q", "Q → R", "R → S", "S → T", "T → U", "P", "V", "W"],
-      "natural_language_conclusion": "Production increases (U).",
-      "hidden_logical_conclusion": "U",
-      "expected_operations": 5,
-      "description": "Biconditional with extended chain of implications",
-      "solution": "Translate: P = 'Budget approved', Q = 'Project viable', R = 'Allocate resources', S = 'Hiring begins', T = 'Team expands', U = 'Production increases', V = 'Market favorable', W = 'No competitors'. Extract P → Q from P ↔ Q, apply Modus Ponens with P to get Q. Chain Q → U through four steps using Hypothetical Syllogism, then apply Modus Ponens to conclude U.",
-      "interpretation_hints": ["Extract the needed direction from the biconditional", "Build the chain from the extracted implication", "Two facts are not needed for this conclusion"]
+      "interpretation_hints": [
+        "Build the complete five-step chain",
+        "Each step leads to the next",
+        "One fact is irrelevant to the final conclusion"
+      ]
     },
     {
       "natural_language_premises": [
@@ -292,13 +260,27 @@
         "The architect approves the design (P).",
         "The neighborhood is zoned for construction (Y)."
       ],
-      "hidden_logical_premises": ["P → (Q ∧ R)", "Q → S", "R → T", "S → U", "U → V", "T → W", "(V ∧ W) → X", "P", "Y"],
+      "hidden_logical_premises": [
+        "P → (Q ∧ R)",
+        "Q → S",
+        "R → T",
+        "S → U",
+        "U → V",
+        "T → W",
+        "(V ∧ W) → X",
+        "P",
+        "Y"
+      ],
       "natural_language_conclusion": "Construction officially starts (X).",
       "hidden_logical_conclusion": "X",
       "expected_operations": 5,
       "description": "Complex multi-branch convergence",
       "solution": "Translate: P = 'Design approved', Q = 'Permits obtained', R = 'Materials ordered', S = 'Site prep begins', T = 'Materials arrive', U = 'Equipment set up', V = 'Workers building', W = 'Inspection occurs', X = 'Construction starts', Y = 'Zoned correctly'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Extract Q and R separately. Chain Q → S → U → V using Hypothetical Syllogism to get Q → V, apply to get V. Chain R → T → W to get W. Apply Modus Ponens to (V ∧ W) → X with V ∧ W to conclude X.",
-      "interpretation_hints": ["Handle compound consequents carefully", "Build two separate chains that eventually converge", "Multiple paths must all be satisfied for final conclusion"]
+      "interpretation_hints": [
+        "Handle compound consequents carefully",
+        "Build two separate chains that eventually converge",
+        "Multiple paths must all be satisfied for final conclusion"
+      ]
     },
     {
       "natural_language_premises": [
@@ -311,13 +293,27 @@
         "The patent is not denied (¬Q).",
         "The invention is novel (X)."
       ],
-      "hidden_logical_premises": ["P ∨ Q", "P → (R ∧ S)", "R → T", "S → U", "T → V", "(V ∧ U) → W", "¬Q", "X"],
+      "hidden_logical_premises": [
+        "P ∨ Q",
+        "P → (R ∧ S)",
+        "R → T",
+        "S → U",
+        "T → V",
+        "(V ∧ U) → W",
+        "¬Q",
+        "X"
+      ],
       "natural_language_conclusion": "The company thrives (W).",
       "hidden_logical_conclusion": "W",
       "expected_operations": 5,
       "description": "Disjunctive entry with branching convergence",
       "solution": "Translate: P = 'Patent approved', Q = 'Patent denied', R = 'Invention protected', S = 'License opportunities', T = 'No copying', U = 'Revenue generated', V = 'Market share preserved', W = 'Company thrives', X = 'Invention novel'. From P ∨ Q and ¬Q, deduce P. Apply Modus Ponens to P → (R ∧ S) to get R ∧ S. Extract both: R → T → V and S → U. Apply Modus Ponens to (V ∧ U) → W to conclude W.",
-      "interpretation_hints": ["Eliminate one option from disjunction", "Handle compound consequent", "Build two convergent paths", "Combine paths for final conclusion"]
+      "interpretation_hints": [
+        "Eliminate one option from disjunction",
+        "Handle compound consequent",
+        "Build two convergent paths",
+        "Combine paths for final conclusion"
+      ]
     },
     {
       "natural_language_premises": [
@@ -331,32 +327,28 @@
         "The software team is hired (P).",
         "The deadline is flexible (Y)."
       ],
-      "hidden_logical_premises": ["P → (Q ∧ R)", "Q → S", "S → T", "R → U", "T → V", "U → W", "(V ∧ W) → X", "P", "Y"],
+      "hidden_logical_premises": [
+        "P → (Q ∧ R)",
+        "Q → S",
+        "S → T",
+        "R → U",
+        "T → V",
+        "U → W",
+        "(V ∧ W) → X",
+        "P",
+        "Y"
+      ],
       "natural_language_conclusion": "The product is ready (X).",
       "hidden_logical_conclusion": "X",
       "expected_operations": 5,
       "description": "Parallel development chains converging",
       "solution": "Translate: P = 'Team hired', Q = 'Development begins', R = 'Testing set up', S = 'Features coded', T = 'App built', U = 'Tests created', V = 'Optimization done', W = 'Quality verified', X = 'Product ready', Y = 'Deadline flexible'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Build chain Q → S → T → V. Build chain R → U → W. Apply Modus Ponens to (V ∧ W) → X to conclude X.",
-      "interpretation_hints": ["Two parallel development tracks must complete", "Extract components from compound consequent", "Each track requires multiple steps", "Both tracks converge at final step"]
-    },
-    {
-      "natural_language_premises": [
-        "The company invests in research (P) if and only if innovation is prioritized (Q).",
-        "If innovation is prioritized (Q), then both cutting-edge products are developed (R) and the workforce is trained (S).",
-        "If cutting-edge products are developed (R), then the market position strengthens (T).",
-        "If the workforce is trained (S), then employee productivity increases (U).",
-        "If market position strengthens (T), then profits grow (V).",
-        "If profits grow (V) and employee productivity increases (U), then shareholder value increases (W).",
-        "The company invests in research (P).",
-        "The board approves the strategy (X)."
-      ],
-      "hidden_logical_premises": ["P ↔ Q", "Q → (R ∧ S)", "R → T", "S → U", "T → V", "(V ∧ U) → W", "P", "X"],
-      "natural_language_conclusion": "Shareholder value increases (W).",
-      "hidden_logical_conclusion": "W",
-      "expected_operations": 5,
-      "description": "Biconditional entry with dual outcome paths",
-      "solution": "Translate: P = 'Invests in research', Q = 'Innovation prioritized', R = 'Cutting-edge products', S = 'Workforce trained', T = 'Market position strong', U = 'Productivity increases', V = 'Profits grow', W = 'Shareholder value up', X = 'Board approves'. Extract P → Q from P ↔ Q, apply Modus Ponens with P to get Q. Apply Modus Ponens to Q → (R ∧ S) to get R ∧ S. Build chain R → T → V and chain S → U. Apply Modus Ponens to (V ∧ U) → W to conclude W.",
-      "interpretation_hints": ["Extract the needed implication from biconditional", "Handle compound consequent effectively", "Build two convergent paths", "Satisfying both paths enables final conclusion"]
+      "interpretation_hints": [
+        "Two parallel development tracks must complete",
+        "Extract components from compound consequent",
+        "Each track requires multiple steps",
+        "Both tracks converge at final step"
+      ]
     },
     {
       "natural_language_premises": [
@@ -370,13 +362,28 @@
         "The manufacturing process is optimized (P).",
         "Industry regulations are relaxed (Y)."
       ],
-      "hidden_logical_premises": ["P ∨ Q", "P → (R ∧ S)", "R → T", "S → U", "T → V", "U → W", "(V ∧ W) → X", "P", "Y"],
+      "hidden_logical_premises": [
+        "P ∨ Q",
+        "P → (R ∧ S)",
+        "R → T",
+        "S → U",
+        "T → V",
+        "U → W",
+        "(V ∧ W) → X",
+        "P",
+        "Y"
+      ],
       "natural_language_conclusion": "Competitive advantage emerges (X).",
       "hidden_logical_conclusion": "X",
       "expected_operations": 5,
       "description": "Disjunctive optimization with competitive outcome",
       "solution": "Translate: P = 'Process optimized', Q = 'Costs high', R = 'Waste reduced', S = 'Efficiency improves', T = 'Material costs drop', U = 'Speed increases', V = 'Expenses drop', W = 'Capacity expands', X = 'Competitive advantage', Y = 'Regulations relaxed'. P is true, so follow P → (R ∧ S) to get R ∧ S. Build R → T → V and S → U → W separately. Apply Modus Ponens to (V ∧ W) → X to conclude X.",
-      "interpretation_hints": ["Confirm disjunction path is satisfied", "Extract compound consequences", "Develop two parallel improvement streams", "Converge both streams for competitive benefit"]
+      "interpretation_hints": [
+        "Confirm disjunction path is satisfied",
+        "Extract compound consequences",
+        "Develop two parallel improvement streams",
+        "Converge both streams for competitive benefit"
+      ]
     },
     {
       "natural_language_premises": [
@@ -390,33 +397,28 @@
         "The environmental sustainability initiative is launched (P).",
         "Government incentives are available (Y)."
       ],
-      "hidden_logical_premises": ["P → (Q ∧ R)", "Q → S", "R → T", "S → U", "T → V", "U → W", "(W ∧ V) → X", "P", "Y"],
+      "hidden_logical_premises": [
+        "P → (Q ∧ R)",
+        "Q → S",
+        "R → T",
+        "S → U",
+        "T → V",
+        "U → W",
+        "(W ∧ V) → X",
+        "P",
+        "Y"
+      ],
       "natural_language_conclusion": "Long-term success is secured (X).",
       "hidden_logical_conclusion": "X",
       "expected_operations": 5,
       "description": "Sustainability-driven dual outcome convergence",
       "solution": "Translate: P = 'Launch initiative', Q = 'Green tech adopted', R = 'Engagement increases', S = 'Energy decreases', T = 'Retention improves', U = 'Costs reduce', V = 'Knowledge grows', W = 'Profitability increases', X = 'Long-term success', Y = 'Incentives available'. Apply Modus Ponens to P → (Q ∧ R) to get Q ∧ R. Chain Q → S → U → W and R → T → V. Apply Modus Ponens to (W ∧ V) → X to conclude X.",
-      "interpretation_hints": ["Extract both components from compound consequent", "One path leads to profitability", "Another path develops organizational capability", "Both must converge for long-term security"]
-    },
-    {
-      "natural_language_premises": [
-        "The healthcare transformation program is implemented (P) if and only if digital infrastructure is established (Q).",
-        "If digital infrastructure is established (Q), then both electronic health records are deployed (R) and patient access improves (S).",
-        "If electronic health records are deployed (R), then healthcare providers gain efficiency (T).",
-        "If patient access improves (S), then patient satisfaction increases (U).",
-        "If healthcare providers gain efficiency (T), then costs are controlled (V).",
-        "If patient satisfaction increases (U), then community trust builds (W).",
-        "If costs are controlled (V) and community trust builds (W), then the healthcare system is transformed (X).",
-        "The healthcare transformation program is implemented (P).",
-        "The government supports the program (Y)."
-      ],
-      "hidden_logical_premises": ["P ↔ Q", "Q → (R ∧ S)", "R → T", "S → U", "T → V", "U → W", "(V ∧ W) → X", "P", "Y"],
-      "natural_language_conclusion": "The healthcare system is transformed (X).",
-      "hidden_logical_conclusion": "X",
-      "expected_operations": 5,
-      "description": "Biconditional healthcare transformation with dual benefits",
-      "solution": "Translate: P = 'Program implemented', Q = 'Digital infrastructure', R = 'Health records deployed', S = 'Access improves', T = 'Provider efficiency', U = 'Satisfaction increases', V = 'Costs controlled', W = 'Community trust', X = 'System transformed', Y = 'Gov support'. Extract P → Q from P ↔ Q, apply Modus Ponens with P to get Q. Apply Modus Ponens to Q → (R ∧ S) to get R ∧ S. Build R → T → V for cost control and S → U → W for trust building. Apply Modus Ponens to (V ∧ W) → X to conclude X.",
-      "interpretation_hints": ["Extract implication from biconditional", "Handle compound intermediate result", "Two outcome streams emerge", "System transformation requires both efficiency and trust"]
+      "interpretation_hints": [
+        "Extract both components from compound consequent",
+        "One path leads to profitability",
+        "Another path develops organizational capability",
+        "Both must converge for long-term security"
+      ]
     }
   ]
 }

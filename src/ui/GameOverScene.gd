@@ -1,6 +1,13 @@
 extends Control
 
+const ProgressTrackerTypes = preload("res://src/managers/ProgressTrackerTypes.gd")
+const GradeBadge = preload("res://src/ui/GradeBadge.gd")
+
 @onready var final_score_label: Label = $GameOverPanel/GameOverContainer/FinalScore
+
+# Store leaderboard qualification status
+var qualifies_for_leaderboard: bool = false
+var leaderboard_button: Button = null
 
 func _ready() -> void:
 	# Wait a brief moment before stopping music to avoid cutting off game over sound
@@ -36,6 +43,40 @@ func add_progress_context() -> void:
 	var game_over_container = $GameOverPanel/GameOverContainer
 	var current_score = GameManager.current_score
 
+	# Add grade display (hero badge)
+	var recent_sessions = ProgressTracker.get_recent_sessions(1)
+	if recent_sessions.size() > 0:
+		var grade_section = VBoxContainer.new()
+		grade_section.alignment = BoxContainer.ALIGNMENT_CENTER
+		grade_section.add_theme_constant_override("separation", 12)
+		game_over_container.add_child(grade_section)
+
+		var grade_title = Label.new()
+		grade_title.text = "Your Grade"
+		grade_title.add_theme_font_size_override("font_size", 36)
+		grade_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		grade_title.modulate = Color.BLACK
+		grade_section.add_child(grade_title)
+
+		# Calculate grade
+		var grade = ProgressTrackerTypes.GradeCalculator.calculate_session_grade(
+			recent_sessions[0], stats
+		)
+
+		# Create hero badge (120x120px)
+		var badge = GradeBadge.new()
+		badge.set_grade(grade)
+		badge.custom_minimum_size = Vector2(120, 120)
+		grade_section.add_child(badge)
+
+		# Grade description
+		var grade_desc = Label.new()
+		grade_desc.text = ProgressTrackerTypes.GradeCalculator.get_grade_description(grade)
+		grade_desc.add_theme_font_size_override("font_size", 24)
+		grade_desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		grade_desc.modulate = Color.BLACK
+		grade_section.add_child(grade_desc)
+
 	# Add spacer before progress info
 	var spacer_before = Control.new()
 	spacer_before.custom_minimum_size = Vector2(0, 20)
@@ -67,8 +108,10 @@ func add_progress_context() -> void:
 	games_info.add_theme_font_size_override("font_size", 24)
 	games_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	games_info.text = "Games played: " + str(stats.total_games_played)
+	# Calculate completion rate (time_out = completed successfully)
 	if stats.total_games_played > 0:
-		games_info.text += " | Success rate: %.1f%%" % (stats.success_rate * 100.0)
+		var completion_rate = (float(stats.games_ended_by_time_out) / float(stats.total_games_played)) * 100.0
+		games_info.text += " | Completion rate: %.1f%%" % completion_rate
 	progress_info.add_child(games_info)
 
 	# Achievement notifications (if any recent unlocks)
@@ -109,18 +152,23 @@ func get_recent_achievements() -> Array[String]:
 func check_leaderboard_qualification() -> void:
 	var current_score = GameManager.current_score
 
-	# Skip leaderboard check if score is 0
+	# Always show progress context first
+	# If score is 0, skip leaderboard check
 	if current_score <= 0:
+		qualifies_for_leaderboard = false
 		add_progress_context()
 		return
 
-	# Add checking message
+	# Show progress context immediately (with grade)
+	add_progress_context()
+
+	# Add checking message at the bottom
 	var game_over_container = $GameOverPanel/GameOverContainer
 	var checking_label = Label.new()
 	checking_label.text = "Checking leaderboard..."
-	checking_label.add_theme_font_size_override("font_size", 24)
+	checking_label.add_theme_font_size_override("font_size", 20)
 	checking_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	checking_label.modulate = Color(0.7, 0.7, 0.7, 1)
+	checking_label.modulate = Color(0.5, 0.5, 0.5, 1)
 	game_over_container.add_child(checking_label)
 
 	# Check if score qualifies for top 10
@@ -129,12 +177,46 @@ func check_leaderboard_qualification() -> void:
 	# Remove checking label
 	checking_label.queue_free()
 
+	# Store qualification status
+	qualifies_for_leaderboard = qualifies
+
+	# Add leaderboard button if qualified
 	if qualifies:
-		# Transition to high score entry scene
-		transition_to_high_score_entry()
-	else:
-		# Show normal game over
-		add_progress_context()
+		add_leaderboard_button()
+
+func add_leaderboard_button() -> void:
+	var game_over_container = $GameOverPanel/GameOverContainer
+
+	# Add spacer before button
+	var spacer = Control.new()
+	spacer.custom_minimum_size = Vector2(0, 20)
+	game_over_container.add_child(spacer)
+
+	# Add celebration message
+	var qualify_label = Label.new()
+	qualify_label.text = "🎉 YOU MADE THE TOP 10! 🎉"
+	qualify_label.add_theme_font_size_override("font_size", 32)
+	qualify_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	qualify_label.modulate = Color(0.9, 0.6, 0.0)  # Gold/orange color
+	game_over_container.add_child(qualify_label)
+
+	# Add small spacer
+	var small_spacer = Control.new()
+	small_spacer.custom_minimum_size = Vector2(0, 10)
+	game_over_container.add_child(small_spacer)
+
+	# Create leaderboard button
+	leaderboard_button = Button.new()
+	leaderboard_button.custom_minimum_size = Vector2(400, 70)
+	leaderboard_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	leaderboard_button.add_theme_font_size_override("font_size", 28)
+	leaderboard_button.text = "SUBMIT HIGH SCORE"
+	leaderboard_button.pressed.connect(_on_submit_high_score_pressed)
+	game_over_container.add_child(leaderboard_button)
+
+func _on_submit_high_score_pressed() -> void:
+	AudioManager.play_button_click()
+	transition_to_high_score_entry()
 
 func transition_to_high_score_entry() -> void:
 	# Get session data

@@ -142,3 +142,91 @@ class PlayerStatistics:
 		games_ended_by_time_out = data.get("games_ended_by_time_out", 0)
 		games_ended_by_quit = data.get("games_ended_by_quit", 0)
 		average_time_remaining_on_quit = data.get("average_time_remaining_on_quit", 0.0)
+
+## GradeCalculator - Static utility class for calculating session grades
+class GradeCalculator:
+	## Calculate letter grade (A-F) for a game session
+	## Grading components:
+	## - Score percentile vs personal best (40% weight)
+	## - Accuracy: 1 - (mistakes / max(10, orders)) (40% weight)
+	## - Completion quality (20% weight)
+	static func calculate_session_grade(session: GameSession, stats: PlayerStatistics) -> String:
+		var grade_score: float = 0.0
+
+		# Component 1: Score Percentile (40% weight)
+		var difficulty: int = session.difficulty_level
+		var high_score: int = stats.high_scores_by_difficulty.get(difficulty, 0)
+
+		var score_percentile: float = 0.0
+		if high_score > 0:
+			score_percentile = float(session.final_score) / float(high_score)
+			score_percentile = clamp(score_percentile, 0.0, 1.0)
+
+		# Component 2: Accuracy (40% weight)
+		# Accuracy = 1 - (mistakes / max(10, orders_completed))
+		var max_expected_orders: float = max(10.0, float(session.orders_completed))
+		var accuracy: float = 1.0 - (float(session.mistakes_count) / max_expected_orders)
+		accuracy = clamp(accuracy, 0.0, 1.0)
+
+		# Component 3: Completion Quality (20% weight)
+		var completion_quality: float = 0.0
+		if session.completion_status == "time_out":
+			# Timed out = full points for completion
+			completion_quality = 1.0
+		elif session.completion_status == "quit":
+			# Quit = partial credit based on time played
+			if session.time_limit_seconds > 0:
+				var time_played_ratio: float = 1.0 - (session.time_remaining_on_quit / session.time_limit_seconds)
+				completion_quality = time_played_ratio * 0.5  # Max 50% credit for quit
+			else:
+				completion_quality = 0.0
+		else:
+			# Incomplete = 0 points
+			completion_quality = 0.0
+
+		# Calculate weighted grade score (0-100)
+		grade_score = (score_percentile * 40.0) + (accuracy * 40.0) + (completion_quality * 20.0)
+
+		# Convert to letter grade
+		if grade_score >= 90.0:
+			return "A"
+		elif grade_score >= 80.0:
+			return "B"
+		elif grade_score >= 70.0:
+			return "C"
+		elif grade_score >= 60.0:
+			return "D"
+		else:
+			return "F"
+
+	## Get color for a letter grade
+	static func get_grade_color(grade: String) -> Color:
+		match grade:
+			"A":
+				return Color(0.2, 0.8, 0.2)  # GREEN - excellent
+			"B":
+				return Color(0.2, 0.8, 0.8)  # CYAN - very good
+			"C":
+				return Color(0.9, 0.9, 0.2)  # YELLOW - average
+			"D":
+				return Color(0.9, 0.6, 0.2)  # ORANGE - below average
+			"F":
+				return Color(0.9, 0.2, 0.2)  # RED - needs work
+			_:
+				return Color.GRAY
+
+	## Get description text for a letter grade
+	static func get_grade_description(grade: String) -> String:
+		match grade:
+			"A":
+				return "Excellent Performance!"
+			"B":
+				return "Great Job!"
+			"C":
+				return "Good Effort"
+			"D":
+				return "Keep Practicing"
+			"F":
+				return "Room for Improvement"
+			_:
+				return ""

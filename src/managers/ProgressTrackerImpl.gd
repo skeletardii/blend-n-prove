@@ -667,70 +667,163 @@ func debug_populate_test_data() -> void:
 	# Clear existing data
 	game_sessions.clear()
 	statistics = ProgressTrackerTypes.PlayerStatistics.new()
-	
-	# Create dummy sessions
+
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
-	
-	var total_sessions = 20
-	
+
+	# Define operations for realistic data
+	var operations = ["Modus Ponens", "Modus Tollens", "Conjunction", "Addition", "Double Negation", "Simplification"]
+
+	# Create sessions spanning last 30 days
+	var total_sessions = 35
+	var now = Time.get_unix_time_from_system()
+	var time_out_count = 0
+	var quit_count = 0
+	var total_quit_time = 0.0
+	var longest_duration = 0.0
+	var longest_combo = 0
+	var difficulty_counts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+
 	for i in range(total_sessions):
-		var difficulty = rng.randi_range(1, 5)
-		var score = rng.randi_range(100, 5000) * difficulty
-		var orders = rng.randi_range(3, 15)
-		var duration = rng.randf_range(60.0, 300.0)
+		# Spread sessions over last 30 days
+		var days_ago = rng.randi_range(0, 30)
+		var session_time = now - (days_ago * 86400) - rng.randi_range(0, 86400)
+
+		# Generate difficulty with progression pattern (start low, get higher)
+		var difficulty = 1
+		if i < 5:
+			difficulty = 1
+		elif i < 12:
+			difficulty = rng.randi_range(1, 2)
+		elif i < 20:
+			difficulty = rng.randi_range(2, 3)
+		elif i < 28:
+			difficulty = rng.randi_range(2, 4)
+		else:
+			difficulty = rng.randi_range(3, 5)
+
+		difficulty_counts[difficulty] += 1
+
+		# Generate performance that varies but shows some improvement over time
+		var base_score = difficulty * 200
+		var progression_bonus = int(i * 15)  # Improve over time
+		var variance = rng.randi_range(-100, 200)
+		var score = max(50, base_score + progression_bonus + variance)
+
+		var orders = rng.randi_range(5, 20)
+		var duration = rng.randf_range(120.0, 300.0)
+		var time_limit = 300.0
+
+		# Status: 70% complete, 25% quit, 5% incomplete
+		var status_roll = rng.randf()
 		var status = "time_out"
-		if rng.randf() < 0.2: # 20% chance to quit
+		var time_remaining = 0.0
+
+		if status_roll < 0.70:
+			status = "time_out"
+			time_out_count += 1
+		elif status_roll < 0.95:
 			status = "quit"
-		
-		var session = ProgressTrackerTypes.GameSession.new(score, difficulty, orders, duration, status, 0.0, 0.0, 0, 0)
+			quit_count += 1
+			time_remaining = rng.randf_range(30.0, 150.0)
+			total_quit_time += time_remaining
+			duration = time_limit - time_remaining  # Adjust duration for quit
+		else:
+			status = "incomplete"
+
+		# Mistakes based on difficulty and session progression (improve over time)
+		var base_mistakes = difficulty * 2
+		var improvement_factor = max(0, 1.0 - (float(i) / 50.0))  # Fewer mistakes over time
+		var mistakes = max(0, int(base_mistakes * improvement_factor + rng.randi_range(-1, 2)))
+
+		# Combo based on performance
+		var combo = max(0, orders - mistakes - rng.randi_range(0, 3))
+		longest_combo = max(longest_combo, combo)
+
+		# Create session
+		var session = ProgressTrackerTypes.GameSession.new(
+			score, difficulty, orders, duration, status,
+			time_limit, time_remaining, combo, mistakes
+		)
+
+		# Set timestamp manually to spread over 30 days
+		var datetime = Time.get_datetime_dict_from_unix_time(int(session_time))
+		session.timestamp = "%04d-%02d-%02dT%02d:%02d:%02d" % [
+			datetime.year, datetime.month, datetime.day,
+			datetime.hour, datetime.minute, datetime.second
+		]
+
+		# Populate operations_used for each session
+		var ops_in_session = rng.randi_range(3, 6)
+		for j in range(ops_in_session):
+			var op = operations[rng.randi_range(0, operations.size() - 1)]
+			if not session.operations_used.has(op):
+				session.operations_used[op] = {"count": 0, "successes": 0}
+
+			var op_count = rng.randi_range(1, 8)
+			var success_rate = 0.5 + (float(i) / 70.0) + rng.randf_range(-0.2, 0.2)  # Improve over time
+			success_rate = clamp(success_rate, 0.3, 0.98)
+			var successes = int(op_count * success_rate)
+
+			session.operations_used[op]["count"] += op_count
+			session.operations_used[op]["successes"] += successes
+
 		game_sessions.append(session)
-		
-	# Calculate statistics manually based on these sessions
+		longest_duration = max(longest_duration, duration)
+
+	# Calculate statistics from actual session data
 	statistics.total_games_played = total_sessions
-	# statistics.total_successful_games = wins # Removed as property no longer exists
-	
+
 	var total_score = 0
 	var total_time = 0.0
 	var total_orders = 0
-	
+
+	# Initialize operation tracking
+	for op in operations:
+		statistics.operation_usage_count[op] = 0
+		statistics.operation_proficiency[op] = {"total": 0, "successes": 0, "rate": 0.0}
+
 	for session in game_sessions:
 		total_score += session.final_score
 		total_time += session.session_duration
 		total_orders += session.orders_completed
-		
+
 		# High scores
 		if session.final_score > statistics.high_score_overall:
 			statistics.high_score_overall = session.final_score
-		
+
 		if session.final_score > statistics.high_scores_by_difficulty.get(session.difficulty_level, 0):
 			statistics.high_scores_by_difficulty[session.difficulty_level] = session.final_score
-			
-		# Streak (simplified for test data - just make up a streak if last game was win)
-		# Removed current_streak and best_streak updates as they are no longer in PlayerStatistics
-			
+
+		# Aggregate operations from session
+		for op in session.operations_used.keys():
+			var op_data = session.operations_used[op]
+			statistics.operation_usage_count[op] += op_data["count"]
+			statistics.operation_proficiency[op]["total"] += op_data["count"]
+			statistics.operation_proficiency[op]["successes"] += op_data["successes"]
+
+	# Calculate operation success rates
+	for op in statistics.operation_proficiency.keys():
+		var prof = statistics.operation_proficiency[op]
+		if prof["total"] > 0:
+			prof["rate"] = float(prof["successes"]) / float(prof["total"])
+		else:
+			prof["rate"] = 0.0
+
 	statistics.total_play_time = total_time
 	statistics.total_orders_completed = total_orders
 	statistics.average_score_overall = float(total_score) / float(total_sessions) if total_sessions > 0 else 0.0
-	
-	# Explicitly populate newly added statistics
+
+	# Session-based statistics
 	statistics.average_session_duration_overall = total_time / float(total_sessions) if total_sessions > 0 else 0.0
-	statistics.longest_session_duration_overall = 280.0 # Example longest session
+	statistics.longest_session_duration_overall = longest_duration
 	statistics.average_orders_per_game_overall = float(total_orders) / float(total_sessions) if total_sessions > 0 else 0.0
-	statistics.longest_orders_combo_overall = 12 # Example longest combo
-	statistics.games_ended_by_time_out = 15 # Example
-	statistics.games_ended_by_quit = 5 # Example
-	statistics.average_time_remaining_on_quit = 30.0 # Example
-	
-	# Dummy operation proficiency and usage
-	statistics.operation_usage_count["Modus Ponens"] = 50
-	statistics.operation_proficiency["Modus Ponens"] = {"total": 50, "successes": 45, "rate": 0.9}
-	statistics.operation_usage_count["Conjunction"] = 30
-	statistics.operation_proficiency["Conjunction"] = {"total": 30, "successes": 20, "rate": 0.66}
-	
-	statistics.common_failures["Negation"] = 5
-	
-	# Average by difficulty
+	statistics.longest_orders_combo_overall = longest_combo
+	statistics.games_ended_by_time_out = time_out_count
+	statistics.games_ended_by_quit = quit_count
+	statistics.average_time_remaining_on_quit = total_quit_time / float(quit_count) if quit_count > 0 else 0.0
+
+	# Average scores by difficulty
 	for diff in range(1, 6):
 		var diff_sessions = game_sessions.filter(func(s): return s.difficulty_level == diff)
 		if diff_sessions.size() > 0:
@@ -738,25 +831,54 @@ func debug_populate_test_data() -> void:
 			for s in diff_sessions:
 				diff_total += s.final_score
 			statistics.average_scores_by_difficulty[diff] = float(diff_total) / float(diff_sessions.size())
-			
-	# Favorite difficulty
-	statistics.favorite_difficulty = rng.randi_range(1, 5)
-	statistics.highest_difficulty_mastered = rng.randi_range(1, 3)
-	
-	# Add some achievements
+
+	# Favorite difficulty = most played
+	var max_count = 0
+	var fav_diff = 1
+	for diff in difficulty_counts.keys():
+		if difficulty_counts[diff] > max_count:
+			max_count = difficulty_counts[diff]
+			fav_diff = diff
+	statistics.favorite_difficulty = fav_diff
+
+	# Highest difficulty mastered (5000+ score)
+	statistics.highest_difficulty_mastered = 1
+	for diff in range(5, 0, -1):
+		if statistics.high_scores_by_difficulty.get(diff, 0) >= 5000:
+			statistics.highest_difficulty_mastered = diff
+			break
+
+	# Add achievements based on actual data
 	statistics.achievements_unlocked.append("first_game")
-	# Removed '5_streak' achievement based on 'wins', now driven by combo
-	if statistics.high_score_overall > 1000: statistics.achievements_unlocked.append("1000_score")
-	if statistics.high_score_overall > 5000: statistics.achievements_unlocked.append("5000_score")
-	
+	if statistics.total_games_played >= 3: statistics.achievements_unlocked.append("3_games")
+	if statistics.total_games_played >= 10: statistics.achievements_unlocked.append("10_games")
+	if statistics.high_score_overall >= 500: statistics.achievements_unlocked.append("500_score")
+	if statistics.high_score_overall >= 1000: statistics.achievements_unlocked.append("1000_score")
+	if statistics.high_score_overall >= 5000: statistics.achievements_unlocked.append("5000_score")
+	if statistics.longest_orders_combo_overall >= 3: statistics.achievements_unlocked.append("3_streak")
+	if statistics.longest_orders_combo_overall >= 5: statistics.achievements_unlocked.append("5_streak")
+	if statistics.longest_orders_combo_overall >= 10: statistics.achievements_unlocked.append("10_streak")
+
+	# Operation-based achievements
+	for op in ["Modus Ponens", "Modus Tollens", "Conjunction", "Addition", "Double Negation"]:
+		var count = statistics.operation_usage_count.get(op, 0)
+		var op_key = op.replace(" ", "_").to_lower()
+		if count >= 5:
+			statistics.achievements_unlocked.append("rule_" + op_key + "_5")
+		if count >= 20:
+			statistics.achievements_unlocked.append("rule_" + op_key + "_20")
+
 	# Tutorial progress
 	statistics.tutorials_completed = 3
 	statistics.tutorial_completions["tutorial_basics"] = [0, 1, 2]
 	statistics.tutorial_completions["tutorial_logic_gates"] = [0, 1]
-	
+
 	save_progress_data()
 	progress_updated.emit()
-	print("Debug: Populated test data with ", total_sessions, " sessions.")
+	print("Debug: Populated test data with ", total_sessions, " sessions over 30 days.")
+	print("  → Favorite difficulty: ", statistics.favorite_difficulty)
+	print("  → High score: ", statistics.high_score_overall)
+	print("  → Achievements: ", statistics.achievements_unlocked.size())
 
 ## Helper function to print human-readable file error messages
 func _print_file_error(error_code: int) -> void:

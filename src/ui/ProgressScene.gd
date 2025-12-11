@@ -3,6 +3,9 @@ extends Control
 const ProgressTrackerTypes = preload("res://src/managers/ProgressTrackerTypes.gd")
 const PieChart = preload("res://src/ui/PieChart.gd")
 const CircleGraph = preload("res://src/ui/CircleGraph.gd")
+const ScoreTrendGraph = preload("res://src/ui/ScoreTrendGraph.gd")
+const GradeBadge = preload("res://src/ui/GradeBadge.gd")
+const DifficultyRecommender = preload("res://src/managers/DifficultyRecommender.gd")
 
 @onready var total_games_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/OverallStatsGrid/TotalGamesPanel/VBoxContainer/TotalGamesValue
 @onready var high_score_value: Label = $MainScrollContainer/StatsContainer/OverallStatsSection/HighScoreHeroPanel/VBoxContainer/HighScoreValue
@@ -18,6 +21,9 @@ const CircleGraph = preload("res://src/ui/CircleGraph.gd")
 const CARD_STYLE = preload("res://assets/styles/dark_inventory_panel.tres")
 const HEADER_FONT = preload("res://assets/fonts/MuseoSansRounded1000.otf")
 const BODY_FONT = preload("res://assets/fonts/MuseoSansRounded500.otf")
+
+# Difficulty recommendation dismissal state
+var _difficulty_recommendation_dismissed: bool = false
 
 func _ready() -> void:
 	# Connect button
@@ -72,9 +78,16 @@ func update_detailed_stats() -> void:
 	spacer.custom_minimum_size = Vector2(0, 12)
 	spacer.name = "DetailedSectionSpacer1"
 	stats_container.add_child(spacer)
-	
+
+	# Add difficulty recommendation (if not dismissed)
+	if not _difficulty_recommendation_dismissed:
+		add_difficulty_recommendation_section()
+
 	# Add visual breakdown
 	add_visual_breakdown_section(stats)
+
+	# Add score trend graph
+	add_score_trend_section()
 
 	# Add achievements section
 	if stats.achievements_unlocked.size() > 0:
@@ -225,7 +238,7 @@ func add_operation_statistics_section() -> void:
 	section.name = "DetailedSectionOperations"
 	stats_container.add_child(section)
 
-	section.add_child(_create_section_title("Operation Statistics"))
+	section.add_child(_create_section_title("Operation Mastery"))
 
 	var panel = _create_styled_panel()
 	section.add_child(panel)
@@ -237,65 +250,57 @@ func add_operation_statistics_section() -> void:
 	margin.add_theme_constant_override("margin_right", 10)
 	panel.add_child(margin)
 
-	var operations_grid = GridContainer.new()
-	operations_grid.columns = 3
-	operations_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	operations_grid.add_theme_constant_override("h_separation", 8)
-	operations_grid.add_theme_constant_override("v_separation", 8)
-	margin.add_child(operations_grid)
+	var operations_vbox = VBoxContainer.new()
+	operations_vbox.add_theme_constant_override("separation", 12)
+	margin.add_child(operations_vbox)
 
-	# Headers
-	var headers = ["Op", "Used", "Success"]
-	for h in headers:
-		var lbl = Label.new()
-		lbl.text = h
-		lbl.add_theme_font_override("font", BODY_FONT)
-		lbl.add_theme_font_size_override("font_size", 16)
-		lbl.modulate = Color(0.2, 0.2, 0.2, 1)
-		operations_grid.add_child(lbl)
-
-	# Sort operations by usage count (most used first)
+	# Sort operations by mastery (highest first)
 	var sorted_operations = stats.operation_usage_count.keys()
-	sorted_operations.sort_custom(func(a, b): return stats.operation_usage_count[a] > stats.operation_usage_count[b])
+	sorted_operations.sort_custom(func(a, b):
+		return _calculate_operation_mastery(a, stats) > _calculate_operation_mastery(b, stats)
+	)
 
-	# Display each operation
+	# Display each operation with mastery bar
 	for operation_name in sorted_operations:
 		var count = stats.operation_usage_count[operation_name]
+		var mastery = _calculate_operation_mastery(operation_name, stats)
+		var mastery_color = _get_mastery_color(mastery)
+
+		# Operation container
+		var op_container = VBoxContainer.new()
+		op_container.add_theme_constant_override("separation", 4)
+		operations_vbox.add_child(op_container)
+
+		# Info row (name, uses, mastery %)
+		var info_row = HBoxContainer.new()
+		info_row.add_theme_constant_override("separation", 8)
+		op_container.add_child(info_row)
 
 		var name_label = Label.new()
 		name_label.text = operation_name
 		name_label.add_theme_font_override("font", HEADER_FONT)
 		name_label.add_theme_font_size_override("font_size", 18)
 		name_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
-		operations_grid.add_child(name_label)
+		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		info_row.add_child(name_label)
 
 		var count_label = Label.new()
-		count_label.text = str(count)
+		count_label.text = str(count) + " uses"
 		count_label.add_theme_font_override("font", BODY_FONT)
-		count_label.add_theme_font_size_override("font_size", 18)
-		count_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
-		operations_grid.add_child(count_label)
+		count_label.add_theme_font_size_override("font_size", 16)
+		count_label.modulate = Color(0.2, 0.2, 0.2, 1)
+		info_row.add_child(count_label)
 
-		var rate_label = Label.new()
-		if stats.operation_proficiency.has(operation_name):
-			var proficiency = stats.operation_proficiency[operation_name]
-			var rate = proficiency.get("rate", 0.0)
-			rate_label.text = "%.1f%%" % (rate * 100.0)
-			rate_label.add_theme_font_override("font", BODY_FONT)
-			rate_label.add_theme_font_size_override("font_size", 18)
+		var mastery_label = Label.new()
+		mastery_label.text = "%.0f%%" % mastery
+		mastery_label.add_theme_font_override("font", BODY_FONT)
+		mastery_label.add_theme_font_size_override("font_size", 16)
+		mastery_label.modulate = mastery_color
+		info_row.add_child(mastery_label)
 
-			# Color code success rate
-			if rate >= 0.8:
-				rate_label.modulate = Color.GREEN
-			elif rate >= 0.5:
-				rate_label.modulate = Color.YELLOW
-			else:
-				rate_label.modulate = Color.RED
-		else:
-			rate_label.text = "N/A"
-			rate_label.add_theme_font_size_override("font_size", 18)
-			rate_label.modulate = Color.GRAY
-		operations_grid.add_child(rate_label)
+		# Progress bar (custom drawn Control)
+		var progress_bar = _create_mastery_progress_bar(mastery, mastery_color)
+		op_container.add_child(progress_bar)
 
 func add_recent_sessions_section() -> void:
 	var stats_container = $MainScrollContainer/StatsContainer
@@ -336,9 +341,18 @@ func add_recent_sessions_section() -> void:
 		card.add_child(margin)
 		
 		var row = HBoxContainer.new()
+		row.add_theme_constant_override("separation", 8)
 		margin.add_child(row)
-		
-		# Left side: Date & Result
+
+		# Grade badge (left side)
+		var stats = ProgressTracker.statistics
+		var grade = ProgressTrackerTypes.GradeCalculator.calculate_session_grade(session, stats)
+		var badge = GradeBadge.new()
+		badge.set_grade(grade)
+		badge.custom_minimum_size = Vector2(50, 50)
+		row.add_child(badge)
+
+		# Middle: Date & Result
 		var left_vbox = VBoxContainer.new()
 		left_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(left_vbox)
@@ -371,13 +385,28 @@ func add_recent_sessions_section() -> void:
 		var right_vbox = VBoxContainer.new()
 		row.add_child(right_vbox)
 
+		# Score row with delta indicator
+		var score_row = HBoxContainer.new()
+		score_row.add_theme_constant_override("separation", 6)
+		score_row.alignment = BoxContainer.ALIGNMENT_END
+		right_vbox.add_child(score_row)
+
 		var score_label = Label.new()
 		score_label.text = "Score: " + str(session.final_score)
 		score_label.add_theme_font_override("font", HEADER_FONT)
 		score_label.add_theme_font_size_override("font_size", 20)
 		score_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
-		score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		right_vbox.add_child(score_label)
+		score_row.add_child(score_label)
+
+		# Delta indicator
+		var delta_data = _calculate_score_delta(session, stats)
+		if delta_data.show:
+			var delta_label = Label.new()
+			delta_label.text = _format_delta_text(delta_data)
+			delta_label.add_theme_font_override("font", BODY_FONT)
+			delta_label.add_theme_font_size_override("font_size", 14)
+			delta_label.modulate = _get_delta_color(delta_data)
+			score_row.add_child(delta_label)
 
 		var diff_label = Label.new()
 		diff_label.text = "Lvl " + str(session.difficulty_level)
@@ -457,3 +486,282 @@ func add_visual_breakdown_section(stats: ProgressTrackerTypes.PlayerStatistics) 
 			name_lbl.add_theme_font_size_override("font_size", 14)
 			name_lbl.add_theme_color_override("font_color", Color(0.2, 0.2, 0.2, 1))
 			item_hbox.add_child(name_lbl)
+
+func add_score_trend_section() -> void:
+	var stats_container = $MainScrollContainer/StatsContainer
+
+	# Add spacer
+	var spacer = Control.new()
+	spacer.custom_minimum_size = Vector2(0, 12)
+	spacer.name = "DetailedSectionSpacerTrend"
+	stats_container.add_child(spacer)
+
+	var section = VBoxContainer.new()
+	section.name = "DetailedSectionScoreTrend"
+	stats_container.add_child(section)
+
+	section.add_child(_create_section_title("Score Trend"))
+
+	# Time period selector buttons
+	var button_row = HBoxContainer.new()
+	button_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	button_row.add_theme_constant_override("separation", 8)
+	section.add_child(button_row)
+
+	var button_group = ButtonGroup.new()
+	for period in ["7D", "14D", "30D"]:
+		var btn = Button.new()
+		btn.text = period
+		btn.custom_minimum_size = Vector2(60, 44)
+		btn.button_group = button_group
+		btn.toggle_mode = true
+		if period == "7D":
+			btn.button_pressed = true  # Default selection
+		btn.pressed.connect(_on_trend_period_changed.bind(period))
+		button_row.add_child(btn)
+
+	var panel = _create_styled_panel()
+	section.add_child(panel)
+
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_bottom", 12)
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	panel.add_child(margin)
+
+	var graph = ScoreTrendGraph.new()
+	graph.custom_minimum_size = Vector2(696, 250)
+	graph.name = "ScoreTrendGraph"
+	graph.set_sessions(ProgressTracker.game_sessions, 7)  # Default 7 days
+	margin.add_child(graph)
+
+func _on_trend_period_changed(period: String) -> void:
+	var graph_path = "MainScrollContainer/StatsContainer/DetailedSectionScoreTrend/PanelContainer/MarginContainer/ScoreTrendGraph"
+	var graph = get_node_or_null(graph_path)
+	if graph:
+		var days = 7 if period == "7D" else (14 if period == "14D" else 30)
+		graph.set_sessions(ProgressTracker.game_sessions, days)
+
+func add_difficulty_recommendation_section() -> void:
+	var stats = ProgressTracker.statistics
+	var sessions = ProgressTracker.game_sessions
+
+	var recommendation = DifficultyRecommender.get_recommendation(stats, sessions)
+
+	# Only show if recommendation has meaningful confidence
+	if recommendation.confidence == "default":
+		return  # Not enough data
+
+	var stats_container = $MainScrollContainer/StatsContainer
+
+	var section = VBoxContainer.new()
+	section.name = "DetailedSectionRecommendation"
+	stats_container.add_child(section)
+
+	var panel = _create_styled_panel()
+	section.add_child(panel)
+
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_bottom", 12)
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	panel.add_child(margin)
+
+	var main_row = HBoxContainer.new()
+	main_row.add_theme_constant_override("separation", 12)
+	margin.add_child(main_row)
+
+	# Icon container (left side)
+	var icon_bg = ColorRect.new()
+	icon_bg.custom_minimum_size = Vector2(60, 60)
+	icon_bg.color = Color(0.2, 0.5, 0.9, 0.2)  # Light blue tint
+	main_row.add_child(icon_bg)
+
+	var icon_label = Label.new()
+	icon_label.text = "📊"  # Chart emoji
+	icon_label.add_theme_font_size_override("font_size", 36)
+	icon_label.position = Vector2(12, 12)
+	icon_bg.add_child(icon_label)
+
+	# Content (middle)
+	var content_vbox = VBoxContainer.new()
+	content_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content_vbox.add_theme_constant_override("separation", 4)
+	main_row.add_child(content_vbox)
+
+	var title = Label.new()
+	title.text = "Recommended Difficulty"
+	title.add_theme_font_override("font", HEADER_FONT)
+	title.add_theme_font_size_override("font_size", 20)
+	title.add_theme_color_override("font_color", Color(0, 0, 0, 1))
+	content_vbox.add_child(title)
+
+	var level_row = HBoxContainer.new()
+	level_row.add_theme_constant_override("separation", 8)
+	content_vbox.add_child(level_row)
+
+	var level_text = Label.new()
+	level_text.text = "Level"
+	level_text.add_theme_font_override("font", BODY_FONT)
+	level_text.add_theme_font_size_override("font_size", 28)
+	level_text.add_theme_color_override("font_color", Color(0, 0, 0, 1))
+	level_row.add_child(level_text)
+
+	var level_number = Label.new()
+	level_number.text = str(recommendation.level)
+	level_number.add_theme_font_override("font", HEADER_FONT)
+	level_number.add_theme_font_size_override("font_size", 36)
+	level_number.modulate = Color(0.9, 0.6, 0.2)  # Orange
+	level_row.add_child(level_number)
+
+	# Trend indicator
+	var current_fav = stats.favorite_difficulty
+	if recommendation.level > current_fav:
+		var up_arrow = Label.new()
+		up_arrow.text = "↑"
+		up_arrow.add_theme_font_size_override("font_size", 24)
+		up_arrow.modulate = Color.GREEN
+		level_row.add_child(up_arrow)
+	elif recommendation.level < current_fav:
+		var down_arrow = Label.new()
+		down_arrow.text = "↓"
+		down_arrow.add_theme_font_size_override("font_size", 24)
+		down_arrow.modulate = Color.ORANGE
+		level_row.add_child(down_arrow)
+
+	var reasoning = Label.new()
+	reasoning.text = recommendation.reasoning
+	reasoning.add_theme_font_override("font", BODY_FONT)
+	reasoning.add_theme_font_size_override("font_size", 16)
+	reasoning.modulate = Color(0.2, 0.2, 0.2, 1)
+	reasoning.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	content_vbox.add_child(reasoning)
+
+	# Dismiss button (right side)
+	var dismiss_btn = Button.new()
+	dismiss_btn.text = "×"
+	dismiss_btn.custom_minimum_size = Vector2(44, 44)
+	dismiss_btn.add_theme_font_size_override("font_size", 32)
+	dismiss_btn.pressed.connect(_on_recommendation_dismissed)
+	main_row.add_child(dismiss_btn)
+
+func _on_recommendation_dismissed() -> void:
+	_difficulty_recommendation_dismissed = true
+	var section = $MainScrollContainer/StatsContainer/DetailedSectionRecommendation
+	if section:
+		section.queue_free()
+
+## Calculate operation mastery percentage (0-100)
+## Mastery = (success_rate × 70%) + (experience_bonus × 30%)
+func _calculate_operation_mastery(operation_name: String, stats: ProgressTrackerTypes.PlayerStatistics) -> float:
+	if not stats.operation_proficiency.has(operation_name):
+		return 0.0
+
+	var proficiency = stats.operation_proficiency[operation_name]
+	var success_rate: float = proficiency.get("rate", 0.0)  # 0.0 to 1.0
+	var usage_count: int = stats.operation_usage_count.get(operation_name, 0)
+
+	# Mastery formula: weighted combination of success rate and experience
+	# - Success rate: 70% weight (skill matters most)
+	# - Experience bonus: 30% weight (usage count, capped at 50 uses)
+
+	var skill_component: float = success_rate * 70.0  # Max 70 points from skill
+
+	var experience_ratio: float = min(float(usage_count) / 50.0, 1.0)  # Cap at 50 uses
+	var experience_component: float = experience_ratio * 30.0  # Max 30 points from experience
+
+	var mastery_percentage: float = skill_component + experience_component
+
+	return clamp(mastery_percentage, 0.0, 100.0)
+
+## Get color for mastery percentage
+func _get_mastery_color(mastery: float) -> Color:
+	if mastery >= 80.0:
+		return Color(0.2, 0.8, 0.2)  # GREEN - mastered
+	elif mastery >= 50.0:
+		return Color(0.9, 0.9, 0.2)  # YELLOW - developing
+	else:
+		return Color(0.9, 0.2, 0.2)  # RED - needs practice
+
+## Create a custom progress bar for mastery display
+func _create_mastery_progress_bar(mastery: float, color: Color) -> Control:
+	var bar = Control.new()
+	bar.custom_minimum_size = Vector2(0, 8)
+
+	# Connect draw signal to draw the progress bar
+	bar.draw.connect(func():
+		var bg_color = Color(0.85, 0.85, 0.85)
+		var border_color = Color(0.2, 0.2, 0.2)
+
+		# Background
+		bar.draw_rect(Rect2(Vector2.ZERO, bar.size), bg_color)
+
+		# Fill (based on mastery percentage)
+		var fill_width = bar.size.x * (mastery / 100.0)
+		bar.draw_rect(Rect2(Vector2.ZERO, Vector2(fill_width, bar.size.y)), color)
+
+		# Border
+		bar.draw_rect(Rect2(Vector2.ZERO, bar.size), border_color, false, 1.0)
+	)
+
+	bar.queue_redraw()
+	return bar
+
+## Calculate score delta compared to personal average
+## Returns: {"delta": int, "is_positive": bool, "percentage": float, "show": bool}
+func _calculate_score_delta(session: ProgressTrackerTypes.GameSession, stats: ProgressTrackerTypes.PlayerStatistics) -> Dictionary:
+	var difficulty: int = session.difficulty_level
+	var session_score: int = session.final_score
+
+	# Get personal average for this difficulty
+	var avg_score: float = stats.average_scores_by_difficulty.get(difficulty, 0.0)
+
+	if avg_score == 0.0:
+		# First session at this difficulty
+		return {
+			"delta": 0,
+			"is_positive": true,
+			"percentage": 0.0,
+			"show": false  # Don't show delta on first attempt
+		}
+
+	var delta: int = int(session_score - avg_score)
+	var percentage: float = (delta / avg_score) * 100.0 if avg_score > 0 else 0.0
+
+	return {
+		"delta": delta,
+		"is_positive": delta >= 0,
+		"percentage": percentage,
+		"show": true
+	}
+
+## Format delta text for display
+## Returns: "+150 (↑)" or "-75 (↓)"
+func _format_delta_text(delta_data: Dictionary) -> String:
+	if not delta_data.show:
+		return ""
+
+	var sign: String = "+" if delta_data.is_positive else ""
+	var arrow: String = "↑" if delta_data.is_positive else "↓"
+
+	return "%s%d (%s)" % [sign, delta_data.delta, arrow]
+
+## Get color for delta indicator
+func _get_delta_color(delta_data: Dictionary) -> Color:
+	if not delta_data.show:
+		return Color.GRAY
+
+	if delta_data.is_positive:
+		# Above average
+		if delta_data.percentage >= 20.0:
+			return Color(0.2, 0.8, 0.2)  # GREEN - excellent (20%+ above avg)
+		else:
+			return Color(0.2, 0.8, 0.8)  # CYAN - good (slightly above avg)
+	else:
+		# Below average
+		if delta_data.percentage <= -20.0:
+			return Color(0.9, 0.2, 0.2)  # RED - significantly below (-20% or worse)
+		else:
+			return Color(0.9, 0.6, 0.2)  # ORANGE - slightly below (between 0% and -20%)
