@@ -72,8 +72,20 @@ bbcode_enabled = true
 text = "Solution text will appear here..."
 fit_content = true
 
-[node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="ButtonContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="SkipButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "Skip Problem"
+
+[node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 35
 text = "Close"

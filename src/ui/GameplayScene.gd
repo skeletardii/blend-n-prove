@@ -23,6 +23,8 @@ var fuel_icon: TextureRect = null  # Created dynamically to show fuel icon
 @onready var resume_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ResumeButton
 @onready var quit_button: Button = $PauseOverlay/PauseMenu/MenuContainer/QuitButton
 @onready var background_texture: TextureRect = $TextureRect
+@onready var intro_flash: ColorRect = $IntroFlash
+@onready var black_hole: TextureRect = $BlackHole
 
 # Phase Scenes
 var phase1_scene: PackedScene = preload("res://src/ui/Phase1UI.tscn")
@@ -92,6 +94,16 @@ func create_fuel_icon() -> void:
 	patience_bar.add_child(fuel_icon)
 
 func _ready() -> void:
+	# Fade out the white flash from intro
+	if intro_flash:
+		var tween = create_tween()
+		tween.tween_property(intro_flash, "modulate:a", 0.0, 1.0)
+		tween.tween_callback(func(): intro_flash.queue_free())
+
+	# Start black hole rotation animation
+	if black_hole:
+		start_black_hole_rotation()
+
 	# Set dynamic spacing based on viewport size
 	setup_dynamic_spacing()
 
@@ -127,6 +139,8 @@ func _ready() -> void:
 	if not GameManager.is_first_time_tutorial:
 		hint_button.pressed.connect(_on_hint_button_pressed)
 		hint_popup.popup_closed.connect(_on_hint_popup_closed)
+		if hint_popup.has_signal("skip_requested"):
+			hint_popup.skip_requested.connect(_on_hint_skip_requested)
 
 	# Setup pause button
 	pause_button.pressed.connect(_on_pause_button_pressed)
@@ -147,6 +161,17 @@ func _ready() -> void:
 	# Start first-time tutorial after phase loads
 	if GameManager.is_first_time_tutorial and tutorial_manager:
 		call_deferred("start_first_time_tutorial")
+
+func _on_hint_skip_requested() -> void:
+	show_feedback_message("Skipping problem...", Color.YELLOW)
+	
+	# Skip to next customer immediately
+	generate_new_customer()
+	
+	if should_skip_phase1():
+		convert_premises_and_skip_to_phase2()
+	else:
+		switch_to_phase1()
 
 func _process(delta: float) -> void:
 	if GameManager.current_state == GameManager.GameState.PLAYING and current_customer:
@@ -543,9 +568,15 @@ func customer_leaves() -> void:
 		# Out of fuel = Game Over - play error sound
 		AudioManager.play_error()
 		show_feedback_message("Out of Fuel! Game Over!", Color.RED)
-		get_tree().create_timer(2.0).timeout.connect(func():
+		
+		# Trigger failure effect if in Phase 2
+		if current_phase_instance and current_phase_instance.has_method("trigger_failure_effect"):
+			current_phase_instance.trigger_failure_effect()
+			
+		# Wait for failure animation
+		var on_timeout = func():
 			SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
-		)
+		get_tree().create_timer(4.0).timeout.connect(on_timeout)
 
 func complete_order_successfully() -> void:
 	AudioManager.play_logic_success()
@@ -710,6 +741,8 @@ func _on_hint_popup_closed() -> void:
 	# Optional: Add any logic when hint popup is closed
 	pass
 
+
+
 # Pause Menu Functions
 func _on_pause_button_pressed() -> void:
 	pause_game()
@@ -828,3 +861,9 @@ func _on_first_time_tutorial_skipped() -> void:
 func _on_return_to_menu_from_tutorial() -> void:
 	"""Return to main menu after tutorial completion screen"""
 	SceneManager.change_scene("res://src/ui/MainMenu.tscn")
+
+func start_black_hole_rotation() -> void:
+	"""Start continuous rotation of the black hole"""
+	var tween = create_tween()
+	tween.set_loops()
+	tween.tween_property(black_hole, "rotation", TAU, 20.0).from(0.0).set_trans(Tween.TRANS_LINEAR)
