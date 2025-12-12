@@ -1,0 +1,138 @@
+[gd_scene load_steps=8 format=3 uid="uid://dp6dfj3fyl8li"]
+
+[ext_resource type="Script" path="res://src/ui/IntroSequence.gd" id="1_intro"]
+[ext_resource type="Texture2D" path="res://assets/sprites/spacebg.jpg" id="2_bg"]
+[ext_resource type="Texture2D" path="res://assets/sprites/rocketsprite.png" id="3_rocket"]
+[ext_resource type="Texture2D" path="res://assets/sprites/planet.png" id="4_planet"]
+[ext_resource type="Texture2D" path="res://assets/sprites/blackhole.png" id="5_blackhole"]
+
+[sub_resource type="Curve" id="Curve_shrink"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_flame"]
+colors = PackedColorArray(1, 0.9, 0.2, 1, 1, 0.4, 0, 0)
+
+[sub_resource type="Gradient" id="Gradient_smoke"]
+colors = PackedColorArray(1, 0.5, 0, 0.8, 0.5, 0.5, 0.5, 0)
+
+[node name="IntroSequence" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_intro")
+
+[node name="SpaceBG" type="TextureRect" parent="."]
+z_index = -10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BlackHole" type="TextureRect" parent="CenterContainer"]
+z_index = -1
+visible = false
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+texture = ExtResource("5_blackhole")
+expand_mode = 1
+stretch_mode = 5
+pivot_offset = Vector2(128, 128)
+
+[node name="Planet" type="TextureRect" parent="CenterContainer"]
+z_index = 0
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+texture = ExtResource("4_planet")
+expand_mode = 1
+stretch_mode = 5
+pivot_offset = Vector2(128, 128)
+
+[node name="Rocket" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 100.0
+offset_bottom = 100.0
+rotation = 1.5708
+pivot_offset = Vector2(50, 50)
+texture = ExtResource("3_rocket")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ExhaustContainer" type="Node2D" parent="Rocket"]
+position = Vector2(50, 95)
+
+[node name="FlameCore" type="CPUParticles2D" parent="Rocket/ExhaustContainer"]
+emitting = true
+amount = 80
+lifetime = 0.4
+randomness = 0.1
+direction = Vector2(0, 1)
+spread = 5.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 500.0
+initial_velocity_max = 700.0
+scale_amount_min = 6.0
+scale_amount_max = 12.0
+color_ramp = SubResource("Gradient_flame")
+
+[node name="SmokeTrail" type="CPUParticles2D" parent="Rocket/ExhaustContainer"]
+show_behind_parent = true
+emitting = true
+amount = 60
+lifetime = 0.5
+direction = Vector2(0, 1)
+spread = 8.0
+gravity = Vector2(-300, 0)
+initial_velocity_min = 350.0
+initial_velocity_max = 500.0
+scale_amount_min = 10.0
+scale_amount_max = 20.0
+color_ramp = SubResource("Gradient_smoke")
+
+[node name="BlackHoleParticles" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 150
+lifetime = 2.5
+one_shot = false
+explosiveness = 0.0
+randomness = 0.3
+emission_shape = 3
+emission_rect_extents = Vector2(600, 450)
+direction = Vector2(0, 0)
+spread = 0.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 0.0
+initial_velocity_max = 0.0
+angular_velocity_min = -180.0
+angular_velocity_max = 180.0
+radial_accel_min = -400.0
+radial_accel_max = -300.0
+scale_amount_min = 8.0
+scale_amount_max = 15.0
+scale_amount_curve = SubResource("Curve_shrink")
+color = Color(0.8, 0.6, 1.0, 1)
+
+[node name="Flash" type="ColorRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

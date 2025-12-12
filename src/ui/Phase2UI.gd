@@ -18,6 +18,7 @@ const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 @onready var feedback_label: Label = $WorkContainer/InventoryArea/InventoryContainer/FeedbackLabel
 @onready var space_bg1: TextureRect = $WorkContainer/TargetArea/SpaceBG1
 @onready var space_bg2: TextureRect = $WorkContainer/TargetArea/SpaceBG2
+@onready var black_hole: TextureRect = $WorkContainer/TargetArea/BlackHole
 
 @onready var combo_container: VBoxContainer = $ComboContainer
 @onready var combo_label: Label = $ComboContainer/ComboLabel
@@ -36,6 +37,7 @@ var normal_flame_gradient: Gradient
 var normal_smoke_gradient: Gradient
 var boost_gradient: Gradient # 3x (Red/Orange)
 var blue_gradient: Gradient # 5x
+var cyan_gradient: Gradient # 8x
 var purple_gradient: Gradient # 10x
 
 # Combo State
@@ -70,7 +72,6 @@ var patience_timer: float = 0.0
 # Single Operation Buttons
 @onready var simp_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/SIMPButton
 @onready var imp_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/IMPButton
-@onready var conv_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/CONVButton
 @onready var add_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/ADDButton
 @onready var dm_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/DMButton
 @onready var dneg_button: Button = $OperationsPanel/MainContainer/ButtonsScroll/SingleOpsContainer/DNEGButton
@@ -95,7 +96,7 @@ var is_animating_panel: bool = false
 var current_tab: String = "double"  # "double" or "single"
 
 # Parallax Background State
-var bg_scroll_speed: float = 20.0  # Base scroll speed in pixels per second
+var bg_scroll_speed: float = 60.0  # Base scroll speed in pixels per second
 var bg_offset1: float = 0.0
 var bg_offset2: float = 0.0
 var blur_shader = preload("res://src/shaders/motion_blur.gdshader")
@@ -165,6 +166,7 @@ func _ready() -> void:
 	connect_toggle_buttons()
 	initialize_parallax_background()
 	initialize_rocket()
+	start_black_hole_rotation()
 
 	# Initialize operations panel (starts collapsed)
 	operations_panel.visible = true
@@ -192,6 +194,11 @@ func _ready() -> void:
 	blue_gradient = Gradient.new()
 	blue_gradient.add_point(0.0, Color(0, 0.5, 1, 1))
 	blue_gradient.add_point(1.0, Color(0, 0.5, 1, 0))
+
+	# Cyan Gradient (8x)
+	cyan_gradient = Gradient.new()
+	cyan_gradient.add_point(0.0, Color(0, 1, 1, 1))
+	cyan_gradient.add_point(1.0, Color(0, 1, 1, 0))
 
 	# Purple Gradient (10x)
 	purple_gradient = Gradient.new()
@@ -291,12 +298,18 @@ func update_parallax_background(delta: float) -> void:
 
 func set_rocket_speed(speed_multiplier: float) -> void:
 	"""Update the background scroll speed based on rocket ship velocity"""
-	# Apply artificial visual speed boost for higher impact
-	var visual_multiplier = speed_multiplier
-	if combo_count >= 10: visual_multiplier *= 3.0
-	elif combo_count >= 8: visual_multiplier *= 2.5
-	elif combo_count >= 5: visual_multiplier *= 2.0
-	elif combo_count >= 3: visual_multiplier *= 1.5
+	# Base cruising speed derived from combo (persistent)
+	var combo_cruising_speed = 1.0 + (float(combo_count) * 0.5)
+	
+	# Use MAX of decaying boost (speed_multiplier) and persistent combo speed
+	var effective_base = max(speed_multiplier, combo_cruising_speed)
+
+	# Apply artificial visual speed boost for higher impact (1x intervals)
+	var visual_multiplier = effective_base
+	if combo_count >= 5: visual_multiplier *= 3.0
+	elif combo_count >= 4: visual_multiplier *= 2.5
+	elif combo_count >= 3: visual_multiplier *= 2.0
+	elif combo_count >= 2: visual_multiplier *= 1.5
 	
 	rocket_speed_multiplier = visual_multiplier
 	
@@ -440,8 +453,10 @@ func update_rocket_animation(delta: float) -> void:
 		if shake_intensity > 0.0:
 			shake_y = randf_range(-shake_intensity, shake_intensity)
 			
-		rocket.offset_top = -50.0 + shake_y
-		rocket.offset_bottom = 50.0 + shake_y
+		# Lower rocket by 50px
+		var base_y_offset = 50.0
+		rocket.offset_top = -50.0 + base_y_offset + shake_y
+		rocket.offset_bottom = 50.0 + base_y_offset + shake_y
 
 func increment_combo() -> void:
 	combo_count += 1
@@ -532,6 +547,8 @@ func update_particle_color() -> void:
 	
 	if combo_count >= 10:
 		target_gradient = purple_gradient
+	elif combo_count >= 8:
+		target_gradient = cyan_gradient
 	elif combo_count >= 5:
 		target_gradient = blue_gradient
 	elif combo_count >= 3:
@@ -587,7 +604,6 @@ func connect_rule_buttons() -> void:
 	# Single operation buttons
 	simp_button.pressed.connect(_on_rule_button_pressed.bind("SIMP"))
 	imp_button.pressed.connect(_on_rule_button_pressed.bind("IMP"))
-	conv_button.pressed.connect(_on_rule_button_pressed.bind("CONV"))
 	add_button.pressed.connect(_on_rule_button_pressed.bind("ADD"))
 	dm_button.pressed.connect(_on_rule_button_pressed.bind("DM"))
 	dist_button.pressed.connect(_on_rule_button_pressed.bind("DIST"))
@@ -781,8 +797,7 @@ func _on_premise_card_pressed(premise: BooleanExpression, card: Button) -> void:
 			selected_premises.append(premise)
 			# Emit signal for tutorial detection
 			premise_selected.emit(premise.expression_string)
-			# Show explosion effect on selection
-			spawn_premise_explosion(card)
+			# spawn_premise_explosion(card) # Removed per user request
 	else:
 		# Deselect premise
 		if premise in selected_premises:
@@ -1205,7 +1220,7 @@ func get_all_rule_buttons() -> Array[Button]:
 	var buttons: Array[Button] = []
 	# Add all rule buttons
 	buttons.append_array([mp_button, mt_button, hs_button, ds_button, cd_button, dn_button, conj_button, eq_button, res_button])
-	buttons.append_array([simp_button, imp_button, conv_button, add_button, dm_button, dneg_button, dist_button, comm_button, assoc_button, idemp_button, abs_button])
+	buttons.append_array([simp_button, imp_button, add_button, dm_button, dneg_button, dist_button, comm_button, assoc_button, idemp_button, abs_button])
 	return buttons
 
 func highlight_rule_button(rule: String) -> void:
@@ -1222,7 +1237,6 @@ func get_rule_button(rule: String) -> Button:
 		"CD": return cd_button
 		"DN": return dn_button
 		"IMP": return imp_button
-		"CONV": return conv_button
 		"EQ": return eq_button
 		"RES": return res_button
 		"SIMP": return simp_button
@@ -1298,3 +1312,34 @@ func _on_addition_dialog_cancelled() -> void:
 	# User cancelled the Addition dialog
 	clear_selections()
 	feedback_message.emit("Addition cancelled", Color.WHITE)
+
+func trigger_failure_effect() -> void:
+	# Stop scrolling immediately - background freezes
+	var tween = create_tween()
+	tween.tween_property(self, "rocket_speed_multiplier", 0.0, 0.5)
+
+	# Stop flames and smoke immediately (engine failure)
+	if flame_core:
+		flame_core.emitting = false
+	if smoke_trail:
+		smoke_trail.emitting = false
+
+	# Rocket gets pulled into the black hole on the left
+	# Gradually accelerate toward the left
+	tween.tween_property(rocket, "position:x", -500, 3.5).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+
+	# Rocket rotates as it's pulled in (losing control)
+	tween.parallel().tween_property(rocket, "rotation", rocket.rotation + PI * 2, 3.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+	# Rocket shrinks as it approaches the black hole (perspective)
+	tween.parallel().tween_property(rocket, "scale", Vector2(0.3, 0.3), 3.5).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+
+	# Fade out as it disappears into the black hole
+	tween.parallel().tween_property(rocket, "modulate:a", 0.0, 3.0).set_delay(0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+func start_black_hole_rotation() -> void:
+	"""Start continuous rotation of the black hole"""
+	if black_hole:
+		var tween = create_tween()
+		tween.set_loops()
+		tween.tween_property(black_hole, "rotation", TAU, 20.0).from(0.0).set_trans(Tween.TRANS_LINEAR)

@@ -128,8 +128,8 @@ func _on_play_button_pressed() -> void:
 	GameManager.start_new_game()
 	print("Started new game")
 
-	# Use loading screen transition
-	SceneManager.change_scene_with_loading("res://src/scenes/GameplayScene.tscn")
+	# Use loading screen transition to Intro Sequence
+	SceneManager.change_scene_with_loading("res://src/ui/IntroSequence.tscn")
 
 #func _on_phase1_button_pressed() -> void:
 	#AudioManager.play_button_click()

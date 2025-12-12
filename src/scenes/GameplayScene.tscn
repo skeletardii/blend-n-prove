@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bji7acucw6pe3"]
+[gd_scene load_steps=8 format=3 uid="uid://bji7acucw6pe3"]
 
 [ext_resource type="Script" uid="uid://cl7fuggwr1kue" path="res://src/ui/GameplayScene.gd" id="1_3v9zy"]
 [ext_resource type="PackedScene" uid="uid://cq3k7m5xywb8k" path="res://src/ui/TutorialHelpPanel.tscn" id="2_tutorial_help"]
@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" uid="uid://bu186h4gwve1c" path="res://assets/fonts/MuseoSansRounded300.otf" id="4_wxnvq"]
 [ext_resource type="Texture2D" uid="uid://cugfb5gspi52n" path="res://assets/sprites/pause_icon.svg" id="5_pause_icon"]
 [ext_resource type="Texture2D" uid="uid://bdypoli18j5ih" path="res://assets/sprites/fuelcanister.png" id="6_fuel_canister"]
+[ext_resource type="Texture2D" path="res://assets/sprites/blackhole.png" id="7_blackhole"]
 
 [node name="GameplayScene" type="Control"]
 layout_mode = 3
@@ -25,6 +26,22 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
 stretch_mode = 6
+
+[node name="BlackHole" type="TextureRect" parent="."]
+z_index = -1
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -900.0
+offset_top = -512.0
+offset_right = 124.0
+offset_bottom = 512.0
+grow_vertical = 2
+pivot_offset = Vector2(512, 512)
+texture = ExtResource("7_blackhole")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 1
@@ -232,6 +249,16 @@ offset_right = 601.0
 offset_bottom = 736.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="IntroFlash" type="ColorRect" parent="."]
+z_index = 1000
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 1)
 
 [node name="PauseOverlay" type="CanvasLayer" parent="."]
 layer = 100

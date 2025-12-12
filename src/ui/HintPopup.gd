@@ -1,17 +1,20 @@
 extends Panel
 
 signal popup_closed()
+signal skip_requested()
 
 # UI References
 @onready var hint_title: Label = $MarginContainer/VBoxContainer/HintTitle
 @onready var hint_text: RichTextLabel = $MarginContainer/VBoxContainer/HintScrollContainer/HintText
-@onready var close_button: Button = $MarginContainer/VBoxContainer/CloseButton
+@onready var close_button: Button = $MarginContainer/VBoxContainer/ButtonContainer/CloseButton
+@onready var skip_button: Button = $MarginContainer/VBoxContainer/ButtonContainer/SkipButton
 
 # Blur overlay
 var blur_overlay: ColorRect = null
 
 func _ready() -> void:
 	close_button.pressed.connect(_on_close_button_pressed)
+	skip_button.pressed.connect(_on_skip_button_pressed)
 	hide()
 
 func show_hint(solution_text: String) -> void:
@@ -24,6 +27,11 @@ func _on_close_button_pressed() -> void:
 	_remove_blur_overlay()
 	hide()
 	popup_closed.emit()
+
+func _on_skip_button_pressed() -> void:
+	_remove_blur_overlay()
+	hide()
+	skip_requested.emit()
 
 func _create_blur_overlay() -> void:
 	# Create semi-transparent overlay behind the popup
