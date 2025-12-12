@@ -1,0 +1,179 @@
+[gd_scene load_steps=3 format=3 uid="uid://bw8ywb7ur80oh"]
+
+[ext_resource type="Script" uid="uid://be2cosgbc4a5" path="res://src/ui/AITutorScene.gd" id="1_qshfc"]
+[ext_resource type="Script" uid="uid://ddb5y4mogjw6g" path="res://src/ui/VirtualKeyboard.gd" id="2_keyboard"]
+
+[node name="AITutorScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qshfc")
+
+[node name="BackgroundGradient" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.15, 0.2, 0.35, 1)
+
+[node name="MainMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="MainVBox" type="VBoxContainer" parent="MainMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TopBar" type="HBoxContainer" parent="MainMargin/MainVBox"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="MainMargin/MainVBox/TopBar"]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+text = "← Back"
+
+[node name="TitleSpacer" type="Control" parent="MainMargin/MainVBox/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleLabel" type="Label" parent="MainMargin/MainVBox/TopBar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "AI Tutor Mode"
+
+[node name="EndSpacer" type="Control" parent="MainMargin/MainVBox/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ChatPanel" type="PanelContainer" parent="MainMargin/MainVBox"]
+custom_minimum_size = Vector2(0, 400)
+layout_mode = 2
+
+[node name="ChatMargin" type="MarginContainer" parent="MainMargin/MainVBox/ChatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="ChatVBox" type="VBoxContainer" parent="MainMargin/MainVBox/ChatPanel/ChatMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ChatHeader" type="Label" parent="MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "AI Tutor"
+
+[node name="MessagesScroll" type="ScrollContainer" parent="MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MessagesContainer" type="VBoxContainer" parent="MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/MessagesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="InputArea" type="HBoxContainer" parent="MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputField" type="LineEdit" parent="MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/InputArea"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Type your message..."
+
+[node name="SendButton" type="Button" parent="MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/InputArea"]
+custom_minimum_size = Vector2(80, 40)
+layout_mode = 2
+text = "Send"
+
+[node name="StatusLabel" type="Label" parent="MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Thinking..."
+
+[node name="HTTPRequest" type="HTTPRequest" parent="MainMargin/MainVBox/ChatPanel"]
+
+[node name="SolverPanel" type="PanelContainer" parent="MainMargin/MainVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SolverMargin" type="MarginContainer" parent="MainMargin/MainVBox/SolverPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="SolverVBox" type="VBoxContainer" parent="MainMargin/MainVBox/SolverPanel/SolverMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SolverHeader" type="Label" parent="MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Step-by-Step Solver"
+
+[node name="ProblemDisplay" type="RichTextLabel" parent="MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+bbcode_enabled = true
+text = "[i]Problem will appear here after AI generates it[/i]"
+fit_content = true
+scroll_active = false
+
+[node name="StepsScroll" type="ScrollContainer" parent="MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StepsContainer" type="VBoxContainer" parent="MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/StepsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="ButtonsArea" type="HBoxContainer" parent="MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="AddStepButton" type="Button" parent="MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
+visible = false
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+text = "+ Add Step"
+
+[node name="FinishButton" type="Button" parent="MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
+visible = false
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+text = "Submit for Feedback"
+
+[node name="NewProblemButton" type="Button" parent="MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
+visible = false
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+text = "Try Another Problem"
+
+[node name="VirtualKeyboard" type="Control" parent="MainMargin/MainVBox"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_keyboard")

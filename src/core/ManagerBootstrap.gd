@@ -21,6 +21,7 @@ const MANAGER_PATHS = {
 	"TutorialDataManager": "res://src/managers/TutorialDataManagerImpl.gd",
 	"UpdateCheckerService": "res://src/managers/UpdateCheckerServiceImpl.gd",
 	"SupabaseService": "res://src/managers/SupabaseServiceImpl.gd",
+	"OpenRouterService": "res://src/managers/OpenRouterServiceImpl.gd",
 }
 
 ## Order in which managers are loaded (respects dependencies)
@@ -29,6 +30,7 @@ const MANAGER_LOAD_ORDER = [
 	"ProgressTracker",        # No dependencies
 	"BooleanLogicEngine",     # No dependencies
 	"SupabaseService",        # No dependencies
+	"OpenRouterService",      # No dependencies
 	"TutorialDataManager",    # Depends on ProgressTracker
 	"UpdateCheckerService",   # Depends on AppConstants (full autoload)
 	"TutorialManager",        # No hard dependencies
