@@ -18,7 +18,7 @@ func _init():
 	print("================================================================================\n")
 
 	# Load the Boolean Logic Engine
-	engine = load("res://src/game/autoloads/BooleanLogicEngine.gd").new()
+	engine = load("res://src/managers/BooleanLogicEngineImpl.gd").new()
 
 	run_tests()
 
@@ -36,7 +36,6 @@ func run_tests():
 	print("  Created: " + expr1.normalized_string)
 	print("  Valid: " + str(expr1.is_valid))
 
-	# Step 2: Check available operations
 	print("\nStep 2: Check available operations")
 	var ops1 = engine.get_applicable_single_operations(expr1)
 	print("  Available operations:")
@@ -74,7 +73,7 @@ func run_tests():
 		print("  Note: Result is " + expr2.normalized_string)
 
 	# Step 5: Check if we can apply double negation
-	print("\nStep 5: Extract the right side (should be ¬¬Q)")
+	print("\nStep 5: Check if we can apply double negation")
 	var expr3 = expr2
 	var right_parts = expr3.get_conjunction_parts()
 	if right_parts.get("valid", false):
@@ -122,7 +121,7 @@ func run_tests():
 
 	print("\nStep 2: Check available operations")
 	var ops2 = engine.get_applicable_single_operations(expr5)
-	var has_demorgan = false
+	has_demorgan = false
 	for op in ops2:
 		if "De Morgan" in op:
 			has_demorgan = true
@@ -148,7 +147,7 @@ func run_tests():
 	print("    1. De Morgan's (OR) → ¬P ∧ ¬¬Q")
 	print("    2. Double Negation on ¬¬Q → Q")
 	print("    3. Result: ¬P ∧ Q")
-	print()
+	print("")
 	print("  ✓ ¬P ∧ Q cannot directly use De Morgan's (only one side negated)")
 	print("  ✓ These expressions are logically equivalent!")
 	print(repeat_char("=", 80))
