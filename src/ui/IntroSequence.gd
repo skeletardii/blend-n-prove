@@ -4,6 +4,11 @@ extends Control
 @onready var rocket: TextureRect = $Rocket
 @onready var black_hole: TextureRect = $CenterContainer/BlackHole
 @onready var black_hole_particles: CPUParticles2D = $BlackHoleParticles
+@onready var asteroid1: CPUParticles2D = $Asteroid1
+@onready var asteroid2: CPUParticles2D = $Asteroid2
+@onready var asteroid3: CPUParticles2D = $Asteroid3
+@onready var asteroid4: CPUParticles2D = $Asteroid4
+@onready var asteroid5: CPUParticles2D = $Asteroid5
 @onready var flash: ColorRect = $Flash
 @onready var space_bg: TextureRect = $SpaceBG
 @onready var exhaust_container: Node2D = $Rocket/ExhaustContainer
@@ -18,8 +23,14 @@ func _ready() -> void:
 	# Scale exhaust particles with rocket initial size
 	exhaust_container.scale = Vector2(0.01, 0.01)
 
-	# Position black hole particles at screen center
-	black_hole_particles.position = get_viewport_rect().size / 2
+	# Position black hole and asteroid particles at screen center
+	var screen_center = get_viewport_rect().size / 2
+	black_hole_particles.position = screen_center
+	asteroid1.position = screen_center
+	asteroid2.position = screen_center
+	asteroid3.position = screen_center
+	asteroid4.position = screen_center
+	asteroid5.position = screen_center
 
 	black_hole.scale = Vector2(0.01, 0.01)
 	black_hole.rotation = 0.0
@@ -63,6 +74,20 @@ func play_intro() -> void:
 	tween.parallel().tween_property(black_hole, "rotation", PI * 2, 1.2).set_trans(Tween.TRANS_LINEAR)
 
 	# 5. Planet begins spaghettification - stretches vertically as it's pulled toward center
+	# Start asteroids getting sucked in
+	tween.tween_callback(func():
+		asteroid1.radial_accel_min = -400.0
+		asteroid1.radial_accel_max = -300.0
+		asteroid2.radial_accel_min = -400.0
+		asteroid2.radial_accel_max = -300.0
+		asteroid3.radial_accel_min = -400.0
+		asteroid3.radial_accel_max = -300.0
+		asteroid4.radial_accel_min = -400.0
+		asteroid4.radial_accel_max = -300.0
+		asteroid5.radial_accel_min = -400.0
+		asteroid5.radial_accel_max = -300.0
+	)
+
 	# Start stretching effect (spaghettification)
 	tween.parallel().tween_property(planet, "scale:x", 0.5, 1.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	tween.parallel().tween_property(planet, "scale:y", 1.2, 1.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)

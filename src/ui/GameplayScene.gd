@@ -572,11 +572,11 @@ func customer_leaves() -> void:
 		# Trigger failure effect if in Phase 2
 		if current_phase_instance and current_phase_instance.has_method("trigger_failure_effect"):
 			current_phase_instance.trigger_failure_effect()
-			
-		# Wait for failure animation
+
+		# Wait for failure animation (background stop + ship pull + black hole expansion + fade)
 		var on_timeout = func():
 			SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
-		get_tree().create_timer(4.0).timeout.connect(on_timeout)
+		get_tree().create_timer(7.5).timeout.connect(on_timeout)
 
 func complete_order_successfully() -> void:
 	AudioManager.play_logic_success()
