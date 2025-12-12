@@ -166,6 +166,12 @@ custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
 text = "Submit for Feedback"
 
+[node name="NewProblemButton" type="Button" parent="MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
+visible = false
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+text = "Try Another Problem"
+
 [node name="VirtualKeyboard" type="Control" parent="MainMargin/MainVBox"]
 custom_minimum_size = Vector2(0, 250)
 layout_mode = 2

@@ -39,6 +39,7 @@ var active_step_field: LineEdit = null
 @onready var steps_container: VBoxContainer = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/StepsScroll/StepsContainer
 @onready var add_step_button: Button = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/AddStepButton
 @onready var finish_button: Button = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/FinishButton
+@onready var new_problem_button: Button = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/NewProblemButton
 @onready var virtual_keyboard: VirtualKeyboard = $MainMargin/MainVBox/VirtualKeyboard
 @onready var back_button: Button = $MainMargin/MainVBox/TopBar/BackButton
 
@@ -132,6 +133,7 @@ func _ready():
 	send_button.pressed.connect(_on_send_button_pressed)
 	add_step_button.pressed.connect(_on_add_step_button_pressed)
 	finish_button.pressed.connect(_on_finish_button_pressed)
+	new_problem_button.pressed.connect(_on_new_problem_button_pressed)
 	back_button.pressed.connect(_on_back_button_pressed)
 	input_field.text_submitted.connect(func(_text): _on_send_button_pressed())
 
@@ -227,8 +229,8 @@ func handle_topic_request(topic: String):
 			problem_text += "P" + str(i + 1) + ": " + current_problem.premises[i] + "\n"
 		problem_text += "\n[b]Target:[/b]\n" + current_problem.target
 
-		if not current_problem.hint.is_empty():
-			problem_text += "\n\n[b]Hint:[/b]\n" + current_problem.hint
+		#if not current_problem.hint.is_empty():
+			#problem_text += "\n\n[b]Hint:[/b]\n" + current_problem.hint
 
 		problem_display.text = problem_text
 
@@ -426,13 +428,45 @@ func _on_finish_button_pressed():
 
 			add_ai_message(feedback_msg)
 
-			# Allow questions after validation
+			# Allow questions after validation - show new problem button
 			current_state = TutorState.AWAITING_SOLUTION
-			add_ai_message("Do you have any questions about this solution? Or would you like to try another problem?")
+			new_problem_button.visible = true
+			add_ai_message("Do you have any questions about this solution?\n\nOr click 'Try Another Problem' below when you're ready for a new challenge!")
 		else:
 			add_ai_message(response)  # Fallback to raw response
 	else:
 		add_ai_message("I had trouble reviewing your solution. Please try again.")
+
+	AudioManager.play_button_click()
+
+func _on_new_problem_button_pressed():
+	# Clear all solver steps
+	for step in solver_steps:
+		step.queue_free()
+	solver_steps.clear()
+
+	# Clear problem display
+	problem_display.text = "[i]New problem will appear here[/i]"
+
+	# Hide solver buttons
+	add_step_button.visible = false
+	finish_button.visible = false
+	new_problem_button.visible = false
+
+	# Reset active field
+	active_step_field = null
+
+	# Reset state
+	current_state = TutorState.AWAITING_TOPIC
+	current_problem = {
+		"premises": [],
+		"target": "",
+		"hint": "",
+		"difficulty": ""
+	}
+
+	# Add prompt for new topic
+	add_ai_message("Great! What would you like to learn next?")
 
 	AudioManager.play_button_click()
 
