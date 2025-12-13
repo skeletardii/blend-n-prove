@@ -1041,10 +1041,15 @@ func apply_logical_rule(rule: String, premises: Array[BooleanExpression]) -> Boo
 		"DM":  # De Morgan's Laws
 			if premises.size() == 1:
 				var premise = premises[0]
-				if premise.is_conjunction():
-					return BooleanLogicEngine.apply_de_morgan_and(premise)
-				elif premise.is_disjunction():
-					return BooleanLogicEngine.apply_de_morgan_or(premise)
+				# De Morgan's requires ¬(P ∧ Q) or ¬(P ∨ Q)
+				var normalized = premise.normalized_string
+				if normalized.begins_with("¬(") and normalized.ends_with(")"):
+					var inner = normalized.substr(2, normalized.length() - 3).strip_edges()
+					var inner_expr = BooleanExpression.new(inner)
+					if inner_expr.is_conjunction():
+						return BooleanLogicEngine.apply_de_morgan_and(premise)
+					elif inner_expr.is_disjunction():
+						return BooleanLogicEngine.apply_de_morgan_or(premise)
 			return BooleanExpression.new("")
 		"DOUBLE_NEG":  # Double Negation: ¬¬P ⊢ P
 			if premises.size() == 1:

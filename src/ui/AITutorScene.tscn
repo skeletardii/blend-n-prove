@@ -1,22 +1,52 @@
-[gd_scene load_steps=6 format=3 uid="uid://bw8ywb7ur80oh"]
+[gd_scene load_steps=9 format=3 uid="uid://bw8ywb7ur80oh"]
 
 [ext_resource type="Script" uid="uid://be2cosgbc4a5" path="res://src/ui/AITutorScene.gd" id="1_qshfc"]
 [ext_resource type="Script" uid="uid://ddb5y4mogjw6g" path="res://src/ui/VirtualKeyboard.gd" id="2_keyboard"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="3_theme"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gjwuf"]
-bg_color = Color(1, 1, 1, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chat_button"]
+bg_color = Color(0.775, 0.417, 0.946, 1)
 corner_radius_top_left = 30
 corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_notification_badge"]
+bg_color = Color(1, 0.231, 0.188, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s4qit"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_solver"]
 bg_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 30
-corner_radius_bottom_left = 30
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chat_overlay"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 10
+shadow_offset = Vector2(2, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chat_header"]
+bg_color = Color(0.9, 0.85, 1, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
 
 [node name="AITutorScene" type="Control"]
 layout_mode = 3
@@ -37,7 +67,19 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.54727364, 0.0008273676, 0.66026473, 1)
 
+[node name="DimOverlay" type="ColorRect" parent="."]
+visible = false
+z_index = 150
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.4)
+
 [node name="MainMargin" type="MarginContainer" parent="."]
+z_index = 10
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -72,97 +114,59 @@ text = "AI Tutor Mode"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Spacer" type="Control" parent="MainMargin/MainVBox/TopBar"]
-custom_minimum_size = Vector2(120, 0)
+[node name="ChatToggleButton" type="Button" parent="MainMargin/MainVBox/TopBar"]
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_chat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_chat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_chat_button")
+text = "💬"
+
+[node name="NotificationBadge" type="PanelContainer" parent="MainMargin/MainVBox/TopBar/ChatToggleButton"]
+visible = false
+z_index = 101
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -5.0
+offset_top = -5.0
+offset_right = 15.0
+offset_bottom = 15.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_notification_badge")
 
 [node name="ContentScroll" type="ScrollContainer" parent="MainMargin/MainVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="ContentVBox" type="VBoxContainer" parent="MainMargin/MainVBox/ContentScroll"]
+[node name="SolverPanel" type="PanelContainer" parent="MainMargin/MainVBox/ContentScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 20
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_solver")
 
-[node name="ChatPanel" type="PanelContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_gjwuf")
-
-[node name="ChatMargin" type="MarginContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel"]
+[node name="SolverMargin" type="MarginContainer" parent="MainMargin/MainVBox/ContentScroll/SolverPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="ChatVBox" type="VBoxContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin"]
+[node name="SolverVBox" type="VBoxContainer" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 7
 
-[node name="ChatHeader" type="Label" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "AI Tutor"
-
-[node name="MessagesScroll" type="ScrollContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox"]
-custom_minimum_size = Vector2(0, 300)
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="MessagesContainer" type="VBoxContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox/MessagesScroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 10
-
-[node name="InputArea" type="HBoxContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="InputField" type="LineEdit" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox/InputArea"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-placeholder_text = "Type your message..."
-
-[node name="SendButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox/InputArea"]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Send"
-
-[node name="StatusLabel" type="Label" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox"]
+[node name="SolverHeader" type="Label" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox"]
 visible = false
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "Thinking..."
-
-[node name="HTTPRequest" type="HTTPRequest" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel"]
-
-[node name="SolverPanel" type="PanelContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_s4qit")
-
-[node name="SolverMargin" type="MarginContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 15
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_right = 15
-theme_override_constants/margin_bottom = 15
-
-[node name="SolverVBox" type="VBoxContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin"]
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="SolverHeader" type="Label" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Step-by-Step Solver"
 
-[node name="ProblemDisplay" type="RichTextLabel" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox"]
+[node name="ProblemDisplay" type="RichTextLabel" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
@@ -176,36 +180,36 @@ text = "[i]Problem will appear here after AI generates it[/i]"
 fit_content = true
 scroll_active = false
 
-[node name="StepsScroll" type="ScrollContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox"]
+[node name="StepsScroll" type="ScrollContainer" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox"]
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="StepsContainer" type="VBoxContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox/StepsScroll"]
+[node name="StepsContainer" type="VBoxContainer" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/StepsScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 15
 
-[node name="ButtonsArea" type="VBoxContainer" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox"]
+[node name="ButtonsArea" type="VBoxContainer" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="AddStepButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
+[node name="AddStepButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
 visible = false
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "+ Add Step"
 
-[node name="FinishButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
+[node name="FinishButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
 visible = false
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Submit for Feedback"
 
-[node name="NewProblemButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
+[node name="NewProblemButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
 visible = false
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
@@ -213,7 +217,7 @@ theme_override_font_sizes/font_size = 24
 text = "Try Another Problem"
 
 [node name="VirtualKeyboard" type="Control" parent="MainMargin/MainVBox"]
-custom_minimum_size = Vector2(0, 250)
+custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 script = ExtResource("2_keyboard")
 
@@ -236,3 +240,105 @@ custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Clear Input"
+
+[node name="ChatOverlayContainer" type="PanelContainer" parent="."]
+visible = false
+z_index = 200
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -480.0
+offset_right = 153.0
+offset_bottom = 480.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chat_overlay")
+
+[node name="ChatPanel" type="MarginContainer" parent="ChatOverlayContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="ChatVBox" type="VBoxContainer" parent="ChatOverlayContainer/ChatPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ChatHeader" type="PanelContainer" parent="ChatOverlayContainer/ChatPanel/ChatVBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chat_header")
+
+[node name="ChatHeaderMargin" type="MarginContainer" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatHeader"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 10
+
+[node name="ChatHeaderHBox" type="HBoxContainer" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatHeader/ChatHeaderMargin"]
+layout_mode = 2
+
+[node name="ChatHeaderLabel" type="Label" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatHeader/ChatHeaderMargin/ChatHeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+text = "AI Tutor"
+
+[node name="CloseButton" type="Button" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatHeader/ChatHeaderMargin/ChatHeaderHBox"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "×"
+
+[node name="ChatMargin" type="MarginContainer" parent="ChatOverlayContainer/ChatPanel/ChatVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="ChatContentVBox" type="VBoxContainer" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MessagesScroll" type="ScrollContainer" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox"]
+custom_minimum_size = Vector2(0, 400)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MessagesContainer" type="VBoxContainer" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox/MessagesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="InputArea" type="HBoxContainer" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputField" type="LineEdit" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox/InputArea"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+placeholder_text = "Type your message..."
+
+[node name="SendButton" type="Button" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox/InputArea"]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Send"
+
+[node name="StatusLabel" type="Label" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Thinking..."
+horizontal_alignment = 1
+
+[node name="HTTPRequest" type="HTTPRequest" parent="ChatOverlayContainer"]

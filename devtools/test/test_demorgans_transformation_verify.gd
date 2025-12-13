@@ -121,7 +121,7 @@ func run_tests():
 
 	print("\nStep 2: Check available operations")
 	var ops2 = engine.get_applicable_single_operations(expr5)
-	has_demorgan = false
+	var has_demorgan = false
 	for op in ops2:
 		if "De Morgan" in op:
 			has_demorgan = true

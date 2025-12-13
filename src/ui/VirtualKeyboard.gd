@@ -3,7 +3,6 @@ extends Control
 
 ## Virtual keyboard for boolean logic input
 ## Provides buttons for logic operators, variables, parentheses, and control keys
-## CRITICAL: Does NOT add automatic spacing when symbols are inserted
 
 signal symbol_pressed(symbol: String)
 signal delete_pressed()
@@ -45,10 +44,11 @@ func create_keyboard():
 	keyboard_panel.add_theme_stylebox_override("panel", panel_style)
 	add_child(keyboard_panel)
 
-	# Layout container
-	keyboard_layout = VBoxContainer.new()
-	keyboard_layout.add_theme_constant_override("separation", 5)
-	keyboard_panel.add_child(keyboard_layout)
+	# Anchor panel to fill parent
+	keyboard_panel.anchor_left = 0.0
+	keyboard_panel.anchor_top = 0.0
+	keyboard_panel.anchor_right = 1.0
+	keyboard_panel.anchor_bottom = 1.0
 
 	# Add margin around keyboard
 	var margin = MarginContainer.new()
@@ -56,14 +56,24 @@ func create_keyboard():
 	margin.add_theme_constant_override("margin_top", 10)
 	margin.add_theme_constant_override("margin_right", 10)
 	margin.add_theme_constant_override("margin_bottom", 10)
+	margin.anchor_left = 0.0
+	margin.anchor_top = 0.0
+	margin.anchor_right = 1.0
+	margin.anchor_bottom = 1.0
 	keyboard_panel.add_child(margin)
-	margin.add_child(keyboard_layout)
 
-	# Anchor panel to fill parent
-	keyboard_panel.anchor_left = 0.0
-	keyboard_panel.anchor_top = 0.0
-	keyboard_panel.anchor_right = 1.0
-	keyboard_panel.anchor_bottom = 1.0
+	# Create a centering container
+	var center_container = CenterContainer.new()
+	center_container.anchor_left = 0.0
+	center_container.anchor_top = 0.0
+	center_container.anchor_right = 1.0
+	center_container.anchor_bottom = 1.0
+	margin.add_child(center_container)
+
+	# Layout container
+	keyboard_layout = VBoxContainer.new()
+	keyboard_layout.add_theme_constant_override("separation", 5)
+	center_container.add_child(keyboard_layout)
 
 	# Create rows
 	operator_row1 = create_centered_row()
@@ -93,13 +103,15 @@ func create_row_buttons(row: HBoxContainer, symbols: Array, button_size: int):
 		#button.add_theme_color_override("font_color", Color(0.775, 0.417, 0.946, 1.0))
 		#button.add_theme_color_override("font_focus_color", Color(0.775, 0.417, 0.946, 1.0))
 		#button.add_theme_color_override("font_hover_color", Color(0.6, 0.2, 0.8, 1.0))
-		button.pressed.connect(_on_symbol_pressed.bind(symbol))
-		row.add_child(button)
 		match symbol:
 			"Del":
 				button.pressed.connect(_on_delete_pressed)
+				continue
 			"Clr":
 				button.pressed.connect(_on_clear_pressed)
+				continue
+		button.pressed.connect(_on_symbol_pressed.bind(symbol))
+		row.add_child(button)
 
 ## Set the target LineEdit that this keyboard will input to
 func set_target_field(field: LineEdit):
@@ -125,7 +137,7 @@ func _on_delete_pressed():
 		var cursor_pos = target_field.caret_column
 		if cursor_pos > 0:
 			var current_text = target_field.text
-			var new_text = current_text.erase(cursor_pos - 4, 1)
+			var new_text = current_text.erase(cursor_pos - 1, 1)
 			target_field.text = new_text
 			target_field.caret_column = cursor_pos - 1
 			target_field.grab_focus()
