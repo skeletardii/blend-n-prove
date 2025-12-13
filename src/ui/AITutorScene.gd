@@ -29,19 +29,21 @@ var active_step_field: LineEdit = null
 # Note: We use stateless JSON requests, no conversation history needed
 
 # UI References
-@onready var messages_container: VBoxContainer = $MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/MessagesScroll/MessagesContainer
-@onready var messages_scroll: ScrollContainer = $MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/MessagesScroll
-@onready var input_field: LineEdit = $MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/InputArea/InputField
-@onready var send_button: Button = $MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/InputArea/SendButton
-@onready var status_label: Label = $MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/StatusLabel
-@onready var http_request: HTTPRequest = $MainMargin/MainVBox/ChatPanel/HTTPRequest
-@onready var problem_display: RichTextLabel = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ProblemDisplay
-@onready var steps_container: VBoxContainer = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/StepsScroll/StepsContainer
-@onready var add_step_button: Button = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/AddStepButton
-@onready var finish_button: Button = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/FinishButton
-@onready var new_problem_button: Button = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/NewProblemButton
+@onready var messages_container: VBoxContainer = $MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox/MessagesScroll/MessagesContainer
+@onready var messages_scroll: ScrollContainer = $MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox/MessagesScroll
+@onready var input_field: LineEdit = $MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox/InputArea/InputField
+@onready var send_button: Button = $MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox/InputArea/SendButton
+@onready var status_label: Label = $MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/ChatMargin/ChatVBox/StatusLabel
+@onready var http_request: HTTPRequest = $MainMargin/MainVBox/ContentScroll/ContentVBox/ChatPanel/HTTPRequest
+@onready var problem_display: RichTextLabel = $MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox/ProblemDisplay
+@onready var steps_container: VBoxContainer = $MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox/StepsScroll/StepsContainer
+@onready var add_step_button: Button = $MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/AddStepButton
+@onready var finish_button: Button = $MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/FinishButton
+@onready var new_problem_button: Button = $MainMargin/MainVBox/ContentScroll/ContentVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/NewProblemButton
 @onready var virtual_keyboard: VirtualKeyboard = $MainMargin/MainVBox/VirtualKeyboard
 @onready var back_button: Button = $MainMargin/MainVBox/TopBar/BackButton
+@onready var erase_button: Button = $MainMargin/MainVBox/InputControls/EraseButton
+@onready var clear_button: Button = $MainMargin/MainVBox/InputControls/ClearButton
 
 # System prompts for different request types
 const BASE_SYSTEM_CONTEXT = """You are an expert tutor for boolean logic and formal reasoning.
@@ -136,10 +138,40 @@ func _ready():
 	new_problem_button.pressed.connect(_on_new_problem_button_pressed)
 	back_button.pressed.connect(_on_back_button_pressed)
 	input_field.text_submitted.connect(func(_text): _on_send_button_pressed())
+	
+	# Connect new buttons
+	erase_button.pressed.connect(_on_erase_button_pressed)
+	clear_button.pressed.connect(_on_clear_button_pressed)
 
 	# Initialize conversation with base context (no history needed for JSON mode)
 	add_ai_message("Hello! I'm your AI tutor for boolean logic. What would you like to learn today?\n\nFor example, you can say:\n• 'I want to learn modus ponens'\n• 'Help me with De Morgan's laws'\n• 'Teach me about disjunctive syllogism'")
 	current_state = TutorState.AWAITING_TOPIC
+
+func _on_erase_button_pressed():
+	if active_step_field and active_step_field.has_focus():
+		var text = active_step_field.text
+		if not text.is_empty():
+			var caret = active_step_field.caret_column
+			if caret > 0:
+				active_step_field.text = text.erase(caret - 1, 1)
+				active_step_field.caret_column = caret - 1
+			else:
+				# At start, nothing to delete before caret
+				pass
+	elif active_step_field:
+		# If not focused but active, delete from end
+		var text = active_step_field.text
+		if not text.is_empty():
+			active_step_field.text = text.substr(0, text.length() - 1)
+			active_step_field.caret_column = active_step_field.text.length()
+	
+	AudioManager.play_button_click()
+
+func _on_clear_button_pressed():
+	if active_step_field:
+		active_step_field.text = ""
+		active_step_field.caret_column = 0
+	AudioManager.play_button_click()
 
 func _on_send_button_pressed():
 	var user_input = input_field.text.strip_edges()

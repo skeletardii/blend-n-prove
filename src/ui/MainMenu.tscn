@@ -206,6 +206,8 @@ text = "LEADERBOARD"
 [node name="AITutorButton" type="Button" parent="MenuContainer"]
 custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
+theme = ExtResource("5_u6542")
+theme_override_font_sizes/font_size = 24
 text = "AI Tutor"
 
 [node name="Spacer8" type="Control" parent="MenuContainer"]

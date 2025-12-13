@@ -13,11 +13,8 @@ signal space_pressed()
 var target_field: LineEdit = null
 
 # Button layout definitions
-const OPERATOR_ROW_1 = ["∧", "∨", "⊕", "→", "↔"]
-const OPERATOR_ROW_2 = ["¬"]
-const VARIABLE_ROW = ["P", "Q", "R", "S", "T"]
-const PAREN_ROW = ["(", ")"]
-const CONTROL_ROW = ["Delete", "Clear", "Space"]
+const OPERATOR_ROW_1 = ["∧", "∨", "⊕", "→", "↔","¬","(", ")"]
+const VARIABLE_ROW = ["P", "Q", "R", "S", "T","U","V","Del", "Clr"]
 
 # UI containers
 var keyboard_panel: Panel
@@ -36,7 +33,7 @@ func create_keyboard():
 	keyboard_panel = Panel.new()
 	var panel_style = StyleBoxFlat.new()
 	panel_style.bg_color = Color(1.0, 1.0, 1.0, 1.0)
-	panel_style.border_color = Color(0.7, 0.7, 0.7, 1.0)
+	panel_style.border_color = Color(0.775, 0.417, 0.946, 1.0)
 	panel_style.border_width_left = 2
 	panel_style.border_width_top = 2
 	panel_style.border_width_right = 2
@@ -73,21 +70,12 @@ func create_keyboard():
 	keyboard_layout.add_child(operator_row1)
 	create_row_buttons(operator_row1, OPERATOR_ROW_1, 60)
 
-	operator_row2 = create_centered_row()
-	keyboard_layout.add_child(operator_row2)
-	create_row_buttons(operator_row2, OPERATOR_ROW_2, 60)
-
 	variable_row = create_centered_row()
 	keyboard_layout.add_child(variable_row)
 	create_row_buttons(variable_row, VARIABLE_ROW, 60)
 
-	paren_row = create_centered_row()
-	keyboard_layout.add_child(paren_row)
-	create_row_buttons(paren_row, PAREN_ROW, 60)
-
 	control_row = create_centered_row()
 	keyboard_layout.add_child(control_row)
-	create_control_buttons(control_row)
 
 func create_centered_row() -> HBoxContainer:
 	var row = HBoxContainer.new()
@@ -101,25 +89,17 @@ func create_row_buttons(row: HBoxContainer, symbols: Array, button_size: int):
 		button.text = symbol
 		button.custom_minimum_size = Vector2(button_size, button_size)
 		button.add_theme_font_size_override("font_size", 28)
+		# Purple text for symbols
+		#button.add_theme_color_override("font_color", Color(0.775, 0.417, 0.946, 1.0))
+		#button.add_theme_color_override("font_focus_color", Color(0.775, 0.417, 0.946, 1.0))
+		#button.add_theme_color_override("font_hover_color", Color(0.6, 0.2, 0.8, 1.0))
 		button.pressed.connect(_on_symbol_pressed.bind(symbol))
 		row.add_child(button)
-
-func create_control_buttons(row: HBoxContainer):
-	for control in CONTROL_ROW:
-		var button = Button.new()
-		button.text = control
-		button.custom_minimum_size = Vector2(80, 50)
-		button.add_theme_font_size_override("font_size", 18)
-
-		match control:
-			"Delete":
+		match symbol:
+			"Del":
 				button.pressed.connect(_on_delete_pressed)
-			"Clear":
+			"Clr":
 				button.pressed.connect(_on_clear_pressed)
-			"Space":
-				button.pressed.connect(_on_space_pressed)
-
-		row.add_child(button)
 
 ## Set the target LineEdit that this keyboard will input to
 func set_target_field(field: LineEdit):
@@ -145,7 +125,7 @@ func _on_delete_pressed():
 		var cursor_pos = target_field.caret_column
 		if cursor_pos > 0:
 			var current_text = target_field.text
-			var new_text = current_text.erase(cursor_pos - 1, 1)
+			var new_text = current_text.erase(cursor_pos - 4, 1)
 			target_field.text = new_text
 			target_field.caret_column = cursor_pos - 1
 			target_field.grab_focus()
