@@ -19,10 +19,15 @@ const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 @onready var space_bg1: TextureRect = $WorkContainer/TargetArea/SpaceBG1
 @onready var space_bg2: TextureRect = $WorkContainer/TargetArea/SpaceBG2
 @onready var black_hole: TextureRect = $WorkContainer/TargetArea/BlackHole
+@onready var asteroid1: CPUParticles2D = $WorkContainer/TargetArea/Asteroid1
+@onready var asteroid2: CPUParticles2D = $WorkContainer/TargetArea/Asteroid2
+@onready var asteroid3: CPUParticles2D = $WorkContainer/TargetArea/Asteroid3
+@onready var asteroid4: CPUParticles2D = $WorkContainer/TargetArea/Asteroid4
+@onready var asteroid5: CPUParticles2D = $WorkContainer/TargetArea/Asteroid5
 
 @onready var combo_container: VBoxContainer = $ComboContainer
 @onready var combo_label: Label = $ComboContainer/ComboLabel
-@onready var combo_line: ProgressBar = $ComboContainer/ComboLine
+@onready var combo_line: ColorRect = $ComboContainer/ComboLine
 @onready var combo_sparkles: CPUParticles2D = $ComboContainer/ComboLabel/Sparkles
 @onready var combo_sparks: CPUParticles2D = $ComboContainer/ComboLabel/FallingSparks
 @onready var combo_fire: CPUParticles2D = $ComboContainer/ComboLabel/Fire
@@ -101,6 +106,9 @@ var bg_offset1: float = 0.0
 var bg_offset2: float = 0.0
 var blur_shader = preload("res://src/shaders/motion_blur.gdshader")
 var rocket_speed_multiplier: float = 1.0  # Syncs with rocket ship speed
+
+# Black hole rotation
+var black_hole_rotation_speed: float = PI / 5.0  # Radians per second (36 degrees/sec = 10 sec per full rotation)
 
 # Rocket Animation State
 var rocket_base_x: float = 0.0  # Base X position (2/5 of width)
@@ -210,7 +218,7 @@ func _ready() -> void:
 	
 	# Initialize combo timer color
 	if combo_line:
-		combo_line.modulate = Color.WHITE
+		combo_line.color = Color.WHITE
 
 	# Setup blur shader
 	if space_bg1:
@@ -256,10 +264,25 @@ func initialize_parallax_background() -> void:
 	space_bg1.position.x = bg_offset1
 	space_bg2.position.x = bg_offset2
 
+	# Position asteroid particles at right edge
+	var target_area = $WorkContainer/TargetArea as Control
+	if target_area:
+		var right_edge = target_area.size.x + 50
+		if asteroid1: asteroid1.position.x = right_edge
+		if asteroid2: asteroid2.position.x = right_edge
+		if asteroid3: asteroid3.position.x = right_edge
+		if asteroid4: asteroid4.position.x = right_edge
+		if asteroid5: asteroid5.position.x = right_edge
+
 func _process(delta: float) -> void:
 	"""Update parallax background scrolling and rocket animation every frame"""
 	update_parallax_background(delta)
 	update_rocket_animation(delta)
+	update_asteroid_speed()
+
+	# Rotate black hole continuously
+	if black_hole:
+		black_hole.rotation += black_hole_rotation_speed * delta
 
 	# Update combo timer
 	if combo_count >= 2:
@@ -295,6 +318,28 @@ func update_parallax_background(delta: float) -> void:
 	# Apply the positions
 	space_bg1.position.x = bg_offset1
 	space_bg2.position.x = bg_offset2
+
+func update_asteroid_speed() -> void:
+	"""Update asteroid particle velocity based on ship speed"""
+	# Base asteroid speed scales with rocket speed
+	var base_speed = 80.0 * rocket_speed_multiplier
+	var max_speed = base_speed * 1.8
+
+	if asteroid1:
+		asteroid1.initial_velocity_min = base_speed
+		asteroid1.initial_velocity_max = max_speed
+	if asteroid2:
+		asteroid2.initial_velocity_min = base_speed
+		asteroid2.initial_velocity_max = max_speed
+	if asteroid3:
+		asteroid3.initial_velocity_min = base_speed
+		asteroid3.initial_velocity_max = max_speed
+	if asteroid4:
+		asteroid4.initial_velocity_min = base_speed
+		asteroid4.initial_velocity_max = max_speed
+	if asteroid5:
+		asteroid5.initial_velocity_min = base_speed
+		asteroid5.initial_velocity_max = max_speed
 
 func set_rocket_speed(speed_multiplier: float) -> void:
 	"""Update the background scroll speed based on rocket ship velocity"""
@@ -471,7 +516,7 @@ func increment_combo() -> void:
 		combo_label.text = str(combo_count) + "x"
 		if not glow_tween or not glow_tween.is_valid():
 			combo_label.modulate = Color.WHITE
-		combo_line.modulate = Color.WHITE
+		combo_line.color = Color.WHITE
 		combo_line.scale.x = 1.0 # Reset bar to full width
 		
 		# Pop animation
@@ -511,7 +556,7 @@ func reset_combo_penalty() -> void:
 	# Visual fail feedback
 	if combo_container:
 		combo_label.modulate = Color.RED
-		combo_line.modulate = Color.RED
+		combo_line.color = Color.RED
 		
 		var tween = create_tween()
 		tween.tween_property(combo_container, "modulate:a", 0.0, 0.5)
@@ -1319,32 +1364,58 @@ func _on_addition_dialog_cancelled() -> void:
 	feedback_message.emit("Addition cancelled", Color.WHITE)
 
 func trigger_failure_effect() -> void:
-	# Stop scrolling immediately - background freezes
+	# Stop scrolling gradually - background slows and stops
 	var tween = create_tween()
-	tween.tween_property(self, "rocket_speed_multiplier", 0.0, 0.5)
+	tween.tween_property(self, "rocket_speed_multiplier", 0.0, 1.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
-	# Stop flames and smoke immediately (engine failure)
+	# Stop flames and smoke gradually (engine failure)
 	if flame_core:
-		flame_core.emitting = false
+		tween.parallel().tween_property(flame_core, "amount", 0, 1.0)
+		tween.parallel().tween_callback(func(): flame_core.emitting = false).set_delay(1.0)
 	if smoke_trail:
-		smoke_trail.emitting = false
+		tween.parallel().tween_property(smoke_trail, "amount", 0, 1.0)
+		tween.parallel().tween_callback(func(): smoke_trail.emitting = false).set_delay(1.0)
+
+	# Stop asteroid particles
+	tween.parallel().tween_callback(func():
+		if asteroid1: asteroid1.emitting = false
+		if asteroid2: asteroid2.emitting = false
+		if asteroid3: asteroid3.emitting = false
+		if asteroid4: asteroid4.emitting = false
+		if asteroid5: asteroid5.emitting = false
+	)
 
 	# Rocket gets pulled into the black hole on the left
 	# Gradually accelerate toward the left
-	tween.tween_property(rocket, "position:x", -500, 3.5).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	tween.tween_property(rocket, "position:x", -500, 3.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 
 	# Rocket rotates as it's pulled in (losing control)
-	tween.parallel().tween_property(rocket, "rotation", rocket.rotation + PI * 2, 3.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(rocket, "rotation", rocket.rotation + PI * 2, 3.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 
 	# Rocket shrinks as it approaches the black hole (perspective)
-	tween.parallel().tween_property(rocket, "scale", Vector2(0.3, 0.3), 3.5).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(rocket, "scale", Vector2(0.3, 0.3), 3.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 
 	# Fade out as it disappears into the black hole
-	tween.parallel().tween_property(rocket, "modulate:a", 0.0, 3.0).set_delay(0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(rocket, "modulate:a", 0.0, 2.5).set_delay(0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+	# Black hole grows to devour the entire screen
+	tween.tween_property(black_hole, "scale", Vector2(10.0, 10.0), 2.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+
+	# Create fade to black overlay
+	var fade_overlay = ColorRect.new()
+	fade_overlay.color = Color.BLACK
+	fade_overlay.modulate.a = 0.0
+	fade_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade_overlay.z_index = 1000
+	add_child(fade_overlay)
+
+	# Fade to black
+	tween.parallel().tween_property(fade_overlay, "modulate:a", 1.0, 1.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 
 func start_black_hole_rotation() -> void:
-	"""Start continuous rotation of the black hole"""
+	"""Initialize black hole rotation (actual rotation happens in _process)"""
 	if black_hole:
-		var tween = create_tween()
-		tween.set_loops()
-		tween.tween_property(black_hole, "rotation", TAU, 20.0).from(0.0).set_trans(Tween.TRANS_LINEAR)
+		black_hole.rotation = 0.0
+		print("Black hole initialized for rotation: ", black_hole.name)
+	else:
+		print("ERROR: Black hole not found!")

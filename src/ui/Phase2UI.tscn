@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c5oyjk8p0w8x4"]
+[gd_scene load_steps=24 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
 [ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
@@ -8,8 +8,12 @@
 [ext_resource type="Script" uid="uid://6us7btkgp6wo" path="res://src/ui/SpeechBubble.gd" id="4_speechbubble"]
 [ext_resource type="FontFile" uid="uid://c12vraq60ixtj" path="res://assets/fonts/MuseoSansRounded500.otf" id="6_eptc2"]
 [ext_resource type="Texture2D" uid="uid://ctijqymtg5osu" path="res://assets/sprites/blackhole.png" id="7_d87rg"]
+[ext_resource type="Texture2D" uid="uid://drbagnpe2htnh" path="res://assets/sprites/asteroid1.png" id="7_dshmm"]
 [ext_resource type="FontFile" uid="uid://c1fnar2v6mvb0" path="res://assets/fonts/MuseoSansRounded1000.otf" id="7_eptc2"]
 [ext_resource type="FontFile" uid="uid://bx0fmm2ck5w42" path="res://assets/fonts/MuseoSansRounded900.otf" id="8_gxw17"]
+[ext_resource type="Texture2D" uid="uid://cfk352ey3dpg5" path="res://assets/sprites/asteroid3.png" id="8_t6j8n"]
+[ext_resource type="Texture2D" uid="uid://b5ks3n8sl218x" path="res://assets/sprites/asteroid4.png" id="9_pyfrd"]
+[ext_resource type="Texture2D" uid="uid://bxgb1wsi8m7tu" path="res://assets/sprites/asteroid5.png" id="10_44u6g"]
 
 [sub_resource type="Gradient" id="Gradient_flame"]
 colors = PackedColorArray(1, 0.9, 0.2, 1, 1, 0.4, 0, 0)
@@ -159,10 +163,10 @@ layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = -600.0
-offset_top = -300.0
-offset_right = 0.0
-offset_bottom = 300.0
+offset_left = -385.0
+offset_top = -230.5
+offset_right = 215.0
+offset_bottom = 369.5
 grow_vertical = 2
 pivot_offset = Vector2(300, 300)
 texture = ExtResource("7_d87rg")
@@ -217,7 +221,111 @@ scale_amount_min = 10.0
 scale_amount_max = 20.0
 color_ramp = SubResource("Gradient_smoke")
 
+[node name="Asteroid1" type="CPUParticles2D" parent="WorkContainer/TargetArea"]
+z_index = 4
+position = Vector2(1104, 303.5)
+amount = 2
+texture = ExtResource("7_dshmm")
+lifetime = 20.0
+preprocess = 2.0
+randomness = 0.4
+emission_shape = 3
+emission_rect_extents = Vector2(50, 300)
+direction = Vector2(-1, 0)
+spread = 5.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 80.0
+initial_velocity_max = 150.0
+angular_velocity_min = -45.0
+angular_velocity_max = 45.0
+scale_amount_min = 2.0
+scale_amount_max = 2.0
+color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="Asteroid2" type="CPUParticles2D" parent="WorkContainer/TargetArea"]
+z_index = 4
+position = Vector2(950, 300)
+amount = 2
+texture = ExtResource("7_dshmm")
+lifetime = 20.0
+preprocess = 2.0
+randomness = 0.4
+emission_shape = 3
+emission_rect_extents = Vector2(50, 300)
+direction = Vector2(-1, 0)
+spread = 5.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 80.0
+initial_velocity_max = 150.0
+angular_velocity_min = -45.0
+angular_velocity_max = 45.0
+scale_amount_min = 2.0
+scale_amount_max = 2.0
+color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="Asteroid3" type="CPUParticles2D" parent="WorkContainer/TargetArea"]
+z_index = 4
+position = Vector2(1200, 300)
+amount = 2
+texture = ExtResource("8_t6j8n")
+lifetime = 20.0
+preprocess = 2.0
+randomness = 0.4
+emission_shape = 3
+emission_rect_extents = Vector2(50, 300)
+direction = Vector2(-1, 0)
+spread = 5.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 80.0
+initial_velocity_max = 150.0
+angular_velocity_min = -45.0
+angular_velocity_max = 45.0
+scale_amount_min = 3.0
+scale_amount_max = 3.0
+color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="Asteroid4" type="CPUParticles2D" parent="WorkContainer/TargetArea"]
+z_index = 4
+position = Vector2(1000, 300)
+amount = 2
+texture = ExtResource("9_pyfrd")
+lifetime = 20.0
+preprocess = 2.0
+randomness = 0.4
+emission_shape = 3
+emission_rect_extents = Vector2(50, 300)
+direction = Vector2(-1, 0)
+spread = 5.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 80.0
+initial_velocity_max = 150.0
+angular_velocity_min = -45.0
+angular_velocity_max = 45.0
+color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="Asteroid5" type="CPUParticles2D" parent="WorkContainer/TargetArea"]
+z_index = 4
+position = Vector2(1055, 308.5)
+amount = 2
+texture = ExtResource("10_44u6g")
+lifetime = 20.0
+preprocess = 2.0
+randomness = 0.4
+emission_shape = 3
+emission_rect_extents = Vector2(50, 300)
+direction = Vector2(-1, 0)
+spread = 5.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 80.0
+initial_velocity_max = 150.0
+angular_velocity_min = -45.0
+angular_velocity_max = 45.0
+scale_amount_min = 1.2
+scale_amount_max = 1.2
+color = Color(0.85, 0.85, 0.85, 1)
+
 [node name="ChatBubble" type="Panel" parent="WorkContainer/TargetArea"]
+z_index = 20
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -258,16 +366,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 text_overrun_behavior = 3
-
-[node name="Blackhole" type="TextureRect" parent="WorkContainer/TargetArea"]
-layout_mode = 0
-offset_left = -339.0
-offset_top = 84.5
-offset_right = 242.91455
-offset_bottom = 682.5
-texture = ExtResource("7_d87rg")
-expand_mode = 5
-stretch_mode = 4
 
 [node name="InventoryArea" type="Panel" parent="WorkContainer"]
 custom_minimum_size = Vector2(720, 1000)
@@ -343,6 +441,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="OperationsPanel" type="Panel" parent="."]
+z_index = 1000
 custom_minimum_size = Vector2(700, 800)
 layout_mode = 1
 anchors_preset = 7
@@ -707,11 +806,9 @@ scale_amount_min = 10.0
 scale_amount_max = 20.0
 color = Color(1, 0.4, 0, 0.8)
 
-[node name="ComboLine" type="ProgressBar" parent="ComboContainer"]
-custom_minimum_size = Vector2(0, 4)
+[node name="ComboLine" type="ColorRect" parent="ComboContainer"]
+custom_minimum_size = Vector2(130, 8)
 layout_mode = 2
-value = 100.0
-show_percentage = false
 
 [node name="AdditionDialog" parent="." instance=ExtResource("2_addition_dialog")]
 visible = false
