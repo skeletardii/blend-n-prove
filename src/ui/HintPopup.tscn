@@ -98,10 +98,12 @@ theme_override_constants/separation = 20
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
 text = "Skip Problem"
 
 [node name="CloseButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
 text = "Close"
