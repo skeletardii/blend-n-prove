@@ -32,24 +32,6 @@
       "solution": "Direct application of Distributivity."
     },
     {
-      "problem_number": 4,
-      "difficulty": "Medium",
-      "premises": [
-        "(P ∧ Q) ∨ (P ∧ R)"
-      ],
-      "conclusion": "P ∧ (Q ∨ R)",
-      "solution": "Apply reverse Distributivity (factoring out P)."
-    },
-    {
-      "problem_number": 5,
-      "difficulty": "Medium",
-      "premises": [
-        "(P ∨ Q) ∧ (P ∨ R)"
-      ],
-      "conclusion": "P ∨ (Q ∧ R)",
-      "solution": "Apply reverse Distributivity (factoring out P)."
-    },
-    {
       "problem_number": 6,
       "difficulty": "Medium",
       "premises": [
@@ -77,15 +59,6 @@
       "solution": "Apply nested Distributivity."
     },
     {
-      "problem_number": 9,
-      "difficulty": "Hard",
-      "premises": [
-        "(P ∧ Q) ∨ (P ∧ R)"
-      ],
-      "conclusion": "P",
-      "solution": "Apply reverse Distributivity to get \"P ∧ (Q ∨ R)\", then Simplification."
-    },
-    {
       "problem_number": 10,
       "difficulty": "Very Hard",
       "premises": [
@@ -93,6 +66,5 @@
       ],
       "conclusion": "(P ∧ R) ∨ (P ∧ S) ∨ (Q ∧ R) ∨ (Q ∧ S)",
       "solution": "Apply Distributivity twice to fully expand the expression."
-    }
   ]
 }
