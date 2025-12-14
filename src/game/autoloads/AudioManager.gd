@@ -26,7 +26,7 @@ var audio_paths: Dictionary = {
 	"score_popup": "res://assets/sound/Powerup.wav",  # Reusing powerup sound with pitch variation
 	"background_music": "res://assets/music/Kubbi - Up In My Jam  NO COPYRIGHT 8-bit Music.mp3",
 	"game_over_music": "res://assets/music/Game Over (8-Bit Music).mp3",
-	"blackhole_intro_music": "res://assets/music/blackholeintrosound.mp3",
+	"blackhole_intro_music": "res://assets/music/blackholeintrosound.m4a",
 	# "menu_music": "res://assets/sound/Menu_In.wav" # Commented out - no music in main menu
 }
 
