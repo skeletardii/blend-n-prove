@@ -407,6 +407,10 @@ func switch_to_phase1() -> void:
 
 	# Pass customer data to Phase 1
 	current_phase_instance.set_customer_data(current_customer)
+	
+	# Restore state (Score/Level)
+	if current_phase_instance.has_method("set_initial_state"):
+		current_phase_instance.set_initial_state(GameManager.current_score, GameManager.difficulty_level)
 
 	# Reset validated premises
 	validated_premises.clear()
@@ -448,6 +452,10 @@ func switch_to_phase2() -> void:
 		# Pass score display and patience timer references
 		current_phase_instance.score_display = score_display
 		current_phase_instance.patience_timer = patience_timer
+		
+		# Restore combo state
+		if current_phase_instance.has_method("restore_combo_state"):
+			current_phase_instance.restore_combo_state(combo_count)
 
 		# Connect Phase 2 signals
 		current_phase_instance.rule_applied.connect(_on_rule_applied)

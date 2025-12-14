@@ -581,6 +581,20 @@ func reset_combo_penalty() -> void:
 	GameManager.record_mistake()
 	trigger_damage_wobble()
 
+func restore_combo_state(count: int) -> void:
+	combo_count = count
+	# Update visuals
+	if combo_container:
+		if combo_count >= 2:
+			combo_container.visible = true
+			combo_label.text = str(combo_count) + "x"
+	
+	update_particle_color()
+	update_combo_effects()
+	
+	var new_speed = 1.0 + (float(combo_count) * 0.1)
+	set_rocket_speed(new_speed)
+
 func trigger_damage_wobble() -> void:
 	var tween = create_tween()
 	# Move left quickly

@@ -26,6 +26,8 @@ const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
 @onready var var_r: Button = $MainContainer/VirtualKeyboard/VariableRow/VarR
 @onready var var_s: Button = $MainContainer/VirtualKeyboard/VariableRow/VarS
 @onready var var_t: Button = $MainContainer/VirtualKeyboard/VariableRow/VarT
+@onready var var_u: Button = $MainContainer/VirtualKeyboard/VariableRow/VarU
+@onready var var_v: Button = $MainContainer/VirtualKeyboard/VariableRow/VarV
 @onready var and_button: Button = $MainContainer/VirtualKeyboard/OperatorRow/AndButton
 @onready var xor_button: Button = $MainContainer/VirtualKeyboard/OperatorRow/XorButton
 @onready var biconditional_button: Button = $MainContainer/VirtualKeyboard/OperatorRow/BiconditionalButton
@@ -62,6 +64,11 @@ signal feedback_message(message: String, color: Color)
 signal patience_expired
 signal life_lost
 signal text_changed(text: String)  # For tutorial detection
+
+func set_initial_state(current_score: int, current_level: int) -> void:
+	score = current_score
+	level = current_level
+	update_status_display()
 
 func setup_dynamic_spacing() -> void:
 	"""Set dynamic spacing between UI modules based on viewport height"""
@@ -136,6 +143,8 @@ func connect_virtual_keyboard() -> void:
 	var_r.pressed.connect(_on_symbol_pressed.bind("R"))
 	var_s.pressed.connect(_on_symbol_pressed.bind("S"))
 	var_t.pressed.connect(_on_symbol_pressed.bind("T"))
+	var_u.pressed.connect(_on_symbol_pressed.bind("U"))
+	var_v.pressed.connect(_on_symbol_pressed.bind("V"))
 
 	# Operator buttons
 	and_button.pressed.connect(_on_symbol_pressed.bind("∧"))
@@ -379,19 +388,6 @@ func update_premise_checklist() -> void:
 			
 		var premise_text = display_premises[i]
 		
-		# Add separator line before each premise (except the first)
-		if display_count > 0:
-			var separator = HSeparator.new()
-			separator.add_theme_constant_override("separation", 30) # Increased spacing
-			
-			# Create a thin, crisp divider line
-			var separator_style = StyleBoxLine.new()
-			separator_style.color = Color(0.8, 0.8, 0.8, 0.5)
-			separator_style.thickness = 1
-			
-			separator.add_theme_stylebox_override("separator", separator_style)
-			premise_list.add_child(separator)
-
 		var label = create_premise_item(premise_text)
 		# Store original index for validation mapping
 		label.set_meta("original_index", i)
@@ -400,7 +396,30 @@ func update_premise_checklist() -> void:
 		premise_items.append(label)
 		display_count += 1
 
-func create_premise_item(premise_text: String) -> Label:
+func create_premise_item(premise_text: String) -> PanelContainer:
+	# Create a PanelContainer to hold the label with a border
+	var panel = PanelContainer.new()
+
+	# Create a custom StyleBox for the border
+	var style_box = StyleBoxFlat.new()
+	style_box.bg_color = Color(1, 1, 1, 1)  # White background
+	style_box.border_width_left = 2
+	style_box.border_width_top = 2
+	style_box.border_width_right = 2
+	style_box.border_width_bottom = 2
+	style_box.border_color = Color(0.5, 0.5, 0.5, 1)  # Gray border
+	style_box.corner_radius_top_left = 5
+	style_box.corner_radius_top_right = 5
+	style_box.corner_radius_bottom_left = 5
+	style_box.corner_radius_bottom_right = 5
+	style_box.content_margin_left = 10
+	style_box.content_margin_top = 8
+	style_box.content_margin_right = 10
+	style_box.content_margin_bottom = 8
+
+	panel.add_theme_stylebox_override("panel", style_box)
+
+	# Create the label
 	var label = Label.new()
 	label.text = premise_text
 
@@ -419,7 +438,8 @@ func create_premise_item(premise_text: String) -> Label:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		label.custom_minimum_size.x = 250
 
-	return label
+	panel.add_child(label)
+	return panel
 
 func is_premise_completed(premise_text: String) -> bool:
 	for validated in validated_premises:
