@@ -50,6 +50,21 @@ var feedback_timer: Timer = null
 var is_paused: bool = false
 var is_game_over_sequence_started: bool = false
 
+var game_over_comments: Array[String] = [
+	"you should've typed faster",
+	"more fuel please",
+	"you can review in the tutorial, maybe",
+	"logic is hard, isn't it?",
+	"ran out of time...",
+	"maybe try a simpler difficulty?",
+	"don't give up!",
+	"so close!",
+	"need more practice?",
+	"keep trying!",
+	"fuel empty!",
+	"better luck next time"
+]
+
 # Fuel System (Rocket Ship)
 var fuel: float = 100.0
 var max_fuel: float = 100.0
@@ -595,6 +610,16 @@ func customer_leaves() -> void:
 			intro_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			intro_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
 			add_child(intro_flash)
+			
+			# Add randomized game over comment
+			var comment_label = Label.new()
+			comment_label.text = game_over_comments.pick_random()
+			comment_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			comment_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			comment_label.add_theme_color_override("font_color", Color.WHITE)
+			comment_label.add_theme_font_size_override("font_size", 32)
+			comment_label.set_anchors_preset(Control.PRESET_CENTER)
+			intro_flash.add_child(comment_label)
 
 		# Wait briefly, then fade to black
 		await get_tree().create_timer(2.0).timeout
@@ -604,11 +629,11 @@ func customer_leaves() -> void:
 
 		# Fade to black
 		var tween = create_tween()
-		tween.tween_property(intro_flash, "modulate:a", 1.0, 1.0)
+		tween.tween_property(intro_flash, "modulate:a", 1.0, 4.0)
 		await tween.finished
 
 		# Wait a moment in black, then transition
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(1.0).timeout
 		SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
 
 func complete_order_successfully() -> void:

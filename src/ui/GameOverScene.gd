@@ -10,9 +10,23 @@ var qualifies_for_leaderboard: bool = false
 var leaderboard_button: Button = null
 
 func _ready() -> void:
-	# Wait a brief moment before stopping music to avoid cutting off game over sound
-	await get_tree().create_timer(0.2).timeout
-	AudioManager.stop_music()
+	# Create fade overlay for fade-in transition
+	var fade_overlay = ColorRect.new()
+	fade_overlay.color = Color.BLACK
+	fade_overlay.modulate.a = 1.0
+	fade_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade_overlay.z_index = 100
+	add_child(fade_overlay)
+
+	# Fade in from black
+	var tween = create_tween()
+	tween.tween_property(fade_overlay, "modulate:a", 0.0, 1.0)
+	await tween.finished
+	fade_overlay.queue_free()
+
+	# Start game over music after fade-in
+	AudioManager.start_game_over_music()
 
 	# Display final score
 	final_score_label.text = "Final Score: " + str(GameManager.current_score)
@@ -88,20 +102,62 @@ func add_progress_context() -> void:
 	progress_info.add_theme_constant_override("separation", 15)
 	game_over_container.add_child(progress_info)
 
-	# High Score Comparison
+	# High Score Display - Emphasized
+	var high_score_section = VBoxContainer.new()
+	high_score_section.add_theme_constant_override("separation", 10)
+	progress_info.add_child(high_score_section)
+
+	# Current Score - using RichTextLabel for bold support
+	var current_score_label = RichTextLabel.new()
+	current_score_label.bbcode_enabled = true
+	current_score_label.text = "[center][b]Your Score: " + str(current_score) + "[/b][/center]"
+	current_score_label.add_theme_font_size_override("normal_font_size", 36)
+	current_score_label.add_theme_font_size_override("bold_font_size", 36)
+	current_score_label.add_theme_color_override("default_color", Color.BLACK)
+	current_score_label.fit_content = true
+	current_score_label.scroll_active = false
+	current_score_label.custom_minimum_size = Vector2(400, 50)
+	high_score_section.add_child(current_score_label)
+
+	# Local High Score - using RichTextLabel for bold support
+	var local_high_score_label = RichTextLabel.new()
+	local_high_score_label.bbcode_enabled = true
+	local_high_score_label.text = "[center][b]Local Best: " + str(stats.high_score_overall) + "[/b][/center]"
+	local_high_score_label.add_theme_font_size_override("normal_font_size", 32)
+	local_high_score_label.add_theme_font_size_override("bold_font_size", 32)
+	local_high_score_label.fit_content = true
+	local_high_score_label.scroll_active = false
+	local_high_score_label.custom_minimum_size = Vector2(400, 50)
+
+	# High Score Comparison Message
 	var high_score_comparison = Label.new()
 	high_score_comparison.add_theme_font_size_override("font_size", 28)
 	high_score_comparison.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	if current_score > stats.high_score_overall:
-		high_score_comparison.text = "🎉 NEW HIGH SCORE! 🎉"
-		high_score_comparison.modulate = Color.BLACK
+	
+	# Check if this is a high score (allowing for == if stats already updated)
+	if current_score >= stats.high_score_overall and current_score > 0:
+		high_score_comparison.text = "🎉 NEW LOCAL HIGH SCORE! 🎉"
+		high_score_comparison.modulate = Color(0.9, 0.6, 0.0, 1)  # Gold
+		local_high_score_label.modulate = Color(0.9, 0.6, 0.0, 1)  # Gold for new high score
+		
+		# RGB Glow Animation for Current Score
+		var tween = create_tween().set_loops()
+		tween.tween_property(current_score_label, "modulate", Color(1, 0.2, 0.2), 0.5) # Red
+		tween.tween_property(current_score_label, "modulate", Color(0.2, 1, 0.2), 0.5) # Green
+		tween.tween_property(current_score_label, "modulate", Color(0.2, 0.2, 1), 0.5) # Blue
+		tween.tween_property(current_score_label, "modulate", Color(1, 1, 0.2), 0.5)   # Yellow
+		
 	elif current_score > stats.high_score_overall * 0.8:
-		high_score_comparison.text = "Great performance! Close to your best: " + str(stats.high_score_overall)
+		high_score_comparison.text = "Great performance! Close to your best!"
 		high_score_comparison.modulate = Color.BLACK
+		local_high_score_label.modulate = Color.BLACK
 	else:
-		high_score_comparison.text = "Your best score: " + str(stats.high_score_overall)
+		high_score_comparison.text = "Keep trying to beat your best!"
 		high_score_comparison.modulate = Color.BLACK
-	progress_info.add_child(high_score_comparison)
+		local_high_score_label.modulate = Color.BLACK
+
+	high_score_section.add_child(local_high_score_label)
+	high_score_section.add_child(high_score_comparison)
 
 	# Games Played
 	var games_info = Label.new()
@@ -185,34 +241,115 @@ func check_leaderboard_qualification() -> void:
 		add_leaderboard_button()
 
 func add_leaderboard_button() -> void:
-	var game_over_container = $GameOverPanel/GameOverContainer
+	# Show separate popup for leaderboard submission
+	show_leaderboard_popup()
 
-	# Add spacer before button
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 20)
-	game_over_container.add_child(spacer)
+func show_leaderboard_popup() -> void:
+	# Create popup overlay
+	var overlay = ColorRect.new()
+	overlay.color = Color(0, 0, 0, 0.7)
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.z_index = 200
+	add_child(overlay)
 
-	# Add celebration message
-	var qualify_label = Label.new()
-	qualify_label.text = "🎉 YOU MADE THE TOP 10! 🎉"
-	qualify_label.add_theme_font_size_override("font_size", 32)
-	qualify_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	qualify_label.modulate = Color(0.9, 0.6, 0.0)  # Gold/orange color
-	game_over_container.add_child(qualify_label)
+	# Create center container for proper centering
+	var center_container = CenterContainer.new()
+	center_container.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(center_container)
 
-	# Add small spacer
-	var small_spacer = Control.new()
-	small_spacer.custom_minimum_size = Vector2(0, 10)
-	game_over_container.add_child(small_spacer)
+	# Create popup panel
+	var popup_panel = PanelContainer.new()
+	popup_panel.custom_minimum_size = Vector2(650, 450)
 
-	# Create leaderboard button
-	leaderboard_button = Button.new()
-	leaderboard_button.custom_minimum_size = Vector2(400, 70)
-	leaderboard_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	leaderboard_button.add_theme_font_size_override("font_size", 28)
-	leaderboard_button.text = "SUBMIT HIGH SCORE"
-	leaderboard_button.pressed.connect(_on_submit_high_score_pressed)
-	game_over_container.add_child(leaderboard_button)
+	# Create StyleBox for popup
+	var style_box = StyleBoxFlat.new()
+	style_box.bg_color = Color(0.95, 0.95, 0.95, 1)
+	style_box.border_width_left = 3
+	style_box.border_width_top = 3
+	style_box.border_width_right = 3
+	style_box.border_width_bottom = 3
+	style_box.border_color = Color(0.9, 0.6, 0.0, 1)  # Gold border
+	style_box.corner_radius_top_left = 20
+	style_box.corner_radius_top_right = 20
+	style_box.corner_radius_bottom_right = 20
+	style_box.corner_radius_bottom_left = 20
+	style_box.shadow_size = 10
+	style_box.shadow_offset = Vector2(5, 5)
+	style_box.shadow_color = Color(0, 0, 0, 0.5)
+	popup_panel.add_theme_stylebox_override("panel", style_box)
+	center_container.add_child(popup_panel)
+
+	# Create content container
+	var content = VBoxContainer.new()
+	content.add_theme_constant_override("separation", 20)
+	popup_panel.add_child(content)
+
+	# Add margin
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 40)
+	margin.add_theme_constant_override("margin_top", 40)
+	margin.add_theme_constant_override("margin_right", 40)
+	margin.add_theme_constant_override("margin_bottom", 40)
+	popup_panel.add_child(margin)
+
+	var inner_content = VBoxContainer.new()
+	inner_content.add_theme_constant_override("separation", 30)
+	inner_content.alignment = BoxContainer.ALIGNMENT_CENTER
+	margin.add_child(inner_content)
+
+	# Celebration title - EMPHASIZED
+	var title_label = RichTextLabel.new()
+	title_label.bbcode_enabled = true
+	title_label.text = "[center][b]🎉 CONGRATULATIONS! 🎉[/b][/center]"
+	title_label.add_theme_font_size_override("normal_font_size", 52)
+	title_label.add_theme_font_size_override("bold_font_size", 52)
+	title_label.add_theme_color_override("default_color", Color(0.9, 0.6, 0.0, 1))  # Gold
+	title_label.fit_content = true
+	title_label.scroll_active = false
+	title_label.custom_minimum_size = Vector2(550, 80)
+	inner_content.add_child(title_label)
+
+	# Message - EMPHASIZED
+	var message_label = RichTextLabel.new()
+	message_label.bbcode_enabled = true
+	message_label.text = "[center][b]You made the TOP 10![/b]\n\nWould you like to submit your score\nto the leaderboard?[/center]"
+	message_label.add_theme_font_size_override("normal_font_size", 30)
+	message_label.add_theme_font_size_override("bold_font_size", 32)
+	message_label.add_theme_color_override("default_color", Color.BLACK)
+	message_label.fit_content = true
+	message_label.scroll_active = false
+	message_label.custom_minimum_size = Vector2(550, 150)
+	inner_content.add_child(message_label)
+
+	# Button container
+	var button_container = HBoxContainer.new()
+	button_container.add_theme_constant_override("separation", 20)
+	button_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	inner_content.add_child(button_container)
+
+	# Submit button
+	var submit_button = Button.new()
+	submit_button.custom_minimum_size = Vector2(200, 70)
+	submit_button.add_theme_font_size_override("font_size", 28)
+	submit_button.text = "SUBMIT"
+	submit_button.pressed.connect(func():
+		AudioManager.play_button_click()
+		overlay.queue_free()
+		transition_to_high_score_entry()
+	)
+	button_container.add_child(submit_button)
+
+	# Skip button
+	var skip_button = Button.new()
+	skip_button.custom_minimum_size = Vector2(200, 70)
+	skip_button.add_theme_font_size_override("font_size", 28)
+	skip_button.text = "SKIP"
+	skip_button.pressed.connect(func():
+		AudioManager.play_button_click()
+		overlay.queue_free()
+	)
+	button_container.add_child(skip_button)
 
 func _on_submit_high_score_pressed() -> void:
 	AudioManager.play_button_click()
