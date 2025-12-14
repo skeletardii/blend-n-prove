@@ -6,6 +6,8 @@ var master_volume: float = 1.0
 var music_volume: float = 0.1
 var sfx_volume: float = 0.8
 var is_muted: bool = false
+var is_music_muted: bool = false
+var is_sfx_muted: bool = false
 
 var music_player: AudioStreamPlayer
 var sfx_player: AudioStreamPlayer
@@ -22,7 +24,9 @@ var audio_paths: Dictionary = {
 	"logic_success": "res://assets/sound/Powerup.wav",
 	"premise_complete": "res://assets/sound/Confirm.wav",
 	"score_popup": "res://assets/sound/Powerup.wav",  # Reusing powerup sound with pitch variation
-	"background_music": "res://assets/music/Pinball Spring.mp3",
+	"background_music": "res://assets/music/Kubbi - Up In My Jam  NO COPYRIGHT 8-bit Music.mp3",
+	"game_over_music": "res://assets/music/Game Over (8-Bit Music).mp3",
+	"blackhole_intro_music": "res://assets/music/blackholeintrosound.mp3",
 	# "menu_music": "res://assets/sound/Menu_In.wav" # Commented out - no music in main menu
 }
 
@@ -71,7 +75,7 @@ func get_available_sfx_player() -> AudioStreamPlayer:
 	return sfx_players_pool[0]
 
 func play_sfx(sound_name: String) -> void:
-	if is_muted:
+	if is_muted or is_sfx_muted:
 		return
 
 	# Get an available player from the pool
@@ -91,29 +95,68 @@ func play_sfx(sound_name: String) -> void:
 				player.play()
 
 func play_music(music_name: String, loop: bool = true) -> void:
-	if is_muted:
-		return
-	
+	if is_muted or is_music_muted:
+		print("DEBUG: Music muted, skipping playback start: ", music_name)
+		# We allow it to 'play' but volume will be 0 if we remove this return, 
+		# OR we keep it and it won't start.
+		# If we want unmuting to resume music that *should* be playing, we should probably let it play at 0 volume.
+		# But the current implementation returns.
+		# Let's respect the current pattern: if muted, don't start. 
+		# But wait, if I mute music, then enter game, music won't start. If I unmute, nothing happens?
+		# That might be a bug in existing logic or intended. 
+		# For now, I'll just add the check to match existing behavior.
+		# Ideally, we should play it at -80db so unmuting works.
+		# But let's stick to the current pattern to avoid side effects, just adding the flag.
+		# Actually, if I modify update_volumes, that handles the volume.
+		# If I return here, the stream player never starts.
+		# So if user unmutes, silence.
+		# I will REMOVE the early return so it starts playing (silently) and can be unmuted.
+		pass 
+		# Continued execution...
+
+	print("DEBUG: Attempting to play music: ", music_name, " (loop: ", loop, ")")
+
 	if music_name in loaded_sounds:
 		music_player.stream = loaded_sounds[music_name]
-		if music_player.stream and music_player.stream.has_method("set_loop_mode"):
+		print("DEBUG: Stream loaded from cache, type: ", music_player.stream.get_class())
+		# Handle different audio stream types
+		if music_player.stream is AudioStreamMP3:
+			music_player.stream.loop = loop
+			print("DEBUG: Set MP3 loop to: ", loop)
+		elif music_player.stream and music_player.stream.has_method("set_loop_mode"):
 			music_player.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD if loop else AudioStreamWAV.LOOP_DISABLED
+			print("DEBUG: Set WAV loop_mode")
 		elif music_player.stream and music_player.stream.has_method("set_loop"):
 			music_player.stream.loop = loop
+			print("DEBUG: Set loop property")
 		music_player.play()
+		print("DEBUG: Music player.play() called")
 	else:
 		# Try to load the music if it wasn't loaded before
 		var path: String = audio_paths.get(music_name, "")
+		print("DEBUG: Music not in cache, loading from: ", path)
 		if not path.is_empty() and ResourceLoader.exists(path):
 			var audio_stream = load(path)
 			if audio_stream:
+				print("DEBUG: Stream loaded successfully, type: ", audio_stream.get_class())
 				loaded_sounds[music_name] = audio_stream
 				music_player.stream = audio_stream
-				if music_player.stream and music_player.stream.has_method("set_loop_mode"):
+				# Handle different audio stream types
+				if music_player.stream is AudioStreamMP3:
+					music_player.stream.loop = loop
+					print("DEBUG: Set MP3 loop to: ", loop)
+				elif music_player.stream and music_player.stream.has_method("set_loop_mode"):
 					music_player.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD if loop else AudioStreamWAV.LOOP_DISABLED
+					print("DEBUG: Set WAV loop_mode")
 				elif music_player.stream and music_player.stream.has_method("set_loop"):
 					music_player.stream.loop = loop
+					print("DEBUG: Set loop property")
 				music_player.play()
+				print("DEBUG: Music player.play() called")
+			else:
+				print("ERROR: Failed to load audio stream from: ", path)
+		else:
+			print("ERROR: Path empty or doesn't exist: ", path)
 
 func stop_music() -> void:
 	music_player.stop()
@@ -132,23 +175,41 @@ func set_sfx_volume(volume: float) -> void:
 
 func toggle_mute() -> void:
 	is_muted = !is_muted
-	if is_muted:
-		music_player.volume_db = -80.0  # Effectively mute
-		sfx_player.volume_db = -80.0
-		# Mute all players in the pool
-		for player in sfx_players_pool:
-			player.volume_db = -80.0
-	else:
-		update_volumes()
+	update_volumes()
+	audio_settings_changed.emit()
+
+func toggle_music_mute() -> void:
+	is_music_muted = !is_music_muted
+	update_volumes()
+	audio_settings_changed.emit()
+
+func toggle_sfx_mute() -> void:
+	is_sfx_muted = !is_sfx_muted
+	update_volumes()
 	audio_settings_changed.emit()
 
 func update_volumes() -> void:
-	if not is_muted:
-		music_player.volume_db = linear_to_db(music_volume * master_volume)
-		sfx_player.volume_db = linear_to_db(sfx_volume * master_volume)
-		# Update all players in the pool
+	if is_muted:
+		music_player.volume_db = -80.0
+		sfx_player.volume_db = -80.0
 		for player in sfx_players_pool:
-			player.volume_db = linear_to_db(sfx_volume * master_volume)
+			player.volume_db = -80.0
+	else:
+		# Music volume
+		if is_music_muted:
+			music_player.volume_db = -80.0
+		else:
+			music_player.volume_db = linear_to_db(music_volume * master_volume)
+		
+		# SFX volume
+		var sfx_db = -80.0
+		if not is_sfx_muted:
+			sfx_db = linear_to_db(sfx_volume * master_volume)
+			
+		sfx_player.volume_db = sfx_db
+		for player in sfx_players_pool:
+			player.volume_db = sfx_db
+	
 	audio_settings_changed.emit()
 
 func play_button_click() -> void:
@@ -173,7 +234,7 @@ func play_premise_complete() -> void:
 	play_sfx("premise_complete")
 
 func play_score_popup(multiplier: float) -> void:
-	if is_muted:
+	if is_muted or is_sfx_muted:
 		return
 
 	# Get an available player from the pool
@@ -192,8 +253,24 @@ func play_score_popup(multiplier: float) -> void:
 	else:
 		play_sfx("score_popup")
 
+func stop_all_sfx() -> void:
+	sfx_player.stop()
+	for player in sfx_players_pool:
+		player.stop()
+
 func start_background_music() -> void:
 	play_music("background_music", true)
 
 func start_menu_music() -> void:
 	play_music("menu_music", true)
+
+func start_game_over_music() -> void:
+	# Stop any currently playing music and SFX first
+	stop_music()
+	stop_all_sfx()
+	
+	# Small delay to ensure music player is fully stopped
+	await get_tree().create_timer(0.1).timeout
+	# Play game over music with looping
+	play_music("game_over_music", true)
+	print("DEBUG: Game over music started (looping)")

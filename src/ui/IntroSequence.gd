@@ -12,8 +12,11 @@ extends Control
 @onready var flash: ColorRect = $Flash
 @onready var space_bg: TextureRect = $SpaceBG
 @onready var exhaust_container: Node2D = $Rocket/ExhaustContainer
+@onready var AudioManager = $"/root/AudioManager"
 @onready var flame_core: CPUParticles2D = $Rocket/ExhaustContainer/FlameCore
 @onready var smoke_trail: CPUParticles2D = $Rocket/ExhaustContainer/SmokeTrail
+
+var black_hole_rotation_speed: float = 2.0  # radians per second
 
 func _ready() -> void:
 	# Setup initial state
@@ -32,6 +35,13 @@ func _ready() -> void:
 	asteroid4.position = screen_center
 	asteroid5.position = screen_center
 
+	# Ensure asteroid particles start off not emitting
+	asteroid1.emitting = false
+	asteroid2.emitting = false
+	asteroid3.emitting = false
+	asteroid4.emitting = false
+	asteroid5.emitting = false
+
 	black_hole.scale = Vector2(0.01, 0.01)
 	black_hole.rotation = 0.0
 	black_hole.visible = false
@@ -42,7 +52,13 @@ func _ready() -> void:
 	# Start sequence
 	play_intro()
 
+func _process(delta: float) -> void:
+	# Continuously rotate black hole when visible
+	if black_hole.visible:
+		black_hole.rotation += black_hole_rotation_speed * delta
+
 func play_intro() -> void:
+	AudioManager.play_music("blackhole_intro_music", true)
 	var tween = create_tween()
 	var screen_center = get_viewport_rect().size / 2
 
@@ -69,23 +85,17 @@ func play_intro() -> void:
 	)
 
 	# 4. Black hole starts rotating and growing slowly (ominous buildup)
-	# Initial slow growth with rotation
+	# Initial slow growth (rotation is continuous in _process)
 	tween.tween_property(black_hole, "scale", Vector2(1.8, 1.8), 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(black_hole, "rotation", PI * 2, 1.2).set_trans(Tween.TRANS_LINEAR)
 
 	# 5. Planet begins spaghettification - stretches vertically as it's pulled toward center
 	# Start asteroids getting sucked in
 	tween.tween_callback(func():
-		asteroid1.radial_accel_min = -400.0
-		asteroid1.radial_accel_max = -300.0
-		asteroid2.radial_accel_min = -400.0
-		asteroid2.radial_accel_max = -300.0
-		asteroid3.radial_accel_min = -400.0
-		asteroid3.radial_accel_max = -300.0
-		asteroid4.radial_accel_min = -400.0
-		asteroid4.radial_accel_max = -300.0
-		asteroid5.radial_accel_min = -400.0
-		asteroid5.radial_accel_max = -300.0
+		asteroid1.emitting = true
+		asteroid2.emitting = true
+		asteroid3.emitting = true
+		asteroid4.emitting = true
+		asteroid5.emitting = true
 	)
 
 	# Start stretching effect (spaghettification)
@@ -95,7 +105,6 @@ func play_intro() -> void:
 
 	# 6. Acceleration phase - planet rapidly spirals into screen center
 	tween.tween_property(black_hole, "scale", Vector2(4.5, 4.5), 0.8).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(black_hole, "rotation", PI * 4, 0.8).set_trans(Tween.TRANS_LINEAR)
 
 	# Extreme spaghettification and rapid shrinking toward center
 	tween.parallel().tween_property(planet, "scale:x", 0.05, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
@@ -108,7 +117,6 @@ func play_intro() -> void:
 
 	# 8. Black hole violently expands to consume everything
 	tween.tween_property(black_hole, "scale", Vector2(60.0, 60.0), 1.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(black_hole, "rotation", PI * 8, 1.0).set_trans(Tween.TRANS_LINEAR)
 
 	# 9. Flash to white as reality breaks down
 	tween.parallel().tween_property(flash, "modulate:a", 1.0, 0.6).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
