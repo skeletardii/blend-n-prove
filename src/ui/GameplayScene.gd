@@ -17,7 +17,7 @@ var fuel_icon: TextureRect = null  # Created dynamically to show fuel icon
 @onready var tutorial_help_panel: Panel = $UI/TutorialHelpPanel
 @onready var show_help_button: Button = $UI/MainContainer/TopBar/TopBarContainer/ShowHelpButton
 @onready var hint_button: Button = $UI/MainContainer/TopBar/TopBarContainer/HintButton
-@onready var hint_popup: Panel = $UI/HintPopup
+@onready var hint_popup: Control = $UI/HintPopup
 @onready var pause_button: Button = $UI/MainContainer/TopBar/TopBarContainer/PauseButton
 @onready var pause_overlay: CanvasLayer = $PauseOverlay
 @onready var resume_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ResumeButton
@@ -672,6 +672,10 @@ func customer_leaves() -> void:
 
 		# Wait a moment in black, then transition
 		await get_tree().create_timer(1.0).timeout
+		
+		# Ensure stats are saved
+		GameManager.force_game_over()
+		
 		SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
 
 func complete_order_successfully() -> void:
