@@ -116,6 +116,7 @@ var rocket_bobbing_time: float = 0.0  # Time accumulator for bobbing
 var rocket_target_offset: float = 0.0  # Target horizontal offset when speeding up
 var rocket_current_offset: float = 0.0  # Current smooth offset
 var rocket_wobble_offset: float = 0.0   # Wobble offset for damage
+var is_failing: bool = false # Flag to stop normal animation during failure
 
 # Signals for parent communication
 signal rule_applied(result: BooleanExpression)
@@ -462,7 +463,7 @@ func initialize_rocket() -> void:
 
 func update_rocket_animation(delta: float) -> void:
 	"""Update rocket bobbing and speed-based movement"""
-	if not rocket:
+	if not rocket or is_failing:
 		return
 
 	# Accumulate time for bobbing animation
@@ -585,9 +586,6 @@ func trigger_damage_wobble() -> void:
 	tween.tween_property(self, "rocket_wobble_offset", 0.0, 0.2).set_ease(Tween.EASE_OUT)
 
 func update_particle_color() -> void:
-	if not smoke_trail:
-		return
-		
 	var target_gradient = normal_smoke_gradient
 	
 	if combo_count >= 10:
@@ -599,7 +597,10 @@ func update_particle_color() -> void:
 	elif combo_count >= 3:
 		target_gradient = boost_gradient
 	
-	smoke_trail.color_ramp = target_gradient
+	if smoke_trail:
+		smoke_trail.color_ramp = target_gradient
+	if flame_core:
+		flame_core.color_ramp = target_gradient
 
 func update_combo_effects() -> void:
 	if not combo_label: return
@@ -1083,13 +1084,20 @@ func apply_logical_rule(rule: String, premises: Array[BooleanExpression]) -> Boo
 		# Single operation rules (require 1 premise)
 		"SIMP":  # Simplification: P∧Q ⊢ P
 			return BooleanLogicEngine.apply_simplification(premises)
-		"DM":  # De Morgan's Laws
+		"DM":  # De Morgan's Laws: ¬(P∧Q) ⊢ ¬P∨¬Q or ¬(P∨Q) ⊢ ¬P∧¬Q
 			if premises.size() == 1:
 				var premise = premises[0]
-				if premise.is_conjunction():
-					return BooleanLogicEngine.apply_de_morgan_and(premise)
-				elif premise.is_disjunction():
-					return BooleanLogicEngine.apply_de_morgan_or(premise)
+				var normalized = premise.normalized_string
+				# Check if it's a negated expression: ¬(...)
+				if normalized.begins_with("¬(") and normalized.ends_with(")"):
+					# Extract the inner expression
+					var inner = normalized.substr(2, normalized.length() - 3).strip_edges()
+					var inner_expr = BooleanLogicEngine.create_expression(inner)
+					# Check what the inner expression is
+					if inner_expr.is_conjunction():
+						return BooleanLogicEngine.apply_de_morgan_and(premise)
+					elif inner_expr.is_disjunction():
+						return BooleanLogicEngine.apply_de_morgan_or(premise)
 			return BooleanExpression.new("")
 		"DOUBLE_NEG":  # Double Negation: ¬¬P ⊢ P
 			if premises.size() == 1:
@@ -1380,9 +1388,14 @@ func trigger_failure_effect() -> void:
 		if asteroid5: asteroid5.emitting = false
 	)
 
-	# Rocket gets pulled into the black hole on the left
-	# Gradually accelerate toward the left
-	tween.tween_property(rocket, "position:x", -500, 3.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	is_failing = true
+	
+	# Rocket gets pulled into the black hole (center)
+	# Calculate center position relative to parent (assuming siblings)
+	var target_pos = black_hole.position + (black_hole.size * black_hole.scale * 0.5) - (rocket.size * rocket.scale * 0.5)
+	
+	# Gradually accelerate toward the black hole
+	tween.tween_property(rocket, "position", target_pos, 3.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 
 	# Rocket rotates as it's pulled in (losing control)
 	tween.parallel().tween_property(rocket, "rotation", rocket.rotation + PI * 2, 3.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)

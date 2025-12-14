@@ -50,6 +50,9 @@ var feedback_timer: Timer = null
 var is_paused: bool = false
 var is_game_over_sequence_started: bool = false
 
+var ice_border_shader = preload("res://src/shaders/ice_border.gdshader")
+var ice_border: ColorRect = null
+
 var game_over_comments: Array[String] = [
 	"you should've typed faster",
 	"more fuel please",
@@ -112,6 +115,16 @@ func create_fuel_icon() -> void:
 	patience_bar.add_child(fuel_icon)
 
 func _ready() -> void:
+	# Create Ice Border
+	ice_border = ColorRect.new()
+	ice_border.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ice_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ice_border.material = ShaderMaterial.new()
+	ice_border.material.shader = ice_border_shader
+	ice_border.material.set_shader_parameter("intensity", 0.0)
+	ice_border.z_index = 90
+	add_child(ice_border)
+
 	# Fade out the white flash from intro
 	if intro_flash:
 		var tween = create_tween()
@@ -252,6 +265,13 @@ func update_fuel_system(delta: float) -> void:
 	# Game over if fuel runs out
 	if fuel <= 0.0:
 		customer_leaves()
+	
+	# Update Ice Border intensity
+	if ice_border and ice_border.material:
+		var intensity = 0.0
+		if fuel < 30.0:
+			intensity = 1.0 - (fuel / 30.0)
+		ice_border.material.set_shader_parameter("intensity", intensity)
 
 func update_patience_timer(delta: float) -> void:
 	# Legacy timer for backward compatibility (now unused in favor of fuel)
@@ -291,7 +311,14 @@ func increment_combo() -> void:
 	# Combo multiplier: 1st = 0.5x, 2nd = 1.0x, 3rd = 1.5x, etc.
 	var combo_boost: float = combo_count * 0.5
 	add_speed_boost(combo_boost, false)
-	show_feedback_message("MULTIPLIER x" + str(gameplay_multiplier) + "!", Color.GOLD)
+	
+	var msg_color = Color.GOLD
+	if combo_count >= 10: msg_color = Color(0.8, 0, 1) # Purple
+	elif combo_count >= 8: msg_color = Color.CYAN
+	elif combo_count >= 5: msg_color = Color(0, 0.5, 1) # Blue
+	elif combo_count >= 3: msg_color = Color.ORANGE
+	
+	show_feedback_message("MULTIPLIER x" + str(gameplay_multiplier) + "!", msg_color)
 
 func reset_combo() -> void:
 	"""Reset combo counter on mistake"""
@@ -617,7 +644,7 @@ func customer_leaves() -> void:
 			comment_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			comment_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 			comment_label.add_theme_color_override("font_color", Color.WHITE)
-			comment_label.add_theme_font_size_override("font_size", 32)
+			comment_label.add_theme_font_size_override("font_size", 48)
 			comment_label.set_anchors_preset(Control.PRESET_CENTER)
 			intro_flash.add_child(comment_label)
 
