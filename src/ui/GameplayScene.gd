@@ -22,6 +22,8 @@ var fuel_icon: TextureRect = null  # Created dynamically to show fuel icon
 @onready var pause_overlay: CanvasLayer = $PauseOverlay
 @onready var resume_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ResumeButton
 @onready var quit_button: Button = $PauseOverlay/PauseMenu/MenuContainer/QuitButton
+@onready var toggle_music_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ToggleMusicButton
+@onready var toggle_sfx_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ToggleSFXButton
 @onready var background_texture: TextureRect = $TextureRect
 @onready var intro_flash: ColorRect = $IntroFlash
 @onready var black_hole: TextureRect = $BlackHole
@@ -46,6 +48,7 @@ var max_patience: float = 60.0
 var feedback_label: Label = null
 var feedback_timer: Timer = null
 var is_paused: bool = false
+var is_game_over_sequence_started: bool = false
 
 # Fuel System (Rocket Ship)
 var fuel: float = 100.0
@@ -146,6 +149,13 @@ func _ready() -> void:
 	pause_button.pressed.connect(_on_pause_button_pressed)
 	resume_button.pressed.connect(_on_resume_button_pressed)
 	quit_button.pressed.connect(_on_quit_button_pressed)
+	
+	if toggle_music_button:
+		toggle_music_button.pressed.connect(_on_toggle_music_pressed)
+	if toggle_sfx_button:
+		toggle_sfx_button.pressed.connect(_on_toggle_sfx_pressed)
+		
+	update_audio_buttons_state()
 
 	# Generate first customer
 	generate_new_customer()
@@ -565,18 +575,41 @@ func customer_leaves() -> void:
 		generate_new_customer()
 		switch_to_phase1()
 	else:
-		# Out of fuel = Game Over - play error sound
+		if is_game_over_sequence_started:
+			return
+		is_game_over_sequence_started = true
+
+		# Out of fuel = Game Over - play error sound ONCE
 		AudioManager.play_error()
 		show_feedback_message("Out of Fuel! Game Over!", Color.RED)
-		
+
 		# Trigger failure effect if in Phase 2
 		if current_phase_instance and current_phase_instance.has_method("trigger_failure_effect"):
 			current_phase_instance.trigger_failure_effect()
 
-		# Wait for failure animation (background stop + ship pull + black hole expansion + fade)
-		var on_timeout = func():
-			SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
-		get_tree().create_timer(7.5).timeout.connect(on_timeout)
+		# Create fade overlay if it doesn't exist
+		if not intro_flash:
+			intro_flash = ColorRect.new()
+			intro_flash.color = Color.BLACK
+			intro_flash.modulate.a = 0.0
+			intro_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			intro_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+			add_child(intro_flash)
+
+		# Wait briefly, then fade to black
+		await get_tree().create_timer(2.0).timeout
+
+		# Stop music and all sounds before transition
+		AudioManager.stop_music()
+
+		# Fade to black
+		var tween = create_tween()
+		tween.tween_property(intro_flash, "modulate:a", 1.0, 1.0)
+		await tween.finished
+
+		# Wait a moment in black, then transition
+		await get_tree().create_timer(0.5).timeout
+		SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
 
 func complete_order_successfully() -> void:
 	AudioManager.play_logic_success()
@@ -750,6 +783,7 @@ func _on_pause_button_pressed() -> void:
 func pause_game() -> void:
 	is_paused = true
 	pause_overlay.visible = true
+	update_audio_buttons_state()
 	# Block input to the phase container (game area)
 	phase_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# Note: Timer continues counting as requested by user
@@ -778,6 +812,25 @@ func _on_quit_button_pressed() -> void:
 	show_feedback_message("Game Ended!", Color.ORANGE)
 	await get_tree().create_timer(1.0).timeout
 	SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
+
+func _on_toggle_music_pressed() -> void:
+	AudioManager.toggle_music_mute()
+	AudioManager.play_button_click()
+	update_audio_buttons_state()
+
+func _on_toggle_sfx_pressed() -> void:
+	AudioManager.toggle_sfx_mute()
+	AudioManager.play_button_click()
+	update_audio_buttons_state()
+
+func update_audio_buttons_state() -> void:
+	if toggle_music_button:
+		toggle_music_button.text = "Unmute Music" if AudioManager.is_music_muted else "Mute Music"
+		toggle_music_button.modulate = Color(1, 0.5, 0.5) if AudioManager.is_music_muted else Color.WHITE
+		
+	if toggle_sfx_button:
+		toggle_sfx_button.text = "Unmute SFX" if AudioManager.is_sfx_muted else "Mute SFX"
+		toggle_sfx_button.modulate = Color(1, 0.5, 0.5) if AudioManager.is_sfx_muted else Color.WHITE
 
 # ============================================================================
 # FIRST-TIME TUTORIAL FUNCTIONS
