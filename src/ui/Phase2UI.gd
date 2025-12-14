@@ -109,6 +109,7 @@ var rocket_speed_multiplier: float = 1.0  # Syncs with rocket ship speed
 
 # Black hole rotation
 var black_hole_rotation_speed: float = PI / 5.0  # Radians per second (36 degrees/sec = 10 sec per full rotation)
+var black_hole_target_pos: Vector2 = Vector2.ZERO # Original position to move to on failure
 
 # Rocket Animation State
 var rocket_base_x: float = 0.0  # Base X position (2/5 of width)
@@ -116,6 +117,7 @@ var rocket_bobbing_time: float = 0.0  # Time accumulator for bobbing
 var rocket_target_offset: float = 0.0  # Target horizontal offset when speeding up
 var rocket_current_offset: float = 0.0  # Current smooth offset
 var rocket_wobble_offset: float = 0.0   # Wobble offset for damage
+var is_failing: bool = false # Flag to stop normal animation during failure
 
 # Signals for parent communication
 signal rule_applied(result: BooleanExpression)
@@ -175,6 +177,10 @@ func _ready() -> void:
 	initialize_parallax_background()
 	initialize_rocket()
 	start_black_hole_rotation()
+	
+	if black_hole:
+		black_hole_target_pos = black_hole.position
+		black_hole.position.x = -400 # Start far left
 
 	# Initialize operations panel (starts collapsed)
 	operations_panel.visible = true
@@ -462,7 +468,7 @@ func initialize_rocket() -> void:
 
 func update_rocket_animation(delta: float) -> void:
 	"""Update rocket bobbing and speed-based movement"""
-	if not rocket:
+	if not rocket or is_failing:
 		return
 
 	# Accumulate time for bobbing animation
@@ -585,9 +591,6 @@ func trigger_damage_wobble() -> void:
 	tween.tween_property(self, "rocket_wobble_offset", 0.0, 0.2).set_ease(Tween.EASE_OUT)
 
 func update_particle_color() -> void:
-	if not smoke_trail:
-		return
-		
 	var target_gradient = normal_smoke_gradient
 	
 	if combo_count >= 10:
@@ -599,7 +602,10 @@ func update_particle_color() -> void:
 	elif combo_count >= 3:
 		target_gradient = boost_gradient
 	
-	smoke_trail.color_ramp = target_gradient
+	if smoke_trail:
+		smoke_trail.color_ramp = target_gradient
+	if flame_core:
+		flame_core.color_ramp = target_gradient
 
 func update_combo_effects() -> void:
 	if not combo_label: return
@@ -1083,7 +1089,7 @@ func apply_logical_rule(rule: String, premises: Array[BooleanExpression]) -> Boo
 		# Single operation rules (require 1 premise)
 		"SIMP":  # Simplification: P∧Q ⊢ P
 			return BooleanLogicEngine.apply_simplification(premises)
-		"DM":  # De Morgan's Laws
+		"DM":  # De Morgan's Laws: ¬(P∧Q) ⊢ ¬P∨¬Q or ¬(P∨Q) ⊢ ¬P∧¬Q
 			if premises.size() == 1:
 				var premise = premises[0]
 				# De Morgan's requires ¬(P ∧ Q) or ¬(P ∨ Q)
@@ -1343,6 +1349,11 @@ func _on_addition_dialog_confirmed(expr_text: String) -> void:
 
 		show_feedback("✓ Addition", Color.GREEN, false)
 		rule_applied.emit(cleaned_result)
+		
+		# Play multiplier increase sound (on GameplayScene)
+		var root = get_tree().current_scene # Assumes GameplayScene is root
+		if root.has_method("play_multiplier_increase_sound"):
+			root.play_multiplier_increase_sound(combo_count)
 
 		# Check if target is reached (only trigger once)
 		if not target_reached_triggered and cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():
@@ -1385,9 +1396,18 @@ func trigger_failure_effect() -> void:
 		if asteroid5: asteroid5.emitting = false
 	)
 
-	# Rocket gets pulled into the black hole on the left
-	# Gradually accelerate toward the left
-	tween.tween_property(rocket, "position:x", -500, 3.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	is_failing = true
+	
+	# Rocket gets pulled into the black hole (center)
+	# Calculate center position relative to parent (assuming siblings)
+	# Use black_hole_target_pos as the destination
+	var target_pos = black_hole_target_pos + (black_hole.size * black_hole.scale * 0.5) - (rocket.size * rocket.scale * 0.5)
+	
+	# Animate black hole moving right (catching up)
+	tween.parallel().tween_property(black_hole, "position", black_hole_target_pos, 3.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	
+	# Gradually accelerate toward the black hole
+	tween.tween_property(rocket, "position", target_pos, 3.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 
 	# Rocket rotates as it's pulled in (losing control)
 	tween.parallel().tween_property(rocket, "rotation", rocket.rotation + PI * 2, 3.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)

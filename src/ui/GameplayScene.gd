@@ -22,6 +22,8 @@ var fuel_icon: TextureRect = null  # Created dynamically to show fuel icon
 @onready var pause_overlay: CanvasLayer = $PauseOverlay
 @onready var resume_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ResumeButton
 @onready var quit_button: Button = $PauseOverlay/PauseMenu/MenuContainer/QuitButton
+@onready var toggle_music_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ToggleMusicButton
+@onready var toggle_sfx_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ToggleSFXButton
 @onready var background_texture: TextureRect = $TextureRect
 @onready var intro_flash: ColorRect = $IntroFlash
 @onready var black_hole: TextureRect = $BlackHole
@@ -46,6 +48,25 @@ var max_patience: float = 60.0
 var feedback_label: Label = null
 var feedback_timer: Timer = null
 var is_paused: bool = false
+var is_game_over_sequence_started: bool = false
+
+var ice_border_shader = preload("res://src/shaders/ice_border.gdshader")
+var ice_border: ColorRect = null
+
+var game_over_comments: Array[String] = [
+	"you should've typed faster",
+	"more fuel please",
+	"you can review in the tutorial, maybe",
+	"logic is hard, isn't it?",
+	"ran out of time...",
+	"maybe try a simpler difficulty?",
+	"don't give up!",
+	"so close!",
+	"need more practice?",
+	"keep trying!",
+	"fuel empty!",
+	"better luck next time"
+]
 
 # Fuel System (Rocket Ship)
 var fuel: float = 100.0
@@ -94,6 +115,16 @@ func create_fuel_icon() -> void:
 	patience_bar.add_child(fuel_icon)
 
 func _ready() -> void:
+	# Create Ice Border
+	ice_border = ColorRect.new()
+	ice_border.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ice_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ice_border.material = ShaderMaterial.new()
+	ice_border.material.shader = ice_border_shader
+	ice_border.material.set_shader_parameter("intensity", 0.0)
+	ice_border.z_index = 90
+	add_child(ice_border)
+
 	# Fade out the white flash from intro
 	if intro_flash:
 		var tween = create_tween()
@@ -146,6 +177,13 @@ func _ready() -> void:
 	pause_button.pressed.connect(_on_pause_button_pressed)
 	resume_button.pressed.connect(_on_resume_button_pressed)
 	quit_button.pressed.connect(_on_quit_button_pressed)
+	
+	if toggle_music_button:
+		toggle_music_button.pressed.connect(_on_toggle_music_pressed)
+	if toggle_sfx_button:
+		toggle_sfx_button.pressed.connect(_on_toggle_sfx_pressed)
+		
+	update_audio_buttons_state()
 
 	# Generate first customer
 	generate_new_customer()
@@ -227,6 +265,13 @@ func update_fuel_system(delta: float) -> void:
 	# Game over if fuel runs out
 	if fuel <= 0.0:
 		customer_leaves()
+	
+	# Update Ice Border intensity
+	if ice_border and ice_border.material:
+		var intensity = 0.0
+		if fuel < 30.0:
+			intensity = 1.0 - (fuel / 30.0)
+		ice_border.material.set_shader_parameter("intensity", intensity)
 
 func update_patience_timer(delta: float) -> void:
 	# Legacy timer for backward compatibility (now unused in favor of fuel)
@@ -266,7 +311,17 @@ func increment_combo() -> void:
 	# Combo multiplier: 1st = 0.5x, 2nd = 1.0x, 3rd = 1.5x, etc.
 	var combo_boost: float = combo_count * 0.5
 	add_speed_boost(combo_boost, false)
-	show_feedback_message("MULTIPLIER x" + str(gameplay_multiplier) + "!", Color.GOLD)
+	
+	var msg_color = Color.GOLD
+	if combo_count >= 10: msg_color = Color(0.8, 0, 1) # Purple
+	elif combo_count >= 8: msg_color = Color.CYAN
+	elif combo_count >= 5: msg_color = Color(0, 0.5, 1) # Blue
+	elif combo_count >= 3: msg_color = Color.ORANGE
+	
+	show_feedback_message("MULTIPLIER x" + str(gameplay_multiplier) + "!", msg_color)
+	
+	# Play multiplier increase sound
+	AudioManager.play_multiplier_increase(combo_count)
 
 func reset_combo() -> void:
 	"""Reset combo counter on mistake"""
@@ -565,18 +620,51 @@ func customer_leaves() -> void:
 		generate_new_customer()
 		switch_to_phase1()
 	else:
-		# Out of fuel = Game Over - play error sound
+		if is_game_over_sequence_started:
+			return
+		is_game_over_sequence_started = true
+
+		# Out of fuel = Game Over - play error sound ONCE
 		AudioManager.play_error()
 		show_feedback_message("Out of Fuel! Game Over!", Color.RED)
-		
+
 		# Trigger failure effect if in Phase 2
 		if current_phase_instance and current_phase_instance.has_method("trigger_failure_effect"):
 			current_phase_instance.trigger_failure_effect()
 
-		# Wait for failure animation (background stop + ship pull + black hole expansion + fade)
-		var on_timeout = func():
-			SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
-		get_tree().create_timer(7.5).timeout.connect(on_timeout)
+		# Create fade overlay if it doesn't exist
+		if not intro_flash:
+			intro_flash = ColorRect.new()
+			intro_flash.color = Color.BLACK
+			intro_flash.modulate.a = 0.0
+			intro_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			intro_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+			add_child(intro_flash)
+			
+			# Add randomized game over comment
+			var comment_label = Label.new()
+			comment_label.text = game_over_comments.pick_random()
+			comment_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			comment_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			comment_label.add_theme_color_override("font_color", Color.WHITE)
+			comment_label.add_theme_font_size_override("font_size", 48)
+			comment_label.set_anchors_preset(Control.PRESET_CENTER)
+			intro_flash.add_child(comment_label)
+
+		# Wait briefly, then fade to black
+		await get_tree().create_timer(2.0).timeout
+
+		# Stop music and all sounds before transition
+		AudioManager.stop_music()
+
+		# Fade to black
+		var tween = create_tween()
+		tween.tween_property(intro_flash, "modulate:a", 1.0, 4.0)
+		await tween.finished
+
+		# Wait a moment in black, then transition
+		await get_tree().create_timer(1.0).timeout
+		SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
 
 func complete_order_successfully() -> void:
 	AudioManager.play_logic_success()
@@ -750,6 +838,7 @@ func _on_pause_button_pressed() -> void:
 func pause_game() -> void:
 	is_paused = true
 	pause_overlay.visible = true
+	update_audio_buttons_state()
 	# Block input to the phase container (game area)
 	phase_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# Note: Timer continues counting as requested by user
@@ -778,6 +867,25 @@ func _on_quit_button_pressed() -> void:
 	show_feedback_message("Game Ended!", Color.ORANGE)
 	await get_tree().create_timer(1.0).timeout
 	SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
+
+func _on_toggle_music_pressed() -> void:
+	AudioManager.toggle_music_mute()
+	AudioManager.play_button_click()
+	update_audio_buttons_state()
+
+func _on_toggle_sfx_pressed() -> void:
+	AudioManager.toggle_sfx_mute()
+	AudioManager.play_button_click()
+	update_audio_buttons_state()
+
+func update_audio_buttons_state() -> void:
+	if toggle_music_button:
+		toggle_music_button.text = "Unmute Music" if AudioManager.is_music_muted else "Mute Music"
+		toggle_music_button.modulate = Color(1, 0.5, 0.5) if AudioManager.is_music_muted else Color.WHITE
+		
+	if toggle_sfx_button:
+		toggle_sfx_button.text = "Unmute SFX" if AudioManager.is_sfx_muted else "Mute SFX"
+		toggle_sfx_button.modulate = Color(1, 0.5, 0.5) if AudioManager.is_sfx_muted else Color.WHITE
 
 # ============================================================================
 # FIRST-TIME TUTORIAL FUNCTIONS
