@@ -1,4 +1,4 @@
-extends Panel
+extends Control
 
 # Explicit preload to ensure BooleanExpression type is available
 const BooleanExpression = preload("res://src/game/expressions/BooleanExpression.gd")
@@ -8,32 +8,32 @@ signal expression_confirmed(expression_text: String)
 signal dialog_cancelled()
 
 # UI References
-@onready var title_label: Label = $MarginContainer/VBoxContainer/TitleLabel
-@onready var rule_label: Label = $MarginContainer/VBoxContainer/RuleLabel
-@onready var premise_label: Label = $MarginContainer/VBoxContainer/PremiseLabel
-@onready var instruction_label: Label = $MarginContainer/VBoxContainer/InstructionLabel
-@onready var input_display: Label = $MarginContainer/VBoxContainer/InputDisplay
-@onready var cancel_button: Button = $MarginContainer/VBoxContainer/ButtonContainer/CancelButton
-@onready var apply_button: Button = $MarginContainer/VBoxContainer/ButtonContainer/ApplyButton
+@onready var title_label: Label = $Panel/MarginContainer/VBoxContainer/TitleLabel
+@onready var rule_label: Label = $Panel/MarginContainer/VBoxContainer/RuleLabel
+@onready var premise_label: Label = $Panel/MarginContainer/VBoxContainer/PremiseLabel
+@onready var instruction_label: Label = $Panel/MarginContainer/VBoxContainer/InstructionLabel
+@onready var input_display: Label = $Panel/MarginContainer/VBoxContainer/InputDisplay
+@onready var cancel_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonContainer/CancelButton
+@onready var apply_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonContainer/ApplyButton
 
 # Virtual Keyboard Button References - Updated for new layout
-@onready var var_p: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarP
-@onready var var_q: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarQ
-@onready var var_r: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarR
-@onready var var_s: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarS
-@onready var var_t: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarT
+@onready var var_p: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarP
+@onready var var_q: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarQ
+@onready var var_r: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarR
+@onready var var_s: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarS
+@onready var var_t: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row1/VarT
 
-@onready var and_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row2/AndButton
-@onready var or_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row2/OrButton
-@onready var implies_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row2/ImpliesButton
-@onready var not_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row2/NotButton
+@onready var and_button: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row2/AndButton
+@onready var or_button: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row2/OrButton
+@onready var implies_button: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row2/ImpliesButton
+@onready var not_button: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row2/NotButton
 
-@onready var open_paren_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row3/OpenParenButton
-@onready var close_paren_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row3/CloseParenButton
-@onready var xor_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row3/XorButton
-@onready var biconditional_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row3/BiconditionalButton
+@onready var open_paren_button: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row3/OpenParenButton
+@onready var close_paren_button: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row3/CloseParenButton
+@onready var xor_button: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row3/XorButton
+@onready var biconditional_button: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row3/BiconditionalButton
 
-@onready var backspace_button: Button = $MarginContainer/VBoxContainer/VirtualKeyboard/Row4/BackspaceButton
+@onready var backspace_button: Button = $Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row4/BackspaceButton
 
 # Input state
 var current_input: String = ""

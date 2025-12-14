@@ -2,6 +2,7 @@ extends Control
 
 const ProgressTrackerTypes = preload("res://src/managers/ProgressTrackerTypes.gd")
 const GradeBadge = preload("res://src/ui/GradeBadge.gd")
+const FONT_HEAVY = preload("res://assets/fonts/MuseoSansRounded900.otf")
 
 @onready var final_score_label: Label = $GameOverPanel/GameOverContainer/FinalScore
 
@@ -28,8 +29,8 @@ func _ready() -> void:
 	# Start game over music after fade-in
 	AudioManager.start_game_over_music()
 
-	# Display final score
-	final_score_label.text = "Final Score: " + str(GameManager.current_score)
+	# Hide default label, we'll use the enhanced one
+	final_score_label.visible = false
 
 	# Connect to game manager for state changes
 	GameManager.game_state_changed.connect(_on_game_state_changed)
@@ -107,16 +108,17 @@ func add_progress_context() -> void:
 	high_score_section.add_theme_constant_override("separation", 10)
 	progress_info.add_child(high_score_section)
 
-	# Current Score - using RichTextLabel for bold support
+	# Current Score - Emphasized
 	var current_score_label = RichTextLabel.new()
 	current_score_label.bbcode_enabled = true
-	current_score_label.text = "[center][b]Your Score: " + str(current_score) + "[/b][/center]"
-	current_score_label.add_theme_font_size_override("normal_font_size", 36)
-	current_score_label.add_theme_font_size_override("bold_font_size", 36)
+	# Score first (BIG), then label (smaller)
+	current_score_label.text = "[center][font_size=96]" + str(current_score) + "[/font_size]\n[font_size=32]Final Score[/font_size][/center]"
+	current_score_label.add_theme_font_override("normal_font", FONT_HEAVY)
+	current_score_label.add_theme_font_override("bold_font", FONT_HEAVY)
 	current_score_label.add_theme_color_override("default_color", Color.BLACK)
 	current_score_label.fit_content = true
 	current_score_label.scroll_active = false
-	current_score_label.custom_minimum_size = Vector2(400, 50)
+	current_score_label.custom_minimum_size = Vector2(400, 150)
 	high_score_section.add_child(current_score_label)
 
 	# Local High Score - using RichTextLabel for bold support
