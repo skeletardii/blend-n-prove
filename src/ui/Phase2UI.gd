@@ -109,6 +109,7 @@ var rocket_speed_multiplier: float = 1.0  # Syncs with rocket ship speed
 
 # Black hole rotation
 var black_hole_rotation_speed: float = PI / 5.0  # Radians per second (36 degrees/sec = 10 sec per full rotation)
+var black_hole_target_pos: Vector2 = Vector2.ZERO # Original position to move to on failure
 
 # Rocket Animation State
 var rocket_base_x: float = 0.0  # Base X position (2/5 of width)
@@ -176,6 +177,10 @@ func _ready() -> void:
 	initialize_parallax_background()
 	initialize_rocket()
 	start_black_hole_rotation()
+	
+	if black_hole:
+		black_hole_target_pos = black_hole.position
+		black_hole.position.x = -400 # Start far left
 
 	# Initialize operations panel (starts collapsed)
 	operations_panel.visible = true
@@ -1392,7 +1397,11 @@ func trigger_failure_effect() -> void:
 	
 	# Rocket gets pulled into the black hole (center)
 	# Calculate center position relative to parent (assuming siblings)
-	var target_pos = black_hole.position + (black_hole.size * black_hole.scale * 0.5) - (rocket.size * rocket.scale * 0.5)
+	# Use black_hole_target_pos as the destination
+	var target_pos = black_hole_target_pos + (black_hole.size * black_hole.scale * 0.5) - (rocket.size * rocket.scale * 0.5)
+	
+	# Animate black hole moving right (catching up)
+	tween.parallel().tween_property(black_hole, "position", black_hole_target_pos, 3.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	
 	# Gradually accelerate toward the black hole
 	tween.tween_property(rocket, "position", target_pos, 3.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)

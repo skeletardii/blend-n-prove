@@ -27,6 +27,7 @@ var audio_paths: Dictionary = {
 	"background_music": "res://assets/music/Kubbi - Up In My Jam  NO COPYRIGHT 8-bit Music.mp3",
 	"game_over_music": "res://assets/music/Game Over (8-Bit Music).mp3",
 	"blackhole_intro_music": "res://assets/music/blackholeintrosound.mp3",
+	"multiplier_increase": "res://assets/music/mixkit-arcade-bonus-alert-767.wav",
 	# "menu_music": "res://assets/sound/Menu_In.wav" # Commented out - no music in main menu
 }
 
@@ -252,6 +253,37 @@ func play_score_popup(multiplier: float) -> void:
 		player.pitch_scale = 1.0
 	else:
 		play_sfx("score_popup")
+
+func play_multiplier_increase(combo_count: int) -> void:
+	if is_muted or is_sfx_muted:
+		return
+
+	# Get an available player from the pool
+	var player = get_available_sfx_player()
+
+	if "multiplier_increase" in loaded_sounds:
+		player.stream = loaded_sounds["multiplier_increase"]
+		# Pitch goes up with combo (1.0 to 2.0 range)
+		var pitch: float = 1.0 + min(float(combo_count) * 0.1, 1.0)
+		player.pitch_scale = pitch
+		player.play()
+		# Reset pitch after playing (approximate duration of sound is short)
+		await get_tree().create_timer(1.0).timeout
+		player.pitch_scale = 1.0
+	else:
+		# Fallback - try to load it
+		var path = audio_paths.get("multiplier_increase", "")
+		if not path.is_empty() and ResourceLoader.exists(path):
+			var stream = load(path)
+			if stream:
+				loaded_sounds["multiplier_increase"] = stream
+				player.stream = stream
+				var pitch: float = 1.0 + min(float(combo_count) * 0.1, 1.0)
+				player.pitch_scale = pitch
+				player.play()
+				# Reset pitch
+				await get_tree().create_timer(1.0).timeout
+				player.pitch_scale = 1.0
 
 func stop_all_sfx() -> void:
 	sfx_player.stop()

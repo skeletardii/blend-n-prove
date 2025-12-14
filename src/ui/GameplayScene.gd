@@ -319,6 +319,9 @@ func increment_combo() -> void:
 	elif combo_count >= 3: msg_color = Color.ORANGE
 	
 	show_feedback_message("MULTIPLIER x" + str(gameplay_multiplier) + "!", msg_color)
+	
+	# Play multiplier increase sound
+	AudioManager.play_multiplier_increase(combo_count)
 
 func reset_combo() -> void:
 	"""Reset combo counter on mistake"""
