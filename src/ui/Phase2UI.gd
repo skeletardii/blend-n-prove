@@ -1092,13 +1092,11 @@ func apply_logical_rule(rule: String, premises: Array[BooleanExpression]) -> Boo
 		"DM":  # De Morgan's Laws: ¬(P∧Q) ⊢ ¬P∨¬Q or ¬(P∨Q) ⊢ ¬P∧¬Q
 			if premises.size() == 1:
 				var premise = premises[0]
+				# De Morgan's requires ¬(P ∧ Q) or ¬(P ∨ Q)
 				var normalized = premise.normalized_string
-				# Check if it's a negated expression: ¬(...)
 				if normalized.begins_with("¬(") and normalized.ends_with(")"):
-					# Extract the inner expression
 					var inner = normalized.substr(2, normalized.length() - 3).strip_edges()
-					var inner_expr = BooleanLogicEngine.create_expression(inner)
-					# Check what the inner expression is
+					var inner_expr = BooleanExpression.new(inner)
 					if inner_expr.is_conjunction():
 						return BooleanLogicEngine.apply_de_morgan_and(premise)
 					elif inner_expr.is_disjunction():
@@ -1351,6 +1349,11 @@ func _on_addition_dialog_confirmed(expr_text: String) -> void:
 
 		show_feedback("✓ Addition", Color.GREEN, false)
 		rule_applied.emit(cleaned_result)
+		
+		# Play multiplier increase sound (on GameplayScene)
+		var root = get_tree().current_scene # Assumes GameplayScene is root
+		if root.has_method("play_multiplier_increase_sound"):
+			root.play_multiplier_increase_sound(combo_count)
 
 		# Check if target is reached (only trigger once)
 		if not target_reached_triggered and cleaned_result.expression_string.strip_edges() == target_conclusion.strip_edges():

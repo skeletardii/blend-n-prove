@@ -84,7 +84,8 @@ func create_implication_expression(antecedent: BooleanExpression, consequent: Bo
 		ante_str = "(" + ante_str + ")"
 	if _has_operator(cons_str) and not (cons_str.begins_with("(") and cons_str.ends_with(")")):
 		cons_str = "(" + cons_str + ")"
-	var implication = "(" + ante_str + " → " + cons_str + ")"
+	# Don't wrap the whole expression in extra parentheses
+	var implication = ante_str + " → " + cons_str
 	return BooleanExpression.new(implication)
 
 func create_biconditional_expression(left: BooleanExpression, right: BooleanExpression) -> BooleanExpression:
@@ -96,7 +97,8 @@ func create_biconditional_expression(left: BooleanExpression, right: BooleanExpr
 		left_str = "(" + left_str + ")"
 	if _has_operator(right_str) and not (right_str.begins_with("(") and right_str.ends_with(")")):
 		right_str = "(" + right_str + ")"
-	var biconditional = "(" + left_str + " ↔ " + right_str + ")"
+	# Don't wrap the whole expression in extra parentheses
+	var biconditional = left_str + " ↔ " + right_str
 	return BooleanExpression.new(biconditional)
 
 func create_xor_expression(left: BooleanExpression, right: BooleanExpression) -> BooleanExpression:
@@ -108,7 +110,8 @@ func create_xor_expression(left: BooleanExpression, right: BooleanExpression) ->
 		left_str = "(" + left_str + ")"
 	if _has_operator(right_str) and not (right_str.begins_with("(") and right_str.ends_with(")")):
 		right_str = "(" + right_str + ")"
-	var xor_expr = "(" + left_str + " ⊕ " + right_str + ")"
+	# Don't wrap the whole expression in extra parentheses
+	var xor_expr = left_str + " ⊕ " + right_str
 	return BooleanExpression.new(xor_expr)
 
 func apply_modus_ponens(premises: Array) -> BooleanExpression:

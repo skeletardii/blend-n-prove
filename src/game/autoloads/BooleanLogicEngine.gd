@@ -101,6 +101,14 @@ func apply_de_morgan_or(premise: BooleanExpression) -> BooleanExpression:
 	if _impl: return _impl.apply_de_morgan_or(premise)
 	return null
 
+func apply_de_morgan_reverse_and(premise: BooleanExpression) -> BooleanExpression:
+	if _impl: return _impl.apply_de_morgan_reverse_and(premise)
+	return null
+
+func apply_de_morgan_reverse_or(premise: BooleanExpression) -> BooleanExpression:
+	if _impl: return _impl.apply_de_morgan_reverse_or(premise)
+	return null
+
 func apply_double_negation(premise: BooleanExpression) -> BooleanExpression:
 	if _impl: return _impl.apply_double_negation(premise)
 	return null
@@ -205,9 +213,17 @@ func apply_contrapositive(premise: BooleanExpression) -> BooleanExpression:
 	if _impl: return _impl.apply_contrapositive(premise)
 	return null
 
+func apply_implication_reverse(premise: BooleanExpression) -> BooleanExpression:
+	if _impl: return _impl.apply_implication_reverse(premise)
+	return null
+
 func apply_parenthesis_removal(premise: BooleanExpression) -> BooleanExpression:
 	if _impl: return _impl.apply_parenthesis_removal(premise)
 	return null
+
+func are_semantically_equivalent(expr1: BooleanExpression, expr2: BooleanExpression) -> bool:
+	if _impl: return _impl.are_semantically_equivalent(expr1, expr2)
+	return false
 
 func test_logic_engine() -> bool:
 	if _impl: return _impl.test_logic_engine()

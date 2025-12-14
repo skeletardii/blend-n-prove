@@ -452,6 +452,50 @@ func evaluate(variable_values: Dictionary) -> bool:
 	# Now evaluate the boolean expression
 	return _evaluate_boolean_string(eval_string)
 
+func _extract_negated_expression(expr: String) -> String:
+	# Extract just the negated part after a ¬ symbol
+	# Returns: just the sub-expression that is negated
+	# Examples:
+	#   "(P ∨ Q) ∨ ¬R" -> "(P ∨ Q)"
+	#   "P ∨ Q" -> "P"
+	#   "(P ∨ Q)" -> "(P ∨ Q)"
+
+	expr = expr.strip_edges()
+	if expr.is_empty():
+		return ""
+
+	# If it starts with a parenthesis, extract the full parenthesized expression
+	if expr.begins_with("("):
+		var paren_count = 0
+		for i in range(expr.length()):
+			if expr[i] == '(':
+				paren_count += 1
+			elif expr[i] == ')':
+				paren_count -= 1
+				if paren_count == 0:
+					# Found the matching closing paren
+					return expr.substr(0, i + 1)
+		# Unbalanced - return whole thing
+		return expr
+
+	# If it starts with another ¬, recursively extract
+	if expr.begins_with("¬"):
+		var inner = _extract_negated_expression(expr.substr(1))
+		return "¬" + inner
+
+	# Otherwise, extract just the first variable/token
+	var operators = ["∧", "∨", "⊕", "→", "↔", " "]
+	for i in range(expr.length()):
+		for op in operators:
+			if expr.substr(i, op.length()) == op:
+				# Found an operator
+				if i == 0:
+					return ""  # No variable before operator
+				return expr.substr(0, i).strip_edges()
+
+	# No operator found - return the whole thing
+	return expr
+
 func _evaluate_boolean_string(expr: String) -> bool:
 	# Recursively evaluate a boolean expression string
 	expr = expr.strip_edges()
@@ -477,10 +521,18 @@ func _evaluate_boolean_string(expr: String) -> bool:
 		if can_strip and paren_count == 0:
 			expr = expr.substr(1, expr.length() - 2).strip_edges()
 
-	# Handle negation
+	# Handle negation - FIXED: only consume the negated sub-expression
 	if expr.begins_with("¬"):
-		var inner = expr.substr(1).strip_edges()
-		return not _evaluate_boolean_string(inner)
+		var rest = expr.substr(1).strip_edges()
+		# Extract just the negated part
+		var negated_part = _extract_negated_expression(rest)
+		if negated_part.length() < rest.length():
+			# There's more after the negated part - this isn't a pure negation
+			# Don't handle it here, let it fall through to operator parsing
+			pass
+		else:
+			# The entire rest is negated
+			return not _evaluate_boolean_string(negated_part)
 
 	# Find top-level operator and evaluate
 	var operators_to_check = [

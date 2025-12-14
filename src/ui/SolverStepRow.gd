@@ -27,8 +27,8 @@ func _init(p_step_number: int):
 func setup_ui():
 	# Panel styling
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.95, 0.95, 0.95, 1.0)
-	style.border_color = Color(0.7, 0.7, 0.7, 1.0)
+	style.bg_color = Color(1.0, 1.0, 1.0, 1.0)
+	style.border_color = Color(0.775, 0.417, 0.946, 1.0)
 	style.border_width_left = 2
 	style.border_width_top = 2
 	style.border_width_right = 2
@@ -125,9 +125,9 @@ func setup_ui():
 	custom_minimum_size = Vector2(0, 180)
 
 func populate_rule_dropdown():
-	# Add "Select a rule" as first item
-	rule_dropdown.add_item("-- Select a rule --")
-	rule_dropdown.set_item_disabled(0, true)
+	# Add "---" as first item
+	rule_dropdown.add_item("---")
+	rule_dropdown.selected = 0
 
 	# Inference Rules section
 	var inference_header_idx = rule_dropdown.get_item_count()

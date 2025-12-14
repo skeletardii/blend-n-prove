@@ -26,22 +26,36 @@ var current_problem: Dictionary = {
 var solver_steps: Array[SolverStepRow] = []
 var active_step_field: LineEdit = null
 
+# Chat state
+var is_chat_open: bool = false
+var chat_tween: Tween = null
+var has_unread_messages: bool = false
+
 # Note: We use stateless JSON requests, no conversation history needed
 
-# UI References
-@onready var messages_container: VBoxContainer = $MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/MessagesScroll/MessagesContainer
-@onready var messages_scroll: ScrollContainer = $MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/MessagesScroll
-@onready var input_field: LineEdit = $MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/InputArea/InputField
-@onready var send_button: Button = $MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/InputArea/SendButton
-@onready var status_label: Label = $MainMargin/MainVBox/ChatPanel/ChatMargin/ChatVBox/StatusLabel
-@onready var http_request: HTTPRequest = $MainMargin/MainVBox/ChatPanel/HTTPRequest
-@onready var problem_display: RichTextLabel = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ProblemDisplay
-@onready var steps_container: VBoxContainer = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/StepsScroll/StepsContainer
-@onready var add_step_button: Button = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/AddStepButton
-@onready var finish_button: Button = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/FinishButton
-@onready var new_problem_button: Button = $MainMargin/MainVBox/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/NewProblemButton
+# UI References - Chat Overlay
+@onready var chat_toggle_button: Button = $MainMargin/MainVBox/TopBar/ChatToggleButton
+@onready var close_button: Button = $ChatOverlayContainer/ChatPanel/ChatVBox/ChatHeader/ChatHeaderMargin/ChatHeaderHBox/CloseButton
+@onready var notification_badge: PanelContainer = $MainMargin/MainVBox/TopBar/ChatToggleButton/NotificationBadge
+@onready var dim_overlay: ColorRect = $DimOverlay
+@onready var chat_overlay: PanelContainer = $ChatOverlayContainer
+@onready var messages_container: VBoxContainer = $ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox/MessagesScroll/MessagesContainer
+@onready var messages_scroll: ScrollContainer = $ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox/MessagesScroll
+@onready var input_field: LineEdit = $ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox/InputArea/InputField
+@onready var send_button: Button = $ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox/InputArea/SendButton
+@onready var status_label: Label = $ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox/StatusLabel
+@onready var http_request: HTTPRequest = $ChatOverlayContainer/HTTPRequest
+
+# UI References - Solver
+@onready var problem_display: RichTextLabel = $MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ProblemDisplay
+@onready var steps_container: VBoxContainer = $MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/StepsScroll/StepsContainer
+@onready var add_step_button: Button = $MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/AddStepButton
+@onready var finish_button: Button = $MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/FinishButton
+@onready var new_problem_button: Button = $MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea/NewProblemButton
 @onready var virtual_keyboard: VirtualKeyboard = $MainMargin/MainVBox/VirtualKeyboard
 @onready var back_button: Button = $MainMargin/MainVBox/TopBar/BackButton
+@onready var erase_button: Button = $MainMargin/MainVBox/InputControls/EraseButton
+@onready var clear_button: Button = $MainMargin/MainVBox/InputControls/ClearButton
 
 # System prompts for different request types
 const BASE_SYSTEM_CONTEXT = """You are an expert tutor for boolean logic and formal reasoning.
@@ -137,9 +151,54 @@ func _ready():
 	back_button.pressed.connect(_on_back_button_pressed)
 	input_field.text_submitted.connect(func(_text): _on_send_button_pressed())
 
+	# Connect new buttons
+	erase_button.pressed.connect(_on_erase_button_pressed)
+	clear_button.pressed.connect(_on_clear_button_pressed)
+
+	# Connect chat overlay buttons
+	chat_toggle_button.pressed.connect(_on_chat_toggle_pressed)
+	close_button.pressed.connect(close_chat)
+	dim_overlay.gui_input.connect(_on_dim_overlay_clicked)
+
+	# Initialize notification badge as hidden
+	notification_badge.visible = false
+
+	# Initialize DimOverlay modulate for fade animation
+	dim_overlay.modulate = Color(1, 1, 1, 0)
+
 	# Initialize conversation with base context (no history needed for JSON mode)
 	add_ai_message("Hello! I'm your AI tutor for boolean logic. What would you like to learn today?\n\nFor example, you can say:\n• 'I want to learn modus ponens'\n• 'Help me with De Morgan's laws'\n• 'Teach me about disjunctive syllogism'")
 	current_state = TutorState.AWAITING_TOPIC
+
+	# Open chat initially for greeting
+	await get_tree().process_frame
+	open_chat()
+
+func _on_erase_button_pressed():
+	if active_step_field and active_step_field.has_focus():
+		var text = active_step_field.text
+		if not text.is_empty():
+			var caret = active_step_field.caret_column
+			if caret > 0:
+				active_step_field.text = text.erase(caret - 1, 1)
+				active_step_field.caret_column = caret - 1
+			else:
+				# At start, nothing to delete before caret
+				pass
+	elif active_step_field:
+		# If not focused but active, delete from end
+		var text = active_step_field.text
+		if not text.is_empty():
+			active_step_field.text = text.substr(0, text.length() - 1)
+			active_step_field.caret_column = active_step_field.text.length()
+	
+	AudioManager.play_button_click()
+
+func _on_clear_button_pressed():
+	if active_step_field:
+		active_step_field.text = ""
+		active_step_field.caret_column = 0
+	AudioManager.play_button_click()
 
 func _on_send_button_pressed():
 	var user_input = input_field.text.strip_edges()
@@ -166,6 +225,9 @@ func add_ai_message(text: String):
 	messages_container.add_child(msg_box)
 	await get_tree().process_frame
 	messages_scroll.scroll_vertical = messages_scroll.get_v_scroll_bar().max_value
+
+	# Show notification badge if chat is closed
+	show_notification_badge()
 
 func add_user_message(text: String):
 	var msg_box = ChatMessageBox.new(ChatMessageBox.MessageRole.USER, text)
@@ -305,6 +367,129 @@ func handle_question_during_solving(question: String):
 func handle_generic_conversation(message: String):
 	# Use question handler for generic conversation too
 	await handle_question_during_solving(message)
+
+## Chat Overlay Toggle Functions
+
+func _on_chat_toggle_pressed():
+	if is_chat_open:
+		close_chat()
+	else:
+		open_chat()
+
+func _on_dim_overlay_clicked(event: InputEvent):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		close_chat()
+
+func open_chat():
+	if is_chat_open:
+		return
+
+	is_chat_open = true
+	chat_overlay.visible = true
+	dim_overlay.visible = true
+
+	# Kill existing tween if running
+	if chat_tween and chat_tween.is_running():
+		chat_tween.kill()
+
+	chat_tween = create_tween()
+	chat_tween.set_parallel(true)
+
+	# Get screen dimensions
+	var screen_size = get_viewport_rect().size
+	var target_pos = Vector2(screen_size.x * 0.05, screen_size.y * 0.075)
+
+	# Dim overlay fade in
+	chat_tween.tween_property(dim_overlay, "modulate:a", 1.0, 0.3)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+	# Chat panel slide from right
+	chat_tween.tween_property(chat_overlay, "position", target_pos, 0.5)\
+		.from(Vector2(screen_size.x, target_pos.y))\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+	# Chat panel scale up
+	chat_tween.tween_property(chat_overlay, "scale", Vector2(1.0, 1.0), 0.5)\
+		.from(Vector2(0.95, 0.95))\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+	# Chat panel fade in
+	chat_tween.tween_property(chat_overlay, "modulate:a", 1.0, 0.5)\
+		.from(0.0)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+	# Button rotation
+	chat_tween.tween_property(chat_toggle_button, "rotation", deg_to_rad(45), 0.3)\
+		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+	# Dim virtual keyboard
+	chat_tween.tween_property(virtual_keyboard, "modulate:a", 0.3, 0.3)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+	# Clear notification badge when chat opens
+	has_unread_messages = false
+	notification_badge.visible = false
+
+	AudioManager.play_button_click()
+
+func close_chat():
+	if not is_chat_open:
+		return
+
+	is_chat_open = false
+
+	if chat_tween and chat_tween.is_running():
+		chat_tween.kill()
+
+	chat_tween = create_tween()
+	chat_tween.set_parallel(true)
+
+	var screen_size = get_viewport_rect().size
+	var current_pos = chat_overlay.position
+
+	# Dim overlay fade out
+	chat_tween.tween_property(dim_overlay, "modulate:a", 0.0, 0.3)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+	# Chat panel slide to right
+	chat_tween.tween_property(chat_overlay, "position", Vector2(screen_size.x, current_pos.y), 0.4)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+	# Chat panel scale down
+	chat_tween.tween_property(chat_overlay, "scale", Vector2(0.95, 0.95), 0.4)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+	# Chat panel fade out
+	chat_tween.tween_property(chat_overlay, "modulate:a", 0.0, 0.4)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+	# Button rotation back
+	chat_tween.tween_property(chat_toggle_button, "rotation", 0.0, 0.3)\
+		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_IN)
+
+	# Restore virtual keyboard opacity
+	chat_tween.tween_property(virtual_keyboard, "modulate:a", 1.0, 0.3)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+	# Hide elements after animation completes
+	chat_tween.chain().tween_callback(func():
+		chat_overlay.visible = false
+		dim_overlay.visible = false
+	)
+
+	AudioManager.play_button_click()
+
+func show_notification_badge():
+	if not is_chat_open:
+		has_unread_messages = true
+		notification_badge.visible = true
+		# Optional: Add pulse animation
+		var badge_tween = create_tween()
+		badge_tween.set_loops(3)
+		badge_tween.tween_property(notification_badge, "scale", Vector2(1.2, 1.2), 0.2)
+		badge_tween.tween_property(notification_badge, "scale", Vector2(1.0, 1.0), 0.2)
+
+## Solver Functions
 
 func _on_add_step_button_pressed():
 	var step_number = solver_steps.size() + 1
