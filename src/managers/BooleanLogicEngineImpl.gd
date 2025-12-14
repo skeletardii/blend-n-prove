@@ -776,37 +776,35 @@ func apply_absorption(premise: BooleanExpression) -> BooleanExpression:
 	if not premise or not premise.is_valid:
 		return BooleanExpression.new("")
 
-	# Try disjunction form FIRST: P ∨ (P ∧ Q) → P
-	var disj_parts = premise.get_disjunction_parts()
-	if disj_parts.get("valid", false):
-		var left = disj_parts.get("left") as BooleanExpression
-		var right = disj_parts.get("right") as BooleanExpression
+	# Case 1: P ∨ (P ∧ Q) → P  (Absorption via Disjunction)
+	if premise.is_disjunction():
+		var parts = premise.get_disjunction_parts()
+		if parts.get("valid", false):
+			var left = parts.get("left") as BooleanExpression
+			var right = parts.get("right") as BooleanExpression
 
-		if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
-			var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
-			var inner_expr = BooleanExpression.new(inner)
-
-			if inner_expr.is_conjunction():
-				var conj_parts = inner_expr.get_conjunction_parts()
-				if conj_parts.get("valid", false):
-					var inner_left = conj_parts.get("left") as BooleanExpression
+			# Check if right side is a conjunction
+			if right.is_conjunction():
+				var inner_parts = right.get_conjunction_parts()
+				if inner_parts.get("valid", false):
+					var inner_left = inner_parts.get("left") as BooleanExpression
+					# P ∨ (P ∧ Q)
 					if left.equals(inner_left):
 						return left
 
-	# Try conjunction form SECOND: P ∧ (P ∨ Q) → P
-	var conj_parts = premise.get_conjunction_parts()
-	if conj_parts.get("valid", false):
-		var left = conj_parts.get("left") as BooleanExpression
-		var right = conj_parts.get("right") as BooleanExpression
+	# Case 2: P ∧ (P ∨ Q) → P  (Absorption via Conjunction)
+	elif premise.is_conjunction():
+		var parts = premise.get_conjunction_parts()
+		if parts.get("valid", false):
+			var left = parts.get("left") as BooleanExpression
+			var right = parts.get("right") as BooleanExpression
 
-		if right.normalized_string.begins_with("(") and right.normalized_string.ends_with(")"):
-			var inner = right.normalized_string.substr(1, right.normalized_string.length() - 2).strip_edges()
-			var inner_expr = BooleanExpression.new(inner)
-
-			if inner_expr.is_disjunction():
-				var disj_inner_parts = inner_expr.get_disjunction_parts()
-				if disj_inner_parts.get("valid", false):
-					var inner_left = disj_inner_parts.get("left") as BooleanExpression
+			# Check if right side is a disjunction
+			if right.is_disjunction():
+				var inner_parts = right.get_disjunction_parts()
+				if inner_parts.get("valid", false):
+					var inner_left = inner_parts.get("left") as BooleanExpression
+					# P ∧ (P ∨ Q)
 					if left.equals(inner_left):
 						return left
 
