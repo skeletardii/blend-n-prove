@@ -259,16 +259,15 @@ func initialize_parallax_background() -> void:
 	if not space_bg1 or not space_bg2:
 		return
 
-	# Get the width of the background texture to calculate seamless looping
-	await get_tree().process_frame  # Wait for layout to update
-	var bg_width = space_bg1.size.x
-
-	# Position the second background to the right of the first
+	# Reset scroll accumulator
 	bg_offset1 = 0.0
-	bg_offset2 = bg_width
-
-	space_bg1.position.x = bg_offset1
-	space_bg2.position.x = bg_offset2
+	
+	# Initial positioning
+	await get_tree().process_frame
+	if space_bg1 and space_bg2:
+		var bg_width = space_bg1.size.x
+		space_bg1.position.x = 0
+		space_bg2.position.x = bg_width
 
 	# Position asteroid particles at right edge
 	var target_area = $WorkContainer/TargetArea as Control
@@ -305,25 +304,24 @@ func update_parallax_background(delta: float) -> void:
 	if not space_bg1 or not space_bg2:
 		return
 
+	# Get the width for seamless wrapping
+	var bg_width = space_bg1.size.x
+	if bg_width <= 0:
+		return
+
 	# Calculate effective scroll speed (base speed * rocket speed multiplier)
 	var effective_speed = bg_scroll_speed * rocket_speed_multiplier
 
-	# Move both backgrounds to the left
-	bg_offset1 -= effective_speed * delta
-	bg_offset2 -= effective_speed * delta
+	# Increment scroll accumulator
+	bg_offset1 += effective_speed * delta
 
-	# Get the width for seamless wrapping
-	var bg_width = space_bg1.size.x
+	# Wrap around when scroll exceeds width
+	while bg_offset1 >= bg_width:
+		bg_offset1 -= bg_width
 
-	# Wrap around when a background goes off-screen to the left
-	if bg_offset1 <= -bg_width:
-		bg_offset1 = bg_offset2 + bg_width
-	if bg_offset2 <= -bg_width:
-		bg_offset2 = bg_offset1 + bg_width
-
-	# Apply the positions
-	space_bg1.position.x = bg_offset1
-	space_bg2.position.x = bg_offset2
+	# Apply the positions (bg1 moves left, bg2 follows immediately)
+	space_bg1.position.x = -bg_offset1
+	space_bg2.position.x = -bg_offset1 + bg_width
 
 func update_asteroid_speed() -> void:
 	"""Update asteroid particle velocity based on ship speed"""
@@ -1392,7 +1390,7 @@ func _on_addition_dialog_cancelled() -> void:
 func trigger_failure_effect() -> void:
 	# Stop scrolling gradually - background slows and stops
 	var tween = create_tween()
-	tween.tween_property(self, "rocket_speed_multiplier", 0.0, 1.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	# DISABLED per user request: tween.tween_property(self, "rocket_speed_multiplier", 0.0, 1.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 	# Stop flames and smoke gradually (engine failure)
 	if flame_core:
