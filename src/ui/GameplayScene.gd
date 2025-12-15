@@ -17,7 +17,7 @@ var fuel_icon: TextureRect = null  # Created dynamically to show fuel icon
 @onready var tutorial_help_panel: Panel = $UI/TutorialHelpPanel
 @onready var show_help_button: Button = $UI/MainContainer/TopBar/TopBarContainer/ShowHelpButton
 @onready var hint_button: Button = $UI/MainContainer/TopBar/TopBarContainer/HintButton
-@onready var hint_popup: Panel = $UI/HintPopup
+@onready var hint_popup: Control = $UI/HintPopup
 @onready var pause_button: Button = $UI/MainContainer/TopBar/TopBarContainer/PauseButton
 @onready var pause_overlay: CanvasLayer = $PauseOverlay
 @onready var resume_button: Button = $PauseOverlay/PauseMenu/MenuContainer/ResumeButton
@@ -129,7 +129,11 @@ func _ready() -> void:
 	if intro_flash:
 		var tween = create_tween()
 		tween.tween_property(intro_flash, "modulate:a", 0.0, 1.0)
-		tween.tween_callback(func(): intro_flash.queue_free())
+		tween.tween_callback(func(): 
+			if is_instance_valid(intro_flash):
+				intro_flash.queue_free()
+			intro_flash = null
+		)
 
 	# Start black hole rotation animation
 	if black_hole:
@@ -407,6 +411,10 @@ func switch_to_phase1() -> void:
 
 	# Pass customer data to Phase 1
 	current_phase_instance.set_customer_data(current_customer)
+	
+	# Restore state (Score/Level)
+	if current_phase_instance.has_method("set_initial_state"):
+		current_phase_instance.set_initial_state(GameManager.current_score, GameManager.difficulty_level)
 
 	# Reset validated premises
 	validated_premises.clear()
@@ -448,6 +456,10 @@ func switch_to_phase2() -> void:
 		# Pass score display and patience timer references
 		current_phase_instance.score_display = score_display
 		current_phase_instance.patience_timer = patience_timer
+		
+		# Restore combo state
+		if current_phase_instance.has_method("restore_combo_state"):
+			current_phase_instance.restore_combo_state(combo_count)
 
 		# Connect Phase 2 signals
 		current_phase_instance.rule_applied.connect(_on_rule_applied)
@@ -633,7 +645,7 @@ func customer_leaves() -> void:
 			current_phase_instance.trigger_failure_effect()
 
 		# Create fade overlay if it doesn't exist
-		if not intro_flash:
+		if not is_instance_valid(intro_flash):
 			intro_flash = ColorRect.new()
 			intro_flash.color = Color.BLACK
 			intro_flash.modulate.a = 0.0
@@ -648,7 +660,7 @@ func customer_leaves() -> void:
 			comment_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 			comment_label.add_theme_color_override("font_color", Color.WHITE)
 			comment_label.add_theme_font_size_override("font_size", 48)
-			comment_label.set_anchors_preset(Control.PRESET_CENTER)
+			comment_label.set_anchors_preset(Control.PRESET_FULL_RECT)
 			intro_flash.add_child(comment_label)
 
 		# Wait briefly, then fade to black
@@ -663,12 +675,14 @@ func customer_leaves() -> void:
 		await tween.finished
 
 		# Wait a moment in black, then transition
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(3.0).timeout
+		
+		# Ensure stats are saved
+		GameManager.force_game_over()
+		
 		SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
 
 func complete_order_successfully() -> void:
-	AudioManager.play_logic_success()
-
 	# No longer calculating score in chunks - it's continuous!
 	# Instead, give a big fuel boost for completing the order
 	add_fuel(50.0)  # Big fuel reward for completion
@@ -730,7 +744,6 @@ func _on_premises_completed(premises: Array[BooleanExpression]) -> void:
 # Phase 2 Signal Handlers
 func _on_rule_applied(result: BooleanExpression) -> void:
 	validated_premises.append(result)
-	AudioManager.play_logic_success()
 
 func _on_target_reached(result: BooleanExpression) -> void:
 	show_feedback_message("✓ Proof complete! Order fulfilled!", Color.CYAN)

@@ -102,22 +102,21 @@ theme_override_constants/separation = 15
 [node name="BackButton" type="Button" parent="MainMargin/MainVBox/TopBar"]
 custom_minimum_size = Vector2(120, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 text = "← Back"
 
 [node name="TitleLabel" type="Label" parent="MainMargin/MainVBox/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 32
-text = "AI Tutor Mode"
+    theme_override_colors/font_color = Color(1, 1, 1, 1)
+    theme_override_font_sizes/font_size = 40text = "AI Tutor Mode"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ChatToggleButton" type="Button" parent="MainMargin/MainVBox/TopBar"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_chat_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_chat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_chat_button")
@@ -164,17 +163,17 @@ theme_override_constants/separation = 7
 visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
-text = "Step-by-Step Solver"
+theme_override_font_sizes/font_size = 32
 
 [node name="ProblemDisplay" type="RichTextLabel" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/normal_font_size = 29
-theme_override_font_sizes/bold_font_size = 29
-theme_override_font_sizes/bold_italics_font_size = 26
-theme_override_font_sizes/italics_font_size = 26
-theme_override_font_sizes/mono_font_size = 26
+theme_override_font_sizes/normal_font_size = 32
+theme_override_font_sizes/bold_font_size = 32
+theme_override_font_sizes/bold_italics_font_size = 28
+theme_override_font_sizes/italics_font_size = 28
+theme_override_font_sizes/mono_font_size = 28
 bbcode_enabled = true
 text = "[i]Problem will appear here after AI generates it[/i]"
 fit_content = true
@@ -197,24 +196,21 @@ alignment = 1
 
 [node name="AddStepButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
 visible = false
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "+ Add Step"
+    custom_minimum_size = Vector2(0, 60)
+    layout_mode = 2
+    theme_override_font_sizes/font_size = 28text = "+ Add Step"
 
 [node name="FinishButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
 visible = false
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Submit for Feedback"
+    custom_minimum_size = Vector2(0, 60)
+    layout_mode = 2
+    theme_override_font_sizes/font_size = 28text = "Submit for Feedback"
 
 [node name="NewProblemButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
 visible = false
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Try Another Problem"
+    custom_minimum_size = Vector2(0, 60)
+    layout_mode = 2
+    theme_override_font_sizes/font_size = 28text = "Try Another Problem"
 
 [node name="VirtualKeyboard" type="Control" parent="MainMargin/MainVBox"]
 custom_minimum_size = Vector2(0, 150)
@@ -231,14 +227,14 @@ alignment = 1
 visible = false
 custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 text = "⌫ Erase"
 
 [node name="ClearButton" type="Button" parent="MainMargin/MainVBox/InputControls"]
 visible = false
 custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 text = "Clear Input"
 
 [node name="ChatOverlayContainer" type="PanelContainer" parent="."]
@@ -285,8 +281,7 @@ layout_mode = 2
 
 [node name="ChatHeaderLabel" type="Label" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatHeader/ChatHeaderMargin/ChatHeaderHBox"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 32
 text = "AI Tutor"
 
 [node name="CloseButton" type="Button" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatHeader/ChatHeaderMargin/ChatHeaderHBox"]
@@ -325,19 +320,19 @@ theme_override_constants/separation = 10
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 28
 placeholder_text = "Type your message..."
 
 [node name="SendButton" type="Button" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox/InputArea"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 28
 text = "Send"
 
 [node name="StatusLabel" type="Label" parent="ChatOverlayContainer/ChatPanel/ChatVBox/ChatMargin/ChatContentVBox"]
 visible = false
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 24
 text = "Thinking..."
 horizontal_alignment = 1
 

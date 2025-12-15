@@ -1,39 +1,56 @@
-[gd_scene load_steps=4 format=3 uid="uid://c8x4k5nan2p1q"]
+[gd_scene load_steps=5 format=3 uid="uid://c8x4k5nan2p1q"]
 
 [ext_resource type="Script" uid="uid://douvyi5vv1yf" path="res://src/ui/AdditionDialog.gd" id="1_addition_dialog"]
-[ext_resource type="FontFile" uid="uid://c12vraq60ixtj" path="res://assets/fonts/MuseoSansRounded500.otf" id="2_museo500"]
+[ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_theme"]
+[ext_resource type="Shader" path="res://src/shaders/ui_blur.gdshader" id="3_blur"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.95, 0.95, 0.95, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.3, 0.3, 0.3, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 8
-shadow_offset = Vector2(4, 4)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
+shader = ExtResource("3_blur")
+shader_parameter/amount = 2.0
 
-[node name="AdditionDialog" type="Panel"]
+[node name="AdditionDialog" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_addition_dialog")
+
+[node name="BlurLayer" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_blur")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DarkeningLayer" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.4)
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -434.0
-offset_top = -182.0
-offset_right = 406.0
-offset_bottom = 658.0
+offset_left = -420.0
+offset_top = -420.0
+offset_right = 420.0
+offset_bottom = 420.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-script = ExtResource("1_addition_dialog")
+theme = ExtResource("2_theme")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -45,60 +62,52 @@ theme_override_constants/margin_top = 45
 theme_override_constants/margin_right = 50
 theme_override_constants/margin_bottom = 45
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 42
+theme_override_font_sizes/font_size = 40
 text = "Addition Rule"
 horizontal_alignment = 1
 
-[node name="RuleLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="RuleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 horizontal_alignment = 1
 
-[node name="PremiseLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="PremiseLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 26
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer"]
 visible = false
 layout_mode = 2
 
-[node name="InstructionLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="InstructionLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 26
 text = "Build expression to add :"
 horizontal_alignment = 1
 
-[node name="InputDisplay" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="InputDisplay" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 32
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VirtualKeyboard" type="Control" parent="MarginContainer/VBoxContainer"]
+[node name="VirtualKeyboard" type="Control" parent="Panel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 
-[node name="Row1" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VirtualKeyboard"]
+[node name="Row1" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -110,47 +119,32 @@ grow_horizontal = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="VarP" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row1"]
+[node name="VarP" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row1"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "P"
 
-[node name="VarQ" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row1"]
+[node name="VarQ" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row1"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "Q"
 
-[node name="VarR" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row1"]
+[node name="VarR" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row1"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "R"
 
-[node name="VarS" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row1"]
+[node name="VarS" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row1"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "S"
 
-[node name="VarT" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row1"]
+[node name="VarT" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row1"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "T"
 
-[node name="Row2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VirtualKeyboard"]
+[node name="Row2" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -163,39 +157,27 @@ grow_horizontal = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="AndButton" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row2"]
+[node name="AndButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row2"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "∧"
 
-[node name="OrButton" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row2"]
+[node name="OrButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row2"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "∨"
 
-[node name="ImpliesButton" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row2"]
+[node name="ImpliesButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row2"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "→"
 
-[node name="NotButton" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row2"]
+[node name="NotButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row2"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "¬"
 
-[node name="Row3" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VirtualKeyboard"]
+[node name="Row3" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -208,39 +190,27 @@ grow_horizontal = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="OpenParenButton" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row3"]
+[node name="OpenParenButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row3"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "("
 
-[node name="CloseParenButton" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row3"]
+[node name="CloseParenButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row3"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = ")"
 
-[node name="XorButton" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row3"]
+[node name="XorButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row3"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "⊕"
 
-[node name="BiconditionalButton" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row3"]
+[node name="BiconditionalButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row3"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "↔"
 
-[node name="Row4" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VirtualKeyboard"]
+[node name="Row4" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -253,34 +223,25 @@ grow_horizontal = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="BackspaceButton" type="Button" parent="MarginContainer/VBoxContainer/VirtualKeyboard/Row4"]
+[node name="BackspaceButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/VirtualKeyboard/Row4"]
 custom_minimum_size = Vector2(180, 65)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 28
 text = "Backspace"
 
-[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="ButtonContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="ButtonContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 40
 alignment = 1
 
-[node name="CancelButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonContainer"]
+[node name="CancelButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(200, 75)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "Cancel"
 
-[node name="ApplyButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonContainer"]
+[node name="ApplyButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(200, 75)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_museo500")
-theme_override_font_sizes/font_size = 32
 text = "Apply"

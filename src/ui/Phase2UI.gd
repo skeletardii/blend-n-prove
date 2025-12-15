@@ -11,7 +11,7 @@ const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 @onready var phase_label: Label = $WorkContainer/PhaseLabel
 @onready var premise_grid: GridContainer = $WorkContainer/InventoryArea/InventoryContainer/InventoryScroll/MarginContainer/PremiseGrid
 @onready var target_expression: Label = $WorkContainer/TargetArea/ChatBubble/TargetContainer/TargetExpression
-@onready var addition_dialog: Panel = $AdditionDialog
+@onready var addition_dialog: Control = $AdditionDialog
 @onready var rocket: TextureRect = $WorkContainer/TargetArea/Rocket
 @onready var flame_core: CPUParticles2D = $WorkContainer/TargetArea/Rocket/ExhaustContainer/FlameCore
 @onready var smoke_trail: CPUParticles2D = $WorkContainer/TargetArea/Rocket/ExhaustContainer/SmokeTrail
@@ -581,6 +581,20 @@ func reset_combo_penalty() -> void:
 	GameManager.record_mistake()
 	trigger_damage_wobble()
 
+func restore_combo_state(count: int) -> void:
+	combo_count = count
+	# Update visuals
+	if combo_container:
+		if combo_count >= 2:
+			combo_container.visible = true
+			combo_label.text = str(combo_count) + "x"
+	
+	update_particle_color()
+	update_combo_effects()
+	
+	var new_speed = 1.0 + (float(combo_count) * 0.1)
+	set_rocket_speed(new_speed)
+
 func trigger_damage_wobble() -> void:
 	var tween = create_tween()
 	# Move left quickly
@@ -1092,9 +1106,10 @@ func apply_logical_rule(rule: String, premises: Array[BooleanExpression]) -> Boo
 		"DM":  # De Morgan's Laws: ¬(P∧Q) ⊢ ¬P∨¬Q or ¬(P∨Q) ⊢ ¬P∧¬Q
 			if premises.size() == 1:
 				var premise = premises[0]
-				# De Morgan's requires ¬(P ∧ Q) or ¬(P ∨ Q)
 				var normalized = premise.normalized_string
+				# Check if it's a negated expression: ¬(...)
 				if normalized.begins_with("¬(") and normalized.ends_with(")"):
+					# Extract the inner expression
 					var inner = normalized.substr(2, normalized.length() - 3).strip_edges()
 					var inner_expr = BooleanExpression.new(inner)
 					if inner_expr.is_conjunction():

@@ -133,10 +133,9 @@ layout_mode = 2
 text = "Show Help"
 
 [node name="HintButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
-custom_minimum_size = Vector2(80, 50)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "Hint"
+	custom_minimum_size = Vector2(80, 50)
+	layout_mode = 2
+	theme_override_font_sizes/font_size = 32text = "Hint"
 
 [node name="PatienceBar" type="ProgressBar" parent="UI/MainContainer"]
 texture_filter = 1
@@ -278,10 +277,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -320.0
-offset_top = -240.0
-offset_right = 320.0
-offset_bottom = 240.0
+offset_left = -350.0
+offset_top = -300.0
+offset_right = 350.0
+offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -296,7 +295,7 @@ offset_right = -50.0
 offset_bottom = -50.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 40
+theme_override_constants/separation = 20
 alignment = 1
 
 [node name="PausedLabel" type="Label" parent="PauseOverlay/PauseMenu/MenuContainer"]
@@ -308,6 +307,20 @@ horizontal_alignment = 1
 [node name="Spacer" type="Control" parent="PauseOverlay/PauseMenu/MenuContainer"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
+
+[node name="ToggleMusicButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
+custom_minimum_size = Vector2(380, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
+text = "Mute Music"
+
+[node name="ToggleSFXButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
+custom_minimum_size = Vector2(380, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
+text = "Mute SFX"
 
 [node name="ResumeButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
 custom_minimum_size = Vector2(380, 75)

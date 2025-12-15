@@ -1,8 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://bcmuhrnjliwde"]
+[gd_scene load_steps=12 format=3 uid="uid://bcmuhrnjliwde"]
 
 [ext_resource type="Script" uid="uid://1pl6aae4iwul" path="res://src/ui/GameOverScene.gd" id="1_4w0zy"]
 [ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_shader"]
 [ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_spiral"]
+[ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="4_theme"]
+[ext_resource type="Shader" path="res://src/shaders/ui_blur.gdshader" id="5_blur"]
 
 [sub_resource type="Gradient" id="Gradient_bg"]
 offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
@@ -22,20 +24,9 @@ shader_parameter/amplitude = 1.0
 shader_parameter/noise_scale = 20.0
 shader_parameter/noise_speed = 20.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gameover"]
-bg_color = Color(0.95, 0.95, 0.95, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.3, 0.3, 0.3, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_size = 8
-shadow_offset = Vector2(4, 4)
-shadow_color = Color(0, 0, 0, 0.3)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
+shader = ExtResource("5_blur")
+shader_parameter/amount = 2.0
 
 [node name="GameOverScene" type="Control"]
 layout_mode = 3
@@ -68,6 +59,15 @@ texture = ExtResource("3_spiral")
 expand_mode = 2
 stretch_mode = 1
 
+[node name="BlurLayer" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_blur")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="GameOverPanel" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 8
@@ -75,13 +75,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -400.0
-offset_top = -450.0
-offset_right = 400.0
-offset_bottom = 450.0
+offset_left = -450.0
+offset_top = -475.0
+offset_right = 450.0
+offset_bottom = 475.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_gameover")
+theme = ExtResource("4_theme")
 
 [node name="GameOverContainer" type="VBoxContainer" parent="GameOverPanel"]
 layout_mode = 1
@@ -107,6 +107,7 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="FinalScore" type="Label" parent="GameOverPanel/GameOverContainer"]
+visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
 text = "Final Score: 0"
@@ -120,7 +121,6 @@ layout_mode = 2
 custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 32
 text = "PLAY AGAIN"
 
 [node name="Spacer3" type="Control" parent="GameOverPanel/GameOverContainer"]
@@ -131,7 +131,6 @@ layout_mode = 2
 custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 32
 text = "MAIN MENU"
 
 [connection signal="pressed" from="GameOverPanel/GameOverContainer/PlayAgainButton" to="." method="_on_play_again_button_pressed"]
