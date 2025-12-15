@@ -1059,12 +1059,24 @@ func apply_rule() -> void:
 			# Emit signal after animation delay
 			get_tree().create_timer(1.0).timeout.connect(func(): target_reached.emit(cleaned_result))
 	else:
-		# Clear selections when rule fails
-		clear_selections()
+		# Red glow on selected premises
+		for premise in selected_premises:
+			for card in premise_cards:
+				var btn = card as Button
+				if btn and btn.text == premise.expression_string:
+					var tween = create_tween()
+					tween.tween_property(btn, "modulate", Color.RED, 0.2)
+					tween.tween_property(btn, "modulate", Color.WHITE, 0.2)
+
+		# Show error popup
+		show_error_popup(Vector2.ZERO)
+
 		show_feedback("✗ Cannot apply " + rule_def.name, Color.RED, false)
 		# Penalty: lose fuel and reset combo
 		reset_combo_penalty()
-		# Don't auto-open remotes on failure
+		
+		# Clear selections
+		clear_selections()
 
 func apply_logical_rule_multi(rule: String, premises: Array[BooleanExpression]) -> Array:
 	# Returns an array of results for operations that can produce multiple statements
@@ -1240,6 +1252,32 @@ func animate_target_reached(result: BooleanExpression) -> void:
 		show_score_popup_at_card(winning_card)
 	tween.finished.connect(on_finished)
 
+
+var error_comments: Array[String] = [
+	"That doesn't work!",
+	"Try another rule.",
+	"Maybe not quite that one...",
+	"Nope!",
+	"Logic error!",
+	"Cannot apply that here.",
+	"Incorrect premises."
+]
+
+func show_error_popup(target_pos: Vector2) -> void:
+	var label = Label.new()
+	label.text = error_comments.pick_random()
+	label.add_theme_font_size_override("font_size", 24)
+	label.add_theme_color_override("font_color", Color.RED)
+	# Adjust position to be local to this control if needed, but adding child directly works if position is local
+	# get_global_mouse_position returns global. 
+	# If I add child to 'self' (Phase2UI), I should use local position.
+	label.position = get_local_mouse_position() # Use local
+	add_child(label)
+	
+	var tween = create_tween()
+	tween.parallel().tween_property(label, "position:y", label.position.y - 50, 1.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(label, "modulate:a", 0.0, 1.0)
+	tween.tween_callback(label.queue_free)
 
 func show_feedback(message: String, color: Color, emit_to_parent: bool = true) -> void:
 	"""Show shortened feedback at the bottom of the premise box"""
