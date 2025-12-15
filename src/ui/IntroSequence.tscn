@@ -54,10 +54,21 @@ visible = false
 z_index = -1
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -300.0
+offset_right = 300.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(300, 300)
 texture = ExtResource("5_blackhole")
 expand_mode = 1
 stretch_mode = 5
-pivot_offset = Vector2(128, 128)
 
 [node name="Planet" type="TextureRect" parent="CenterContainer"]
 custom_minimum_size = Vector2(256, 256)
@@ -151,7 +162,7 @@ color = Color(0.8, 0.8, 0.8, 1)
 
 [node name="Asteroid2" type="CPUParticles2D" parent="."]
 z_index = -1
-position = Vector2(327, 406)
+position = Vector2(363, 642)
 amount = 3
 texture = ExtResource("7_56ein")
 lifetime = 1.5
@@ -175,7 +186,7 @@ color = Color(0.8, 0.8, 0.8, 1)
 
 [node name="Asteroid3" type="CPUParticles2D" parent="."]
 z_index = -1
-position = Vector2(362, 386)
+position = Vector2(359, 645)
 amount = 3
 texture = ExtResource("8_ef2p7")
 lifetime = 1.5
@@ -199,7 +210,7 @@ color = Color(0.8, 0.8, 0.8, 1)
 
 [node name="Asteroid4" type="CPUParticles2D" parent="."]
 z_index = -1
-position = Vector2(328, 907)
+position = Vector2(364, 640)
 amount = 3
 texture = ExtResource("9_l20bg")
 lifetime = 1.5
@@ -223,7 +234,7 @@ color = Color(0.8, 0.8, 0.8, 1)
 
 [node name="Asteroid5" type="CPUParticles2D" parent="."]
 z_index = -1
-position = Vector2(374, 494)
+position = Vector2(366, 647)
 amount = 3
 texture = ExtResource("8_ef2p7")
 lifetime = 1.5
