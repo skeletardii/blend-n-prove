@@ -1,0 +1,44 @@
+
+[functions.submit-leaderboard-score]
+enabled = true
+verify_jwt = true
+import_map = "./functions/submit-leaderboard-score/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/submit-leaderboard-score/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/submit-leaderboard-score/*.html" ]
+
+[functions.get-name-rank]
+enabled = true
+verify_jwt = true
+import_map = "./functions/get-name-rank/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/get-name-rank/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/get-name-rank/*.html" ]
+
+[functions.ai-inference]
+enabled = true
+verify_jwt = true
+import_map = "./functions/ai-inference/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/ai-inference/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/ai-inference/*.html" ]
+
+[functions.record-session-stats]
+enabled = true
+verify_jwt = true
+import_map = "./functions/record-session-stats/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/record-session-stats/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/record-session-stats/*.html" ]

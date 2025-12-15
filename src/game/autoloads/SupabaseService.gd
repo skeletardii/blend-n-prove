@@ -4,9 +4,13 @@ extends Node
 ## This is a proxy autoload that forwards calls to SupabaseServiceImpl
 ## Following the proxy pattern used in this project
 
+# --- SIGNALS ---
 signal leaderboard_loaded(entries: Array)
 signal leaderboard_error(error_message: String)
-signal score_submitted(success: bool)
+signal score_submitted(rank: int)
+signal login_completed(user: Dictionary, error: String)
+signal save_uploaded(success: bool)
+signal save_downloaded(data: Dictionary)
 
 var _impl: Node = null
 
@@ -17,44 +21,80 @@ func _ready() -> void:
 func _set_impl(impl: Node) -> void:
 	_impl = impl
 	# Forward signals
-	if _impl.leaderboard_loaded.connect(_on_leaderboard_loaded) != OK:
-		print("Warning: Could not connect leaderboard_loaded signal")
-	if _impl.leaderboard_error.connect(_on_leaderboard_error) != OK:
-		print("Warning: Could not connect leaderboard_error signal")
-	if _impl.score_submitted.connect(_on_score_submitted) != OK:
-		print("Warning: Could not connect score_submitted signal")
+	_connect_signal("leaderboard_loaded", _on_leaderboard_loaded)
+	_connect_signal("leaderboard_error", _on_leaderboard_error)
+	_connect_signal("score_submitted", _on_score_submitted)
+	_connect_signal("login_completed", _on_login_completed)
+	_connect_signal("save_uploaded", _on_save_uploaded)
+	_connect_signal("save_downloaded", _on_save_downloaded)
+	
+	print("SupabaseService Proxy connected to implementation.")
 
+func _connect_signal(sig_name: String, callable: Callable) -> void:
+	if _impl.has_signal(sig_name):
+		if _impl.connect(sig_name, callable) != OK:
+			print("Warning: Could not connect " + sig_name + " signal")
+	else:
+		print("Warning: Implementation missing signal " + sig_name)
+
+# --- SIGNAL HANDLERS ---
 func _on_leaderboard_loaded(entries: Array) -> void:
 	leaderboard_loaded.emit(entries)
 
 func _on_leaderboard_error(error_message: String) -> void:
 	leaderboard_error.emit(error_message)
 
-func _on_score_submitted(success: bool) -> void:
-	score_submitted.emit(success)
+func _on_score_submitted(rank: int) -> void:
+	score_submitted.emit(rank)
 
-## Fetch top 10 scores from the last 24 hours
-func fetch_top_10_today() -> Array:
-	if _impl:
-		return await _impl.fetch_top_10_today()
-	print("Error: SupabaseService implementation not loaded")
-	return []
+func _on_login_completed(user: Dictionary, error: String) -> void:
+	login_completed.emit(user, error)
 
-## Submit a new score to the leaderboard
-func submit_score(player_name: String, score: int, duration: float, difficulty: int) -> bool:
+func _on_save_uploaded(success: bool) -> void:
+	save_uploaded.emit(success)
+
+func _on_save_downloaded(data: Dictionary) -> void:
+	save_downloaded.emit(data)
+
+# --- PUBLIC METHODS ---
+
+## Submit score via Edge Function (Arcade Mode)
+func submit_score_arcade(initials: String, score: int, level: int, duration: float) -> void:
 	if _impl:
-		return await _impl.submit_score(player_name, score, duration, difficulty)
-	print("Error: SupabaseService implementation not loaded")
+		_impl.submit_score_arcade(initials, score, level, duration)
+	else:
+		print("Error: SupabaseService implementation not loaded")
+
+## Fetch Top 10 from REST API
+func fetch_leaderboard() -> void:
+	if _impl:
+		_impl.fetch_leaderboard()
+	else:
+		print("Error: SupabaseService implementation not loaded")
+
+## Log in using Email/Password
+func login(email, password) -> void:
+	if _impl:
+		_impl.login(email, password)
+	else:
+		login_completed.emit(null, "Implementation not loaded")
+
+## Upload Save to Cloud
+func save_game_cloud(slot: int, data: Dictionary) -> void:
+	if _impl:
+		_impl.save_game_cloud(slot, data)
+	else:
+		save_uploaded.emit(false)
+
+## Download Save from Cloud
+func download_game_cloud(slot: int) -> void:
+	if _impl:
+		_impl.download_game_cloud(slot)
+	else:
+		save_downloaded.emit({})
+
+## Helper to check if logged in (if impl exposes it)
+func is_logged_in() -> bool:
+	if _impl and "session_token" in _impl:
+		return _impl.session_token != ""
 	return false
-
-## Check if a score qualifies for the top 10
-func check_qualifies_for_top_10(score: int) -> bool:
-	if _impl:
-		return await _impl.check_qualifies_for_top_10(score)
-	print("Error: SupabaseService implementation not loaded")
-	return false
-
-## Clear the cache
-func clear_cache() -> void:
-	if _impl:
-		_impl.clear_cache()
