@@ -912,10 +912,10 @@ func _on_quit_button_pressed() -> void:
 	if GameManager.tutorial_mode:
 		GameManager.exit_tutorial_mode()
 
-	# Stop background music
+	# Stop all audio
 	AudioManager.stop_music()
-	# Stop rocket engine sound
 	AudioManager.stop_rocket_engine()
+	AudioManager.stop_all_sfx()
 
 	# End the game and show game over screen
 	show_feedback_message("Game Ended!", Color.ORANGE)
