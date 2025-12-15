@@ -914,6 +914,8 @@ func _on_quit_button_pressed() -> void:
 
 	# Stop background music
 	AudioManager.stop_music()
+	# Stop rocket engine sound
+	AudioManager.stop_rocket_engine()
 
 	# End the game and show game over screen
 	show_feedback_message("Game Ended!", Color.ORANGE)
