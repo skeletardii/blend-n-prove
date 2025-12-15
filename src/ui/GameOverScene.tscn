@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bcmuhrnjliwde"]
+[gd_scene load_steps=12 format=3 uid="uid://bcmuhrnjliwde"]
 
 [ext_resource type="Script" uid="uid://1pl6aae4iwul" path="res://src/ui/GameOverScene.gd" id="1_4w0zy"]
 [ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_shader"]
@@ -6,6 +6,7 @@
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="4_theme"]
 [ext_resource type="Shader" uid="uid://cuo407gjacr1j" path="res://src/shaders/ui_blur.gdshader" id="5_blur"]
 [ext_resource type="Script" uid="uid://c03es3s5m6ago" path="res://src/ui/BooleanAsteroidField.gd" id="6_asteroid"]
+[ext_resource type="FontFile" uid="uid://c1fnar2v6mvb0" path="res://assets/fonts/MuseoSansRounded1000.otf" id="7_vxenn"]
 
 [sub_resource type="Gradient" id="Gradient_bg"]
 offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
@@ -109,6 +110,7 @@ theme_override_constants/separation = 20
 
 [node name="GameOverTitle" type="Label" parent="GameOverPanel/GameOverContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("7_vxenn")
 theme_override_font_sizes/font_size = 72
 text = "GAME OVER"
 horizontal_alignment = 1
