@@ -1106,9 +1106,10 @@ func apply_logical_rule(rule: String, premises: Array[BooleanExpression]) -> Boo
 		"DM":  # De Morgan's Laws: ¬(P∧Q) ⊢ ¬P∨¬Q or ¬(P∨Q) ⊢ ¬P∧¬Q
 			if premises.size() == 1:
 				var premise = premises[0]
-				# De Morgan's requires ¬(P ∧ Q) or ¬(P ∨ Q)
 				var normalized = premise.normalized_string
+				# Check if it's a negated expression: ¬(...)
 				if normalized.begins_with("¬(") and normalized.ends_with(")"):
+					# Extract the inner expression
 					var inner = normalized.substr(2, normalized.length() - 3).strip_edges()
 					var inner_expr = BooleanExpression.new(inner)
 					if inner_expr.is_conjunction():

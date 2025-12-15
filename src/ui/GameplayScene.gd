@@ -683,8 +683,6 @@ func customer_leaves() -> void:
 		SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
 
 func complete_order_successfully() -> void:
-	AudioManager.play_logic_success()
-
 	# No longer calculating score in chunks - it's continuous!
 	# Instead, give a big fuel boost for completing the order
 	add_fuel(50.0)  # Big fuel reward for completion
@@ -746,7 +744,6 @@ func _on_premises_completed(premises: Array[BooleanExpression]) -> void:
 # Phase 2 Signal Handlers
 func _on_rule_applied(result: BooleanExpression) -> void:
 	validated_premises.append(result)
-	AudioManager.play_logic_success()
 
 func _on_target_reached(result: BooleanExpression) -> void:
 	show_feedback_message("✓ Proof complete! Order fulfilled!", Color.CYAN)
