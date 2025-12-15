@@ -65,8 +65,8 @@ func setup_ui():
 	label.fit_content = true
 	label.scroll_active = false
 	label.selection_enabled = true
-	label.add_theme_font_size_override("normal_font_size", 18)
-	label.add_theme_font_size_override("bold_font_size", 20)
+	label.add_theme_font_size_override("normal_font_size", 32)
+	label.add_theme_font_size_override("bold_font_size", 36)
 	label.add_theme_color_override("default_color", Color(0.1, 0.1, 0.1, 1.0))
 	label.text = message_text
 	margin.add_child(label)

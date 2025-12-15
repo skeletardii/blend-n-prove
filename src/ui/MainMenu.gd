@@ -20,7 +20,9 @@ extends Control
 @onready var high_score_quick: Label = $QuickStatsPanel/HighScoreQuick
 @onready var games_played_quick: Label = $QuickStatsPanel/GamesPlayedQuick
 @onready var streak_quick: Label = $QuickStatsPanel/StreakQuick
-@onready var reset_confirmation_dialog: ConfirmationDialog = $ResetConfirmationDialog
+@onready var reset_popup: Control = $ResetPopup
+@onready var reset_confirm_btn: Button = $ResetPopup/Panel/VBoxContainer/ButtonContainer/ConfirmButton
+@onready var reset_cancel_btn: Button = $ResetPopup/Panel/VBoxContainer/ButtonContainer/CancelButton
 @onready var feedback_label: Label = $FeedbackLabel
 @onready var title_sprite: TextureRect = $MenuContainer/TextureRect
 @onready var high_score_value: Label = $MenuContainer/HighScoreContainer/HighScoreValue
@@ -68,6 +70,13 @@ func _ready() -> void:
 	if not ai_tutor_button.pressed.is_connected(_on_ai_tutor_button_pressed):
 		ai_tutor_button.pressed.connect(_on_ai_tutor_button_pressed)
 		print("AI Tutor button connected!")
+	
+	# Connect reset popup buttons
+	if not reset_confirm_btn.pressed.is_connected(_on_reset_progress_confirmed):
+		reset_confirm_btn.pressed.connect(_on_reset_progress_confirmed)
+	
+	if not reset_cancel_btn.pressed.is_connected(_on_reset_cancel_pressed):
+		reset_cancel_btn.pressed.connect(_on_reset_cancel_pressed)
 
 	# Connect to progress updates
 	ProgressTracker.progress_updated.connect(_on_progress_updated)
@@ -366,18 +375,26 @@ func _on_populate_test_data_button_pressed() -> void:
 func _on_reset_progress_button_pressed() -> void:
 	AudioManager.play_button_click()
 	# Show confirmation dialog
-	reset_confirmation_dialog.popup_centered()
+	reset_popup.visible = true
 
 func _on_reset_progress_confirmed() -> void:
+	AudioManager.play_button_click()
 	# Reset all progress
 	ProgressTracker.reset_progress_data()
 
 	# Update UI
 	update_quick_stats()
+	
+	# Hide popup
+	reset_popup.visible = false
 
 	# Close settings panel and show feedback
 	settings_panel.visible = false
 	show_feedback("All progress has been reset!", Color(0.9, 0.3, 0.3))
+
+func _on_reset_cancel_pressed() -> void:
+	AudioManager.play_button_click()
+	reset_popup.visible = false
 
 # ===== FEEDBACK SYSTEM =====
 

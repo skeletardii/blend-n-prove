@@ -91,7 +91,7 @@ theme_override_constants/separation = 20
 [node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 50
 text = "Tutorial Title"
 horizontal_alignment = 1
 
@@ -110,8 +110,8 @@ theme_override_constants/separation = 15
 [node name="DescriptionLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer/ContentScroll/VBox"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0.2, 0.2, 0.2, 1)
-theme_override_font_sizes/normal_font_size = 24
-theme_override_font_sizes/bold_font_size = 24
+theme_override_font_sizes/normal_font_size = 36
+theme_override_font_sizes/bold_font_size = 36
 bbcode_enabled = true
 text = "Description text..."
 fit_content = true
@@ -119,8 +119,8 @@ fit_content = true
 [node name="RulePatternLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer/ContentScroll/VBox"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0.1, 0.1, 0.5, 1)
-theme_override_font_sizes/normal_font_size = 32
-theme_override_font_sizes/bold_font_size = 32
+theme_override_font_sizes/normal_font_size = 45
+theme_override_font_sizes/bold_font_size = 45
 bbcode_enabled = true
 text = "[center][b]P → Q[/b][/center]"
 fit_content = true
@@ -132,7 +132,7 @@ alignment = 1
 [node name="ProgressLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ProgressContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 32
 text = "Progress: 0/10 Completed"
 
 [node name="ButtonContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
@@ -143,14 +143,14 @@ alignment = 1
 [node name="CancelButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 36
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cancel_normal")
 text = "Cancel"
 
 [node name="StartButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(250, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 36
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_start_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_start_hover")
 text = "Start Tutorial"

@@ -5,6 +5,7 @@ const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
 signal help_panel_closed()
 
 # UI References
+@onready var rule_title_button: Button = $MarginContainer/VBoxContainer/RuleTitleContainer
 @onready var rule_title: Label = $MarginContainer/VBoxContainer/RuleTitleContainer/RuleTitle
 @onready var rule_description: RichTextLabel = $MarginContainer/VBoxContainer/RuleDescriptionPanel/RuleDescription
 @onready var problem_hint: RichTextLabel = $MarginContainer/VBoxContainer/ProblemHintPanel/ProblemHint
@@ -19,7 +20,7 @@ var current_problem_index: int = 0
 var blur_overlay: ColorRect = null
 
 func _ready() -> void:
-	close_button.pressed.connect(_on_close_button_pressed)
+	close_button.pressed.connect(toggle_visibility)
 	hide()
 
 func show_tutorial_help(tutorial_key: String, problem_index: int) -> void:
@@ -56,10 +57,7 @@ func show_tutorial_help(tutorial_key: String, problem_index: int) -> void:
 	_create_blur_overlay()
 	show()
 
-func _on_close_button_pressed() -> void:
-	_remove_blur_overlay()
-	hide()
-	help_panel_closed.emit()
+
 
 func toggle_visibility() -> void:
 	if visible:

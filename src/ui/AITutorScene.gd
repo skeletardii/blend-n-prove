@@ -468,6 +468,9 @@ func open_chat():
 	is_chat_open = true
 	chat_overlay.visible = true
 	dim_overlay.visible = true
+	
+	# Update toggle button state
+	chat_toggle_button.button_pressed = true
 
 	if chat_tween and chat_tween.is_running():
 		chat_tween.kill()
@@ -482,7 +485,6 @@ func open_chat():
 	chat_tween.tween_property(chat_overlay, "position", target_pos, 0.5).from(Vector2(screen_size.x, target_pos.y)).set_trans(Tween.TRANS_CUBIC)
 	chat_tween.tween_property(chat_overlay, "scale", Vector2(1.0, 1.0), 0.5).from(Vector2(0.95, 0.95)).set_trans(Tween.TRANS_CUBIC)
 	chat_tween.tween_property(chat_overlay, "modulate:a", 1.0, 0.5).from(0.0).set_trans(Tween.TRANS_CUBIC)
-	chat_tween.tween_property(chat_toggle_button, "rotation", deg_to_rad(45), 0.3).set_trans(Tween.TRANS_ELASTIC)
 	chat_tween.tween_property(virtual_keyboard, "modulate:a", 0.3, 0.3).set_trans(Tween.TRANS_CUBIC)
 
 	has_unread_messages = false
@@ -494,6 +496,9 @@ func close_chat():
 		return
 
 	is_chat_open = false
+	
+	# Update toggle button state
+	chat_toggle_button.button_pressed = false
 
 	if chat_tween and chat_tween.is_running():
 		chat_tween.kill()
@@ -508,7 +513,6 @@ func close_chat():
 	chat_tween.tween_property(chat_overlay, "position", Vector2(screen_size.x, current_pos.y), 0.4).set_trans(Tween.TRANS_CUBIC)
 	chat_tween.tween_property(chat_overlay, "scale", Vector2(0.95, 0.95), 0.4).set_trans(Tween.TRANS_CUBIC)
 	chat_tween.tween_property(chat_overlay, "modulate:a", 0.0, 0.4).set_trans(Tween.TRANS_CUBIC)
-	chat_tween.tween_property(chat_toggle_button, "rotation", 0.0, 0.3).set_trans(Tween.TRANS_ELASTIC)
 	chat_tween.tween_property(virtual_keyboard, "modulate:a", 1.0, 0.3).set_trans(Tween.TRANS_CUBIC)
 
 	chat_tween.chain().tween_callback(func():

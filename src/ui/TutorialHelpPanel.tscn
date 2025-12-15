@@ -20,7 +20,7 @@ shadow_offset = Vector2(0, 8)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_transparent"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
-bg_color = Color(0.25, 0.65, 1, 1)
+bg_color = Color(0.2, 0.6, 0.9, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -30,7 +30,7 @@ shadow_size = 2
 shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
-bg_color = Color(0.15, 0.55, 0.9, 1)
+bg_color = Color(0.1, 0.5, 0.8, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -40,7 +40,7 @@ shadow_size = 1
 shadow_offset = Vector2(0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0.35, 0.75, 1, 1)
+bg_color = Color(0.3, 0.7, 1, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -82,14 +82,18 @@ theme_override_constants/margin_bottom = 30
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="RuleTitleContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="RuleTitleContainer" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_transparent")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_transparent")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_transparent")
+text = "" # No text needed, the label inside will provide the text
+connection signal="pressed" from="RuleTitleContainer" to="." method="toggle_visibility"
 
 [node name="RuleTitle" type="Label" parent="MarginContainer/VBoxContainer/RuleTitleContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.2, 0.4, 1)
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 42
 text = "Tutorial Rule Name"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -103,8 +107,8 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/normal_font_size = 30
-theme_override_font_sizes/bold_font_size = 30
+theme_override_font_sizes/normal_font_size = 42
+theme_override_font_sizes/bold_font_size = 42
 bbcode_enabled = true
 text = "Rule description goes here..."
 fit_content = true
@@ -113,7 +117,7 @@ scroll_active = false
 [node name="ProblemNumberLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.2, 0.4, 1)
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 36
 text = "Problem 1/10 (Easy)"
 horizontal_alignment = 1
 
@@ -126,8 +130,8 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/normal_font_size = 30
-theme_override_font_sizes/bold_font_size = 30
+theme_override_font_sizes/normal_font_size = 42
+theme_override_font_sizes/bold_font_size = 42
 bbcode_enabled = true
 text = "Problem-specific hint goes here..."
 fit_content = true
@@ -140,7 +144,7 @@ alignment = 1
 [node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")

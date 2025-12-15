@@ -45,7 +45,7 @@ theme_override_constants/separation = 20
 [node name="HeaderLabel" type="Label" parent="MarginContainer/ScrollContainer/ContentVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 45
 text = "Solution Review"
 horizontal_alignment = 1
 
@@ -53,14 +53,14 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.1, 0.1, 0.1, 1)
-theme_override_font_sizes/normal_font_size = 20
+theme_override_font_sizes/normal_font_size = 32
 bbcode_enabled = true
 fit_content = true
 
 [node name="StepsHeader" type="Label" parent="MarginContainer/ScrollContainer/ContentVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 36
 text = "Your Steps:"
 
 [node name="StepsContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/ContentVBox"]
@@ -74,13 +74,13 @@ layout_mode = 2
 [node name="CorrectHeader" type="Label" parent="MarginContainer/ScrollContainer/ContentVBox/CorrectSolutionContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.6, 0.2, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 36
 text = "Correct Approach:"
 
 [node name="CorrectLabel" type="RichTextLabel" parent="MarginContainer/ScrollContainer/ContentVBox/CorrectSolutionContainer"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0.2, 0.2, 0.2, 1)
-theme_override_font_sizes/normal_font_size = 18
+theme_override_font_sizes/normal_font_size = 32
 bbcode_enabled = true
 fit_content = true
 
@@ -92,11 +92,11 @@ alignment = 1
 [node name="RetryButton" type="Button" parent="MarginContainer/ScrollContainer/ContentVBox/ButtonsContainer"]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 32
 text = "Try Similar Problem"
 
 [node name="ContinueButton" type="Button" parent="MarginContainer/ScrollContainer/ContentVBox/ButtonsContainer"]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 32
 text = "New Topic"

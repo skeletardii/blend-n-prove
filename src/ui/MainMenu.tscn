@@ -7,6 +7,28 @@
 [ext_resource type="Texture2D" uid="uid://onbkto0umar" path="res://assets/sprites/newlogo.png" id="4_ihbld"]
 [ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_1000_with_fallback.tres" id="5_dbyr8"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="5_u6542"]
+[ext_resource type="Shader" path="res://src/shaders/ui_blur.gdshader" id="6_blur"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_reset_blur"]
+shader = ExtResource("6_blur")
+shader_parameter/amount = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_white_popup"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 10
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_red_btn"]
+bg_color = Color(0.9, 0.2, 0.2, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="Gradient" id="Gradient_2wh52"]
 offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
@@ -395,10 +417,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -350.0
-offset_top = -450.0
-offset_right = 350.0
-offset_bottom = 450.0
+offset_left = -400.0
+offset_top = -500.0
+offset_right = 400.0
+offset_bottom = 500.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -416,7 +438,7 @@ grow_vertical = 2
 
 [node name="SettingsTitle" type="Label" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 60
+theme_override_font_sizes/font_size = 70
 text = "SETTINGS"
 horizontal_alignment = 1
 
@@ -426,7 +448,7 @@ layout_mode = 2
 
 [node name="AudioLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 50
+theme_override_font_sizes/font_size = 60
 text = "Audio"
 
 [node name="MusicVolumeContainer" type="HBoxContainer" parent="SettingsPanel/SettingsContainer"]
@@ -435,7 +457,7 @@ layout_mode = 2
 [node name="MusicLabel" type="Label" parent="SettingsPanel/SettingsContainer/MusicVolumeContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 40
 text = "Music"
 
 [node name="MusicSlider" type="HSlider" parent="SettingsPanel/SettingsContainer/MusicVolumeContainer"]
@@ -452,7 +474,7 @@ layout_mode = 2
 [node name="SFXLabel" type="Label" parent="SettingsPanel/SettingsContainer/SFXVolumeContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 40
 text = "SFX"
 
 [node name="SFXSlider" type="HSlider" parent="SettingsPanel/SettingsContainer/SFXVolumeContainer"]
@@ -465,7 +487,7 @@ value = 0.8
 
 [node name="MuteCheck" type="CheckBox" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 40
 text = "Mute All"
 
 [node name="SpacerAudio" type="Control" parent="SettingsPanel/SettingsContainer"]
@@ -474,12 +496,12 @@ layout_mode = 2
 
 [node name="DisableIntroCheck" type="CheckBox" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 40
 text = "Disable Intro Sequence"
 
 [node name="DifficultyModeLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 50
 text = "Classic Mode Difficulty:"
 
 [node name="DifficultyModeContainer" type="HBoxContainer" parent="SettingsPanel/SettingsContainer"]
@@ -489,10 +511,11 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 40
 
 [node name="InfoLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 32
 text = "Auto: Difficulty increases as you play
 1-6: Lock difficulty to specific level"
 autowrap_mode = 3
@@ -505,7 +528,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 45
 text = "Reset All Progress"
 
 [node name="Spacer3" type="Control" parent="SettingsPanel/SettingsContainer"]
@@ -515,7 +538,7 @@ layout_mode = 2
 [node name="CloseSettingsButton" type="Button" parent="SettingsPanel/SettingsContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 55
 text = "CLOSE"
 
 [node name="QuickStatsPanel" type="VBoxContainer" parent="."]
@@ -566,12 +589,66 @@ offset_bottom = 17.0
 rotation = 0.785398
 text = "🍊"
 
-[node name="ResetConfirmationDialog" type="ConfirmationDialog" parent="."]
-title = "Reset Progress"
-initial_position = 2
-size = Vector2i(400, 150)
-ok_button_text = "Reset Everything"
-dialog_text = "Are you sure you want to reset ALL progress?
+[node name="ResetPopup" type="Control" parent="."]
+visible = false
+z_index = 100
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BlurLayer" type="ColorRect" parent="ResetPopup"]
+material = SubResource("ShaderMaterial_reset_blur")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="ResetPopup"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -250.0
+offset_right = 300.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_white_popup")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ResetPopup/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="ResetPopup/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 40
+text = "Reset Progress"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="ResetPopup/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 24
+text = "Are you sure you want to reset ALL progress?
 
 This will delete:
 - All statistics and scores
@@ -580,6 +657,28 @@ This will delete:
 - Tutorial progress
 
 This action cannot be undone!"
+autowrap_mode = 3
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ButtonContainer" type="HBoxContainer" parent="ResetPopup/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="CancelButton" type="Button" parent="ResetPopup/Panel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Cancel"
+
+[node name="ConfirmButton" type="Button" parent="ResetPopup/Panel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_red_btn")
+text = "Reset Everything"
 
 [node name="FeedbackLabel" type="Label" parent="."]
 layout_mode = 1
