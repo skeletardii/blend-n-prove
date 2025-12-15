@@ -49,6 +49,9 @@ func _ready() -> void:
 	planet.scale = Vector2(1.0, 1.0)
 	flash.modulate.a = 0.0
 
+	# Start background music early
+	AudioManager.start_background_music()
+
 	# Start sequence
 	play_intro()
 
@@ -58,7 +61,7 @@ func _process(delta: float) -> void:
 		black_hole.rotation += black_hole_rotation_speed * delta
 
 func play_intro() -> void:
-	AudioManager.play_music("blackhole_intro_music", true)
+	AudioManager.play_rocket_launch()
 	var tween = create_tween()
 	var screen_center = get_viewport_rect().size / 2
 
@@ -82,6 +85,7 @@ func play_intro() -> void:
 	tween.tween_callback(func():
 		black_hole.visible = true
 		black_hole_particles.emitting = true
+		AudioManager.play_music("power_on_music", false) # Play music here
 	)
 
 	# 4. Black hole starts rotating and growing slowly (ominous buildup)

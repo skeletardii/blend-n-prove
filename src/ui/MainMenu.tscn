@@ -472,6 +472,11 @@ text = "Mute All"
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
+[node name="DisableIntroCheck" type="CheckBox" parent="SettingsPanel/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Disable Intro Sequence"
+
 [node name="DifficultyModeLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
@@ -613,4 +618,5 @@ vertical_alignment = 1
 [connection signal="item_selected" from="SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption" to="." method="_on_difficulty_mode_option_item_selected"]
 [connection signal="pressed" from="SettingsPanel/SettingsContainer/ResetProgressButton" to="." method="_on_reset_progress_button_pressed"]
 [connection signal="pressed" from="SettingsPanel/SettingsContainer/CloseSettingsButton" to="." method="_on_close_settings_button_pressed"]
+[connection signal="toggled" from="SettingsPanel/SettingsContainer/DisableIntroCheck" to="." method="_on_disable_intro_check_toggled"]
 [connection signal="confirmed" from="ResetConfirmationDialog" to="." method="_on_reset_progress_confirmed"]

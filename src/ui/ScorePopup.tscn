@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://src/ui/ScorePopup.gd" id="1_score_popup"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="2_wenrexa"]
-[ext_resource type="FontFile" uid="uid://rkxmldc64bol" path="res://assets/fonts/Good-Game.ttf" id="3_goodgame"]
+[ext_resource type="FontFile" uid="uid://bx0fmm2ck5w42" path="res://assets/fonts/MuseoSansRounded900.otf" id="3_goodgame"]
 
 [sub_resource type="Gradient" id="Gradient_bg"]
 offsets = PackedFloat32Array(0, 0.7, 1)
@@ -37,11 +37,11 @@ outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_multiplier"]
 font = ExtResource("3_goodgame")
-font_size = 64
-shadow_size = 7
-shadow_color = Color(0, 0, 0, 0.8)
-shadow_offset = Vector2(3, 3)
-outline_size = 5
+font_size = 96
+shadow_size = 12
+shadow_color = Color(0, 0, 0, 0.9)
+shadow_offset = Vector2(5, 5)
+outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
 [node name="ScorePopup" type="CanvasLayer"]

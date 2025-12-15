@@ -26,6 +26,7 @@ var orders_completed_this_session: int = 0
 
 var debug_mode: bool = false
 var infinite_patience: bool = false
+var disable_intro_sequence: bool = false
 
 # Debug difficulty mode: -1 = Auto (normal scaling), 1-6 = locked difficulty level
 var debug_difficulty_mode: int = -1

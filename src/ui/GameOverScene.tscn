@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://bcmuhrnjliwde"]
+[gd_scene load_steps=11 format=3 uid="uid://bcmuhrnjliwde"]
 
 [ext_resource type="Script" uid="uid://1pl6aae4iwul" path="res://src/ui/GameOverScene.gd" id="1_4w0zy"]
 [ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_shader"]
 [ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_spiral"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="4_theme"]
-[ext_resource type="Shader" path="res://src/shaders/ui_blur.gdshader" id="5_blur"]
+[ext_resource type="Shader" uid="uid://cuo407gjacr1j" path="res://src/shaders/ui_blur.gdshader" id="5_blur"]
+[ext_resource type="Script" uid="uid://c03es3s5m6ago" path="res://src/ui/BooleanAsteroidField.gd" id="6_asteroid"]
 
 [sub_resource type="Gradient" id="Gradient_bg"]
 offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
@@ -59,6 +60,15 @@ texture = ExtResource("3_spiral")
 expand_mode = 2
 stretch_mode = 1
 
+[node name="BooleanAsteroidField" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_asteroid")
+
 [node name="BlurLayer" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_blur")
 layout_mode = 1
@@ -69,16 +79,17 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="GameOverPanel" type="Panel" parent="."]
+z_index = 100
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -450.0
-offset_top = -475.0
-offset_right = 450.0
-offset_bottom = 475.0
+offset_left = -348.0
+offset_top = -476.0
+offset_right = 348.0
+offset_bottom = 474.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("4_theme")
@@ -88,9 +99,9 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 40.0
+offset_left = 29.0
 offset_top = 40.0
-offset_right = -40.0
+offset_right = -31.0
 offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -102,25 +113,19 @@ theme_override_font_sizes/font_size = 72
 text = "GAME OVER"
 horizontal_alignment = 1
 
-[node name="Spacer1" type="Control" parent="GameOverPanel/GameOverContainer"]
-custom_minimum_size = Vector2(0, 20)
+[node name="ContentContainer" type="VBoxContainer" parent="GameOverPanel/GameOverContainer"]
 layout_mode = 2
+theme_override_constants/separation = 20
 
-[node name="FinalScore" type="Label" parent="GameOverPanel/GameOverContainer"]
-visible = false
-layout_mode = 2
-theme_override_font_sizes/font_size = 48
-text = "Final Score: 0"
-horizontal_alignment = 1
-
-[node name="Spacer2" type="Control" parent="GameOverPanel/GameOverContainer"]
-custom_minimum_size = Vector2(0, 30)
+[node name="SpacerButtons" type="Control" parent="GameOverPanel/GameOverContainer"]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
 [node name="PlayAgainButton" type="Button" parent="GameOverPanel/GameOverContainer"]
 custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
 text = "PLAY AGAIN"
 
 [node name="Spacer3" type="Control" parent="GameOverPanel/GameOverContainer"]
@@ -131,6 +136,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
 text = "MAIN MENU"
 
 [connection signal="pressed" from="GameOverPanel/GameOverContainer/PlayAgainButton" to="." method="_on_play_again_button_pressed"]

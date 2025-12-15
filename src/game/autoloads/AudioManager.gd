@@ -3,7 +3,7 @@ extends Node
 signal audio_settings_changed
 
 var master_volume: float = 1.0
-var music_volume: float = 0.1
+var music_volume: float = 0.5
 var sfx_volume: float = 0.8
 var is_muted: bool = false
 var is_music_muted: bool = false
@@ -11,6 +11,7 @@ var is_sfx_muted: bool = false
 
 var music_player: AudioStreamPlayer
 var sfx_player: AudioStreamPlayer
+var rocket_engine_player: AudioStreamPlayer
 var sfx_players_pool: Array[AudioStreamPlayer] = []
 const MAX_SFX_PLAYERS: int = 8  # Allow up to 8 simultaneous sound effects
 
@@ -27,9 +28,26 @@ var audio_paths: Dictionary = {
 	"background_music": "res://assets/music/Kubbi - Up In My Jam  NO COPYRIGHT 8-bit Music.mp3",
 	"game_over_music": "res://assets/music/Game Over (8-Bit Music).mp3",
 	"blackhole_intro_music": "res://assets/music/blackholeintrosound.mp3",
+	"power_on_music": "res://assets/music/power-on-39172.mp3",
 	"multiplier_increase": "res://assets/music/mixkit-arcade-bonus-alert-767.wav",
+	"rocket_launch": "res://assets/sound/Explosion.wav",
+	"rocket_engine": "res://assets/music/rocket-engine-90835.mp3",
+	"losing_horn": "res://assets/music/losing-horn-313723.mp3",
+	"fail_trumpet": "res://assets/music/cartoon-fail-trumpet-278822.mp3",
+	"fail_sound": "res://assets/music/fail-234710.mp3",
+	"invalid_rule": "res://assets/music/error-08-206492.mp3"
 	# "menu_music": "res://assets/sound/Menu_In.wav" # Commented out - no music in main menu
 }
+
+# ...
+
+func play_game_over_fail_sound() -> void:
+	if is_muted or is_sfx_muted: return
+	var fail_sounds = ["losing_horn", "fail_trumpet"]
+	play_sfx(fail_sounds.pick_random())
+
+func play_multiplier_lost_sound() -> void:
+	play_sfx("invalid_rule")
 
 # Loaded audio streams
 var loaded_sounds: Dictionary = {}
@@ -40,9 +58,11 @@ func _ready() -> void:
 	# Create audio players
 	music_player = AudioStreamPlayer.new()
 	sfx_player = AudioStreamPlayer.new()
+	rocket_engine_player = AudioStreamPlayer.new()
 
 	add_child(music_player)
 	add_child(sfx_player)
+	add_child(rocket_engine_player)
 
 	# Create pool of additional SFX players for simultaneous sounds
 	for i in range(MAX_SFX_PLAYERS):
@@ -118,7 +138,13 @@ func play_music(music_name: String, loop: bool = true) -> void:
 	print("DEBUG: Attempting to play music: ", music_name, " (loop: ", loop, ")")
 
 	if music_name in loaded_sounds:
-		music_player.stream = loaded_sounds[music_name]
+		var stream = loaded_sounds[music_name]
+		# Check if already playing this stream
+		if music_player.playing and music_player.stream == stream:
+			print("DEBUG: Music already playing, skipping restart")
+			return
+
+		music_player.stream = stream
 		print("DEBUG: Stream loaded from cache, type: ", music_player.stream.get_class())
 		# Handle different audio stream types
 		if music_player.stream is AudioStreamMP3:
@@ -193,6 +219,7 @@ func update_volumes() -> void:
 	if is_muted:
 		music_player.volume_db = -80.0
 		sfx_player.volume_db = -80.0
+		rocket_engine_player.volume_db = -80.0
 		for player in sfx_players_pool:
 			player.volume_db = -80.0
 	else:
@@ -208,6 +235,7 @@ func update_volumes() -> void:
 			sfx_db = linear_to_db(sfx_volume * master_volume)
 			
 		sfx_player.volume_db = sfx_db
+		rocket_engine_player.volume_db = sfx_db
 		for player in sfx_players_pool:
 			player.volume_db = sfx_db
 	
@@ -284,6 +312,45 @@ func play_multiplier_increase(combo_count: int) -> void:
 				# Reset pitch
 				await get_tree().create_timer(1.0).timeout
 				player.pitch_scale = 1.0
+
+func play_rocket_launch() -> void:
+	play_sfx("rocket_launch")
+
+func play_rocket_engine(pitch_scale: float = 1.0) -> void:
+	if is_muted or is_sfx_muted:
+		return
+		
+	if not rocket_engine_player.playing:
+		if "rocket_engine" in loaded_sounds:
+			rocket_engine_player.stream = loaded_sounds["rocket_engine"]
+			# Set loop mode for WAV
+			if rocket_engine_player.stream and rocket_engine_player.stream.has_method("set_loop_mode"):
+				rocket_engine_player.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+		else:
+			# Load on demand
+			var path = audio_paths.get("rocket_engine", "")
+			if not path.is_empty() and ResourceLoader.exists(path):
+				var stream = load(path)
+				loaded_sounds["rocket_engine"] = stream
+				rocket_engine_player.stream = stream
+				# Set loop mode for WAV
+				if rocket_engine_player.stream and rocket_engine_player.stream.has_method("set_loop_mode"):
+					rocket_engine_player.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+		
+		if rocket_engine_player.stream:
+			rocket_engine_player.play()
+	
+	# Update pitch
+	rocket_engine_player.pitch_scale = pitch_scale
+
+func stop_rocket_engine() -> void:
+	if rocket_engine_player:
+		rocket_engine_player.stop()
+
+func set_rocket_engine_volume(db: float) -> void:
+	# Allows stutter effect
+	if rocket_engine_player:
+		rocket_engine_player.volume_db = db
 
 func stop_all_sfx() -> void:
 	sfx_player.stop()

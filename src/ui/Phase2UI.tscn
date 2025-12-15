@@ -223,10 +223,10 @@ color_ramp = SubResource("Gradient_smoke")
 
 [node name="Asteroid1" type="CPUParticles2D" parent="WorkContainer/TargetArea"]
 z_index = 4
-position = Vector2(1104, 303.5)
+position = Vector2(1007, 338.5)
 amount = 2
 texture = ExtResource("7_dshmm")
-lifetime = 20.0
+lifetime = 30.0
 preprocess = 2.0
 randomness = 0.4
 emission_shape = 3
@@ -244,7 +244,7 @@ color = Color(0.85, 0.85, 0.85, 1)
 
 [node name="Asteroid2" type="CPUParticles2D" parent="WorkContainer/TargetArea"]
 z_index = 4
-position = Vector2(950, 300)
+position = Vector2(882, 302.5)
 amount = 2
 texture = ExtResource("7_dshmm")
 lifetime = 20.0
@@ -265,10 +265,10 @@ color = Color(0.85, 0.85, 0.85, 1)
 
 [node name="Asteroid3" type="CPUParticles2D" parent="WorkContainer/TargetArea"]
 z_index = 4
-position = Vector2(1200, 300)
+position = Vector2(990, 462.5)
 amount = 2
 texture = ExtResource("8_t6j8n")
-lifetime = 20.0
+lifetime = 30.0
 preprocess = 2.0
 randomness = 0.4
 emission_shape = 3
@@ -286,7 +286,7 @@ color = Color(0.85, 0.85, 0.85, 1)
 
 [node name="Asteroid4" type="CPUParticles2D" parent="WorkContainer/TargetArea"]
 z_index = 4
-position = Vector2(1000, 300)
+position = Vector2(884, 401.5)
 amount = 2
 texture = ExtResource("9_pyfrd")
 lifetime = 20.0
@@ -305,10 +305,10 @@ color = Color(0.85, 0.85, 0.85, 1)
 
 [node name="Asteroid5" type="CPUParticles2D" parent="WorkContainer/TargetArea"]
 z_index = 4
-position = Vector2(1055, 308.5)
+position = Vector2(942, 237.5)
 amount = 2
 texture = ExtResource("10_44u6g")
-lifetime = 20.0
+lifetime = 30.0
 preprocess = 2.0
 randomness = 0.4
 emission_shape = 3
@@ -441,7 +441,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="OperationsPanel" type="Panel" parent="."]
-z_index = 1000
+z_index = 90
 custom_minimum_size = Vector2(700, 800)
 layout_mode = 1
 anchors_preset = 7

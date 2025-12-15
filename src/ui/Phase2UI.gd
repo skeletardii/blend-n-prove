@@ -259,16 +259,15 @@ func initialize_parallax_background() -> void:
 	if not space_bg1 or not space_bg2:
 		return
 
-	# Get the width of the background texture to calculate seamless looping
-	await get_tree().process_frame  # Wait for layout to update
-	var bg_width = space_bg1.size.x
-
-	# Position the second background to the right of the first
+	# Reset scroll accumulator
 	bg_offset1 = 0.0
-	bg_offset2 = bg_width
-
-	space_bg1.position.x = bg_offset1
-	space_bg2.position.x = bg_offset2
+	
+	# Initial positioning
+	await get_tree().process_frame
+	if space_bg1 and space_bg2:
+		var bg_width = space_bg1.size.x
+		space_bg1.position.x = 0
+		space_bg2.position.x = bg_width
 
 	# Position asteroid particles at right edge
 	var target_area = $WorkContainer/TargetArea as Control
@@ -305,25 +304,24 @@ func update_parallax_background(delta: float) -> void:
 	if not space_bg1 or not space_bg2:
 		return
 
+	# Get the width for seamless wrapping
+	var bg_width = space_bg1.size.x
+	if bg_width <= 0:
+		return
+
 	# Calculate effective scroll speed (base speed * rocket speed multiplier)
 	var effective_speed = bg_scroll_speed * rocket_speed_multiplier
 
-	# Move both backgrounds to the left
-	bg_offset1 -= effective_speed * delta
-	bg_offset2 -= effective_speed * delta
+	# Increment scroll accumulator
+	bg_offset1 += effective_speed * delta
 
-	# Get the width for seamless wrapping
-	var bg_width = space_bg1.size.x
+	# Wrap around when scroll exceeds width
+	while bg_offset1 >= bg_width:
+		bg_offset1 -= bg_width
 
-	# Wrap around when a background goes off-screen to the left
-	if bg_offset1 <= -bg_width:
-		bg_offset1 = bg_offset2 + bg_width
-	if bg_offset2 <= -bg_width:
-		bg_offset2 = bg_offset1 + bg_width
-
-	# Apply the positions
-	space_bg1.position.x = bg_offset1
-	space_bg2.position.x = bg_offset2
+	# Apply the positions (bg1 moves left, bg2 follows immediately)
+	space_bg1.position.x = -bg_offset1
+	space_bg2.position.x = -bg_offset1 + bg_width
 
 func update_asteroid_speed() -> void:
 	"""Update asteroid particle velocity based on ship speed"""
@@ -552,6 +550,19 @@ func increment_combo() -> void:
 			p = p.get_parent()
 
 func reset_combo_penalty() -> void:
+	# Apply fuel penalty (10%)
+	var root = get_tree().current_scene
+	if root.has_method("apply_fuel_penalty"):
+		root.apply_fuel_penalty(0.1)
+
+	# Red glow on selected rule button
+	if not selected_rule.is_empty():
+		var btn = get_rule_button(selected_rule)
+		if btn:
+			var tween = create_tween()
+			tween.tween_property(btn, "modulate", Color.RED, 0.2)
+			tween.tween_property(btn, "modulate", Color.WHITE, 0.2)
+
 	if combo_count < 2:
 		return # Already reset or low
 		
@@ -1048,12 +1059,24 @@ func apply_rule() -> void:
 			# Emit signal after animation delay
 			get_tree().create_timer(1.0).timeout.connect(func(): target_reached.emit(cleaned_result))
 	else:
-		# Clear selections when rule fails
-		clear_selections()
+		# Red glow on selected premises
+		for premise in selected_premises:
+			for card in premise_cards:
+				var btn = card as Button
+				if btn and btn.text == premise.expression_string:
+					var tween = create_tween()
+					tween.tween_property(btn, "modulate", Color.RED, 0.2)
+					tween.tween_property(btn, "modulate", Color.WHITE, 0.2)
+
+		# Show error popup
+		show_error_popup(Vector2.ZERO)
+
 		show_feedback("✗ Cannot apply " + rule_def.name, Color.RED, false)
 		# Penalty: lose fuel and reset combo
 		reset_combo_penalty()
-		# Don't auto-open remotes on failure
+		
+		# Clear selections
+		clear_selections()
 
 func apply_logical_rule_multi(rule: String, premises: Array[BooleanExpression]) -> Array:
 	# Returns an array of results for operations that can produce multiple statements
@@ -1230,6 +1253,32 @@ func animate_target_reached(result: BooleanExpression) -> void:
 	tween.finished.connect(on_finished)
 
 
+var error_comments: Array[String] = [
+	"That doesn't work!",
+	"Try another rule.",
+	"Maybe not quite that one...",
+	"Nope!",
+	"Logic error!",
+	"Cannot apply that here.",
+	"Incorrect premises."
+]
+
+func show_error_popup(target_pos: Vector2) -> void:
+	var label = Label.new()
+	label.text = error_comments.pick_random()
+	label.add_theme_font_size_override("font_size", 24)
+	label.add_theme_color_override("font_color", Color.RED)
+	# Adjust position to be local to this control if needed, but adding child directly works if position is local
+	# get_global_mouse_position returns global. 
+	# If I add child to 'self' (Phase2UI), I should use local position.
+	label.position = get_local_mouse_position() # Use local
+	add_child(label)
+	
+	var tween = create_tween()
+	tween.parallel().tween_property(label, "position:y", label.position.y - 50, 1.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(label, "modulate:a", 0.0, 1.0)
+	tween.tween_callback(label.queue_free)
+
 func show_feedback(message: String, color: Color, emit_to_parent: bool = true) -> void:
 	"""Show shortened feedback at the bottom of the premise box"""
 	feedback_label.text = message
@@ -1392,7 +1441,7 @@ func _on_addition_dialog_cancelled() -> void:
 func trigger_failure_effect() -> void:
 	# Stop scrolling gradually - background slows and stops
 	var tween = create_tween()
-	tween.tween_property(self, "rocket_speed_multiplier", 0.0, 1.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	# DISABLED per user request: tween.tween_property(self, "rocket_speed_multiplier", 0.0, 1.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 	# Stop flames and smoke gradually (engine failure)
 	if flame_core:
