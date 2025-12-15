@@ -92,29 +92,10 @@ func play_intro() -> void:
 	# Initial slow growth (rotation is continuous in _process)
 	tween.tween_property(black_hole, "scale", Vector2(1.8, 1.8), 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
-	# 5. Planet begins spaghettification - stretches vertically as it's pulled toward center
-	# Start asteroids getting sucked in
-	tween.tween_callback(func():
-		asteroid1.emitting = true
-		asteroid2.emitting = true
-		asteroid3.emitting = true
-		asteroid4.emitting = true
-		asteroid5.emitting = true
-	)
+	# 5. Planet shrinks uniformly and disappears into center
+	tween.parallel().tween_property(planet, "scale", Vector2(0.01, 0.01), 2.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(planet, "modulate:a", 0.0, 1.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 
-	# Start stretching effect (spaghettification)
-	tween.parallel().tween_property(planet, "scale:x", 0.5, 1.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(planet, "scale:y", 1.2, 1.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(planet, "rotation", -PI * 1.5, 1.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-
-	# 6. Acceleration phase - planet rapidly spirals into screen center
-	tween.tween_property(black_hole, "scale", Vector2(4.5, 4.5), 0.8).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-
-	# Extreme spaghettification and rapid shrinking toward center
-	tween.parallel().tween_property(planet, "scale:x", 0.05, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(planet, "scale:y", 0.02, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(planet, "rotation", -PI * 4, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(planet, "modulate:a", 0.0, 0.6).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 
 	# 7. Brief moment as planet is consumed
 	tween.tween_interval(0.15)

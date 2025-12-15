@@ -346,6 +346,7 @@ func play_rocket_engine(pitch_scale: float = 1.0) -> void:
 func stop_rocket_engine() -> void:
 	if rocket_engine_player:
 		rocket_engine_player.stop()
+		print("DEBUG: Rocket engine stopped.")
 
 func set_rocket_engine_volume(db: float) -> void:
 	# Allows stutter effect
