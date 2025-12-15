@@ -85,6 +85,14 @@ func submit_score_arcade(initials: String, score: int, level: int, duration: flo
 	else:
 		print("Error: SupabaseService implementation not loaded")
 
+## Submit score (Awaitable)
+func submit_score(initials: String, score: int, duration: float, level: int) -> bool:
+	if _impl:
+		return await _impl.submit_score(initials, score, duration, level)
+	else:
+		print("Error: SupabaseService implementation not loaded")
+		return false
+
 ## Fetch Top 10 from REST API
 func fetch_leaderboard() -> void:
 	if _impl:

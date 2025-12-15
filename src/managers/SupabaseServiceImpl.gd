@@ -144,6 +144,45 @@ func submit_score_arcade(initials: String, score: int, level: int, duration: flo
 	)
 	http.request(url, _get_headers(), HTTPClient.METHOD_POST, body)
 
+## Submit score (Awaitable, returns success bool)
+func submit_score(initials: String, score: int, duration: float, level: int) -> bool:
+	if not is_initialized:
+		print("Supabase not initialized.")
+		return false
+
+	var url = supabase_url + "/functions/v1/submit-leaderboard-score"
+	var body = JSON.stringify({
+		"three_name": initials,
+		"score": score,
+		"level": level,
+		"duration": duration
+	})
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request(url, _get_headers(), HTTPClient.METHOD_POST, body)
+	
+	var result = await http.request_completed
+	http.queue_free()
+	
+	var code = result[1]
+	var body_resp = result[3]
+	
+	if code == 200:
+		var json = JSON.parse_string(body_resp.get_string_from_utf8())
+		if json != null and json.has("rank"):
+			print("Score Submitted! Rank: ", json.rank)
+			# Invalidate cache
+			cached_leaderboard.clear()
+			score_submitted.emit(int(json.rank))
+			return true
+		else:
+			print("Error submitting score (invalid response): ", body_resp.get_string_from_utf8())
+	else:
+		print("Error submitting score (HTTP ", code, "): ", body_resp.get_string_from_utf8())
+		
+	return false
+
 ## Fetch Top 10 from REST API
 func fetch_leaderboard() -> void:
 	if not is_initialized:
@@ -211,18 +250,20 @@ func clear_cache() -> void:
 	cache_timestamp = 0.0
 	print("Leaderboard cache cleared.")
 
-## Check if a score qualifies for the top 10
+## Check if a score qualifies for the top 10 (Daily)
 func check_qualifies_for_top_10(score: int) -> bool:
 	if not is_initialized:
 		return false
 
-	# If we have a recent cache, use it
-	var current_time = Time.get_unix_time_from_system()
-	if cached_leaderboard.size() > 0 and (current_time - cache_timestamp) < CACHE_DURATION:
-		return _check_score_against_leaderboard(score, cached_leaderboard)
+	# We check against DAILY leaderboard to match LeaderboardScene display.
+	# We do NOT use cached_leaderboard (all-time) here.
 
-	# Otherwise, fetch the leaderboard (just scores for efficiency)
-	var url = supabase_url + "/rest/v1/leaderboard?select=game_score&order=game_score.desc&limit=10"
+	# Calculate 24h ago
+	var yesterday_unix = Time.get_unix_time_from_system() - 86400
+	var yesterday_str = Time.get_datetime_string_from_unix_time(yesterday_unix)
+
+	# Fetch daily top 10 scores
+	var url = supabase_url + "/rest/v1/leaderboard?select=game_score&order=game_score.desc&limit=10&created_at=gt." + yesterday_str
 	
 	var http = HTTPRequest.new()
 	add_child(http)
