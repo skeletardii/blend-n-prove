@@ -27,6 +27,7 @@ var audio_paths: Dictionary = {
 	"background_music": "res://assets/music/Kubbi - Up In My Jam  NO COPYRIGHT 8-bit Music.mp3",
 	"game_over_music": "res://assets/music/Game Over (8-Bit Music).mp3",
 	"blackhole_intro_music": "res://assets/music/blackholeintrosound.mp3",
+	"power_on_music": "res://assets/music/power-on-39172.mp3",
 	"multiplier_increase": "res://assets/music/mixkit-arcade-bonus-alert-767.wav",
 	# "menu_music": "res://assets/sound/Menu_In.wav" # Commented out - no music in main menu
 }

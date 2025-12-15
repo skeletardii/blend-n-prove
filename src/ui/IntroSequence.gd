@@ -81,7 +81,7 @@ func play_intro() -> void:
 	tween.tween_callback(func():
 		black_hole.visible = true
 		black_hole_particles.emitting = true
-		AudioManager.play_music("blackhole_intro_music", true) # Play music here
+		AudioManager.play_music("power_on_music", false) # Play music here
 	)
 
 	# 4. Black hole starts rotating and growing slowly (ominous buildup)
