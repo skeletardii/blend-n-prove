@@ -651,6 +651,7 @@ func customer_leaves() -> void:
 			intro_flash.modulate.a = 0.0
 			intro_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			intro_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+			intro_flash.z_index = 100  # Ensure it covers ice border (z=90)
 			add_child(intro_flash)
 			
 			# Add randomized game over comment
@@ -660,8 +661,15 @@ func customer_leaves() -> void:
 			comment_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 			comment_label.add_theme_color_override("font_color", Color.WHITE)
 			comment_label.add_theme_font_size_override("font_size", 48)
+			comment_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			comment_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-			intro_flash.add_child(comment_label)
+			# Add margins to prevent text touching edges
+			var margin_container = MarginContainer.new()
+			margin_container.set_anchors_preset(Control.PRESET_FULL_RECT)
+			margin_container.add_theme_constant_override("margin_left", 50)
+			margin_container.add_theme_constant_override("margin_right", 50)
+			intro_flash.add_child(margin_container)
+			margin_container.add_child(comment_label)
 
 		# Wait briefly, then fade to black
 		await get_tree().create_timer(2.0).timeout
