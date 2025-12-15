@@ -11,7 +11,7 @@ signal delete_requested(row: SolverStepRow)
 var step_number: int = 1
 var result_text: String = ""
 var selected_rule: String = ""
-var selected_sources: Array[int] = []
+var selected_sources: Array = []
 
 # UI References
 var number_label: Label
@@ -113,7 +113,7 @@ func setup_ui():
 
 	source_field = LineEdit.new()
 	source_field.custom_minimum_size = Vector2(400, 40)
-	source_field.placeholder_text = "e.g., 1, 2 or P1, P2"
+	source_field.placeholder_text = "e.g., P1, P2 or S1, S2"
 	source_field.add_theme_font_size_override("font_size", 18)
 	source_field.text_changed.connect(func(new_text):
 		parse_sources(new_text)
@@ -183,13 +183,43 @@ func parse_sources(text: String):
 	selected_sources.clear()
 	var parts = text.split(",")
 	for part in parts:
-		var trimmed = part.strip_edges()
-		# Remove "P" prefix if present (for premises)
+		var trimmed = part.strip_edges().to_upper()
+		
+		# Check for Prefix
+		var type = ""
+		var number_str = ""
+		
 		if trimmed.begins_with("P"):
-			trimmed = trimmed.substr(1)
+			type = "P"
+			number_str = trimmed.substr(1)
+		elif trimmed.begins_with("S"):
+			type = "S"
+			number_str = trimmed.substr(1)
+		elif trimmed.is_valid_int():
+			# Fallback for plain numbers, assume P if it's typical input style or just handle as is
+			# But user asked for P/S distinction. 
+			# Let's assume input "1" means "P1" for backward compat or "S1"? 
+			# The prompt implies explicit differentiation.
+			# Let's default to just storing the raw number if no prefix, 
+			# but the prompt asks for S1/P1 interpretation.
+			# Let's STRICTLY parse P and S, or raw numbers.
+			number_str = trimmed
+		
+		if number_str.is_valid_int():
+			var val = number_str.to_int()
+			if type == "P":
+				selected_sources.append("P" + str(val))
+			elif type == "S":
+				selected_sources.append("S" + str(val))
+			else:
+				# No prefix provided, maybe default to P? Or just pass formatted string?
+				# Let's try to infer or just keep raw for now, but the system needs P/S.
+				# If user types "1", and we want them to type P1/S1, maybe we just store "1" and let validation handle it?
+				# OR, we force them to type P/S.
+				# Let's store "P" + val if they just type a number to be safe/lazy?
+				# No, let's respect the user's input.
+				selected_sources.append(str(val))
 
-		if trimmed.is_valid_int():
-			selected_sources.append(trimmed.to_int())
 
 func update_result_text(text: String):
 	result_text = text

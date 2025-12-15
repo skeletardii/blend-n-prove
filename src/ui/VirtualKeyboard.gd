@@ -103,6 +103,7 @@ func create_row_buttons(row: HBoxContainer, symbols: Array, button_size: int):
 		#button.add_theme_color_override("font_color", Color(0.775, 0.417, 0.946, 1.0))
 		#button.add_theme_color_override("font_focus_color", Color(0.775, 0.417, 0.946, 1.0))
 		#button.add_theme_color_override("font_hover_color", Color(0.6, 0.2, 0.8, 1.0))
+		row.add_child(button)
 		match symbol:
 			"Del":
 				button.pressed.connect(_on_delete_pressed)
@@ -111,7 +112,6 @@ func create_row_buttons(row: HBoxContainer, symbols: Array, button_size: int):
 				button.pressed.connect(_on_clear_pressed)
 				continue
 		button.pressed.connect(_on_symbol_pressed.bind(symbol))
-		row.add_child(button)
 
 ## Set the target LineEdit that this keyboard will input to
 func set_target_field(field: LineEdit):
