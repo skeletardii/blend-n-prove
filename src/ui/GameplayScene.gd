@@ -245,6 +245,27 @@ func update_fuel_system(delta: float) -> void:
 	fuel -= delta * fuel_consumption_rate * score_multiplier
 	fuel = max(0.0, fuel)
 
+	# Engine Audio Logic
+	if GameManager.current_phase == GameManager.GamePhase.TRANSFORMING_PREMISES:
+		if fuel <= 0.0:
+			AudioManager.stop_rocket_engine()
+		else:
+			# Pitch: Increases with speed (Base 1.0, scales with speed)
+			var target_pitch = 1.0 + ((current_speed - 1.0) * 0.2)
+			
+			# Stutter if fuel is low (< 15%)
+			if fuel < 15.0:
+				# Random volume drop for stutter effect
+				if randf() > 0.7:
+					AudioManager.set_rocket_engine_volume(-20.0) # significantly quieter
+				else:
+					AudioManager.set_rocket_engine_volume(linear_to_db(AudioManager.sfx_volume * AudioManager.master_volume))
+			else:
+				# Normal volume (reset in case it was stuttering)
+				AudioManager.set_rocket_engine_volume(linear_to_db(AudioManager.sfx_volume * AudioManager.master_volume))
+			
+			AudioManager.play_rocket_engine(target_pitch)
+
 	# Gain score over time based on speed
 	score_accumulator += delta * current_speed * 10.0 * gameplay_multiplier  # 10 points per second at 1x speed
 	var score_to_add: int = int(score_accumulator)
@@ -394,6 +415,9 @@ func switch_to_phase1() -> void:
 
 	# Change background to Phase 1
 	change_background(GameManager.GamePhase.PREPARING_PREMISES)
+	
+	# Stop rocket engine sound (rocket not visible in Phase 1)
+	AudioManager.stop_rocket_engine()
 
 	# Clear current phase
 	if current_phase_instance:
@@ -439,6 +463,9 @@ func switch_to_phase2() -> void:
 
 	# Change background to Phase 2
 	change_background(GameManager.GamePhase.TRANSFORMING_PREMISES)
+	
+	# Start rocket engine sound
+	AudioManager.play_rocket_engine()
 
 	# Check if we're already in Phase 2 - if so, just update premises instead of recreating scene
 	var already_in_phase2 = current_phase_instance != null and current_phase_instance.has_method("set_premises_and_target")
@@ -643,6 +670,8 @@ func customer_leaves() -> void:
 		# Trigger failure effect if in Phase 2
 		if current_phase_instance and current_phase_instance.has_method("trigger_failure_effect"):
 			current_phase_instance.trigger_failure_effect()
+			
+		AudioManager.stop_rocket_engine()
 
 		# Create fade overlay if it doesn't exist
 		if not is_instance_valid(intro_flash):

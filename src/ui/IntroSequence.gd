@@ -58,6 +58,7 @@ func _process(delta: float) -> void:
 		black_hole.rotation += black_hole_rotation_speed * delta
 
 func play_intro() -> void:
+	AudioManager.play_rocket_launch()
 	var tween = create_tween()
 	var screen_center = get_viewport_rect().size / 2
 
