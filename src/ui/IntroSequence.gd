@@ -49,6 +49,9 @@ func _ready() -> void:
 	planet.scale = Vector2(1.0, 1.0)
 	flash.modulate.a = 0.0
 
+	# Start background music early
+	AudioManager.start_background_music()
+
 	# Start sequence
 	play_intro()
 

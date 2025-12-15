@@ -137,7 +137,13 @@ func play_music(music_name: String, loop: bool = true) -> void:
 	print("DEBUG: Attempting to play music: ", music_name, " (loop: ", loop, ")")
 
 	if music_name in loaded_sounds:
-		music_player.stream = loaded_sounds[music_name]
+		var stream = loaded_sounds[music_name]
+		# Check if already playing this stream
+		if music_player.playing and music_player.stream == stream:
+			print("DEBUG: Music already playing, skipping restart")
+			return
+
+		music_player.stream = stream
 		print("DEBUG: Stream loaded from cache, type: ", music_player.stream.get_class())
 		# Handle different audio stream types
 		if music_player.stream is AudioStreamMP3:
