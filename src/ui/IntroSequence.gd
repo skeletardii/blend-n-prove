@@ -58,7 +58,6 @@ func _process(delta: float) -> void:
 		black_hole.rotation += black_hole_rotation_speed * delta
 
 func play_intro() -> void:
-	AudioManager.play_music("blackhole_intro_music", true)
 	var tween = create_tween()
 	var screen_center = get_viewport_rect().size / 2
 
@@ -82,6 +81,7 @@ func play_intro() -> void:
 	tween.tween_callback(func():
 		black_hole.visible = true
 		black_hole_particles.emitting = true
+		AudioManager.play_music("blackhole_intro_music", true) # Play music here
 	)
 
 	# 4. Black hole starts rotating and growing slowly (ominous buildup)
