@@ -102,20 +102,13 @@ theme_override_font_sizes/font_size = 72
 text = "GAME OVER"
 horizontal_alignment = 1
 
-[node name="Spacer1" type="Control" parent="GameOverPanel/GameOverContainer"]
-custom_minimum_size = Vector2(0, 20)
+[node name="ContentContainer" type="VBoxContainer" parent="GameOverPanel/GameOverContainer"]
 layout_mode = 2
+theme_override_constants/separation = 20
 
-[node name="FinalScore" type="Label" parent="GameOverPanel/GameOverContainer"]
-visible = false
+[node name="SpacerExpander" type="Control" parent="GameOverPanel/GameOverContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
-text = "Final Score: 0"
-horizontal_alignment = 1
-
-[node name="Spacer2" type="Control" parent="GameOverPanel/GameOverContainer"]
-custom_minimum_size = Vector2(0, 30)
-layout_mode = 2
+size_flags_vertical = 3
 
 [node name="PlayAgainButton" type="Button" parent="GameOverPanel/GameOverContainer"]
 custom_minimum_size = Vector2(400, 70)
