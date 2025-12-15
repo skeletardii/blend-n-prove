@@ -69,7 +69,7 @@ func add_progress_context() -> void:
 	var current_score_label = RichTextLabel.new()
 	current_score_label.bbcode_enabled = true
 	# Score first (BIG), then label (smaller)
-	current_score_label.text = "[center][font_size=96]" + str(current_score) + "[/font_size]\n[font_size=32]Final Score[/font_size][/center]"
+	current_score_label.text = "[center][font_size=96]" + str(current_score) + "[/font_size]\n[font_size=32]FINAL SCORE[/font_size][/center]"
 	current_score_label.add_theme_font_override("normal_font", FONT_HEAVY)
 	current_score_label.add_theme_font_override("bold_font", FONT_HEAVY)
 	current_score_label.add_theme_color_override("default_color", Color.BLACK)
