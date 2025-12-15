@@ -3,6 +3,9 @@ extends Control
 ## High Score Entry Scene
 ## Allows players to enter their 3-letter name when they achieve a top 10 score
 
+const HEADER_FONT = preload("res://assets/fonts/MuseoSansRounded900.otf")
+const BODY_FONT = preload("res://assets/fonts/MuseoSansRounded300.otf")
+
 # Character data
 var current_name: Array[String] = ["A", "A", "A"]  # Default to AAA
 var current_position: int = 0
@@ -11,14 +14,15 @@ var session_duration: float = 0.0
 var difficulty_level: int = 1
 
 # Virtual keyboard characters
-const LETTERS_ROW1 = ["A", "B", "C", "D", "E", "F", "G"]
-const LETTERS_ROW2 = ["H", "I", "J", "K", "L", "M", "N"]
-const LETTERS_ROW3 = ["O", "P", "Q", "R", "S", "T", "U"]
-const LETTERS_ROW4 = ["V", "W", "X", "Y", "Z"]
-const NUMBERS_ROW5 = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+const LETTERS_ROW1 = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]
+const LETTERS_ROW2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"]
+const LETTERS_ROW3 = ["Z", "X", "C", "V", "B", "N", "M"]
+const NUMBERS_ROW4 = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 # UI References
+@onready var new_high_score_title: Label = $EntryPanel/EntryContainer/NewHighScoreTitle
 @onready var score_display: Label = $EntryPanel/EntryContainer/ScoreDisplay
+@onready var instructions_label: Label = $EntryPanel/EntryContainer/InstructionsLabel
 @onready var letter_labels: Array[Label] = [
 	$EntryPanel/EntryContainer/NameDisplay/LetterContainer/Letter1Panel/Letter1,
 	$EntryPanel/EntryContainer/NameDisplay/LetterContainer/Letter2Panel/Letter2,
@@ -58,6 +62,11 @@ func _ready() -> void:
 
 	# Display score
 	score_display.text = str(achieved_score)
+	
+	# Apply fonts
+	new_high_score_title.add_theme_font_override("font", HEADER_FONT)
+	score_display.add_theme_font_override("font", HEADER_FONT)
+	instructions_label.add_theme_font_override("font", BODY_FONT)
 
 	# Setup virtual keyboard
 	create_keyboard()
@@ -74,8 +83,8 @@ func create_keyboard() -> void:
 	create_row_buttons(row1, LETTERS_ROW1)
 	create_row_buttons(row2, LETTERS_ROW2)
 	create_row_buttons(row3, LETTERS_ROW3)
-	create_row_buttons(row4, LETTERS_ROW4)
-	create_row_buttons(row5, NUMBERS_ROW5)
+	create_row_buttons(row4, NUMBERS_ROW4)
+	# Row 5 is unused in QWERTY layout with numbers on row 4
 
 func create_row_buttons(row: HBoxContainer, characters: Array) -> void:
 	for character in characters:

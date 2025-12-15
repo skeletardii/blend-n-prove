@@ -1,0 +1,342 @@
+{
+  "level": 1,
+  "description": "Level 1: 1 operation, max 2 premises - Mix of direct symbols and word analysis",
+  "problems": [
+	{
+	  "problem_type": "direct_symbols",
+	  "premises": [
+		"P → Q",
+		"P"
+	  ],
+	  "conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Modus Ponens",
+	  "solution": "Apply Modus Ponens: from \"P → Q\" and \"P\", conclude \"Q\"."
+	},
+	{
+	  "premises": [
+		"P ∧ Q"
+	  ],
+	  "conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Simplification (left)",
+	  "solution": "Apply Simplification to extract the left conjunct \"P\" from \"P ∧ Q\"."
+	},
+	{
+	  "premises": [
+		"P → Q",
+		"¬Q"
+	  ],
+	  "conclusion": "¬P",
+	  "expected_operations": 1,
+	  "description": "Modus Tollens",
+	  "solution": "Apply Modus Tollens: from \"P → Q\" and \"¬Q\", conclude \"¬P\"."
+	},
+	{
+	  "premises": [
+		"P ∨ Q",
+		"¬P"
+	  ],
+	  "conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Disjunctive Syllogism",
+	  "solution": "Apply Disjunctive Syllogism: from \"P ∨ Q\" and \"¬P\", conclude \"Q\"."
+	},
+	{
+	  "premises": [
+		"¬¬P"
+	  ],
+	  "conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Double Negation",
+	  "solution": "Apply Double Negation elimination to remove \"¬¬\" and get \"P\"."
+	},
+	{
+	  "premises": [
+		"P",
+		"Q"
+	  ],
+	  "conclusion": "P ∧ Q",
+	  "expected_operations": 1,
+	  "description": "Conjunction",
+	  "solution": "Apply Conjunction to combine \"P\" and \"Q\" into \"(P ∧ Q)\"."
+	},
+	{
+	  "premises": [
+		"R ∧ S"
+	  ],
+	  "conclusion": "S",
+	  "expected_operations": 1,
+	  "description": "Simplification (right)",
+	  "solution": "Apply Simplification to extract the right conjunct \"S\" from \"R ∧ S\"."
+	},
+	{
+	  "premises": [
+		"¬(P ∧ Q)"
+	  ],
+	  "conclusion": "¬P ∨ ¬Q",
+	  "expected_operations": 1,
+	  "description": "De Morgan's Law (AND)",
+	  "solution": "Apply De Morgan's Law to transform \"¬(P ∧ Q)\" into \"(¬P ∨ ¬Q)\"."
+	},
+	{
+	  "premises": [
+		"¬(P ∨ Q)"
+	  ],
+	  "conclusion": "¬P ∧ ¬Q",
+	  "expected_operations": 1,
+	  "description": "De Morgan's Law (OR)",
+	  "solution": "Apply De Morgan's Law to transform \"¬(P ∨ Q)\" into \"(¬P ∧ ¬Q)\"."
+	},
+	{
+	  "premises": [
+		"Q ∨ R",
+		"¬Q"
+	  ],
+	  "conclusion": "R",
+	  "expected_operations": 1,
+	  "description": "Disjunctive Syllogism (variant)",
+	  "solution": "Apply Disjunctive Syllogism: from \"Q ∨ R\" and \"¬Q\", conclude \"R\"."
+	},
+	{
+	  "premises": [
+		"P ∧ Q"
+	  ],
+	  "conclusion": "Q ∧ P",
+	  "expected_operations": 1,
+	  "description": "Commutativity (AND)",
+	  "solution": "Apply Commutativity to reorder the conjuncts: \"P ∧ Q\" is equivalent to \"(Q ∧ P)\"."
+	},
+	{
+	  "premises": [
+		"P ∨ Q"
+	  ],
+	  "conclusion": "Q ∨ P",
+	  "expected_operations": 1,
+	  "description": "Commutativity (OR)",
+	  "solution": "Apply Commutativity to reorder the disjuncts: \"P ∨ Q\" is equivalent to \"Q ∨ P\"."
+	},
+	{
+	  "premises": [
+		"P ∧ P"
+	  ],
+	  "conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Idempotent (AND)",
+	  "solution": "Apply Idempotent law: \"P ∧ P\" simplifies to just \"P\"."
+	},
+	{
+	  "premises": [
+		"R ∨ R"
+	  ],
+	  "conclusion": "R",
+	  "expected_operations": 1,
+	  "description": "Idempotent (OR)",
+	  "solution": "Apply Idempotent law: \"R ∨ R\" simplifies to just \"R\"."
+	},
+	{
+	  "premises": [
+		"P"
+	  ],
+	  "conclusion": "P ∨ Q",
+	  "expected_operations": 1,
+	  "description": "Addition (OR introduction)",
+	  "solution": "Apply Addition: from \"P\", you can conclude \"(P ∨ Q)\" since P being true makes the disjunction true."
+	},
+	{
+	  "premises": [
+		"R"
+	  ],
+	  "conclusion": "R ∨ S",
+	  "expected_operations": 1,
+	  "description": "Addition (OR introduction, variant)",
+	  "solution": "Apply Addition: from \"R\", you can conclude \"R ∨ S\" since R being true makes the disjunction true."
+	},
+	{
+	  "premises": [
+		"P ∨ (P ∧ Q)"
+	  ],
+	  "conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Absorption Law (OR absorbing AND)",
+	  "solution": "Apply Absorption law: \"P ∨ (P ∧ Q)\" simplifies to \"P\" since if P is true, the whole expression is true regardless of Q."
+	},
+	{
+	  "premises": [
+		"R ∧ (R ∨ S)"
+	  ],
+	  "conclusion": "R",
+	  "expected_operations": 1,
+	  "description": "Absorption Law (AND absorbing OR)",
+	  "solution": "Apply Absorption law: \"R ∧ (R ∨ S)\" simplifies to \"R\" since R must be true for the whole expression to be true."
+	},
+	{
+	  "premises": [
+		"S → T",
+		"S"
+	  ],
+	  "conclusion": "T",
+	  "expected_operations": 1,
+	  "description": "Modus Ponens (variant)",
+	  "solution": "Apply Modus Ponens: from \"S → T\" and \"S\", conclude \"T\"."
+	},
+	{
+	  "premises": [
+		"R → S",
+		"¬S"
+	  ],
+	  "conclusion": "¬R",
+	  "expected_operations": 1,
+	  "description": "Modus Tollens (variant)",
+	  "solution": "Apply Modus Tollens: from \"R → S\" and \"¬S\", conclude \"¬R\"."
+	},
+	{
+	  "natural_language_premises": [
+		"If the cat is hungry (P), then it meows (Q).",
+		"The cat is hungry (P)."
+	  ],
+	  "hidden_logical_premises": ["P → Q", "P"],
+	  "natural_language_conclusion": "The cat meows (Q).",
+	  "hidden_logical_conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Modus Ponens with natural language",
+	  "solution": "Translate: P = 'The cat is hungry', Q = 'The cat meows'. Apply Modus Ponens: from \"P → Q\" and \"P\", conclude \"Q\".",
+	  "variable_definitions": {
+		"P": "the cat is hungry",
+		"Q": "the cat meows"
+	  },
+	  "interpretation_hints": ["Identify the condition and what follows from it", "The condition is met, so the consequence is true"]
+	},
+	{
+	  "natural_language_premises": [
+		"If the light is on (P), then the room is bright (Q).",
+		"The room is not bright (¬Q)."
+	  ],
+	  "hidden_logical_premises": ["P → Q", "¬Q"],
+	  "natural_language_conclusion": "The light is not on (¬P).",
+	  "hidden_logical_conclusion": "¬P",
+	  "expected_operations": 1,
+	  "description": "Modus Tollens with natural language",
+	  "solution": "Translate: P = 'The light is on', Q = 'The room is bright'. Apply Modus Tollens: from \"P → Q\" and \"¬Q\", conclude \"¬P\".",
+	  "variable_definitions": {
+		"P": "the light is on",
+		"Q": "the room is bright"
+	  },
+	  "interpretation_hints": ["Work backwards from the false consequence", "If the result is false, the condition must be false"]
+	},
+	{
+	  "natural_language_premises": [
+		"The book is fiction (P) and the book is entertaining (Q)."
+	  ],
+	  "hidden_logical_premises": ["P ∧ Q"],
+	  "natural_language_conclusion": "The book is fiction (P).",
+	  "hidden_logical_conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Simplification (extracting left component)",
+	  "solution": "Translate: P = 'Book is fiction', Q = 'Book is entertaining'. Apply Simplification to extract P from P ∧ Q.",
+	  "variable_definitions": {
+		"P": "the book is fiction",
+		"Q": "the book is entertaining"
+	  },
+	  "interpretation_hints": ["When something is both A and B, each property still holds individually"]
+	},
+	{
+	  "natural_language_premises": [
+		"Either the store is open (P) or it is closed (Q).",
+		"The store is not open (¬P)."
+	  ],
+	  "hidden_logical_premises": ["P ∨ Q", "¬P"],
+	  "natural_language_conclusion": "The store is closed (Q).",
+	  "hidden_logical_conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Disjunctive Syllogism with natural language",
+	  "solution": "Translate: P = 'Store is open', Q = 'Store is closed'. Apply Disjunctive Syllogism: from P ∨ Q and ¬P, conclude Q.",
+	  "variable_definitions": {
+		"P": "the store is open",
+		"Q": "the store is closed"
+	  },
+	  "interpretation_hints": ["One of two options must be true", "If one is false, the other must be true"]
+	},
+	{
+	  "natural_language_premises": [
+		"It is not the case that the weather is not sunny (¬¬P)."
+	  ],
+	  "hidden_logical_premises": ["¬¬P"],
+	  "natural_language_conclusion": "The weather is sunny (P).",
+	  "hidden_logical_conclusion": "P",
+	  "expected_operations": 1,
+	  "description": "Double Negation elimination",
+	  "solution": "Translate: P = 'Weather is sunny'. Apply Double Negation elimination: ¬¬P becomes P.",
+	  "variable_definitions": {
+		"P": "the weather is sunny"
+	  },
+	  "interpretation_hints": ["Removing double negatives reveals the positive statement"]
+	},
+	{
+	  "natural_language_premises": [
+		"The car is red (P).",
+		"The car is fast (Q)."
+	  ],
+	  "hidden_logical_premises": ["P", "Q"],
+	  "natural_language_conclusion": "The car is red and fast (P ∧ Q).",
+	  "hidden_logical_conclusion": "P ∧ Q",
+	  "expected_operations": 1,
+	  "description": "Conjunction with natural language",
+	  "solution": "Translate: P = 'Car is red', Q = 'Car is fast'. Apply Conjunction to combine P and Q into P ∧ Q.",
+	  "variable_definitions": {
+		"P": "the car is red",
+		"Q": "the car is fast"
+	  },
+	  "interpretation_hints": ["Combine individual facts into a compound statement"]
+	},
+	{
+	  "natural_language_premises": [
+		"The pizza has cheese (P) and has pepperoni (Q)."
+	  ],
+	  "hidden_logical_premises": ["P ∧ Q"],
+	  "natural_language_conclusion": "The pizza has pepperoni (Q).",
+	  "hidden_logical_conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Simplification (extracting right component)",
+	  "solution": "Translate: P = 'Pizza has cheese', Q = 'Pizza has pepperoni'. Apply Simplification to extract Q from P ∧ Q.",
+	  "variable_definitions": {
+		"P": "the pizza has cheese",
+		"Q": "the pizza has pepperoni"
+	  },
+	  "interpretation_hints": ["From a compound AND statement, extract the second component"]
+	},
+	{
+	  "natural_language_premises": [
+		"The student passed the exam (P).",
+		"Either the student failed the exam (¬P) or got a scholarship (Q)."
+	  ],
+	  "hidden_logical_premises": ["P", "¬P ∨ Q"],
+	  "natural_language_conclusion": "The student got a scholarship (Q).",
+	  "hidden_logical_conclusion": "Q",
+	  "expected_operations": 1,
+	  "description": "Disjunctive Syllogism with premise negation",
+	  "solution": "Translate: P = 'Student passed', Q = 'Got scholarship'. From P, we know ¬P is false. Apply Disjunctive Syllogism with ¬P ∨ Q to conclude Q.",
+	  "variable_definitions": {
+		"P": "the student passed the exam",
+		"Q": "the student got a scholarship"
+	  },
+	  "interpretation_hints": ["Use the known fact to eliminate one option from the disjunction"]
+	},
+	{
+	  "natural_language_premises": [
+		"It is not the case that both the team won (P) and lost (Q)."
+	  ],
+	  "hidden_logical_premises": ["¬(P ∧ Q)"],
+	  "natural_language_conclusion": "Either the team did not win or did not lose (¬P ∨ ¬Q).",
+	  "hidden_logical_conclusion": "¬P ∨ ¬Q",
+	  "expected_operations": 1,
+	  "description": "De Morgan's Law with natural language",
+	  "solution": "Translate: P = 'Team won', Q = 'Team lost'. Apply De Morgan's Law: ¬(P ∧ Q) becomes ¬P ∨ ¬Q.",
+	  "variable_definitions": {
+		"P": "the team won",
+		"Q": "the team lost"
+	  },
+	  "interpretation_hints": ["'Not both' means at least one is false", "This is equivalent to saying 'not one or not the other'"]
+	}
+  ]
+}

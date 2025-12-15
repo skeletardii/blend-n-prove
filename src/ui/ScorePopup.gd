@@ -166,9 +166,17 @@ func _animate_popup(multiplier: float, popup_color: Color) -> void:
 	tween.chain().tween_property(container, "scale", Vector2.ONE, SCALE_DURATION * 0.4) \
 		.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
 
-	# Screen flash for high multipliers (2x and above)
-	if multiplier >= 2.0:
-		var flash_intensity: float = min((multiplier - 2.0) * 0.15, 0.3)
+	# Add pulsing effect to multiplier label for emphasis
+	var pulse_tween: Tween = create_tween()
+	pulse_tween.set_loops(3)
+	pulse_tween.tween_property(multiplier_label, "scale", Vector2(1.2, 1.2), 0.25) \
+		.set_ease(Tween.EASE_OUT)
+	pulse_tween.tween_property(multiplier_label, "scale", Vector2.ONE, 0.25) \
+		.set_ease(Tween.EASE_IN)
+
+	# Screen flash for high multipliers (1.5x and above) - made more dramatic
+	if multiplier >= 1.5:
+		var flash_intensity: float = min((multiplier - 1.5) * 0.2, 0.5)
 		flash_rect.modulate = popup_color
 		var flash_tween: Tween = create_tween()
 		flash_tween.tween_property(flash_rect, "modulate:a", flash_intensity, 0.1)

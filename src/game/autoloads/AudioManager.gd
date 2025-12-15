@@ -31,10 +31,11 @@ var audio_paths: Dictionary = {
 	"power_on_music": "res://assets/music/power-on-39172.mp3",
 	"multiplier_increase": "res://assets/music/mixkit-arcade-bonus-alert-767.wav",
 	"rocket_launch": "res://assets/sound/Explosion.wav",
-	"rocket_engine": "res://assets/sound/Thunder.wav",
+	"rocket_engine": "res://assets/music/rocket-engine-90835.mp3",
 	"losing_horn": "res://assets/music/losing-horn-313723.mp3",
 	"fail_trumpet": "res://assets/music/cartoon-fail-trumpet-278822.mp3",
-	"fail_sound": "res://assets/music/fail-234710.mp3"
+	"fail_sound": "res://assets/music/fail-234710.mp3",
+	"invalid_rule": "res://assets/music/error-08-206492.mp3"
 	# "menu_music": "res://assets/sound/Menu_In.wav" # Commented out - no music in main menu
 }
 
@@ -46,7 +47,7 @@ func play_game_over_fail_sound() -> void:
 	play_sfx(fail_sounds.pick_random())
 
 func play_multiplier_lost_sound() -> void:
-	play_sfx("fail_sound")
+	play_sfx("invalid_rule")
 
 # Loaded audio streams
 var loaded_sounds: Dictionary = {}
