@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://d13ohu4mg1m4w" path="res://assets/sprites/spiralbg.jpg" id="3_spiral"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="4_theme"]
 [ext_resource type="Shader" path="res://src/shaders/ui_blur.gdshader" id="5_blur"]
+[ext_resource type="Script" uid="uid://c03es3s5m6ago" path="res://src/ui/BooleanAsteroidField.gd" id="6_asteroid"]
 
 [sub_resource type="Gradient" id="Gradient_bg"]
 offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
@@ -58,6 +59,15 @@ grow_vertical = 2
 texture = ExtResource("3_spiral")
 expand_mode = 2
 stretch_mode = 1
+
+[node name="BooleanAsteroidField" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_asteroid")
 
 [node name="BlurLayer" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_blur")
