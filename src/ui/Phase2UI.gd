@@ -31,6 +31,7 @@ const score_popup_scene = preload("res://src/ui/ScorePopup.tscn")
 @onready var combo_sparkles: CPUParticles2D = $ComboContainer/ComboLabel/Sparkles
 @onready var combo_sparks: CPUParticles2D = $ComboContainer/ComboLabel/FallingSparks
 @onready var combo_fire: CPUParticles2D = $ComboContainer/ComboLabel/Fire
+@onready var play_error: AudioStreamPlayer2D = $WorkContainer/TargetArea/ErrorSound
 
 # Card Styles
 var card_style_normal: StyleBoxFlat
@@ -1264,6 +1265,7 @@ var error_comments: Array[String] = [
 ]
 
 func show_error_popup(target_pos: Vector2) -> void:
+	play_error.play()
 	var label = Label.new()
 	label.text = error_comments.pick_random()
 	label.add_theme_font_size_override("font_size", 24)

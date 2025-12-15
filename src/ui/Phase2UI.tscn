@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://c5oyjk8p0w8x4"]
+[gd_scene load_steps=25 format=3 uid="uid://c5oyjk8p0w8x4"]
 
 [ext_resource type="Script" uid="uid://d0ih4fib6hkdp" path="res://src/ui/Phase2UI.gd" id="1_phase2"]
 [ext_resource type="PackedScene" uid="uid://c8x4k5nan2p1q" path="res://src/ui/AdditionDialog.tscn" id="2_addition_dialog"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://cfk352ey3dpg5" path="res://assets/sprites/asteroid3.png" id="8_t6j8n"]
 [ext_resource type="Texture2D" uid="uid://b5ks3n8sl218x" path="res://assets/sprites/asteroid4.png" id="9_pyfrd"]
 [ext_resource type="Texture2D" uid="uid://bxgb1wsi8m7tu" path="res://assets/sprites/asteroid5.png" id="10_44u6g"]
+[ext_resource type="AudioStream" uid="uid://b7oguqhas44yi" path="res://assets/music/error-08-206492.mp3" id="11_t6j8n"]
 
 [sub_resource type="Gradient" id="Gradient_flame"]
 colors = PackedColorArray(1, 0.9, 0.2, 1, 1, 0.4, 0, 0)
@@ -323,6 +324,11 @@ angular_velocity_max = 45.0
 scale_amount_min = 1.2
 scale_amount_max = 1.2
 color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="ErrorSound" type="AudioStreamPlayer2D" parent="WorkContainer/TargetArea"]
+position = Vector2(794, 103.5)
+stream = ExtResource("11_t6j8n")
+volume_db = 18.667
 
 [node name="ChatBubble" type="Panel" parent="WorkContainer/TargetArea"]
 z_index = 20
