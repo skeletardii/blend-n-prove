@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b0ebagu0ts5p1"]
+[gd_scene load_steps=9 format=3 uid="uid://b0ebagu0ts5p1"]
 
 [ext_resource type="Script" uid="uid://csubga53p2pr4" path="res://src/ui/Phase1UI.gd" id="1_phase1"]
 [ext_resource type="Texture2D" uid="uid://5s07bsbpboi0" path="res://assets/sprites/Phase1UIMockup.png" id="2_tgfdk"]
@@ -53,7 +53,6 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 5.0
-offset_top = 0.0
 offset_right = -5.0
 offset_bottom = -5.0
 grow_horizontal = 2

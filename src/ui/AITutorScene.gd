@@ -5,14 +5,12 @@ extends Control
 
 # Tutor state machine
 enum TutorState {
-	GREETING,           # Initial greeting
-	AWAITING_TOPIC,     # Waiting for learning topic
-	GENERATING_PROBLEM, # AI creating problem
-	AWAITING_SOLUTION,  # User solving
-	PROVIDING_FEEDBACK  # AI reviewing
+	AWAITING_INPUT,     # Waiting for user input (topic, question, or chat)
+	AWAITING_SOLUTION,  # User is solving a problem
+	REVIEWING           # Viewing feedback
 }
 
-var current_state: TutorState = TutorState.GREETING
+var current_state: TutorState = TutorState.AWAITING_INPUT
 
 # Problem data
 var current_problem: Dictionary = {
@@ -30,8 +28,6 @@ var active_step_field: LineEdit = null
 var is_chat_open: bool = false
 var chat_tween: Tween = null
 var has_unread_messages: bool = false
-
-# Note: We use stateless JSON requests, no conversation history needed
 
 # UI References - Chat Overlay
 @onready var chat_toggle_button: Button = $MainMargin/MainVBox/TopBar/ChatToggleButton
@@ -57,7 +53,12 @@ var has_unread_messages: bool = false
 @onready var erase_button: Button = $MainMargin/MainVBox/InputControls/EraseButton
 @onready var clear_button: Button = $MainMargin/MainVBox/InputControls/ClearButton
 
-# System prompts for different request types
+# New UI Elements
+var feedback_view: FeedbackView
+var loading_overlay: ColorRect
+var loading_label: Label
+
+# System prompts
 const BASE_SYSTEM_CONTEXT = """You are an expert tutor for boolean logic and formal reasoning.
 
 Available Inference Rules:
@@ -82,64 +83,74 @@ Available Equivalence Laws:
 - Contrapositive: P → Q ≡ ¬Q → ¬P
 - Idempotence: P ∧ P ≡ P, P ∨ P ≡ P
 - Absorption: P ∧ (P ∨ Q) ≡ P, P ∨ (P ∧ Q) ≡ P
-
-Use only variables: P, Q, R, S, T
-Use operators: ∧ (AND), ∨ (OR), ⊕ (XOR), ¬ (NOT), → (implies), ↔ (biconditional)
 """
 
-const PROBLEM_GENERATION_PROMPT = """Generate a boolean logic practice problem based on the student's learning request.
+const ROUTER_PROMPT = """Analyze the student's input and determine the appropriate response type.
 
-You MUST respond with ONLY valid JSON in this exact format:
+You MUST respond with ONLY valid JSON in this exact format with a 'type' field. Prioritize generating a 'problem' if the student asks to learn a concept.
+
+1. If the student explicitly asks for a boolean logic practice problem, mentions a topic to practice, or asks to learn/be taught a specific logic concept or rule (e.g., "teach me Modus Ponens", "I want to learn about conjunction"):
 {
   "type": "problem",
-  "topic": "description of what this problem teaches",
+  "problem_type": "symbol|worded",
+  "topic": "description of topic (e.g., Modus Ponens, Conjunction)",
   "premises": ["premise1", "premise2", ...],
-  "target": "conclusion to derive",
-  "hint": "optional hint about which rules to use",
+  "variable_mapping": {"P": "It is raining", "Q": "The ground is wet"}, // Required if problem_type is 'worded', else null
+  "target": "conclusion",
+  "hint": "optional hint",
   "difficulty": "easy|medium|hard"
 }
+Note: Problem should be solvable in 3-7 steps. Premises must be simple logical statements. Variables used in problems MUST be strictly from P, Q, R, S, T, U, V. Do NOT use A, B, C, W, X, Y, Z or any other letters. No step numbers.
+If problem_type is "worded", premises should be in English sentences, and variable_mapping must provide the key. If "symbol", premises use logical symbols directly.
 
-Requirements:
-- Problem should be solvable in 3-7 steps
-- Premises should be simple, clear logical statements
-- Target should logically follow from premises
-- Do not include step numbers or labels in premises
-- Respond with ONLY the JSON, no other text
+2. If the student asks a general question about logic/rules/concepts without requesting to be taught or practice (e.g., "What is a tautology?", "How does Modus Tollens work in general?"):
+{
+  "type": "answer",
+  "response": "detailed answer",
+  "related_rules": ["rule1", "rule2"],
+  "example": "optional example"
+}
+
+3. If the student is just chatting or saying hello:
+{
+  "type": "chat",
+  "response": "conversational response"
+}
+
+4. If the request is unrelated to boolean logic, math, or reasoning:
+{
+  "type": "refusal",
+  "response": "polite refusal message explaining you only teach boolean logic"
+}
+
+Respond with ONLY the JSON.
 """
 
-const VALIDATION_PROMPT = """Validate the student's step-by-step solution to a boolean logic problem.
+const VALIDATION_PROMPT = """Validate the student's step-by-step solution to the boolean logic problem.
+
+The solution steps use the following reference notation:
+- P#: Refers to a premise from the original problem (e.g., P1 is the first premise).
+- S#: Refers to a previous step in the user's solution (e.g., S1 is the result of the user's first step).
 
 You MUST respond with ONLY valid JSON in this exact format:
 {
   "type": "validation",
   "is_correct": true|false,
-  "errors": [
+  "step_analysis": [
     {
       "step": 1,
-      "issue": "description of the error",
-      "suggestion": "how to fix it"
+      "is_correct": true|false,
+      "feedback": "Specific feedback for this step (why it is correct or incorrect)",
+      "suggestion": "optional hint if incorrect"
     }
   ],
-  "feedback": "overall feedback message",
+  "feedback": "overall assessment",
   "correct_solution": ["step1", "step2", ...],
-  "encouragement": "positive message for the student"
+  "encouragement": "positive message"
 }
 
-If solution is correct, errors array should be empty and is_correct should be true.
-Respond with ONLY the JSON, no other text.
-"""
-
-const QUESTION_PROMPT = """Answer the student's question about boolean logic, inference rules, or their current problem.
-
-You MUST respond with ONLY valid JSON in this exact format:
-{
-  "type": "answer",
-  "response": "your detailed answer to the question",
-  "related_rules": ["rule1", "rule2", ...],
-  "example": "optional example if helpful"
-}
-
-Be concise but thorough. Respond with ONLY the JSON, no other text.
+Provide analysis for EVERY step submitted by the student.
+Respond with ONLY the JSON.
 """
 
 func _ready():
@@ -160,19 +171,45 @@ func _ready():
 	close_button.pressed.connect(close_chat)
 	dim_overlay.gui_input.connect(_on_dim_overlay_clicked)
 
-	# Initialize notification badge as hidden
+	# Initialize notification badge
 	notification_badge.visible = false
-
-	# Initialize DimOverlay modulate for fade animation
 	dim_overlay.modulate = Color(1, 1, 1, 0)
+	
+	setup_custom_ui()
 
-	# Initialize conversation with base context (no history needed for JSON mode)
-	add_ai_message("Hello! I'm your AI tutor for boolean logic. What would you like to learn today?\n\nFor example, you can say:\n• 'I want to learn modus ponens'\n• 'Help me with De Morgan's laws'\n• 'Teach me about disjunctive syllogism'")
-	current_state = TutorState.AWAITING_TOPIC
+	# Initial greeting
+	add_ai_message("Hello! I'm your AI tutor for boolean logic. How can I help you today?\n\nYou can ask for a problem on a specific topic, or ask me questions about logic rules.")
+	current_state = TutorState.AWAITING_INPUT
 
-	# Open chat initially for greeting
+	# Open chat initially
 	await get_tree().process_frame
 	open_chat()
+
+func setup_custom_ui():
+	# Create Feedback View
+	var feedback_scene = load("res://src/ui/FeedbackView.tscn")
+	feedback_view = feedback_scene.instantiate()
+	feedback_view.z_index = 250 # Ensure it appears above MainMargin(10) and Chat(200)
+	feedback_view.visible = false
+	feedback_view.continue_pressed.connect(_on_feedback_continue)
+	feedback_view.retry_pressed.connect(_on_feedback_retry)
+	add_child(feedback_view)
+	
+	# Create Loading Overlay
+	loading_overlay = ColorRect.new()
+	loading_overlay.color = Color(0, 0, 0, 0.7)
+	loading_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	loading_overlay.visible = false
+	loading_overlay.z_index = 300 # Above everything
+	add_child(loading_overlay)
+	
+	loading_label = Label.new()
+	loading_label.text = "Evaluating your solution..."
+	loading_label.add_theme_font_size_override("font_size", 24)
+	loading_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	loading_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	loading_label.set_anchors_preset(Control.PRESET_CENTER)
+	loading_overlay.add_child(loading_label)
 
 func _on_erase_button_pressed():
 	if active_step_field and active_step_field.has_focus():
@@ -182,16 +219,11 @@ func _on_erase_button_pressed():
 			if caret > 0:
 				active_step_field.text = text.erase(caret - 1, 1)
 				active_step_field.caret_column = caret - 1
-			else:
-				# At start, nothing to delete before caret
-				pass
 	elif active_step_field:
-		# If not focused but active, delete from end
-		var text = active_step_field.text
-		if not text.is_empty():
-			active_step_field.text = text.substr(0, text.length() - 1)
-			active_step_field.caret_column = active_step_field.text.length()
-	
+			var text = active_step_field.text
+			if not text.is_empty():
+				active_step_field.text = text.substr(0, text.length() - 1)
+				active_step_field.caret_column = active_step_field.text.length()
 	AudioManager.play_button_click()
 
 func _on_clear_button_pressed():
@@ -205,28 +237,197 @@ func _on_send_button_pressed():
 	if user_input.is_empty():
 		return
 
-	# Add user message to chat
 	add_user_message(user_input)
 	input_field.text = ""
 
-	# Handle based on current state
-	match current_state:
-		TutorState.AWAITING_TOPIC:
-			await handle_topic_request(user_input)
-		TutorState.AWAITING_SOLUTION:
-			# User can ask questions during solving
-			await handle_question_during_solving(user_input)
+	# Handle based on current state, but always use Router logic for input interpretation
+	# unless we are strictly in a "answering questions while solving" mode.
+	# But even then, the user might ask for a new problem.
+	
+	handle_user_input(user_input)
+
+func handle_user_input(input: String):
+	status_label.visible = true
+	status_label.text = "Thinking..."
+
+	var context = BASE_SYSTEM_CONTEXT
+	if current_state == TutorState.AWAITING_SOLUTION:
+		context += "\nCurrent Problem:\nPremises: " + str(current_problem.premises) + "\nTarget: " + current_problem.target
+
+	# Prepare router request
+	var request_json = {
+		"user_input": input,
+		"current_state": "solving" if current_state == TutorState.AWAITING_SOLUTION else "idle"
+	}
+
+	var messages = [
+		{"role": "system", "content": context + "\n\n" + ROUTER_PROMPT},
+		{"role": "user", "content": JSON.stringify(request_json)}
+	]
+
+	var response = await OpenRouterService.send_chat_request(messages, http_request)
+	status_label.visible = false
+
+	if response.is_empty():
+		add_ai_message("I'm having trouble connecting. Please try again.")
+		return
+
+	var data = parse_json_response(response)
+	if data == null or not data.has("type"):
+		add_ai_message("I didn't quite catch that. Could you rephrase?")
+		return
+
+	match data.get("type"):
+		"problem":
+			handle_generated_problem(data)
+		"answer":
+			var text = data.get("response", "")
+			if data.has("example"): text += "\n\nExample: " + data.example
+			add_ai_message(text)
+		"chat":
+			add_ai_message(data.get("response", "Hello!"))
+		"refusal":
+			add_ai_message(data.get("response", "I can only help with boolean logic."))
 		_:
-			# Generic conversation
-			await handle_generic_conversation(user_input)
+			add_ai_message("I'm not sure how to handle that response type.")
+
+func handle_generated_problem(problem_data: Dictionary):
+	current_problem = {
+		"topic": problem_data.get("topic", "Logic Problem"),
+		"problem_type": problem_data.get("problem_type", "symbol"),
+		"premises": problem_data.get("premises", []),
+		"variable_mapping": problem_data.get("variable_mapping", {}),
+		"target": problem_data.get("target", ""),
+		"hint": problem_data.get("hint", ""),
+		"difficulty": problem_data.get("difficulty", "medium")
+	}
+
+	var chat_msg = "I've generated a problem on: " + current_problem.topic + "\n"
+	chat_msg += "Check the main screen to solve it!"
+	add_ai_message(chat_msg)
+	
+	# Close chat to show problem
+	close_chat()
+
+	# Update UI
+	var problem_text = ""
+	
+	# Display variable mapping if worded
+	if current_problem.problem_type == "worded" and not current_problem.variable_mapping.is_empty():
+		problem_text += "[b]Definitions:[/b]\n"
+		for key in current_problem.variable_mapping:
+			problem_text += "Let " + key + " be: " + current_problem.variable_mapping[key] + "\n"
+		problem_text += "\n"
+
+	problem_text += "[b]Premises:[/b]\n"
+	for i in range(current_problem.premises.size()):
+		problem_text += "P" + str(i + 1) + ": " + current_problem.premises[i] + "\n"
+	problem_text += "\n[b]Target:[/b]\n" + current_problem.target
+
+	problem_display.text = problem_text
+	add_step_button.visible = true
+	finish_button.visible = true
+	
+	# Clear previous steps
+	_clear_solver_steps()
+	
+	current_state = TutorState.AWAITING_SOLUTION
+
+func _clear_solver_steps():
+	for step in solver_steps:
+		step.queue_free()
+	solver_steps.clear()
+	active_step_field = null
+
+func _on_finish_button_pressed():
+	if solver_steps.is_empty():
+		add_ai_message("Please add at least one step.")
+		open_chat()
+		return
+
+	# Show loading overlay
+	loading_overlay.visible = true
+	finish_button.disabled = true
+	
+	# Collect solution
+	var solution_steps = []
+	for i in range(solver_steps.size()):
+		var step = solver_steps[i]
+		var step_data = step.get_step_data()
+		solution_steps.append({
+			"step_number": i + 1,
+			"result": step_data.result,
+			"rule": step_data.rule,
+			"sources": step_data.sources
+		})
+
+	var request_json = {
+		"request_type": "validate_solution",
+		"problem": current_problem,
+		"solution": solution_steps
+	}
+
+	var messages = [
+		{"role": "system", "content": BASE_SYSTEM_CONTEXT + "\n\n" + VALIDATION_PROMPT},
+		{"role": "user", "content": JSON.stringify(request_json)}
+	]
+
+	var response = await OpenRouterService.send_chat_request(messages, http_request)
+	
+	loading_overlay.visible = false
+	finish_button.disabled = false
+
+	if response.is_empty():
+		add_ai_message("Connection error during validation.")
+		open_chat()
+		return
+
+	var validation_data = parse_json_response(response)
+	if validation_data and validation_data.get("type") == "validation":
+		# Show feedback view
+		current_state = TutorState.REVIEWING
+		feedback_view.visible = true
+		feedback_view.display_feedback(solution_steps, validation_data)
+		# Hide Chat if open
+		if is_chat_open:
+			close_chat()
+	else:
+		add_ai_message("Error validating solution. Please try again.")
+		open_chat()
+
+func _on_feedback_continue():
+	# Go back to AWAITING_INPUT (Reset)
+	feedback_view.visible = false
+	current_state = TutorState.AWAITING_INPUT
+	
+	_clear_solver_steps()
+	problem_display.text = "[i]Ask for a new problem in the chat![/i]"
+	add_step_button.visible = false
+	finish_button.visible = false
+	new_problem_button.visible = false # Legacy button, might hide it always
+	
+	open_chat()
+	add_ai_message("Ready for the next topic? Just ask!")
+
+func _on_feedback_retry():
+	# Keep the same problem, hide feedback, allow editing
+	feedback_view.visible = false
+	current_state = TutorState.AWAITING_SOLUTION
+	# Steps are still there, user can edit them
+	
+	# Maybe open chat with hint?
+	open_chat()
+	add_ai_message("Check the feedback and try to fix your steps!")
+
+# Legacy button handler (if visible)
+func _on_new_problem_button_pressed():
+	_on_feedback_continue()
 
 func add_ai_message(text: String):
 	var msg_box = ChatMessageBox.new(ChatMessageBox.MessageRole.AI, text)
 	messages_container.add_child(msg_box)
 	await get_tree().process_frame
 	messages_scroll.scroll_vertical = messages_scroll.get_v_scroll_bar().max_value
-
-	# Show notification badge if chat is closed
 	show_notification_badge()
 
 func add_user_message(text: String):
@@ -235,138 +436,18 @@ func add_user_message(text: String):
 	await get_tree().process_frame
 	messages_scroll.scroll_vertical = messages_scroll.get_v_scroll_bar().max_value
 
-func handle_topic_request(topic: String):
-	current_state = TutorState.GENERATING_PROBLEM
-	status_label.visible = true
-	status_label.text = "Generating problem..."
-
-	# Build JSON request for problem generation
-	var request_json = {
-		"request_type": "generate_problem",
-		"topic": topic
-	}
-
-	# Create messages with system context and request
-	var messages = [
-		{"role": "system", "content": BASE_SYSTEM_CONTEXT + "\n\n" + PROBLEM_GENERATION_PROMPT},
-		{"role": "user", "content": JSON.stringify(request_json)}
-	]
-
-	# Request problem from AI
-	var response = await OpenRouterService.send_chat_request(messages, http_request)
-
-	if response.is_empty():
-		add_ai_message("I'm having trouble connecting. Please try again.")
-		status_label.visible = false
-		current_state = TutorState.AWAITING_TOPIC
-		return
-
-	# Parse JSON response
-	var problem_data = parse_json_response(response)
-
-	if problem_data == null or problem_data.get("type") != "problem":
-		add_ai_message("I had trouble generating a problem. Please try rephrasing your request.")
-		status_label.visible = false
-		current_state = TutorState.AWAITING_TOPIC
-		return
-
-	# Store problem data
-	current_problem = {
-		"topic": problem_data.get("topic", ""),
-		"premises": problem_data.get("premises", []),
-		"target": problem_data.get("target", ""),
-		"hint": problem_data.get("hint", ""),
-		"difficulty": problem_data.get("difficulty", "medium")
-	}
-
-	# Display problem in chat
-	var chat_msg = "Great! I've prepared a problem for you on [b]" + current_problem.topic + "[/b].\n"
-	chat_msg += "Difficulty: " + current_problem.difficulty.capitalize()
-	add_ai_message(chat_msg)
-
-	# Display problem in solver area
-	if not current_problem.premises.is_empty():
-		var problem_text = "[b]Premises:[/b]\n"
-		for i in range(current_problem.premises.size()):
-			problem_text += "P" + str(i + 1) + ": " + current_problem.premises[i] + "\n"
-		problem_text += "\n[b]Target:[/b]\n" + current_problem.target
-
-		#if not current_problem.hint.is_empty():
-			#problem_text += "\n\n[b]Hint:[/b]\n" + current_problem.hint
-
-		problem_display.text = problem_text
-
-		# Enable solver UI
-		add_step_button.visible = true
-		finish_button.visible = true
-
-		current_state = TutorState.AWAITING_SOLUTION
-	else:
-		add_ai_message("There was an issue with the problem. Please try again.")
-		current_state = TutorState.AWAITING_TOPIC
-
-	status_label.visible = false
-
 func parse_json_response(response: String) -> Dictionary:
-	# Try to extract JSON from response (handle cases where AI adds extra text)
 	var json_start = response.find("{")
 	var json_end = response.rfind("}") + 1
 
 	if json_start == -1 or json_end == 0:
-		print("Error: No JSON found in response")
 		return {}
 
 	var json_str = response.substr(json_start, json_end - json_start)
 	var json = JSON.new()
-	var parse_result = json.parse(json_str)
-
-	if parse_result != OK:
-		print("Error parsing JSON: ", json.get_error_message())
-		return {}
-
-	return json.data
-
-func handle_question_during_solving(question: String):
-	status_label.visible = true
-	status_label.text = "Thinking..."
-
-	# Build JSON request for question
-	var request_json = {
-		"request_type": "answer_question",
-		"question": question,
-		"current_problem": current_problem
-	}
-
-	var messages = [
-		{"role": "system", "content": BASE_SYSTEM_CONTEXT + "\n\n" + QUESTION_PROMPT},
-		{"role": "user", "content": JSON.stringify(request_json)}
-	]
-
-	var response = await OpenRouterService.send_chat_request(messages, http_request)
-
-	if not response.is_empty():
-		var answer_data = parse_json_response(response)
-
-		if answer_data != null and answer_data.get("type") == "answer":
-			var answer_text = answer_data.get("response", "")
-
-			# Add related rules if present
-			if answer_data.has("related_rules") and answer_data.related_rules.size() > 0:
-				answer_text += "\n\n[b]Related Rules:[/b] " + ", ".join(answer_data.related_rules)
-
-			# Add example if present
-			if answer_data.has("example") and answer_data.example != "":
-				answer_text += "\n\n[b]Example:[/b] " + answer_data.example
-
-			add_ai_message(answer_text)
-		else:
-			add_ai_message(response)  # Fallback to raw response
-
-	status_label.visible = false
-
-func handle_generic_conversation(message: String):
-	# Use question handler for generic conversation too
-	await handle_question_during_solving(message)
+	if json.parse(json_str) == OK:
+		return json.data
+	return {}
 
 ## Chat Overlay Toggle Functions
 
@@ -388,48 +469,24 @@ func open_chat():
 	chat_overlay.visible = true
 	dim_overlay.visible = true
 
-	# Kill existing tween if running
 	if chat_tween and chat_tween.is_running():
 		chat_tween.kill()
 
 	chat_tween = create_tween()
 	chat_tween.set_parallel(true)
 
-	# Get screen dimensions
 	var screen_size = get_viewport_rect().size
 	var target_pos = Vector2(screen_size.x * 0.05, screen_size.y * 0.075)
 
-	# Dim overlay fade in
-	chat_tween.tween_property(dim_overlay, "modulate:a", 1.0, 0.3)\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	chat_tween.tween_property(dim_overlay, "modulate:a", 1.0, 0.3).set_trans(Tween.TRANS_CUBIC)
+	chat_tween.tween_property(chat_overlay, "position", target_pos, 0.5).from(Vector2(screen_size.x, target_pos.y)).set_trans(Tween.TRANS_CUBIC)
+	chat_tween.tween_property(chat_overlay, "scale", Vector2(1.0, 1.0), 0.5).from(Vector2(0.95, 0.95)).set_trans(Tween.TRANS_CUBIC)
+	chat_tween.tween_property(chat_overlay, "modulate:a", 1.0, 0.5).from(0.0).set_trans(Tween.TRANS_CUBIC)
+	chat_tween.tween_property(chat_toggle_button, "rotation", deg_to_rad(45), 0.3).set_trans(Tween.TRANS_ELASTIC)
+	chat_tween.tween_property(virtual_keyboard, "modulate:a", 0.3, 0.3).set_trans(Tween.TRANS_CUBIC)
 
-	# Chat panel slide from right
-	chat_tween.tween_property(chat_overlay, "position", target_pos, 0.5)\
-		.from(Vector2(screen_size.x, target_pos.y))\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-
-	# Chat panel scale up
-	chat_tween.tween_property(chat_overlay, "scale", Vector2(1.0, 1.0), 0.5)\
-		.from(Vector2(0.95, 0.95))\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-
-	# Chat panel fade in
-	chat_tween.tween_property(chat_overlay, "modulate:a", 1.0, 0.5)\
-		.from(0.0)\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-
-	# Button rotation
-	chat_tween.tween_property(chat_toggle_button, "rotation", deg_to_rad(45), 0.3)\
-		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
-
-	# Dim virtual keyboard
-	chat_tween.tween_property(virtual_keyboard, "modulate:a", 0.3, 0.3)\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-
-	# Clear notification badge when chat opens
 	has_unread_messages = false
 	notification_badge.visible = false
-
 	AudioManager.play_button_click()
 
 func close_chat():
@@ -447,47 +504,23 @@ func close_chat():
 	var screen_size = get_viewport_rect().size
 	var current_pos = chat_overlay.position
 
-	# Dim overlay fade out
-	chat_tween.tween_property(dim_overlay, "modulate:a", 0.0, 0.3)\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	chat_tween.tween_property(dim_overlay, "modulate:a", 0.0, 0.3).set_trans(Tween.TRANS_CUBIC)
+	chat_tween.tween_property(chat_overlay, "position", Vector2(screen_size.x, current_pos.y), 0.4).set_trans(Tween.TRANS_CUBIC)
+	chat_tween.tween_property(chat_overlay, "scale", Vector2(0.95, 0.95), 0.4).set_trans(Tween.TRANS_CUBIC)
+	chat_tween.tween_property(chat_overlay, "modulate:a", 0.0, 0.4).set_trans(Tween.TRANS_CUBIC)
+	chat_tween.tween_property(chat_toggle_button, "rotation", 0.0, 0.3).set_trans(Tween.TRANS_ELASTIC)
+	chat_tween.tween_property(virtual_keyboard, "modulate:a", 1.0, 0.3).set_trans(Tween.TRANS_CUBIC)
 
-	# Chat panel slide to right
-	chat_tween.tween_property(chat_overlay, "position", Vector2(screen_size.x, current_pos.y), 0.4)\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-
-	# Chat panel scale down
-	chat_tween.tween_property(chat_overlay, "scale", Vector2(0.95, 0.95), 0.4)\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-
-	# Chat panel fade out
-	chat_tween.tween_property(chat_overlay, "modulate:a", 0.0, 0.4)\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-
-	# Button rotation back
-	chat_tween.tween_property(chat_toggle_button, "rotation", 0.0, 0.3)\
-		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_IN)
-
-	# Restore virtual keyboard opacity
-	chat_tween.tween_property(virtual_keyboard, "modulate:a", 1.0, 0.3)\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-
-	# Hide elements after animation completes
 	chat_tween.chain().tween_callback(func():
 		chat_overlay.visible = false
 		dim_overlay.visible = false
 	)
-
 	AudioManager.play_button_click()
 
 func show_notification_badge():
 	if not is_chat_open:
 		has_unread_messages = true
 		notification_badge.visible = true
-		# Optional: Add pulse animation
-		var badge_tween = create_tween()
-		badge_tween.set_loops(3)
-		badge_tween.tween_property(notification_badge, "scale", Vector2(1.2, 1.2), 0.2)
-		badge_tween.tween_property(notification_badge, "scale", Vector2(1.0, 1.0), 0.2)
 
 ## Solver Functions
 
@@ -498,11 +531,9 @@ func _on_add_step_button_pressed():
 	step_row.delete_requested.connect(_on_step_delete_requested)
 	steps_container.add_child(step_row)
 	solver_steps.append(step_row)
-
-	# Auto-focus the new step
+	
 	await get_tree().process_frame
 	_on_step_result_focused(step_row)
-
 	AudioManager.play_button_click()
 
 func _on_step_result_focused(step: SolverStepRow):
@@ -514,145 +545,8 @@ func _on_step_delete_requested(step: SolverStepRow):
 	if index >= 0:
 		solver_steps.remove_at(index)
 		step.queue_free()
-
-		# Renumber remaining steps
 		for i in range(solver_steps.size()):
 			solver_steps[i].update_step_number(i + 1)
-
-	AudioManager.play_button_click()
-
-func _on_finish_button_pressed():
-	if solver_steps.is_empty():
-		add_ai_message("Please add at least one step before submitting.")
-		return
-
-	finish_button.disabled = true
-	finish_button.text = "Submitting..."
-	status_label.visible = true
-	status_label.text = "AI is reviewing your solution..."
-
-	# Build solution data for validation
-	var solution_steps = []
-	for i in range(solver_steps.size()):
-		var step = solver_steps[i]
-		var step_data = step.get_step_data()
-		solution_steps.append({
-			"step_number": i + 1,
-			"result": step_data.result,
-			"rule": step_data.rule,
-			"sources": step_data.sources
-		})
-
-	# Build JSON request for validation
-	var request_json = {
-		"request_type": "validate_solution",
-		"problem": current_problem,
-		"solution": solution_steps
-	}
-
-	var messages = [
-		{"role": "system", "content": BASE_SYSTEM_CONTEXT + "\n\n" + VALIDATION_PROMPT},
-		{"role": "user", "content": JSON.stringify(request_json)}
-	]
-
-	# Show solution summary to user
-	var solution_summary = "My solution:\n"
-	for i in range(solution_steps.size()):
-		var step = solution_steps[i]
-		solution_summary += "Step %d: %s (Rule: %s, From: %s)\n" % [
-			step.step_number,
-			step.result,
-			step.rule,
-			step.sources
-		]
-	add_user_message(solution_summary)
-
-	# Get AI validation
-	var response = await OpenRouterService.send_chat_request(messages, http_request)
-
-	status_label.visible = false
-	finish_button.disabled = false
-	finish_button.text = "Submit for Feedback"
-
-	if not response.is_empty():
-		var validation_data = parse_json_response(response)
-
-		if validation_data != null and validation_data.get("type") == "validation":
-			var is_correct = validation_data.get("is_correct", false)
-			var errors = validation_data.get("errors", [])
-			var feedback = validation_data.get("feedback", "")
-			var encouragement = validation_data.get("encouragement", "")
-
-			# Build feedback message
-			var feedback_msg = ""
-
-			if is_correct:
-				feedback_msg = "[color=green][b]✓ Correct![/b][/color]\n\n"
-			else:
-				feedback_msg = "[color=orange][b]Not quite right...[/b][/color]\n\n"
-
-			feedback_msg += feedback
-
-			# Show specific errors if present
-			if errors.size() > 0:
-				feedback_msg += "\n\n[b]Issues found:[/b]"
-				for error in errors:
-					feedback_msg += "\n• [b]Step " + str(error.step) + ":[/b] " + error.issue
-					if error.has("suggestion"):
-						feedback_msg += "\n  [i]Suggestion:[/i] " + error.suggestion
-
-			# Add correct solution if provided
-			if not is_correct and validation_data.has("correct_solution"):
-				var correct_sol = validation_data.correct_solution
-				if correct_sol.size() > 0:
-					feedback_msg += "\n\n[b]Correct approach:[/b]"
-					for i in range(correct_sol.size()):
-						feedback_msg += "\n" + str(i + 1) + ". " + correct_sol[i]
-
-			feedback_msg += "\n\n" + encouragement
-
-			add_ai_message(feedback_msg)
-
-			# Allow questions after validation - show new problem button
-			current_state = TutorState.AWAITING_SOLUTION
-			new_problem_button.visible = true
-			add_ai_message("Do you have any questions about this solution?\n\nOr click 'Try Another Problem' below when you're ready for a new challenge!")
-		else:
-			add_ai_message(response)  # Fallback to raw response
-	else:
-		add_ai_message("I had trouble reviewing your solution. Please try again.")
-
-	AudioManager.play_button_click()
-
-func _on_new_problem_button_pressed():
-	# Clear all solver steps
-	for step in solver_steps:
-		step.queue_free()
-	solver_steps.clear()
-
-	# Clear problem display
-	problem_display.text = "[i]New problem will appear here[/i]"
-
-	# Hide solver buttons
-	add_step_button.visible = false
-	finish_button.visible = false
-	new_problem_button.visible = false
-
-	# Reset active field
-	active_step_field = null
-
-	# Reset state
-	current_state = TutorState.AWAITING_TOPIC
-	current_problem = {
-		"premises": [],
-		"target": "",
-		"hint": "",
-		"difficulty": ""
-	}
-
-	# Add prompt for new topic
-	add_ai_message("Great! What would you like to learn next?")
-
 	AudioManager.play_button_click()
 
 func _on_back_button_pressed():
