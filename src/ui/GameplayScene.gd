@@ -129,7 +129,11 @@ func _ready() -> void:
 	if intro_flash:
 		var tween = create_tween()
 		tween.tween_property(intro_flash, "modulate:a", 0.0, 1.0)
-		tween.tween_callback(func(): intro_flash.queue_free())
+		tween.tween_callback(func(): 
+			if is_instance_valid(intro_flash):
+				intro_flash.queue_free()
+			intro_flash = null
+		)
 
 	# Start black hole rotation animation
 	if black_hole:
@@ -641,7 +645,7 @@ func customer_leaves() -> void:
 			current_phase_instance.trigger_failure_effect()
 
 		# Create fade overlay if it doesn't exist
-		if not intro_flash:
+		if not is_instance_valid(intro_flash):
 			intro_flash = ColorRect.new()
 			intro_flash.color = Color.BLACK
 			intro_flash.modulate.a = 0.0
@@ -656,7 +660,7 @@ func customer_leaves() -> void:
 			comment_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 			comment_label.add_theme_color_override("font_color", Color.WHITE)
 			comment_label.add_theme_font_size_override("font_size", 48)
-			comment_label.set_anchors_preset(Control.PRESET_CENTER)
+			comment_label.set_anchors_preset(Control.PRESET_FULL_RECT)
 			intro_flash.add_child(comment_label)
 
 		# Wait briefly, then fade to black
@@ -671,7 +675,7 @@ func customer_leaves() -> void:
 		await tween.finished
 
 		# Wait a moment in black, then transition
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(3.0).timeout
 		
 		# Ensure stats are saved
 		GameManager.force_game_over()
