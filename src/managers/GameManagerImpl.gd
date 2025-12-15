@@ -45,6 +45,13 @@ var mistakes_count_this_session: int = 0
 var current_combo: int = 0
 var max_combo_this_session: int = 0
 
+func _reset_session_stats() -> void:
+	current_score = 0
+	orders_completed_this_session = 0
+	mistakes_count_this_session = 0
+	current_combo = 0
+	max_combo_this_session = 0
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	load_classic_problems()
@@ -158,14 +165,13 @@ func add_score(points: int) -> void:
 	score_updated.emit(current_score)
 
 func reset_game() -> void:
-	current_score = 0
+	_reset_session_stats()
 	difficulty_level = 1
-	orders_completed_this_session = 0
 	change_state(GameState.MENU)
 	score_updated.emit(current_score)
 
 func start_new_game() -> void:
-	current_score = 0
+	_reset_session_stats()
 
 	# Set initial difficulty based on debug mode
 	if debug_difficulty_mode != -1:
@@ -176,7 +182,6 @@ func start_new_game() -> void:
 		# Normal mode: start at difficulty 1
 		difficulty_level = 1
 
-	orders_completed_this_session = 0
 	current_phase = GamePhase.PREPARING_PREMISES
 	tutorial_mode = false
 	current_tutorial_key = ""
@@ -188,9 +193,8 @@ func start_new_game() -> void:
 	ProgressTracker.start_new_session(difficulty_level, time_limit_seconds)
 
 func start_tutorial_mode(tutorial_key: String = "") -> void:
-	current_score = 0
+	_reset_session_stats()
 	difficulty_level = 1
-	orders_completed_this_session = 0
 	current_phase = GamePhase.PREPARING_PREMISES
 	tutorial_mode = true
 	current_tutorial_key = tutorial_key
@@ -254,13 +258,6 @@ func complete_progress_session(completion_status: String, time_remaining_on_quit
 	var orders_completed_current_session = orders_completed_this_session
 	var max_combo_achieved = max_combo_this_session
 	var total_mistakes_made = mistakes_count_this_session
-
-	# Reset for next game
-	current_score = 0
-	orders_completed_this_session = 0
-	mistakes_count_this_session = 0
-	current_combo = 0
-	max_combo_this_session = 0
 
 	ProgressTracker.complete_current_session(
 		final_score_this_session,
