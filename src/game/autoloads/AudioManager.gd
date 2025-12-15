@@ -355,6 +355,7 @@ func set_rocket_engine_volume(db: float) -> void:
 
 func stop_all_sfx() -> void:
 	sfx_player.stop()
+	rocket_engine_player.stop() # Stop dedicated rocket engine player
 	for player in sfx_players_pool:
 		player.stop()
 
