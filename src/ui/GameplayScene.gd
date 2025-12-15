@@ -352,6 +352,7 @@ func reset_combo() -> void:
 	"""Reset combo counter on mistake"""
 	if combo_count > 0 or gameplay_multiplier > 1.0:
 		show_feedback_message("Multiplier Reset!", Color.ORANGE_RED)
+		AudioManager.play_multiplier_lost_sound()
 	combo_count = 0
 	gameplay_multiplier = 1.0
 
@@ -665,6 +666,7 @@ func customer_leaves() -> void:
 
 		# Out of fuel = Game Over - play error sound ONCE
 		AudioManager.play_error()
+		AudioManager.play_game_over_fail_sound()
 		show_feedback_message("Out of Fuel! Game Over!", Color.RED)
 
 		# Trigger failure effect if in Phase 2

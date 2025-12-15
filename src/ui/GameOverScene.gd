@@ -43,6 +43,7 @@ func _on_play_again_button_pressed() -> void:
 
 func _on_main_menu_button_pressed() -> void:
 	AudioManager.play_button_click()
+	AudioManager.stop_music()
 	GameManager.reset_game()
 	SceneManager.change_scene("res://src/ui/MainMenu.tscn")
 

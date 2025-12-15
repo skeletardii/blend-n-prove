@@ -550,6 +550,19 @@ func increment_combo() -> void:
 			p = p.get_parent()
 
 func reset_combo_penalty() -> void:
+	# Apply fuel penalty (10%)
+	var root = get_tree().current_scene
+	if root.has_method("apply_fuel_penalty"):
+		root.apply_fuel_penalty(0.1)
+
+	# Red glow on selected rule button
+	if not selected_rule.is_empty():
+		var btn = get_rule_button(selected_rule)
+		if btn:
+			var tween = create_tween()
+			tween.tween_property(btn, "modulate", Color.RED, 0.2)
+			tween.tween_property(btn, "modulate", Color.WHITE, 0.2)
+
 	if combo_count < 2:
 		return # Already reset or low
 		
