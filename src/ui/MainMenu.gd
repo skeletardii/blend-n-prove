@@ -9,6 +9,7 @@ extends Control
 @onready var music_slider: HSlider = $SettingsPanel/SettingsContainer/MusicVolumeContainer/MusicSlider
 @onready var sfx_slider: HSlider = $SettingsPanel/SettingsContainer/SFXVolumeContainer/SFXSlider
 @onready var mute_check: CheckBox = $SettingsPanel/SettingsContainer/MuteCheck
+@onready var disable_intro_check: CheckBox = $SettingsPanel/SettingsContainer/DisableIntroCheck
 @onready var difficulty_mode_option: OptionButton = $SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption
 @onready var play_button: Button = $MenuContainer/PlayButton
 @onready var how_to_play_button: Button = $MenuContainer/HowToPlayButton
@@ -75,6 +76,7 @@ func _ready() -> void:
 	difficulty_slider.value = GameManager.difficulty_level
 	difficulty_value_label.text = str(GameManager.difficulty_level)
 	infinite_patience_check.button_pressed = GameManager.infinite_patience
+	disable_intro_check.button_pressed = GameManager.disable_intro_sequence
 
 	# Setup settings panel
 	setup_difficulty_mode_options()
@@ -128,8 +130,11 @@ func _on_play_button_pressed() -> void:
 	GameManager.start_new_game()
 	print("Started new game")
 
-	# Use loading screen transition to Intro Sequence
-	SceneManager.change_scene_with_loading("res://src/ui/IntroSequence.tscn")
+	# Use loading screen transition based on intro setting
+	if GameManager.disable_intro_sequence:
+		SceneManager.change_scene_with_loading("res://src/scenes/GameplayScene.tscn")
+	else:
+		SceneManager.change_scene_with_loading("res://src/ui/IntroSequence.tscn")
 
 #func _on_phase1_button_pressed() -> void:
 	#AudioManager.play_button_click()
@@ -290,6 +295,9 @@ func _on_sfx_volume_changed(value: float) -> void:
 func _on_mute_check_toggled(toggled_on: bool) -> void:
 	if toggled_on != AudioManager.is_muted:
 		AudioManager.toggle_mute()
+
+func _on_disable_intro_check_toggled(toggled_on: bool) -> void:
+	GameManager.disable_intro_sequence = toggled_on
 
 func _on_audio_settings_changed() -> void:
 	if abs(music_slider.value - AudioManager.music_volume) > 0.01:
