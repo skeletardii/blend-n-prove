@@ -1,97 +1,115 @@
-# Implementation Plan: Fusion Rush Supabase Integration
+# Implementation Plan: Fusion Rush Supabase Integration (Arcade Hybrid)
 
-This document outlines the strategy for implementing User Accounts, Profiles, Cloud Saves, and Performance Stats using Supabase and Godot, leveraging the existing database schema.
+This document outlines the architecture for "Fusion Rush", utilizing a hybrid approach: **Arcade-Style Leaderboards** (accessible to everyone, no login) and **Authenticated Cloud Saves** (requires login).
 
-## 1. Existing Schema Overview
+## 1. Schema Strategy
 
-Analysis of `db_schema.sql` confirms the following tables and RLS policies already exist:
+We leverage the existing schema. No major migrations are needed, but we must apply specific RLS policies.
 
-*   **`public.profiles`**: `id` (UUID), `username` (Text).
-    *   *RLS:* `user can manage own profile`.
-*   **`public.stats`**: `id` (UUID), `user_id` (UUID), `data` (JSONB).
-    *   *RLS:* `user can manage own stats`.
-*   **`public.settings`**: `user_id` (UUID), `data` (JSONB).
-    *   *RLS:* `user can manage own settings`.
-*   **`public.saves`**: `id` (UUID), `user_id` (UUID), `slot` (Int), `data` (JSONB).
-    *   *RLS:* `user can manage own saves`.
+### Tables
 
-**Action:** We will build the Godot client to interact directly with these tables. No new SQL migrations are strictly necessary for the core structure, though we may add Edge Functions for optimization.
+*   **`public.profiles`**: Linked to Auth. Used for Cloud Saves owner.
+*   **`public.saves`**: Stores save slots (`jsonb`). Linked to `profiles.id`.
+*   **`public.settings`**: Stores preferences (`jsonb`). Linked to `profiles.id`.
+*   **`public.stats`**: Stores aggregation data (`jsonb`). Linked to `profiles.id`.
+*   **`public.leaderboard`**: **Arcade Table**.
+    *   `id` (BigInt/UUID): Unique entry ID.
+    *   `three_name` (Text): The 3-letter initials (e.g., "ABC").
+    *   `game_score` (Int): The score.
+    *   `game_time` (Interval): Time taken.
+    *   `game_level` (Int): Level reached.
 
-## 2. Cloud Saves Strategy
+## 2. Security & RLS Policies
 
-We will utilize the existing `public.saves` table instead of raw file storage. This simplifies the architecture by keeping all user data within the Postgres database.
+### A. Leaderboard (Arcade Mode)
+*   **Read:** `ENABLE` for `anon` and `authenticated`. (Everyone can see scores).
+*   **Write:** `DISABLE` for everyone.
+    *   *Reason:* We do not want users inserting SQL directly.
+    *   *Solution:* Submissions must go through the `submit-leaderboard-score` Edge Function, which uses the `service_role` key to bypass RLS.
 
-*   **Data Format:** Godot dictionaries (save data) will be serialized to JSON and stored in the `data` column.
-*   **Slots:** The `slot` integer column allows multiple save files per user.
+### B. User Data (Saves/Profiles)
+*   **Read/Write:** `ENABLE` only for `auth.uid() = user_id`.
+    *   *Result:* Users can only touch their own save files.
 
-## 3. Edge Functions Strategy
+## 3. Edge Functions
 
-We will implement the following Supabase Edge Functions to secure sensitive logic and offload processing from the client.
+These TypeScript functions (Deno) run on Supabase to handle secure logic.
 
-### A. Function: `ai-inference`
-*   **Purpose:** Securely interacts with OpenAI/LLM APIs.
-*   **Why:** Prevents exposing API keys in the Godot client build.
-*   **Input:** `{ "prompt": "...", "context": {...} }`
+### Function 1: `submit-leaderboard-score`
+*   **Type:** Public (Anonymous)
+*   **Purpose:** Validates and inserts a score into the restricted leaderboard.
+*   **Input:**
+    ```json
+    {
+      "three_name": "JOE",
+      "score": 12500,
+      "level": 5,
+      "duration": 120.5
+    }
+    ```
+*   **Logic:**
+    1.  Validate `three_name` is exactly 3 chars.
+    2.  Validate `score` is within realistic bounds for the `level` (Anti-cheat).
+    3.  Insert into `public.leaderboard` using Admin Client.
+    4.  Calculate and return the specific rank of this new entry immediately.
+
+### Function 2: `get-name-rank`
+*   **Type:** Public (Anonymous)
+*   **Purpose:** specific retrieval of an arcade name's best performance.
+*   **Input:** `{ "three_name": "JOE" }`
+*   **Output:**
+    ```json
+    {
+      "best_rank": 14,
+      "best_score": 12500,
+      "total_entries": 500
+    }
+    ```
+
+### Function 3: `ai-inference`
+*   **Type:** Public or Authenticated (depending on strictness)
+*   **Purpose:** Proxy for OpenAI/LLM calls to hide the API Key.
+*   **Input:** `{ "prompt": "..." }`
 *   **Output:** `{ "response": "..." }`
-*   **Client Usage:** `SupabaseManager.functions.invoke("ai-inference", payload)`
 
-### B. Function: `record-session-stats`
-*   **Purpose:** Validates and processes raw performance metrics before storage.
-*   **Why:** Allows server-side validation of incoming stats (anti-cheat) and potential immediate aggregation (e.g., updating a "rolling average" column on the profile) without the client needing complex DB permissions.
-*   **Input:** `{ "session_id": "...", "metrics": { "fps": 60, "load_time": 500, ... } }`
-*   **Output:** `{ "success": true, "processed_at": "timestamp" }`
+### Function 4: `record-session-stats`
+*   **Type:** Authenticated Only
+*   **Purpose:** Aggregates telemetry (FPS, Load Times) for logged-in users.
 
-### C. Function: `get-profile-summary`
-*   **Purpose:** Aggregates user data for the profile screen.
-*   **Why:** Calculates "Average FPS", "Total Playtime", etc., on the server to save bandwidth and client CPU.
-*   **Input:** `{ "user_id": "..." }` (Optional, defaults to current user)
-*   **Output:** `{ "username": "...", "stats_summary": { "avg_fps": 58, "avg_load_time": 1.2 } }`
+## 4. Database Helper Functions
 
-## 4. Godot Client Implementation
+To make the Edge Functions fast, we execute complex logic in SQL.
 
-The current `SupabaseServiceImpl.gd` relies on `SUPABASE_ANON_KEY` for everything. We need to upgrade it to handle **User Sessions**.
+```sql
+-- Helper: Get the rank of a specific score entry (for the "New High Score!" screen)
+CREATE OR REPLACE FUNCTION public.get_entry_rank(p_entry_id bigint)
+RETURNS bigint
+LANGUAGE sql SECURITY DEFINER
+AS $$
+  WITH ranked AS (
+    SELECT id, rank() OVER (ORDER BY game_score DESC) as r
+    FROM public.leaderboard
+  )
+  SELECT r FROM ranked WHERE id = p_entry_id;
+$$;
+```
 
-### Architecture Changes
+## 5. Godot Client Architecture
 
-1.  **Refactor `SupabaseServiceImpl.gd` to `SupabaseManager`**:
-    *   This singleton should hold the `session_token`.
-    *   It should expose an `authenticated_request()` method that adds the `Authorization: Bearer {session_token}` header automatically.
-    *   Add `call_edge_function(function_name: String, payload: Dictionary)` method.
+We separate the "Arcade" logic from the "Auth" logic so players aren't forced to sign up.
 
-2.  **New `AuthManager.gd`**:
-    *   `sign_up(email, password)`
-    *   `sign_in(email, password)`
-    *   `sign_out()`
-    *   Stores the received JWT token in `SupabaseManager`.
+*   **`SupabaseManager.gd` (Core)**
+    *   Manages the HTTP client.
+    *   Holds `session_token` (if logged in).
+    *   Helper: `call_function(name, payload, require_auth=false)`
 
-3.  **New `CloudSaveManager.gd`**:
-    *   `upload_save(save_data: Dictionary, slot: int)`: UPSERTs into `public.saves`.
-    *   `download_save(slot: int)`: SELECTs from `public.saves`.
+*   **`LeaderboardManager.gd` (Arcade)**
+    *   Does NOT require login.
+    *   `submit_score(initials, score)` -> Calls `submit-leaderboard-score` function.
+    *   `fetch_top_10()` -> Calls REST API: `GET /rest/v1/leaderboard?select=*&order=game_score.desc&limit=10`.
 
-4.  **New `StatsManager.gd`**:
-    *   Collects metrics during gameplay.
-    *   Uses `SupabaseManager.call_edge_function("record-session-stats", metrics)` to submit data.
-
-5.  **New `AIManager.gd`**:
-    *   Manages AI interactions.
-    *   Uses `SupabaseManager.call_edge_function("ai-inference", prompt)` for secure AI calls.
-
-### API Interaction Example (Godot)
-
-**Authentication (Sign In):**
-*   **Endpoint:** `POST /auth/v1/token?grant_type=password`
-*   **Body:** `{"email": "...", "password": "..."}`
-*   **Response:** JSON containing `access_token` and `user` object.
-
-**Calling Edge Function (Authenticated):**
-*   **Endpoint:** `POST /functions/v1/record-session-stats`
-*   **Headers:**
-    *   `apikey`: `SUPABASE_ANON_KEY`
-    *   `Authorization`: `Bearer USER_ACCESS_TOKEN`
-*   **Body:** JSON payload.
-
-## 5. Next Steps
-
-1.  **Create Manager Scripts:** Create `AuthManager.gd`, `CloudSaveManager.gd`, and `StatsManager.gd` in `src/managers/`.
-2.  **Update SupabaseService:** Modify the existing service to support token-based authentication.
-3.  **UI Integration:** Create Login/Register screens in the Godot UI.
+*   **`AuthManager.gd` (Cloud Saves)**
+    *   `login(email, password)`
+    *   `register(email, password)`
+    *   `upload_save(slot_id)` -> POST to `public.saves`.
+    *   `download_save(slot_id)` -> GET from `public.saves`.

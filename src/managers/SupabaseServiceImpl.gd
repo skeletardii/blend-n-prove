@@ -1,20 +1,34 @@
 extends Node
 
 ## Supabase Service Implementation
-## Handles all HTTP requests to Supabase REST API for daily leaderboard functionality
+## Handles all HTTP requests to Supabase (Auth, Database, Edge Functions)
+## Implements the "Hybrid Architecture" (Arcade + Auth)
 
+# --- SIGNALS ---
 signal leaderboard_loaded(entries: Array)
 signal leaderboard_error(error_message: String)
-signal score_submitted(success: bool)
+signal score_submitted(rank: int)
+signal login_completed(user: Dictionary, error: String)
+signal signup_completed(user: Dictionary, error: String)
+signal name_rank_received(rank: int, score: int)
+signal save_uploaded(success: bool)
+signal save_downloaded(data: Dictionary)
+signal stats_updated(success: bool)
+signal stats_fetched(data: Dictionary)
 
+# --- CONFIGURATION ---
 var supabase_url: String = ""
-var supabase_key: String = ""
+var supabase_key: String = "" # This is the Anon Key
 var is_initialized: bool = false
 
-# Cache to prevent excessive API calls
+# --- STATE ---
+var session_token: String = ""
+var user_id: String = ""
+
+# --- CACHE ---
 var cached_leaderboard: Array = []
 var cache_timestamp: float = 0.0
-const CACHE_DURATION: float = 30.0  # 30 seconds
+const CACHE_DURATION: float = 30.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -29,497 +43,458 @@ func load_env_variables() -> void:
 
 	# Load from .env file for desktop/mobile platforms
 	var env_path = "res://.env"
-
-	# Check if .env file exists
 	if not FileAccess.file_exists(env_path):
-		print("Warning: .env file not found. Using fallback configuration.")
-		print("Please create .env file with SUPABASE_URL and SUPABASE_ANON_KEY")
+		print("Warning: .env file not found.")
 		is_initialized = false
 		return
 
-	# Read and parse .env file
 	var file = FileAccess.open(env_path, FileAccess.READ)
 	if file == null:
-		print("Error: Could not open .env file")
 		is_initialized = false
 		return
 
 	while not file.eof_reached():
 		var line = file.get_line().strip_edges()
-
-		# Skip comments and empty lines
 		if line.begins_with("#") or line.is_empty():
 			continue
-
-		# Parse KEY=VALUE format
 		var parts = line.split("=", true, 1)
 		if parts.size() == 2:
 			var key = parts[0].strip_edges()
 			var value = parts[1].strip_edges()
-
 			if key == "SUPABASE_URL":
 				supabase_url = value
 			elif key == "SUPABASE_ANON_KEY":
 				supabase_key = value
-
 	file.close()
 
-	# Validate that we have the required credentials
 	if supabase_url.is_empty() or supabase_key.is_empty():
-		print("Error: Missing Supabase credentials in .env file")
+		print("Error: Missing Supabase credentials in .env")
 		is_initialized = false
 		return
 
 	is_initialized = true
-	print("Supabase service initialized successfully")
+	print("Supabase service initialized successfully.")
 
 ## Load configuration from JavaScript window variables (for web builds)
 func load_web_config() -> void:
 	if not OS.has_feature("web"):
-		print("Error: load_web_config called on non-web platform")
-		is_initialized = false
 		return
-
-	# Access JavaScript window variables using JavaScriptBridge
+	
 	var js_bridge = JavaScriptBridge
-
-	# Read SUPABASE_URL from window.SUPABASE_URL
 	var url_result = js_bridge.eval("window.SUPABASE_URL")
-	if url_result != null and url_result != "":
+	if url_result != null:
 		supabase_url = str(url_result)
-
-	# Read SUPABASE_ANON_KEY from window.SUPABASE_ANON_KEY
+		
 	var key_result = js_bridge.eval("window.SUPABASE_ANON_KEY")
-	if key_result != null and key_result != "":
+	if key_result != null:
 		supabase_key = str(key_result)
 
-	# Validate that we have the required credentials
 	if supabase_url.is_empty() or supabase_key.is_empty():
 		print("Error: Missing Supabase credentials in web_config.js")
-		print("Please ensure web_config.js sets window.SUPABASE_URL and window.SUPABASE_ANON_KEY")
 		is_initialized = false
 		return
-
+		
 	is_initialized = true
-	print("Supabase service initialized successfully from web_config.js")
+	print("Supabase service initialized from web config.")
 
-## Get timestamp for 24 hours ago in ISO 8601 format
-func get_timestamp_24h_ago() -> String:
-	var now_unix = Time.get_unix_time_from_system()
-	var timestamp_24h_ago_unix = now_unix - 86400  # 86400 seconds = 24 hours
-	var datetime = Time.get_datetime_dict_from_unix_time(timestamp_24h_ago_unix)
-
-	return "%04d-%02d-%02dT%02d:%02d:%02d" % [
-		datetime.year, datetime.month, datetime.day,
-		datetime.hour, datetime.minute, datetime.second
-	]
-
-## Fetch top 10 scores from the last 24 hours
-func fetch_top_10_today() -> Array:
-	if not is_initialized:
-		print("Error: Supabase service not initialized")
-		leaderboard_error.emit("Service not configured. Please check .env file.")
-		return []
-
-	# Check cache first
-	var current_time = Time.get_unix_time_from_system()
-	if cached_leaderboard.size() > 0 and (current_time - cache_timestamp) < CACHE_DURATION:
-		print("Returning cached leaderboard data")
-		leaderboard_loaded.emit(cached_leaderboard)
-		return cached_leaderboard
-
-	# Use JavaScript fetch on web platform to avoid decompression issues
-	if OS.has_feature("web"):
-		return await fetch_top_10_today_web()
-
-	# Create HTTP request node for desktop/mobile
-	var http = HTTPRequest.new()
-	add_child(http)
-
-	# Build query URL
-	var timestamp_24h_ago = get_timestamp_24h_ago()
-	var url = supabase_url + "/rest/v1/leaderboard"
-	url += "?select=*"
-	url += "&created_at=gte." + timestamp_24h_ago
-	url += "&order=game_score.desc"
-	url += "&limit=10"
-
-	# Set headers
-	var headers = [
-		"apikey: " + supabase_key,
-		"Authorization: Bearer " + supabase_key,
-		"Content-Type: application/json"
-	]
-
-	print("Fetching leaderboard from: " + url)
-
-	# Make request
-	var error = http.request(url, headers, HTTPClient.METHOD_GET)
-	if error != OK:
-		print("Error making HTTP request: " + str(error))
-		http.queue_free()
-		leaderboard_error.emit("Failed to connect to server")
-		return []
-
-	# Wait for response
-	var response = await http.request_completed
-	http.queue_free()
-
-	# Parse response
-	var result = response[0]
-	var status_code = response[1]
-	var body = response[3]
-
-	if result != HTTPRequest.RESULT_SUCCESS:
-		print("Error: HTTP request failed with result: " + str(result))
-		leaderboard_error.emit("Network error: " + str(result))
-		return []
-
-	if status_code != 200:
-		print("Error: HTTP status " + str(status_code))
-		leaderboard_error.emit("Server error: " + str(status_code))
-		return []
-
-	# Parse JSON
-	var json_string = body.get_string_from_utf8()
-	var json = JSON.parse_string(json_string)
-
-	if json == null:
-		print("Error: Failed to parse JSON response")
-		leaderboard_error.emit("Invalid server response")
-		return []
-
-	# Update cache
-	cached_leaderboard = json
-	cache_timestamp = current_time
-
-	print("Successfully fetched " + str(json.size()) + " leaderboard entries")
-	leaderboard_loaded.emit(json)
-	return json
-
-## Fetch leaderboard using JavaScript fetch API (web platform only)
-func fetch_top_10_today_web() -> Array:
-	var timestamp_24h_ago = get_timestamp_24h_ago()
-	var url = supabase_url + "/rest/v1/leaderboard"
-	url += "?select=*"
-	url += "&created_at=gte." + timestamp_24h_ago
-	url += "&order=game_score.desc"
-	url += "&limit=10"
-
-	print("Fetching leaderboard from web: " + url)
-
-	# Create unique callback name
-	var callback_name = "godot_fetch_callback_" + str(Time.get_ticks_msec())
-
-	# Set up JavaScript code that calls back to Godot
-	var js_code = """
-	(async function() {
-		console.log('Starting fetch to: %s');
-		try {
-			const response = await fetch('%s', {
-				method: 'GET',
-				headers: {
-					'apikey': '%s',
-					'Authorization': 'Bearer %s',
-					'Content-Type': 'application/json'
-				}
-			});
-
-			console.log('Fetch response status:', response.status);
-
-			if (!response.ok) {
-				console.error('Fetch error - status:', response.status);
-				window['%s'] = JSON.stringify({ error: true, status: response.status, message: 'HTTP error' });
-				return;
-			}
-
-			const data = await response.json();
-			console.log('Fetch success - data length:', data.length);
-			window['%s'] = JSON.stringify({ error: false, data: data });
-		} catch (e) {
-			console.error('Fetch exception:', e);
-			window['%s'] = JSON.stringify({ error: true, message: e.toString() });
-		}
-	})();
-	""" % [url, url, supabase_key, supabase_key, callback_name, callback_name, callback_name]
-
-	# Execute the JavaScript
-	JavaScriptBridge.eval(js_code)
-	print("JavaScript executed, polling for result with callback: " + callback_name)
-
-	# Poll for result (with timeout)
-	var max_attempts = 100  # 10 seconds max
-	var attempt = 0
-	var result_json = null
-
-	while attempt < max_attempts:
-		await get_tree().create_timer(0.1).timeout
-		var check_code = "window['%s']" % callback_name
-		result_json = JavaScriptBridge.eval(check_code)
-
-		if result_json != null:
-			print("Result JSON received after " + str(attempt) + " attempts")
-			# Clean up
-			JavaScriptBridge.eval("delete window['%s']" % callback_name)
-			break
-
-		attempt += 1
-
-		# Log every 20 attempts (every 2 seconds)
-		if attempt % 20 == 0:
-			print("Still waiting for result... attempt " + str(attempt))
-
-	if result_json == null:
-		print("Error: JavaScript fetch timed out after " + str(attempt) + " attempts")
-		# Check if callback exists in window
-		var check_exists = JavaScriptBridge.eval("typeof window['%s']" % callback_name)
-		print("Callback variable type: " + str(check_exists))
-		leaderboard_error.emit("Request timed out")
-		return []
-
-	# Parse JSON string to dictionary
-	print("Parsing JSON result: " + str(result_json))
-	var result = JSON.parse_string(result_json)
-
-	if result == null:
-		print("Error: Failed to parse JSON result")
-		leaderboard_error.emit("Invalid response format")
-		return []
-
-	if result.has("error") and result["error"]:
-		var error_msg = result.get("message", "Unknown error")
-		print("Error: JavaScript fetch failed: " + str(error_msg))
-		leaderboard_error.emit("Network error: " + str(error_msg))
-		return []
-
-	if not result.has("data"):
-		print("Error: Response missing data field")
-		leaderboard_error.emit("Invalid server response")
-		return []
-
-	var data = result["data"]
-
-	# Update cache
-	var current_time = Time.get_unix_time_from_system()
-	cached_leaderboard = data
-	cache_timestamp = current_time
-
-	print("Successfully fetched " + str(data.size()) + " leaderboard entries via JavaScript")
-	leaderboard_loaded.emit(data)
-	return data
-
-## Submit a new score to the leaderboard
-func submit_score(player_name: String, score: int, duration: float, difficulty: int) -> bool:
-	if not is_initialized:
-		print("Error: Supabase service not initialized")
-		score_submitted.emit(false)
-		return false
-
-	# Validate inputs
-	if player_name.length() != 3:
-		print("Error: Player name must be exactly 3 characters")
-		score_submitted.emit(false)
-		return false
-
-	if score <= 0:
-		print("Error: Score must be greater than 0")
-		score_submitted.emit(false)
-		return false
-
-	# Use JavaScript fetch on web platform to avoid decompression issues
-	if OS.has_feature("web"):
-		return await submit_score_web(player_name, score, duration, difficulty)
-
-	# Create HTTP request node for desktop/mobile
-	var http = HTTPRequest.new()
-	add_child(http)
-
-	# Build request body
-	var game_time_string = "PT" + str(duration) + "S"
-
-	var body_dict = {
-		"three_name": player_name.to_upper(),
-		"game_score": score,
-		"game_time": game_time_string,
-		"game_level": difficulty
-	}
-	var body_json = JSON.stringify(body_dict)
-
-	# Build URL
-	var url = supabase_url + "/rest/v1/leaderboard"
-
-	# Set headers
-	var headers = [
-		"apikey: " + supabase_key,
-		"Authorization: Bearer " + supabase_key,
-		"Content-Type: application/json",
-		"Prefer: return=minimal"
-	]
-
-	print("Submitting score: " + player_name + " - " + str(score))
-
-	# Make request
-	var error = http.request(url, headers, HTTPClient.METHOD_POST, body_json)
-	if error != OK:
-		print("Error making HTTP request: " + str(error))
-		http.queue_free()
-		score_submitted.emit(false)
-		return false
-
-	# Wait for response
-	var response = await http.request_completed
-	http.queue_free()
-
-	# Parse response
-	var status_code = response[1]
-
-	if status_code == 201:  # Created
-		print("Score submitted successfully!")
-		# Invalidate cache
-		cached_leaderboard.clear()
-		cache_timestamp = 0.0
-		score_submitted.emit(true)
-		return true
+# --- HELPER: HEADERS ---
+func _get_headers(auth_token = null, upsert = false) -> PackedStringArray:
+	var headers = PackedStringArray()
+	headers.append("Content-Type: application/json")
+	headers.append("apikey: " + supabase_key)
+	
+	if auth_token:
+		headers.append("Authorization: Bearer " + auth_token)
 	else:
-		print("Error: HTTP status " + str(status_code))
-		var body = response[3].get_string_from_utf8()
-		print("Response body: " + body)
-		score_submitted.emit(false)
+		headers.append("Authorization: Bearer " + supabase_key)
+	
+	if upsert:
+		headers.append("Prefer: resolution=merge-duplicates")
+		
+	return headers
+
+# --- ARCADE LEADERBOARD ---
+
+## Submit score via Edge Function
+func submit_score_arcade(initials: String, score: int, level: int, duration: float) -> void:
+	if not is_initialized:
+		print("Supabase not initialized.")
+		return
+
+	var url = supabase_url + "/functions/v1/submit-leaderboard-score"
+	var body = JSON.stringify({
+		"three_name": initials,
+		"score": score,
+		"level": level,
+		"duration": duration
+	})
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(func(result, code, headers, body):
+		var json = JSON.parse_string(body.get_string_from_utf8())
+		if code == 200 and json != null and json.has("rank"):
+			score_submitted.emit(int(json.rank))
+			print("Score Submitted! Rank: ", json.rank)
+			# Invalidate cache
+			cached_leaderboard.clear()
+		else:
+			print("Error submitting score: ", body.get_string_from_utf8())
+		http.queue_free()
+	)
+	http.request(url, _get_headers(), HTTPClient.METHOD_POST, body)
+
+## Submit score (Awaitable, returns success bool)
+func submit_score(initials: String, score: int, duration: float, level: int) -> bool:
+	if not is_initialized:
+		print("Supabase not initialized.")
 		return false
 
-## Submit score using JavaScript fetch API (web platform only)
-func submit_score_web(player_name: String, score: int, duration: float, difficulty: int) -> bool:
-	var game_time_string = "PT" + str(duration) + "S"
-	var url = supabase_url + "/rest/v1/leaderboard"
-
-	print("Submitting score via JavaScript: " + player_name + " - " + str(score))
-
-	# Build request body
-	var body_dict = {
-		"three_name": player_name.to_upper(),
-		"game_score": score,
-		"game_time": game_time_string,
-		"game_level": difficulty
-	}
-	var body_json = JSON.stringify(body_dict)
-
-	# Create unique callback name
-	var callback_name = "godot_submit_callback_" + str(Time.get_ticks_msec())
-
-	# Create JavaScript fetch request
-	var js_code = """
-	(async function() {
-		console.log('Starting POST to: %s');
-		try {
-			const response = await fetch('%s', {
-				method: 'POST',
-				headers: {
-					'apikey': '%s',
-					'Authorization': 'Bearer %s',
-					'Content-Type': 'application/json',
-					'Prefer': 'return=minimal'
-				},
-				body: %s
-			});
-
-			console.log('POST response status:', response.status);
-
-			if (response.status === 201) {
-				console.log('Score submitted successfully');
-				window['%s'] = JSON.stringify({ error: false, status: 201 });
-			} else {
-				const text = await response.text();
-				console.error('POST error:', text);
-				window['%s'] = JSON.stringify({ error: true, status: response.status, message: text });
-			}
-		} catch (e) {
-			console.error('POST exception:', e);
-			window['%s'] = JSON.stringify({ error: true, message: e.toString() });
-		}
-	})();
-	""" % [url, url, supabase_key, supabase_key, body_json, callback_name, callback_name, callback_name]
-
-	# Execute the JavaScript
-	JavaScriptBridge.eval(js_code)
-	print("JavaScript executed, polling for result with callback: " + callback_name)
-
-	# Poll for result (with timeout)
-	var max_attempts = 100  # 10 seconds max
-	var attempt = 0
-	var result_json = null
-
-	while attempt < max_attempts:
-		await get_tree().create_timer(0.1).timeout
-		var check_code = "window['%s']" % callback_name
-		result_json = JavaScriptBridge.eval(check_code)
-
-		if result_json != null:
-			print("Result JSON received after " + str(attempt) + " attempts")
-			# Clean up
-			JavaScriptBridge.eval("delete window['%s']" % callback_name)
-			break
-
-		attempt += 1
-
-		# Log every 20 attempts (every 2 seconds)
-		if attempt % 20 == 0:
-			print("Still waiting for submit result... attempt " + str(attempt))
-
-	if result_json == null:
-		print("Error: JavaScript submit timed out after " + str(attempt) + " attempts")
-		var check_exists = JavaScriptBridge.eval("typeof window['%s']" % callback_name)
-		print("Callback variable type: " + str(check_exists))
-		score_submitted.emit(false)
-		return false
-
-	# Parse JSON string to dictionary
-	print("Parsing submit JSON result: " + str(result_json))
-	var result = JSON.parse_string(result_json)
-
-	if result == null:
-		print("Error: Failed to parse JSON result")
-		score_submitted.emit(false)
-		return false
-
-	if result.has("error") and result["error"]:
-		var error_msg = result.get("message", "Unknown error")
-		print("Error: JavaScript submit failed: " + str(error_msg))
-		score_submitted.emit(false)
-		return false
-
-	# Success!
-	print("Score submitted successfully via JavaScript!")
-	# Invalidate cache
-	cached_leaderboard.clear()
-	cache_timestamp = 0.0
-	score_submitted.emit(true)
-	return true
-
-## Check if a score qualifies for the top 10
-func check_qualifies_for_top_10(score: int) -> bool:
-	if score <= 0:
-		return false
-
-	# Fetch current top 10
-	var top_10 = await fetch_top_10_today()
-
-	# If there are fewer than 10 entries, automatically qualifies
-	if top_10.size() < 10:
-		print("Score qualifies: Less than 10 entries")
-		return true
-
-	# Check if score is higher than the lowest in top 10
-	if top_10.size() > 0:
-		var lowest_score = top_10[top_10.size() - 1].get("game_score", 0)
-		if score > lowest_score:
-			print("Score qualifies: " + str(score) + " > " + str(lowest_score))
+	var url = supabase_url + "/functions/v1/submit-leaderboard-score"
+	var body = JSON.stringify({
+		"three_name": initials,
+		"score": score,
+		"level": level,
+		"duration": duration
+	})
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request(url, _get_headers(), HTTPClient.METHOD_POST, body)
+	
+	var result = await http.request_completed
+	http.queue_free()
+	
+	var code = result[1]
+	var body_resp = result[3]
+	
+	if code == 200:
+		var json = JSON.parse_string(body_resp.get_string_from_utf8())
+		if json != null and json.has("rank"):
+			print("Score Submitted! Rank: ", json.rank)
+			# Invalidate cache
+			cached_leaderboard.clear()
+			score_submitted.emit(int(json.rank))
 			return true
-
-	print("Score does not qualify for top 10")
+		else:
+			print("Error submitting score (invalid response): ", body_resp.get_string_from_utf8())
+	else:
+		print("Error submitting score (HTTP ", code, "): ", body_resp.get_string_from_utf8())
+		
 	return false
 
-## Clear the cache (useful for refresh button)
+## Fetch Top 10 from REST API
+func fetch_leaderboard() -> void:
+	if not is_initialized:
+		return
+
+	# Check cache
+	var current_time = Time.get_unix_time_from_system()
+	if cached_leaderboard.size() > 0 and (current_time - cache_timestamp) < CACHE_DURATION:
+		leaderboard_loaded.emit(cached_leaderboard)
+		return
+
+	var url = supabase_url + "/rest/v1/leaderboard?select=three_name,game_score,game_level&order=game_score.desc&limit=10"
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(func(result, code, headers, body):
+		if code == 200:
+			var json = JSON.parse_string(body.get_string_from_utf8())
+			if json != null:
+				cached_leaderboard = json
+				cache_timestamp = Time.get_unix_time_from_system()
+				leaderboard_loaded.emit(json)
+			else:
+				leaderboard_error.emit("Failed to parse response")
+		else:
+			leaderboard_error.emit("HTTP Error: " + str(code))
+		http.queue_free()
+	)
+	http.request(url, _get_headers(), HTTPClient.METHOD_GET)
+
+## Fetch Top 10 from last 24h (Awaitable)
+func fetch_top_10_today() -> Variant:
+	if not is_initialized:
+		return null
+
+	# Calculate 24h ago
+	var yesterday_unix = Time.get_unix_time_from_system() - 86400
+	# Godot's unix time is UTC. This returns ISO 8601 compatible string "YYYY-MM-DDTHH:MM:SS"
+	var yesterday_str = Time.get_datetime_string_from_unix_time(yesterday_unix)
+	
+	# Append query for created_at > yesterday
+	var url = supabase_url + "/rest/v1/leaderboard?select=three_name,game_score,game_level&order=game_score.desc&limit=10&created_at=gt." + yesterday_str
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request(url, _get_headers(), HTTPClient.METHOD_GET)
+	
+	var result = await http.request_completed
+	http.queue_free()
+	
+	var code = result[1]
+	var body = result[3]
+	
+	if code == 200:
+		var json = JSON.parse_string(body.get_string_from_utf8())
+		if json is Array:
+			return json
+	
+	print("Error fetching today's leaderboard: ", code)
+	return null
+
+## Clear Leaderboard Cache
 func clear_cache() -> void:
 	cached_leaderboard.clear()
 	cache_timestamp = 0.0
-	print("Leaderboard cache cleared")
+	print("Leaderboard cache cleared.")
+
+## Check if a score qualifies for the top 10 (Daily)
+func check_qualifies_for_top_10(score: int) -> bool:
+	if not is_initialized:
+		return false
+
+	# We check against DAILY leaderboard to match LeaderboardScene display.
+	# We do NOT use cached_leaderboard (all-time) here.
+
+	# Calculate 24h ago
+	var yesterday_unix = Time.get_unix_time_from_system() - 86400
+	var yesterday_str = Time.get_datetime_string_from_unix_time(yesterday_unix)
+
+	# Fetch daily top 10 scores
+	var url = supabase_url + "/rest/v1/leaderboard?select=game_score&order=game_score.desc&limit=10&created_at=gt." + yesterday_str
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request(url, _get_headers(), HTTPClient.METHOD_GET)
+	
+	var result = await http.request_completed
+	http.queue_free()
+	
+	# result is [result, response_code, headers, body]
+	var code = result[1]
+	var body = result[3]
+	
+	if code == 200:
+		var json = JSON.parse_string(body.get_string_from_utf8())
+		if json is Array:
+			return _check_score_against_leaderboard(score, json)
+	
+	return false
+
+func _check_score_against_leaderboard(score: int, leaderboard: Array) -> bool:
+	# If fewer than 10 entries, any score > 0 qualifies
+	if leaderboard.size() < 10:
+		return score > 0
+		
+	# If 10 entries, must beat the last one
+	var lowest_score = leaderboard[-1].get("game_score", 0)
+	return score > lowest_score
+
+# --- AUTHENTICATION & CLOUD SAVES ---
+
+## Log in using Email/Password
+func login(email, password) -> void:
+	if not is_initialized:
+		login_completed.emit(null, "Not initialized")
+		return
+
+	var url = supabase_url + "/auth/v1/token?grant_type=password"
+	var body = JSON.stringify({"email": email, "password": password})
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(func(result, code, headers, body):
+		var json = JSON.parse_string(body.get_string_from_utf8())
+		if code == 200 and json != null:
+			session_token = json.get("access_token", "")
+			var user = json.get("user", {})
+			if user.has("id"):
+				user_id = user.id
+			login_completed.emit(user, "")
+			print("Login successful.")
+		else:
+			var err_msg = "Login Failed"
+			if json != null and json.has("error_description"):
+				err_msg = json.error_description
+			login_completed.emit(null, err_msg)
+			print("Login error: ", err_msg)
+		http.queue_free()
+	)
+	http.request(url, _get_headers(), HTTPClient.METHOD_POST, body)
+
+## Upload Save to Cloud (UPSERT)
+func save_game_cloud(slot: int, data: Dictionary) -> void:
+	if not is_initialized or session_token == "":
+		print("Cannot save: Not logged in.")
+		save_uploaded.emit(false)
+		return
+
+	var url = supabase_url + "/rest/v1/saves"
+	var headers = _get_headers(session_token, true) # Enable Upsert
+	
+	var body = JSON.stringify({
+		"user_id": user_id,
+		"slot": slot,
+		"data": data
+	})
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(func(result, code, headers, body):
+		if code == 201 or code == 200 or code == 204:
+			print("Cloud save uploaded successfully.")
+			save_uploaded.emit(true)
+		else:
+			print("Cloud save failed. Code: ", code)
+			print("Response: ", body.get_string_from_utf8())
+			save_uploaded.emit(false)
+		http.queue_free()
+	)
+	http.request(url, headers, HTTPClient.METHOD_POST, body)
+
+## Download Save from Cloud
+func download_game_cloud(slot: int) -> void:
+	if not is_initialized or session_token == "":
+		print("Cannot download: Not logged in.")
+		save_downloaded.emit({})
+		return
+		
+	var url = supabase_url + "/rest/v1/saves?slot=eq." + str(slot) + "&select=data"
+	var headers = _get_headers(session_token)
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(func(result, code, headers, body):
+		if code == 200:
+			var json = JSON.parse_string(body.get_string_from_utf8())
+			if json is Array and json.size() > 0:
+				var save_data = json[0].get("data", {})
+				save_downloaded.emit(save_data)
+				print("Cloud save downloaded.")
+			else:
+				print("No save found for slot ", slot)
+				save_downloaded.emit({})
+		else:
+			print("Download failed. Code: ", code)
+			save_downloaded.emit({})
+		http.queue_free()
+	)
+	http.request(url, headers, HTTPClient.METHOD_GET)
+
+## Sign up using Email/Password
+func signup(email, password) -> void:
+	if not is_initialized:
+		signup_completed.emit(null, "Not initialized")
+		return
+
+	var url = supabase_url + "/auth/v1/signup"
+	var body = JSON.stringify({"email": email, "password": password})
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(func(result, code, headers, body):
+		var json = JSON.parse_string(body.get_string_from_utf8())
+		if (code == 200 or code == 201) and json != null:
+			var user = json.get("user", {})
+			# Auto-login if token present
+			if json.has("access_token"):
+				session_token = json.get("access_token", "")
+				if user.has("id"):
+					user_id = user.id
+			signup_completed.emit(user, "")
+			print("Signup successful.")
+		else:
+			var err_msg = "Signup Failed"
+			if json != null:
+				if json.has("msg"): err_msg = json.msg
+				elif json.has("error_description"): err_msg = json.error_description
+				elif json.has("message"): err_msg = json.message
+			signup_completed.emit(null, err_msg)
+			print("Signup error: ", err_msg)
+		http.queue_free()
+	)
+	http.request(url, _get_headers(), HTTPClient.METHOD_POST, body)
+
+## Get best rank for initials via Edge Function
+func get_name_rank(initials: String) -> void:
+	if not is_initialized:
+		name_rank_received.emit(0, 0)
+		return
+
+	var url = supabase_url + "/functions/v1/get-name-rank"
+	var body = JSON.stringify({ "three_name": initials })
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(func(result, code, headers, body):
+		var json = JSON.parse_string(body.get_string_from_utf8())
+		if code == 200 and json != null:
+			var rank = json.get("best_rank")
+			var score = json.get("best_score", 0)
+			if rank != null:
+				name_rank_received.emit(int(rank), int(score))
+			else:
+				name_rank_received.emit(0, 0)
+		else:
+			print("Error fetching name rank: ", body.get_string_from_utf8())
+			name_rank_received.emit(0, 0)
+		http.queue_free()
+	)
+	http.request(url, _get_headers(), HTTPClient.METHOD_POST, body)
+
+## Upload Stats to Cloud (UPSERT)
+func update_stats(stats_data: Dictionary) -> void:
+	if not is_initialized or session_token == "":
+		print("Cannot update stats: Not logged in.")
+		stats_updated.emit(false)
+		return
+
+	var url = supabase_url + "/rest/v1/stats"
+	var headers = _get_headers(session_token, true) # Enable Upsert
+	
+	var body = JSON.stringify({
+		"user_id": user_id,
+		"data": stats_data
+	})
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(func(result, code, headers, body):
+		if code == 201 or code == 200 or code == 204:
+			print("Stats uploaded successfully.")
+			stats_updated.emit(true)
+		else:
+			print("Stats upload failed. Code: ", code)
+			stats_updated.emit(false)
+		http.queue_free()
+	)
+	http.request(url, headers, HTTPClient.METHOD_POST, body)
+
+## Fetch Stats from Cloud
+func get_stats() -> void:
+	if not is_initialized or session_token == "":
+		print("Cannot fetch stats: Not logged in.")
+		stats_fetched.emit({})
+		return
+		
+	var url = supabase_url + "/rest/v1/stats?select=data"
+	var headers = _get_headers(session_token)
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(func(result, code, headers, body):
+		if code == 200:
+			var json = JSON.parse_string(body.get_string_from_utf8())
+			if json is Array and json.size() > 0:
+				var data = json[0].get("data", {})
+				stats_fetched.emit(data)
+			else:
+				stats_fetched.emit({})
+		else:
+			print("Stats fetch failed. Code: ", code)
+			stats_fetched.emit({})
+		http.queue_free()
+	)
+	http.request(url, headers, HTTPClient.METHOD_GET)
