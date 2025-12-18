@@ -48,27 +48,6 @@ bg_color = Color(0.9, 0.85, 1, 1)
 corner_radius_top_left = 15
 corner_radius_top_right = 15
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_normal"]
-bg_color = Color(0.4, 0.4, 0.5, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_hover"]
-bg_color = Color(0.5, 0.5, 0.6, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_pressed"]
-bg_color = Color(0.3, 0.3, 0.4, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-
 [node name="AITutorScene" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -121,179 +100,84 @@ layout_mode = 2
 theme_override_constants/separation = 15
 
 [node name="BackButton" type="Button" parent="MainMargin/MainVBox/TopBar"]
-
 custom_minimum_size = Vector2(120, 50)
-
 layout_mode = 2
-
 theme_override_font_sizes/font_size = 36
-
 text = "← Back"
 
-
-
 [node name="TitleLabel" type="Label" parent="MainMargin/MainVBox/TopBar"]
-
 layout_mode = 2
-
 size_flags_horizontal = 3
-
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-
 theme_override_font_sizes/font_size = 50
-
 text = "AI Tutor Mode"
-
 horizontal_alignment = 1
-
 vertical_alignment = 1
 
-
-
 [node name="ChatToggleButton" type="Button" parent="MainMargin/MainVBox/TopBar"]
-
-
-
 custom_minimum_size = Vector2(60, 60)
-
-
-
 layout_mode = 2
-
-
-
 theme_override_font_sizes/font_size = 40
-
-
-
 theme_override_styles/normal = SubResource("StyleBoxFlat_chat_button")
-
-
-
 theme_override_styles/pressed = SubResource("StyleBoxFlat_chat_button")
-
-
-
 theme_override_styles/hover = SubResource("StyleBoxFlat_chat_button")
-
-
-
 toggle_mode = true
-
-
-
 text = "💬"
 
-
-
 [node name="NotificationBadge" type="PanelContainer" parent="MainMargin/MainVBox/TopBar/ChatToggleButton"]
-
 visible = false
-
 z_index = 101
-
 custom_minimum_size = Vector2(20, 20)
-
 layout_mode = 1
-
 anchors_preset = 1
-
 anchor_left = 1.0
-
 anchor_right = 1.0
-
 offset_left = -5.0
-
 offset_top = -5.0
-
 offset_right = 15.0
-
 offset_bottom = 15.0
-
 grow_horizontal = 0
-
 theme_override_styles/panel = SubResource("StyleBoxFlat_notification_badge")
 
-
-
 [node name="ContentScroll" type="ScrollContainer" parent="MainMargin/MainVBox"]
-
 layout_mode = 2
-
 size_flags_vertical = 3
-
 horizontal_scroll_mode = 0
 
-
-
 [node name="SolverPanel" type="PanelContainer" parent="MainMargin/MainVBox/ContentScroll"]
-
 layout_mode = 2
-
 size_flags_horizontal = 3
-
 size_flags_vertical = 3
-
 theme_override_styles/panel = SubResource("StyleBoxFlat_solver")
 
-
-
 [node name="SolverMargin" type="MarginContainer" parent="MainMargin/MainVBox/ContentScroll/SolverPanel"]
-
 layout_mode = 2
-
 theme_override_constants/margin_left = 15
-
 theme_override_constants/margin_top = 15
-
 theme_override_constants/margin_right = 15
-
 theme_override_constants/margin_bottom = 15
 
-
-
 [node name="SolverVBox" type="VBoxContainer" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin"]
-
 layout_mode = 2
-
 theme_override_constants/separation = 7
 
-
-
 [node name="SolverHeader" type="Label" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox"]
-
 visible = false
-
 layout_mode = 2
-
 theme_override_font_sizes/font_size = 40
 
-
-
 [node name="ProblemDisplay" type="RichTextLabel" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox"]
-
 custom_minimum_size = Vector2(0, 100)
-
 layout_mode = 2
-
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-
 theme_override_font_sizes/normal_font_size = 40
-
 theme_override_font_sizes/bold_font_size = 40
-
 theme_override_font_sizes/bold_italics_font_size = 36
-
 theme_override_font_sizes/italics_font_size = 36
-
 theme_override_font_sizes/mono_font_size = 36
-
 bbcode_enabled = true
-
 text = "[i]Problem will appear here after AI generates it[/i]"
-
 fit_content = true
-
 scroll_active = false
 
 [node name="StepsScroll" type="ScrollContainer" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox"]
@@ -313,23 +197,23 @@ alignment = 1
 
 [node name="AddStepButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
 visible = false
-    custom_minimum_size = Vector2(0, 60)
-    layout_mode = 2
-    theme_override_font_sizes/font_size = 36
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
 text = "+ Add Step"
 
 [node name="FinishButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
 visible = false
-    custom_minimum_size = Vector2(0, 60)
-    layout_mode = 2
-    theme_override_font_sizes/font_size = 36
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
 text = "Submit for Feedback"
 
 [node name="NewProblemButton" type="Button" parent="MainMargin/MainVBox/ContentScroll/SolverPanel/SolverMargin/SolverVBox/ButtonsArea"]
 visible = false
-    custom_minimum_size = Vector2(0, 60)
-    layout_mode = 2
-    theme_override_font_sizes/font_size = 36
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
 text = "Try Another Problem"
 
 [node name="VirtualKeyboard" type="Control" parent="MainMargin/MainVBox"]

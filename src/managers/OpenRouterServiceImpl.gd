@@ -21,12 +21,26 @@ func load_env_variables() -> void:
 		load_web_config()
 		return
 
-	# Load from .env file for desktop/mobile platforms
+	# Try loading from project settings first (for exported builds)
+	if ProjectSettings.has_setting("api_config/openrouter_api_key"):
+		api_key = ProjectSettings.get_setting("api_config/openrouter_api_key")
+		base_url = ProjectSettings.get_setting("api_config/openrouter_base_url")
+
+		# Set default base URL if not specified
+		if base_url.is_empty():
+			base_url = "https://openrouter.ai/api/v1"
+
+		if not api_key.is_empty():
+			is_initialized = true
+			print("OpenRouter service initialized from project settings")
+			return
+
+	# Fallback to .env file for desktop/mobile platforms (development)
 	var env_path = "res://.env"
 
 	# Check if .env file exists
 	if not FileAccess.file_exists(env_path):
-		print("Warning: .env file not found. Using fallback configuration.")
+		print("Warning: .env file not found and no project settings configured.")
 		print("Please create .env file with OPENROUTER_API_KEY and OPENROUTER_BASE_URL")
 		is_initialized = false
 		return
@@ -69,7 +83,7 @@ func load_env_variables() -> void:
 		return
 
 	is_initialized = true
-	print("OpenRouter service initialized successfully")
+	print("OpenRouter service initialized from .env file")
 
 ## Load configuration from JavaScript window variables (for web builds)
 func load_web_config() -> void:
@@ -120,7 +134,7 @@ func send_chat_request(messages: Array, http_request: HTTPRequest) -> String:
 
 	# Build request body
 	var request_body = {
-		"model": "amazon/nova-2-lite-v1:free",
+		"model": "nvidia/nemotron-3-nano-30b-a3b:free",
 		"messages": messages
 	}
 

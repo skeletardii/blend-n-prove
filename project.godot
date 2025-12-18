@@ -8,6 +8,13 @@
 
 config_version=5
 
+[api_config]
+
+supabase_url="https://qfqgbcotqqclrgcejhpd.supabase.co"
+supabase_anon_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmcWdiY290cXFjbHJnY2VqaHBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUxOTcyNDMsImV4cCI6MjA4MDc3MzI0M30.jnzNnOoVpZC93TVBv6bmnZNP0VTfrnSpzmrTO1cHBP0"
+openrouter_api_key="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"
+openrouter_base_url="https://openrouter.ai/api/v1"
+
 [application]
 
 config/name="Fusion Rush"

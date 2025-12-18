@@ -58,7 +58,7 @@ func setup_ui():
 	var header_container = HBoxContainer.new()
 	number_label = Label.new()
 	number_label.text = "Step " + str(step_number)
-	number_label.add_theme_font_size_override("font_size", 20)
+	number_label.add_theme_font_size_override("font_size", 26)
 	header_container.add_child(number_label)
 
 	var spacer = Control.new()
@@ -78,13 +78,29 @@ func setup_ui():
 	# Row 2: Result label and field
 	var result_label = Label.new()
 	result_label.text = "Result:"
-	result_label.add_theme_font_size_override("font_size", 16)
+	result_label.add_theme_font_size_override("font_size", 20)
 	grid.add_child(result_label)
 
 	result_field = LineEdit.new()
-	result_field.custom_minimum_size = Vector2(400, 40)
+	result_field.custom_minimum_size = Vector2(400, 45)
 	result_field.editable = false  # Read-only, use virtual keyboard
-	result_field.add_theme_font_size_override("font_size", 18)
+	result_field.add_theme_font_size_override("font_size", 24)
+	result_field.add_theme_color_override("font_color", Color(0.0, 0.0, 0.0, 1.0))
+	result_field.add_theme_color_override("font_placeholder_color", Color(0.4, 0.4, 0.4, 1.0))
+	result_field.add_theme_color_override("font_uneditable_color", Color(0.0, 0.0, 0.0, 1.0))
+
+	# Ensure white background for result field in all states
+	var result_style = StyleBoxFlat.new()
+	result_style.bg_color = Color(1.0, 1.0, 1.0, 1.0)
+	result_style.border_width_left = 1
+	result_style.border_width_top = 1
+	result_style.border_width_right = 1
+	result_style.border_width_bottom = 1
+	result_style.border_color = Color(0.6, 0.6, 0.6, 1.0)
+	result_field.add_theme_stylebox_override("normal", result_style)
+	result_field.add_theme_stylebox_override("focus", result_style)
+	result_field.add_theme_stylebox_override("read_only", result_style)
+
 	result_field.focus_entered.connect(func(): result_focused.emit(self))
 	result_field.text_changed.connect(func(new_text):
 		result_text = new_text
@@ -95,12 +111,12 @@ func setup_ui():
 	# Row 3: Rule label and dropdown
 	var rule_label = Label.new()
 	rule_label.text = "Rule:"
-	rule_label.add_theme_font_size_override("font_size", 16)
+	rule_label.add_theme_font_size_override("font_size", 20)
 	grid.add_child(rule_label)
 
 	rule_dropdown = OptionButton.new()
-	rule_dropdown.custom_minimum_size = Vector2(400, 40)
-	rule_dropdown.add_theme_font_size_override("font_size", 16)
+	rule_dropdown.custom_minimum_size = Vector2(400, 45)
+	rule_dropdown.add_theme_font_size_override("font_size", 20)
 	populate_rule_dropdown()
 	rule_dropdown.item_selected.connect(_on_rule_selected)
 	grid.add_child(rule_dropdown)
@@ -108,13 +124,13 @@ func setup_ui():
 	# Row 4: Source label and field
 	var source_label = Label.new()
 	source_label.text = "From:"
-	source_label.add_theme_font_size_override("font_size", 16)
+	source_label.add_theme_font_size_override("font_size", 20)
 	grid.add_child(source_label)
 
 	source_field = LineEdit.new()
-	source_field.custom_minimum_size = Vector2(400, 40)
+	source_field.custom_minimum_size = Vector2(400, 45)
 	source_field.placeholder_text = "e.g., P1, P2 or S1, S2"
-	source_field.add_theme_font_size_override("font_size", 18)
+	source_field.add_theme_font_size_override("font_size", 24)
 	source_field.text_changed.connect(func(new_text):
 		parse_sources(new_text)
 		step_changed.emit()

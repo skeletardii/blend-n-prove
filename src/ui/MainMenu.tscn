@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dvdwtisv5ow7b"]
+[gd_scene load_steps=15 format=3 uid="uid://dvdwtisv5ow7b"]
 
 [ext_resource type="Script" uid="uid://k7rdb8uuwufw" path="res://src/ui/MainMenu.gd" id="1_2v8qy"]
 [ext_resource type="Shader" uid="uid://cjvxxsdq4gny2" path="res://src/shaders/scrolling.gdshader" id="2_2wh52"]
@@ -7,7 +7,25 @@
 [ext_resource type="Texture2D" uid="uid://onbkto0umar" path="res://assets/sprites/newlogo.png" id="4_ihbld"]
 [ext_resource type="FontVariation" path="res://assets/fonts/museo_sans_rounded_1000_with_fallback.tres" id="5_dbyr8"]
 [ext_resource type="Theme" uid="uid://b2fedi5eycrnx" path="res://assets/themes/Wenrexa.tres" id="5_u6542"]
-[ext_resource type="Shader" path="res://src/shaders/ui_blur.gdshader" id="6_blur"]
+[ext_resource type="Shader" uid="uid://cuo407gjacr1j" path="res://src/shaders/ui_blur.gdshader" id="6_blur"]
+
+[sub_resource type="Gradient" id="Gradient_2wh52"]
+offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
+colors = PackedColorArray(0.976471, 0.662745, 0.835294, 1, 0.982758, 0.720592, 0.78625, 1, 0.775179, 0.41666, 0.945561, 1, 0.0630186, 0.104642, 0.416814, 1, 0.996078, 0.843137, 0.682353, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ow34m"]
+gradient = SubResource("Gradient_2wh52")
+fill_to = Vector2(1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2wh52"]
+shader = ExtResource("2_2wh52")
+shader_parameter/speed = 0.05
+shader_parameter/opacity = 0.467
+shader_parameter/rotation_speed = 1.0
+shader_parameter/shaking = true
+shader_parameter/amplitude = 1.0
+shader_parameter/noise_scale = 20.0
+shader_parameter/noise_speed = 20.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_reset_blur"]
 shader = ExtResource("6_blur")
@@ -29,24 +47,6 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
-
-[sub_resource type="Gradient" id="Gradient_2wh52"]
-offsets = PackedFloat32Array(0, 0.00421941, 0.0379747, 0.995781, 1)
-colors = PackedColorArray(0.976471, 0.662745, 0.835294, 1, 0.982758, 0.720592, 0.78625, 1, 0.775179, 0.41666, 0.945561, 1, 0.0630186, 0.104642, 0.416814, 1, 0.996078, 0.843137, 0.682353, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_ow34m"]
-gradient = SubResource("Gradient_2wh52")
-fill_to = Vector2(1, 1)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_2wh52"]
-shader = ExtResource("2_2wh52")
-shader_parameter/speed = 0.05
-shader_parameter/opacity = 0.467
-shader_parameter/rotation_speed = 1.0
-shader_parameter/shaking = true
-shader_parameter/amplitude = 1.0
-shader_parameter/noise_scale = 20.0
-shader_parameter/noise_speed = 20.0
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -225,6 +225,10 @@ theme = ExtResource("5_u6542")
 theme_override_font_sizes/font_size = 24
 text = "LEADERBOARD"
 
+[node name="Spacer10" type="Control" parent="MenuContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
 [node name="AITutorButton" type="Button" parent="MenuContainer"]
 custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
@@ -236,6 +240,7 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="QuitButton" type="Button" parent="MenuContainer"]
+visible = false
 custom_minimum_size = Vector2(400, 70)
 layout_mode = 2
 theme = ExtResource("5_u6542")
@@ -657,9 +662,9 @@ This will delete:
 - Tutorial progress
 
 This action cannot be undone!"
-autowrap_mode = 3
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="ButtonContainer" type="HBoxContainer" parent="ResetPopup/Panel/VBoxContainer"]
 layout_mode = 2
@@ -714,8 +719,7 @@ vertical_alignment = 1
 [connection signal="pressed" from="DebugPanel/DebugContainer/ImportProgressButton" to="." method="_on_import_progress_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/PopulateTestDataButton" to="." method="_on_populate_test_data_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/CloseDebugButton" to="." method="_on_close_debug_button_pressed"]
+[connection signal="toggled" from="SettingsPanel/SettingsContainer/DisableIntroCheck" to="." method="_on_disable_intro_check_toggled"]
 [connection signal="item_selected" from="SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption" to="." method="_on_difficulty_mode_option_item_selected"]
 [connection signal="pressed" from="SettingsPanel/SettingsContainer/ResetProgressButton" to="." method="_on_reset_progress_button_pressed"]
 [connection signal="pressed" from="SettingsPanel/SettingsContainer/CloseSettingsButton" to="." method="_on_close_settings_button_pressed"]
-[connection signal="toggled" from="SettingsPanel/SettingsContainer/DisableIntroCheck" to="." method="_on_disable_intro_check_toggled"]
-[connection signal="confirmed" from="ResetConfirmationDialog" to="." method="_on_reset_progress_confirmed"]

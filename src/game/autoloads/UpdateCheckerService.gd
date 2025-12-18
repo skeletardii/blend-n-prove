@@ -19,7 +19,8 @@ func _set_impl(impl: Node) -> void:
 	_impl = impl
 	# Forward signals
 	if _impl.has_signal("update_available"):
-		_impl.update_available.connect(func(info): update_available.emit(info))
+		#_impl.update_available.connect(func(info): update_available.emit(info))
+		print("update")
 	if _impl.has_signal("update_check_failed"):
 		_impl.update_check_failed.connect(func(err): update_check_failed.emit(err))
 	if _impl.has_signal("no_update_available"):

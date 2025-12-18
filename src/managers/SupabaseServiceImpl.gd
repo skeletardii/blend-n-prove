@@ -41,10 +41,20 @@ func load_env_variables() -> void:
 		load_web_config()
 		return
 
-	# Load from .env file for desktop/mobile platforms
+	# Try loading from project settings first (for exported builds)
+	if ProjectSettings.has_setting("api_config/supabase_url"):
+		supabase_url = ProjectSettings.get_setting("api_config/supabase_url")
+		supabase_key = ProjectSettings.get_setting("api_config/supabase_anon_key")
+
+		if not supabase_url.is_empty() and not supabase_key.is_empty():
+			is_initialized = true
+			print("Supabase service initialized from project settings.")
+			return
+
+	# Fallback to .env file for desktop/mobile platforms (development)
 	var env_path = "res://.env"
 	if not FileAccess.file_exists(env_path):
-		print("Warning: .env file not found.")
+		print("Warning: .env file not found and no project settings configured.")
 		is_initialized = false
 		return
 
@@ -73,7 +83,7 @@ func load_env_variables() -> void:
 		return
 
 	is_initialized = true
-	print("Supabase service initialized successfully.")
+	print("Supabase service initialized from .env file.")
 
 ## Load configuration from JavaScript window variables (for web builds)
 func load_web_config() -> void:
