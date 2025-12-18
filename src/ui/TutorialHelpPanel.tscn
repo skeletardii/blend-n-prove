@@ -98,12 +98,23 @@ text = "Tutorial Rule Name"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RuleDescriptionPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="ContentScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="ContentVBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ContentScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="RuleDescriptionPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/ContentScroll/ContentVBox"]
+layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 
-[node name="RuleDescription" type="RichTextLabel" parent="MarginContainer/VBoxContainer/RuleDescriptionPanel"]
+[node name="RuleDescription" type="RichTextLabel" parent="MarginContainer/VBoxContainer/ContentScroll/ContentVBox/RuleDescriptionPanel"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
@@ -114,19 +125,18 @@ text = "Rule description goes here..."
 fit_content = true
 scroll_active = false
 
-[node name="ProblemNumberLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="ProblemNumberLabel" type="Label" parent="MarginContainer/VBoxContainer/ContentScroll/ContentVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.2, 0.4, 1)
 theme_override_font_sizes/font_size = 36
 text = "Problem 1/10 (Easy)"
 horizontal_alignment = 1
 
-[node name="ProblemHintPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="ProblemHintPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/ContentScroll/ContentVBox"]
 layout_mode = 2
-size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
 
-[node name="ProblemHint" type="RichTextLabel" parent="MarginContainer/VBoxContainer/ProblemHintPanel"]
+[node name="ProblemHint" type="RichTextLabel" parent="MarginContainer/VBoxContainer/ContentScroll/ContentVBox/ProblemHintPanel"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)

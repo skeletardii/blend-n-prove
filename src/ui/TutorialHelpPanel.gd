@@ -7,10 +7,10 @@ signal help_panel_closed()
 # UI References
 @onready var rule_title_button: Button = $MarginContainer/VBoxContainer/RuleTitleContainer
 @onready var rule_title: Label = $MarginContainer/VBoxContainer/RuleTitleContainer/RuleTitle
-@onready var rule_description: RichTextLabel = $MarginContainer/VBoxContainer/RuleDescriptionPanel/RuleDescription
-@onready var problem_hint: RichTextLabel = $MarginContainer/VBoxContainer/ProblemHintPanel/ProblemHint
+@onready var rule_description: RichTextLabel = $MarginContainer/VBoxContainer/ContentScroll/ContentVBox/RuleDescriptionPanel/RuleDescription
+@onready var problem_hint: RichTextLabel = $MarginContainer/VBoxContainer/ContentScroll/ContentVBox/ProblemHintPanel/ProblemHint
 @onready var close_button: Button = $MarginContainer/VBoxContainer/ButtonContainer/CloseButton
-@onready var problem_number_label: Label = $MarginContainer/VBoxContainer/ProblemNumberLabel
+@onready var problem_number_label: Label = $MarginContainer/VBoxContainer/ContentScroll/ContentVBox/ProblemNumberLabel
 
 # Tutorial data
 var current_tutorial_key: String = ""
