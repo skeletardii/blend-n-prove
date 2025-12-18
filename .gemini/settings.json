@@ -8,6 +8,9 @@
       "env": {
         "MCP_TRANSPORT": "stdio"
       }
+    },
+    "supabase": {
+      "httpUrl": "https://mcp.supabase.com/mcp?project_ref=qfqgbcotqqclrgcejhpd"
     }
   }
 }

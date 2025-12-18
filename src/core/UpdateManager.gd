@@ -52,28 +52,11 @@ func _start_boot_sequence() -> void:
 
 	print("UpdateManager: Starting boot sequence...")
 
-	# EDITOR MODE: Skip PCK loading, directly load managers
-	# All manager implementations are already available in res://src/managers/
-	if OS.has_feature("editor"):
-		print("UpdateManager: Running in editor - skipping PCK, loading managers directly")
-		_load_managers()
-		return
-
-	# Temporarily disable PCK check for non-Android builds
-	if OS.get_name() != "Android":
-		print("UpdateManager: Not on Android, skipping PCK check and loading managers.")
-		_load_managers()
-		return
-
-	# PRODUCTION MODE: Full PCK flow (version check, download, load)
-	# Create HTTP request node
-	http_request = HTTPRequest.new()
-	add_child(http_request)
-	http_request.timeout = 10.0
-	http_request.request_completed.connect(_on_version_check_completed)
-
-	# Start boot sequence
-	_check_pck_status()
+	# PCK UPDATE CHECKING DISABLED
+	# All manager implementations are embedded in the APK
+	print("UpdateManager: PCK update checking disabled - loading managers directly")
+	_load_managers()
+	return
 
 
 func _check_pck_status() -> void:

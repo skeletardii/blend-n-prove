@@ -16,32 +16,46 @@ func _ready() -> void:
 
 ## Load environment variables from .env file or web config
 func load_env_variables() -> void:
+	print("OpenRouter: Loading configuration...")
+	print("OpenRouter: Platform: ", OS.get_name())
+
 	# Check if running on web platform
 	if OS.get_name() == "Web":
 		load_web_config()
 		return
 
 	# Try loading from project settings first (for exported builds)
-	if ProjectSettings.has_setting("api_config/openrouter_api_key"):
-		api_key = ProjectSettings.get_setting("api_config/openrouter_api_key")
-		base_url = ProjectSettings.get_setting("api_config/openrouter_base_url")
+	print("OpenRouter: Checking project settings...")
 
-		# Set default base URL if not specified
-		if base_url.is_empty():
-			base_url = "https://openrouter.ai/api/v1"
+	# Try to get the setting directly (works even if has_setting returns false)
+	api_key = ProjectSettings.get_setting("api_config/openrouter_api_key", "")
+	base_url = ProjectSettings.get_setting("api_config/openrouter_base_url", "")
 
-		if not api_key.is_empty():
-			is_initialized = true
-			print("OpenRouter service initialized from project settings")
-			return
+	print("OpenRouter: API key loaded: ", api_key.substr(0, 20) + "..." if api_key.length() > 20 else "EMPTY")
+	print("OpenRouter: Base URL: ", base_url if not base_url.is_empty() else "EMPTY")
+
+	# Set default base URL if not specified
+	if base_url.is_empty():
+		base_url = "https://openrouter.ai/api/v1"
+		print("OpenRouter: Using default base URL: ", base_url)
+
+	if not api_key.is_empty():
+		is_initialized = true
+		print("OpenRouter: Service initialized successfully from project settings!")
+		print("OpenRouter: Ready to make API calls to: ", base_url)
+		return
+	else:
+		print("OpenRouter: No API key found in project settings")
+
+	print("OpenRouter: Project settings not found, checking for .env file...")
 
 	# Fallback to .env file for desktop/mobile platforms (development)
 	var env_path = "res://.env"
 
 	# Check if .env file exists
 	if not FileAccess.file_exists(env_path):
-		print("Warning: .env file not found and no project settings configured.")
-		print("Please create .env file with OPENROUTER_API_KEY and OPENROUTER_BASE_URL")
+		print("OpenRouter ERROR: .env file not found and no project settings configured.")
+		print("OpenRouter ERROR: Service cannot initialize without API key!")
 		is_initialized = false
 		return
 
@@ -123,10 +137,13 @@ func load_web_config() -> void:
 ## @return: String containing the AI response content, or empty string on error
 func send_chat_request(messages: Array, http_request: HTTPRequest) -> String:
 	if not is_initialized:
-		var error_msg = "OpenRouter service not initialized. Please check .env file."
-		print("Error: " + error_msg)
+		var error_msg = "OpenRouter service not initialized. API key missing!"
+		print("OpenRouter ERROR: " + error_msg)
+		print("OpenRouter ERROR: Make sure api_config/openrouter_api_key is set in project.godot")
 		error_occurred.emit(error_msg)
 		return ""
+
+	print("OpenRouter: Sending chat request (service is initialized)")
 
 	# Use JavaScript fetch on web platform
 	if OS.has_feature("web"):
@@ -156,10 +173,14 @@ func send_chat_request(messages: Array, http_request: HTTPRequest) -> String:
 	# Make request
 	var error = http_request.request(url, headers, HTTPClient.METHOD_POST, body_json)
 	if error != OK:
-		var error_msg = "Failed to send request: " + str(error)
-		print("Error: " + error_msg)
+		var error_msg = "Failed to send HTTP request: " + str(error)
+		print("OpenRouter ERROR: " + error_msg)
+		print("OpenRouter ERROR: URL was: " + url)
+		print("OpenRouter ERROR: This usually means network connectivity issue or invalid request")
 		error_occurred.emit(error_msg)
 		return ""
+
+	print("OpenRouter: HTTP request sent successfully, waiting for response...")
 
 	# Wait for response
 	var response = await http_request.request_completed
@@ -169,19 +190,28 @@ func send_chat_request(messages: Array, http_request: HTTPRequest) -> String:
 	var status_code = response[1]
 	var body = response[3]
 
+	print("OpenRouter: Response received - Result: ", result, ", Status: ", status_code)
+
 	if result != HTTPRequest.RESULT_SUCCESS:
-		var error_msg = "HTTP request failed with result: " + str(result)
-		print("Error: " + error_msg)
+		var error_msg = "HTTP request failed with result code: " + str(result)
+		print("OpenRouter ERROR: " + error_msg)
+		print("OpenRouter ERROR: Result codes: 0=SUCCESS, 1=CHUNKED_BODY_SIZE_MISMATCH, 2=CANT_CONNECT, 3=CANT_RESOLVE, 4=CONNECTION_ERROR, etc.")
 		error_occurred.emit(error_msg)
 		return ""
 
 	if status_code != 200:
-		var error_msg = "Server returned status " + str(status_code)
-		print("Error: " + error_msg)
+		var error_msg = "OpenRouter API returned HTTP status " + str(status_code)
+		print("OpenRouter ERROR: " + error_msg)
 		var body_text = body.get_string_from_utf8()
-		print("Response body: " + body_text)
+		print("OpenRouter ERROR: Response body: " + body_text)
+		if status_code == 401:
+			print("OpenRouter ERROR: This is an authentication error - check your API key!")
+		elif status_code == 429:
+			print("OpenRouter ERROR: Rate limit exceeded")
 		error_occurred.emit(error_msg)
 		return ""
+
+	print("OpenRouter: HTTP 200 OK - parsing JSON response...")
 
 	# Parse JSON response
 	var json_string = body.get_string_from_utf8()

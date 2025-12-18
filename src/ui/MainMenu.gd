@@ -39,9 +39,9 @@ func _ready() -> void:
 		if has_node("MenuContainer/QuitButton"):
 			$MenuContainer/QuitButton.visible = false
 
-	# Check for app updates (Android only) - disabled if UpdateChecker not loaded
-	if has_node("/root/UpdateCheckerService"):
-		_check_for_app_updates()
+	# PCK UPDATE CHECKING DISABLED
+	# if has_node("/root/UpdateCheckerService"):
+	# 	_check_for_app_updates()
 
 	# Connect button signals
 	print("Connecting play button...")

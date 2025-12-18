@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://c11al4iysc1yl"
+
+[deps]
+
+files=["res://performance_stats.user.translation", "res://performance_stats.updated.translation", "res://performance_stats.games.translation", "res://performance_stats.total.translation"]
+
+source_file="res://performance_stats.csv"
+dest_files=["res://performance_stats.user.translation", "res://performance_stats.updated.translation", "res://performance_stats.games.translation", "res://performance_stats.total.translation"]
+
+[params]
+
+compress=true
+delimiter=0
