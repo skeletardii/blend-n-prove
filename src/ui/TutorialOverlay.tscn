@@ -76,14 +76,22 @@ theme_override_constants/margin_top = 30
 theme_override_constants/margin_right = 30
 theme_override_constants/margin_bottom = 120
 
-[node name="ExplanationLabel" type="RichTextLabel" parent="ExplanationPanel/MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="ExplanationPanel/MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="ExplanationLabel" type="RichTextLabel" parent="ExplanationPanel/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
 theme_override_colors/default_color = Color(0.15, 0.15, 0.15, 1)
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
-bbcode_enabled = true
 text = "Tutorial explanation text goes here"
-fit_content = true
 
 [node name="NextButton" type="Button" parent="ExplanationPanel"]
 visible = false

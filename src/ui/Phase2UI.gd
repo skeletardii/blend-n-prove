@@ -58,7 +58,7 @@ var patience_timer: float = 0.0
 
 # Operations Panel
 @onready var operations_panel: Panel = $OperationsPanel
-@onready var operations_close_button: Button = $OperationsPanel/MainContainer/Header/CloseButton
+
 @onready var double_ops_tab: Button = $OperationsPanel/MainContainer/TabContainer/DoubleOpsTab
 @onready var single_ops_tab: Button = $OperationsPanel/MainContainer/TabContainer/SingleOpsTab
 @onready var double_ops_container: VBoxContainer = $OperationsPanel/MainContainer/ButtonsScroll/DoubleOpsContainer
@@ -125,6 +125,7 @@ signal rule_applied(result: BooleanExpression)
 signal target_reached(result: BooleanExpression)
 signal feedback_message(message: String, color: Color)
 signal premise_selected(premise: String)  # For tutorial detection
+signal combo_updated()
 
 # Rule definitions
 enum RuleType {
@@ -538,17 +539,7 @@ func increment_combo() -> void:
 	set_rocket_speed(new_speed)
 	
 	# Notify GameplayScene to update global multiplier
-	var root = get_tree().current_scene
-	if root.has_method("increment_combo"):
-		root.increment_combo()
-	else:
-		# Fallback search up the tree
-		var p = get_parent()
-		while p:
-			if p.has_method("increment_combo"):
-				p.increment_combo()
-				break
-			p = p.get_parent()
+	combo_updated.emit()
 
 func reset_combo_penalty() -> void:
 	# Apply fuel penalty (10%)
@@ -696,9 +687,21 @@ func connect_addition_dialog() -> void:
 	addition_dialog.dialog_cancelled.connect(_on_addition_dialog_cancelled)
 
 func connect_toggle_buttons() -> void:
-	operations_close_button.pressed.connect(_on_operations_panel_toggle)
+	# Make the entire operations panel clickable to toggle
+	operations_panel.gui_input.connect(_on_operations_panel_gui_input)
 	double_ops_tab.pressed.connect(_on_double_tab_pressed)
 	single_ops_tab.pressed.connect(_on_single_tab_pressed)
+
+func _on_operations_panel_gui_input(event: InputEvent) -> void:
+	# Only respond to mouse button presses (left click)
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		# Get the event position relative to the panel
+		var local_pos = operations_panel.get_local_mouse_position()
+
+		# Check if click is within the header area (top portion of panel)
+		# Header height is approximately 60-70 pixels
+		if local_pos.y < 70:
+			toggle_operations_panel()
 
 func _on_operations_panel_toggle() -> void:
 	toggle_operations_panel()
@@ -726,7 +729,6 @@ func open_operations_panel() -> void:
 		return
 
 	is_animating_panel = true
-	operations_close_button.text = "▼"
 
 	# Animate from closed to open
 	var tween = create_tween()
@@ -741,7 +743,6 @@ func close_operations_panel() -> void:
 		return
 
 	is_animating_panel = true
-	operations_close_button.text = "▲"
 
 	# Animate from open to closed
 	var tween = create_tween()
@@ -1002,11 +1003,10 @@ func apply_rule() -> void:
 			create_premise_cards()
 			ProgressTracker.record_operation_used(rule_def.name, true)
 			clear_selections()
-			
-			increment_combo()
 
 			var result_text = str(added_results.size()) + " result" + ("s" if added_results.size() > 1 else "")
 			show_feedback("✓ " + rule_def.name + ": " + result_text, Color.GREEN, false)
+			increment_combo()
 
 			# Emit signal for each valid result
 			for cleaned_result in added_results:
@@ -1045,10 +1045,9 @@ func apply_rule() -> void:
 
 		# Clear selections
 		clear_selections()
-		
-		increment_combo()
 
 		show_feedback("✓ " + rule_def.name, Color.GREEN, false)
+		increment_combo()
 		rule_applied.emit(cleaned_result)
 
 		# Check if target is reached (only trigger once)
@@ -1410,10 +1409,9 @@ func _on_addition_dialog_confirmed(expr_text: String) -> void:
 
 		# Clear selections
 		clear_selections()
-		
-		increment_combo()
 
 		show_feedback("✓ Addition", Color.GREEN, false)
+		increment_combo()
 		rule_applied.emit(cleaned_result)
 		
 		# Play multiplier increase sound (on GameplayScene)

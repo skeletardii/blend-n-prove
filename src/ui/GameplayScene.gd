@@ -493,6 +493,8 @@ func switch_to_phase2() -> void:
 		current_phase_instance.rule_applied.connect(_on_rule_applied)
 		current_phase_instance.target_reached.connect(_on_target_reached)
 		current_phase_instance.feedback_message.connect(_on_feedback_message)
+		if current_phase_instance.has_signal("combo_updated"):
+			current_phase_instance.combo_updated.connect(increment_combo)
 
 		# Connect tutorial signals if in first-time tutorial
 		if GameManager.is_first_time_tutorial and tutorial_manager:
@@ -787,8 +789,6 @@ func _on_rule_applied(result: BooleanExpression) -> void:
 func _on_target_reached(result: BooleanExpression) -> void:
 	show_feedback_message("✓ Proof complete! Order fulfilled!", Color.CYAN)
 
-	# Massive fuel bonus for completing the proof
-	add_fuel(30.0)
 	# Big speed boost for clean completion
 	add_speed_boost(2.0, true)
 

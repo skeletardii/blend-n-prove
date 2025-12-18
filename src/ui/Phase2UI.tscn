@@ -484,16 +484,9 @@ alignment = 1
 [node name="TitleLabel" type="Label" parent="OperationsPanel/MainContainer/Header"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("8_gxw17")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 50
 text = "Operations"
 horizontal_alignment = 1
-
-[node name="CloseButton" type="Button" parent="OperationsPanel/MainContainer/Header"]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
-theme = ExtResource("2_occ7e")
-theme_override_font_sizes/font_size = 18
-text = "▲"
 
 [node name="TabContainer" type="HBoxContainer" parent="OperationsPanel/MainContainer"]
 custom_minimum_size = Vector2(0, 50)

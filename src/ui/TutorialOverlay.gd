@@ -11,7 +11,7 @@ signal next_button_pressed
 @onready var arrow: Polygon2D = $Arrow
 @onready var circle: Line2D = $Circle
 @onready var explanation_panel: Panel = $ExplanationPanel
-@onready var explanation_label: RichTextLabel = $ExplanationPanel/MarginContainer/ExplanationLabel
+@onready var explanation_label: RichTextLabel = $ExplanationPanel/MarginContainer/ScrollContainer/ExplanationLabel
 @onready var next_button: Button = $ExplanationPanel/NextButton
 @onready var skip_button: Button = $SkipButton
 
