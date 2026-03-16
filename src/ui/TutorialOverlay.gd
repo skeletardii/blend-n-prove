@@ -25,12 +25,22 @@ func _ready() -> void:
 	darkening_layer.visible = false
 	darkening_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	# Add semi-transparent background to explanation panel for contrast
-	var panel_bg := ColorRect.new()
-	#panel_bg.color = Color(0.1, 0.1, 0.15, 0.85)  # Dark semi-transparent background
-	explanation_panel.add_child(panel_bg)
-	explanation_panel.move_child(panel_bg, 0)  # Move to back
-	panel_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Add a prominent contrasting style to the explanation panel
+	var style_box = StyleBoxFlat.new()
+	style_box.bg_color = Color(0.97, 0.97, 0.99, 0.98) # Bright, mostly opaque background
+	style_box.border_width_left = 6
+	style_box.border_width_top = 6
+	style_box.border_width_right = 6
+	style_box.border_width_bottom = 6
+	style_box.border_color = Color(0.2, 0.5, 1.0, 1.0) # Prominent blue border
+	style_box.corner_radius_top_left = 24
+	style_box.corner_radius_top_right = 24
+	style_box.corner_radius_bottom_left = 24
+	style_box.corner_radius_bottom_right = 24
+	style_box.shadow_color = Color(0, 0, 0, 0.4)
+	style_box.shadow_size = 20
+	style_box.shadow_offset = Vector2(0, 10)
+	explanation_panel.add_theme_stylebox_override("panel", style_box)
 
 	# Setup buttons
 	skip_button.pressed.connect(_on_skip_pressed)

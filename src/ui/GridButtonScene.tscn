@@ -110,27 +110,28 @@ flat = true
 [node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-horizontal_scroll_mode = 0
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="MainContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/margin_left = 150
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 150
-theme_override_constants/margin_bottom = 50
+theme_override_constants/margin_left = 210
+theme_override_constants/margin_top = 315
+theme_override_constants/margin_right = 210
+theme_override_constants/margin_bottom = 315
 
-[node name="ButtonGrid" type="VBoxContainer" parent="MainContainer/ScrollContainer/MarginContainer"]
+[node name="ButtonGrid" type="HBoxContainer" parent="MainContainer/ScrollContainer/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 20
 
 [node name="Button1" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -139,9 +140,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 1"
 
 [node name="Button2" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -150,9 +151,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 2"
 
 [node name="Button3" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -161,9 +162,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 3"
 
 [node name="Button4" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -172,9 +173,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 4"
 
 [node name="Button5" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -183,9 +184,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 5"
 
 [node name="Button6" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -194,9 +195,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 6"
 
 [node name="Button7" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -205,9 +206,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 7"
 
 [node name="Button8" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -216,9 +217,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 8"
 
 [node name="Button9" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -227,9 +228,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 9"
 
 [node name="Button10" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -238,9 +239,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 10"
 
 [node name="Button11" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -249,9 +250,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 11"
 
 [node name="Button12" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -260,9 +261,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 12"
 
 [node name="Button13" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -271,9 +272,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 13"
 
 [node name="Button14" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -282,9 +283,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 14"
 
 [node name="Button15" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -293,9 +294,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 15"
 
 [node name="Button16" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -304,9 +305,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 16"
 
 [node name="Button17" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
@@ -315,9 +316,9 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "Button 17"
 
 [node name="Button18" type="Button" parent="MainContainer/ScrollContainer/MarginContainer/ButtonGrid"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")

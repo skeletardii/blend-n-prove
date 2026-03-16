@@ -4,9 +4,13 @@ const TutorialDataTypes = preload("res://src/managers/TutorialDataTypes.gd")
 const TutorialSelectionDialogScene = preload("res://src/ui/TutorialSelectionDialog.tscn")
 
 @onready var back_button: Button = $MainContainer/HeaderPanel/BackButton
-@onready var button_grid: VBoxContainer = $MainContainer/ScrollContainer/MarginContainer/ButtonGrid
+@onready var button_grid: HBoxContainer = $MainContainer/ScrollContainer/MarginContainer/ButtonGrid
+@onready var scroll_container: ScrollContainer = $MainContainer/ScrollContainer
 
 var tutorial_explanation_dialog: Control = null
+var is_dragging: bool = false
+const SCALE_NORMAL = 0.8
+const SCALE_CENTER = 1.0
 
 func _ready() -> void:
 	AudioManager.start_menu_music()
@@ -23,6 +27,10 @@ func _ready() -> void:
 
 	# Connect to progress updates
 	ProgressTracker.progress_updated.connect(_on_progress_updated)
+
+	# Connect scrolling inputs
+	scroll_container.get_h_scroll_bar().gui_input.connect(_on_scroll_gui_input)
+	scroll_container.gui_input.connect(_on_scroll_gui_input)
 
 func setup_tutorial_buttons() -> void:
 	# Setup all grid buttons with tutorial names and completion status
@@ -118,3 +126,48 @@ func _on_cancel_tutorial() -> void:
 	if tutorial_explanation_dialog:
 		tutorial_explanation_dialog.queue_free()
 		tutorial_explanation_dialog = null
+
+func _on_scroll_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			is_dragging = event.pressed
+	elif event is InputEventScreenTouch:
+		is_dragging = event.pressed
+
+func _process(delta: float) -> void:
+	if not is_instance_valid(scroll_container) or not is_instance_valid(button_grid):
+		return
+		
+	var center_x = scroll_container.size.x / 2.0
+	var scroll_center_global = scroll_container.global_position.x + center_x
+	var closest_button = null
+	var min_dist = INF
+	
+	for i in range(1, 19):
+		var button = button_grid.get_node_or_null("Button" + str(i)) as Button
+		if not button or not button.visible:
+			continue
+			
+		# Keep pivot in center for scaling
+		button.pivot_offset = button.size / 2.0
+		
+		var button_center_global = button.global_position.x + button.size.x / 2.0
+		var dist = abs(button_center_global - scroll_center_global)
+		
+		if dist < min_dist:
+			min_dist = dist
+			closest_button = button
+			
+		# Scale cards based on distance to the center
+		var t = clamp(dist / 350.0, 0.0, 1.0)
+		var scale_factor = lerp(SCALE_CENTER, SCALE_NORMAL, t)
+		button.scale = button.scale.lerp(Vector2(scale_factor, scale_factor), delta * 15.0)
+
+	# Snap scroll position to the closest card when not dragging
+	if not is_dragging and closest_button != null:
+		var button_center_global = closest_button.global_position.x + closest_button.size.x / 2.0
+		var error = button_center_global - scroll_center_global
+		
+		if abs(error) > 1.0:
+			var desired_scroll = float(scroll_container.scroll_horizontal) + error
+			scroll_container.scroll_horizontal = int(lerp(float(scroll_container.scroll_horizontal), desired_scroll, delta * 8.0))

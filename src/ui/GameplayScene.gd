@@ -7,6 +7,7 @@ const GameManagerTypes = preload("res://src/managers/GameManagerTypes.gd")
 
 # UI References - Persistent Elements
 @onready var main_container: VBoxContainer = $UI/MainContainer
+@onready var score_container: VBoxContainer = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer
 @onready var score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/CurrentScoreContainer/ScoreDisplay
 @onready var high_score_display: Label = $UI/MainContainer/TopBar/TopBarContainer/ScoreContainer/HighScoreContainer/HighScoreDisplay
 @onready var customer_name: Label = $UI/MainContainer/ScrollContainer/GameContentArea/CustomerArea/CustomerContainer/CustomerName
@@ -161,14 +162,21 @@ func _ready() -> void:
 		show_help_button.visible = false
 		tutorial_help_panel.visible = false
 		hint_button.visible = false  # Hide hint button during first-time tutorial
+		score_container.visible = false
+		quit_button.text = "Quit Tutorial"
 	# Setup tutorial help panel if in regular tutorial mode
 	elif GameManager.tutorial_mode:
 		show_help_button.visible = true
+		hint_button.visible = false
 		show_help_button.pressed.connect(_on_show_help_button_pressed)
 		tutorial_help_panel.help_panel_closed.connect(_on_help_panel_closed)
+		score_container.visible = false
+		quit_button.text = "Quit Tutorial"
 	else:
 		show_help_button.visible = false
+		hint_button.visible = true
 		tutorial_help_panel.visible = false
+		score_container.visible = true
 
 	# Setup hint button (available in all modes except first-time tutorial)
 	if not GameManager.is_first_time_tutorial:
@@ -313,6 +321,11 @@ func add_fuel(amount: float) -> void:
 
 func apply_fuel_penalty(percentage: float) -> void:
 	"""Remove a percentage of current fuel as penalty"""
+	if GameManager.infinite_patience:
+		show_feedback_message("Incorrect!", Color.RED)
+		reset_combo()
+		return
+		
 	var penalty_amount: float = fuel * percentage
 	fuel -= penalty_amount
 	fuel = max(0.0, fuel)
@@ -739,10 +752,14 @@ func complete_order_successfully() -> void:
 			switch_to_phase1()
 		else:
 			show_feedback_message("Tutorial Complete! Well done!", Color.GOLD)
-			# Return to tutorial selection after a delay
-			get_tree().create_timer(3.0).timeout.connect(func():
+			# Show completion screen after a delay
+			get_tree().create_timer(1.5).timeout.connect(func():
 				GameManager.exit_tutorial_mode()
-				SceneManager.change_scene("res://src/ui/GridButtonScene.tscn")
+				GameManager.infinite_patience = false
+				
+				var completion_screen = tutorial_completion_scene.instantiate()
+				add_child(completion_screen)
+				completion_screen.return_to_menu_requested.connect(_on_return_to_menu_from_tutorial)
 			)
 	else:
 		# Normal game mode progression
@@ -908,19 +925,23 @@ func _on_quit_button_pressed() -> void:
 	# Play error/cancel sound when quitting
 	AudioManager.play_error()
 
-	# Exit tutorial mode if active
-	if GameManager.tutorial_mode:
-		GameManager.exit_tutorial_mode()
-
 	# Stop all audio
 	AudioManager.stop_music()
 	AudioManager.stop_rocket_engine()
 	AudioManager.stop_all_sfx()
 
-	# End the game and show game over screen
-	show_feedback_message("Game Ended!", Color.ORANGE)
-	await get_tree().create_timer(1.0).timeout
-	SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
+	# Exit tutorial mode if active and route directly to selection screen
+	if GameManager.tutorial_mode:
+		GameManager.exit_tutorial_mode()
+		GameManager.infinite_patience = false
+		show_feedback_message("Tutorial Quit!", Color.ORANGE)
+		await get_tree().create_timer(1.0).timeout
+		SceneManager.change_scene("res://src/ui/GridButtonScene.tscn")
+	else:
+		# End the game and show game over screen
+		show_feedback_message("Game Ended!", Color.ORANGE)
+		await get_tree().create_timer(1.0).timeout
+		SceneManager.change_scene("res://src/ui/GameOverScene.tscn")
 
 func _on_toggle_music_pressed() -> void:
 	AudioManager.toggle_music_mute()

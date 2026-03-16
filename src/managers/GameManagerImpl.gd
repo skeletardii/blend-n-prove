@@ -200,6 +200,7 @@ func start_tutorial_mode(tutorial_key: String = "") -> void:
 	current_tutorial_key = tutorial_key
 	current_tutorial_problem_index = 0
 	is_first_time_tutorial = false
+	infinite_patience = true
 	change_state(GameState.PLAYING)
 	score_updated.emit(current_score)
 

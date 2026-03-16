@@ -427,6 +427,7 @@ func _on_text_changed(_text: String) -> void:
 	"""Detect when player types anything"""
 	if current_step == TutorialStep.TYPE_FIRST_PREMISE and not has_typed_anything:
 		has_typed_anything = true
+		overlay.hide_all()
 		await get_tree().create_timer(1.0).timeout
 		advance_to_next_step()
 
@@ -435,6 +436,7 @@ func _on_premise_validated(_expression: BooleanExpression) -> void:
 	"""Detect when player submits a premise"""
 	if current_step == TutorialStep.SUBMIT_PREMISE and not has_submitted_premise:
 		has_submitted_premise = true
+		overlay.hide_all()
 		await get_tree().create_timer(1.0).timeout
 		advance_to_next_step()
 
@@ -443,6 +445,7 @@ func _on_premises_completed(_premises: Array) -> void:
 	"""Detect when all premises are entered"""
 	if current_step == TutorialStep.COMPLETE_ALL_PREMISES and not premises_completed:
 		premises_completed = true
+		overlay.hide_all()
 		await get_tree().create_timer(1.0).timeout
 		advance_to_next_step()
 
@@ -458,6 +461,7 @@ func _on_rule_applied(_result: BooleanExpression) -> void:
 	"""Detect when player applies a rule"""
 	if current_step == TutorialStep.APPLY_FIRST_RULE and not has_applied_rule:
 		has_applied_rule = true
+		overlay.hide_all()
 		await get_tree().create_timer(1.0).timeout
 		advance_to_next_step()
 
@@ -466,6 +470,7 @@ func _on_target_reached(_result: BooleanExpression) -> void:
 	"""Detect when player reaches the target"""
 	if not target_reached:
 		target_reached = true
+		overlay.hide_all()
 		# If we're at the REACH_TARGET step, advance immediately
 		if current_step == TutorialStep.REACH_TARGET:
 			await get_tree().create_timer(1.0).timeout

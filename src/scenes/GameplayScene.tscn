@@ -129,7 +129,9 @@ size_flags_horizontal = 3
 
 [node name="ShowHelpButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
 visible = false
+custom_minimum_size = Vector2(80, 50)
 layout_mode = 2
+theme_override_font_sizes/font_size = 32
 text = "Show Help"
 
 [node name="HintButton" type="Button" parent="UI/MainContainer/TopBar/TopBarContainer"]
@@ -221,18 +223,6 @@ Conclusion:
 Q"
 
 [node name="TutorialHelpPanel" parent="UI" instance=ExtResource("2_tutorial_help")]
-layout_mode = 0
-anchors_preset = 0
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 54.0
-offset_top = 138.0
-offset_right = 654.0
-offset_bottom = 738.0
-grow_horizontal = 1
-grow_vertical = 1
 
 [node name="HintPopup" parent="UI" instance=ExtResource("3_hint_popup")]
 visible = false
@@ -308,6 +298,13 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
+[node name="ResumeButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
+custom_minimum_size = Vector2(380, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
+text = "Resume"
+
 [node name="ToggleMusicButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
 custom_minimum_size = Vector2(380, 75)
 layout_mode = 2
@@ -321,13 +318,6 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 32
 text = "Mute SFX"
-
-[node name="ResumeButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
-custom_minimum_size = Vector2(380, 75)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 32
-text = "Resume"
 
 [node name="QuitButton" type="Button" parent="PauseOverlay/PauseMenu/MenuContainer"]
 custom_minimum_size = Vector2(380, 75)

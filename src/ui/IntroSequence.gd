@@ -15,8 +15,10 @@ extends Control
 @onready var AudioManager = $"/root/AudioManager"
 @onready var flame_core: CPUParticles2D = $Rocket/ExhaustContainer/FlameCore
 @onready var smoke_trail: CPUParticles2D = $Rocket/ExhaustContainer/SmokeTrail
+@onready var skip_button: Button = $SkipButton
 
 var black_hole_rotation_speed: float = 2.0  # radians per second
+var current_tween: Tween = null
 
 func _ready() -> void:
 	# Setup initial state
@@ -48,12 +50,21 @@ func _ready() -> void:
 	planet.rotation = 0.0
 	planet.scale = Vector2(1.0, 1.0)
 	flash.modulate.a = 0.0
+	
+	skip_button.pressed.connect(_on_skip_pressed)
 
 	# Start background music early
 	AudioManager.start_background_music()
 
 	# Start sequence
 	play_intro()
+
+func _on_skip_pressed() -> void:
+	if current_tween:
+		current_tween.kill()
+	AudioManager.play_button_click()
+	AudioManager.stop_rocket_engine()
+	SceneManager.change_scene("res://src/scenes/GameplayScene.tscn")
 
 func _process(delta: float) -> void:
 	# Continuously rotate black hole when visible
@@ -63,6 +74,7 @@ func _process(delta: float) -> void:
 func play_intro() -> void:
 	AudioManager.play_rocket_launch()
 	var tween = create_tween()
+	current_tween = tween
 	var screen_center = get_viewport_rect().size / 2
 
 	# 1. Rocket grows and moves away with smooth acceleration
