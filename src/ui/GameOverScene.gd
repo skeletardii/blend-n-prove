@@ -37,15 +37,47 @@ func _ready() -> void:
 
 func _on_play_again_button_pressed() -> void:
 	AudioManager.play_button_click()
+	
+	if should_show_rating():
+		show_rating_screen(func(): 
+			_perform_play_again()
+		)
+	else:
+		_perform_play_again()
+
+func _perform_play_again() -> void:
 	GameManager.reset_game()
 	SceneManager.change_scene("res://src/scenes/GameplayScene.tscn")
 	GameManager.start_new_game()
 
 func _on_main_menu_button_pressed() -> void:
 	AudioManager.play_button_click()
+	
+	if should_show_rating():
+		show_rating_screen(func(): 
+			_perform_main_menu()
+		)
+	else:
+		_perform_main_menu()
+
+func _perform_main_menu() -> void:
 	AudioManager.stop_music()
 	GameManager.reset_game()
 	SceneManager.change_scene("res://src/ui/MainMenu.tscn")
+
+func should_show_rating() -> bool:
+	var stats = ProgressTracker.statistics
+	return stats.total_games_played >= 3 and not stats.has_rated
+
+func show_rating_screen(callback: Callable) -> void:
+	var rating_scene = load("res://src/ui/RatingScreen.tscn")
+	if rating_scene:
+		var rating_instance = rating_scene.instantiate()
+		add_child(rating_instance)
+		rating_instance.rating_completed.connect(callback)
+	else:
+		# Fallback if scene can't be loaded
+		callback.call()
 
 func _on_game_state_changed(new_state: GameManager.GameState) -> void:
 	# Handle any state changes if needed

@@ -91,9 +91,12 @@ func get_available_sfx_player() -> AudioStreamPlayer:
 	"""Get an available SFX player from the pool, or the first one if all are busy"""
 	for player in sfx_players_pool:
 		if not player.playing:
+			player.pitch_scale = 1.0  # Reset pitch for fresh playback
 			return player
 	# If all players are busy, use the first one (will interrupt)
-	return sfx_players_pool[0]
+	var p = sfx_players_pool[0]
+	p.pitch_scale = 1.0  # Reset pitch
+	return p
 
 func play_sfx(sound_name: String) -> void:
 	if is_muted or is_sfx_muted:
@@ -116,25 +119,9 @@ func play_sfx(sound_name: String) -> void:
 				player.play()
 
 func play_music(music_name: String, loop: bool = true) -> void:
-	if is_muted or is_music_muted:
-		print("DEBUG: Music muted, skipping playback start: ", music_name)
-		# We allow it to 'play' but volume will be 0 if we remove this return, 
-		# OR we keep it and it won't start.
-		# If we want unmuting to resume music that *should* be playing, we should probably let it play at 0 volume.
-		# But the current implementation returns.
-		# Let's respect the current pattern: if muted, don't start. 
-		# But wait, if I mute music, then enter game, music won't start. If I unmute, nothing happens?
-		# That might be a bug in existing logic or intended. 
-		# For now, I'll just add the check to match existing behavior.
-		# Ideally, we should play it at -80db so unmuting works.
-		# But let's stick to the current pattern to avoid side effects, just adding the flag.
-		# Actually, if I modify update_volumes, that handles the volume.
-		# If I return here, the stream player never starts.
-		# So if user unmutes, silence.
-		# I will REMOVE the early return so it starts playing (silently) and can be unmuted.
-		pass 
-		# Continued execution...
-
+	# We allow it to 'play' but volume will be 0 if muted (handled in update_volumes),
+	# so that unmuting works seamlessly.
+	
 	print("DEBUG: Attempting to play music: ", music_name, " (loop: ", loop, ")")
 
 	if music_name in loaded_sounds:
@@ -276,9 +263,6 @@ func play_score_popup(multiplier: float) -> void:
 		var pitch: float = 1.0 + (clamp(multiplier - 1.0, 0.0, 1.5) * 0.33)
 		player.pitch_scale = pitch
 		player.play()
-		# Reset pitch after playing
-		await get_tree().create_timer(0.1).timeout
-		player.pitch_scale = 1.0
 	else:
 		play_sfx("score_popup")
 
@@ -295,9 +279,6 @@ func play_multiplier_increase(combo_count: int) -> void:
 		var pitch: float = 1.0 + min(float(combo_count) * 0.1, 1.0)
 		player.pitch_scale = pitch
 		player.play()
-		# Reset pitch after playing (approximate duration of sound is short)
-		await get_tree().create_timer(1.0).timeout
-		player.pitch_scale = 1.0
 	else:
 		# Fallback - try to load it
 		var path = audio_paths.get("multiplier_increase", "")
@@ -309,9 +290,6 @@ func play_multiplier_increase(combo_count: int) -> void:
 				var pitch: float = 1.0 + min(float(combo_count) * 0.1, 1.0)
 				player.pitch_scale = pitch
 				player.play()
-				# Reset pitch
-				await get_tree().create_timer(1.0).timeout
-				player.pitch_scale = 1.0
 
 func play_rocket_launch() -> void:
 	play_sfx("rocket_launch")
@@ -323,9 +301,6 @@ func play_rocket_engine(pitch_scale: float = 1.0) -> void:
 	if not rocket_engine_player.playing:
 		if "rocket_engine" in loaded_sounds:
 			rocket_engine_player.stream = loaded_sounds["rocket_engine"]
-			# Set loop mode for WAV
-			if rocket_engine_player.stream and rocket_engine_player.stream.has_method("set_loop_mode"):
-				rocket_engine_player.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 		else:
 			# Load on demand
 			var path = audio_paths.get("rocket_engine", "")
@@ -333,11 +308,14 @@ func play_rocket_engine(pitch_scale: float = 1.0) -> void:
 				var stream = load(path)
 				loaded_sounds["rocket_engine"] = stream
 				rocket_engine_player.stream = stream
-				# Set loop mode for WAV
-				if rocket_engine_player.stream and rocket_engine_player.stream.has_method("set_loop_mode"):
-					rocket_engine_player.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 		
 		if rocket_engine_player.stream:
+			# Handle different audio stream types for looping
+			if rocket_engine_player.stream is AudioStreamMP3:
+				rocket_engine_player.stream.loop = true
+			elif rocket_engine_player.stream.has_method("set_loop_mode"):
+				rocket_engine_player.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+			
 			rocket_engine_player.play()
 	
 	# Update pitch

@@ -848,6 +848,8 @@ func debug_populate_test_data() -> void:
 			statistics.highest_difficulty_mastered = diff
 			break
 
+	statistics.has_rated = false
+
 	# Add achievements based on actual data
 	statistics.achievements_unlocked.append("first_game")
 	if statistics.total_games_played >= 3: statistics.achievements_unlocked.append("3_games")

@@ -508,3 +508,28 @@ func get_stats() -> void:
 		http.queue_free()
 	)
 	http.request(url, headers, HTTPClient.METHOD_GET)
+
+## Submit user feedback/rating
+func submit_feedback(rating: int, comment: String) -> void:
+	if not is_initialized:
+		return
+
+	var url = supabase_url + "/rest/v1/feedback"
+	var body = JSON.stringify({
+		"rating": rating,
+		"comment": comment,
+		"device_id": OS.get_unique_id(),
+		"platform": OS.get_name()
+	})
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(func(result, code, headers, body_resp):
+		if code == 201 or code == 200:
+			print("Feedback submitted successfully.")
+		else:
+			print("Feedback submission failed. Code: ", code)
+			print("Response: ", body_resp.get_string_from_utf8())
+		http.queue_free()
+	)
+	http.request(url, _get_headers(), HTTPClient.METHOD_POST, body)

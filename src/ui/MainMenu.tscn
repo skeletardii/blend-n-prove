@@ -330,12 +330,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "1"
 
-[node name="InfinitePatienceCheck" type="CheckBox" parent="DebugPanel/DebugContainer"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Infinite Patience"
-
 [node name="ForceGameOverButton" type="Button" parent="DebugPanel/DebugContainer"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
@@ -413,6 +407,17 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "CLOSE"
 
+[node name="SettingsBlurOverlay" type="ColorRect" parent="."]
+visible = false
+z_index = 19
+material = SubResource("ShaderMaterial_reset_blur")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="SettingsPanel" type="Panel" parent="."]
 visible = false
 z_index = 20
@@ -422,50 +427,57 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -400.0
-offset_top = -500.0
-offset_right = 400.0
-offset_bottom = 500.0
+offset_left = -320.0
+offset_top = -550.0
+offset_right = 320.0
+offset_bottom = 550.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("5_u6542")
 
-[node name="SettingsContainer" type="VBoxContainer" parent="SettingsPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="SettingsPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = 30.0
-offset_right = -30.0
-offset_bottom = -30.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
 
-[node name="SettingsTitle" type="Label" parent="SettingsPanel/SettingsContainer"]
+[node name="SettingsContainer" type="VBoxContainer" parent="SettingsPanel/MarginContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 70
+theme_override_constants/separation = 15
+
+[node name="SettingsTitle" type="Label" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "SETTINGS"
 horizontal_alignment = 1
 
-[node name="Spacer1" type="Control" parent="SettingsPanel/SettingsContainer"]
-custom_minimum_size = Vector2(0, 20)
+[node name="HSeparator" type="HSeparator" parent="SettingsPanel/MarginContainer/SettingsContainer"]
 layout_mode = 2
+theme_override_constants/separation = 20
 
-[node name="AudioLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
+[node name="AudioLabel" type="Label" parent="SettingsPanel/MarginContainer/SettingsContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 60
+theme_override_font_sizes/font_size = 32
 text = "Audio"
 
-[node name="MusicVolumeContainer" type="HBoxContainer" parent="SettingsPanel/SettingsContainer"]
+[node name="AudioGrid" type="GridContainer" parent="SettingsPanel/MarginContainer/SettingsContainer"]
 layout_mode = 2
+theme_override_constants/h_separation = 20
+columns = 2
 
-[node name="MusicLabel" type="Label" parent="SettingsPanel/SettingsContainer/MusicVolumeContainer"]
+[node name="MusicLabel" type="Label" parent="SettingsPanel/MarginContainer/SettingsContainer/AudioGrid"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 32
 text = "Music"
 
-[node name="MusicSlider" type="HSlider" parent="SettingsPanel/SettingsContainer/MusicVolumeContainer"]
+[node name="MusicSlider" type="HSlider" parent="SettingsPanel/MarginContainer/SettingsContainer/AudioGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -473,16 +485,13 @@ max_value = 1.0
 step = 0.05
 value = 0.5
 
-[node name="SFXVolumeContainer" type="HBoxContainer" parent="SettingsPanel/SettingsContainer"]
-layout_mode = 2
-
-[node name="SFXLabel" type="Label" parent="SettingsPanel/SettingsContainer/SFXVolumeContainer"]
+[node name="SFXLabel" type="Label" parent="SettingsPanel/MarginContainer/SettingsContainer/AudioGrid"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 32
 text = "SFX"
 
-[node name="SFXSlider" type="HSlider" parent="SettingsPanel/SettingsContainer/SFXVolumeContainer"]
+[node name="SFXSlider" type="HSlider" parent="SettingsPanel/MarginContainer/SettingsContainer/AudioGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -490,61 +499,75 @@ max_value = 1.0
 step = 0.05
 value = 0.8
 
-[node name="MuteCheck" type="CheckBox" parent="SettingsPanel/SettingsContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "Mute All"
-
-[node name="SpacerAudio" type="Control" parent="SettingsPanel/SettingsContainer"]
-custom_minimum_size = Vector2(0, 20)
-layout_mode = 2
-
-[node name="DisableIntroCheck" type="CheckBox" parent="SettingsPanel/SettingsContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "Disable Intro Sequence"
-
-[node name="DifficultyModeLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Classic Mode Difficulty:"
-
-[node name="DifficultyModeContainer" type="HBoxContainer" parent="SettingsPanel/SettingsContainer"]
-layout_mode = 2
-
-[node name="DifficultyModeOption" type="OptionButton" parent="SettingsPanel/SettingsContainer/DifficultyModeContainer"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 40
-
-[node name="InfoLabel" type="Label" parent="SettingsPanel/SettingsContainer"]
+[node name="MuteCheck" type="CheckBox" parent="SettingsPanel/MarginContainer/SettingsContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Auto: Difficulty increases as you play
-1-6: Lock difficulty to specific level"
+text = "Mute All"
+
+[node name="HSeparator2" type="HSeparator" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="GameplayLabel" type="Label" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Gameplay"
+
+[node name="DisableIntroCheck" type="CheckBox" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Disable Intro Sequence"
+
+[node name="InfinitePatienceCheck" type="CheckBox" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Infinite Patience"
+
+[node name="DifficultyModeLabel" type="Label" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Classic Mode Difficulty:"
+
+[node name="DifficultyModeContainer" type="HBoxContainer" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+layout_mode = 2
+
+[node name="DifficultyModeOption" type="OptionButton" parent="SettingsPanel/MarginContainer/SettingsContainer/DifficultyModeContainer"]
+custom_minimum_size = Vector2(0, 65)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+
+[node name="InfoLabel" type="Label" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_font_sizes/font_size = 24
+text = "Auto: Difficulty increases as you play.
+1-6: Lock difficulty to specific level."
 autowrap_mode = 3
 
-[node name="Spacer2" type="Control" parent="SettingsPanel/SettingsContainer"]
-custom_minimum_size = Vector2(0, 40)
+[node name="Spacer2" type="Control" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+size_flags_vertical = 3
 layout_mode = 2
 
-[node name="ResetProgressButton" type="Button" parent="SettingsPanel/SettingsContainer"]
+[node name="SendFeedbackButton" type="Button" parent="SettingsPanel/MarginContainer/SettingsContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 45
+theme_override_font_sizes/font_size = 32
+text = "Send Feedback"
+
+[node name="ResetProgressButton" type="Button" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
 text = "Reset All Progress"
 
-[node name="Spacer3" type="Control" parent="SettingsPanel/SettingsContainer"]
-custom_minimum_size = Vector2(0, 20)
+[node name="CloseSettingsButton" type="Button" parent="SettingsPanel/MarginContainer/SettingsContainer"]
+custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
-
-[node name="CloseSettingsButton" type="Button" parent="SettingsPanel/SettingsContainer"]
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-theme_override_font_sizes/font_size = 55
+theme_override_font_sizes/font_size = 32
 text = "CLOSE"
+
 
 [node name="QuickStatsPanel" type="VBoxContainer" parent="."]
 z_index = 10
@@ -708,7 +731,7 @@ vertical_alignment = 1
 [connection signal="pressed" from="MenuContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="MenuContainer/QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="value_changed" from="DebugPanel/DebugContainer/DifficultyContainer/DifficultySlider" to="." method="_on_difficulty_slider_value_changed"]
-[connection signal="toggled" from="DebugPanel/DebugContainer/InfinitePatienceCheck" to="." method="_on_infinite_patience_check_toggled"]
+[connection signal="toggled" from="SettingsPanel/SettingsContainer/InfinitePatienceCheck" to="." method="_on_infinite_patience_check_toggled"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/ForceGameOverButton" to="." method="_on_force_game_over_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/LogicTestButton" to="." method="_on_logic_test_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/IntegrationTestButton" to="." method="_on_integration_test_button_pressed"]
@@ -718,8 +741,9 @@ vertical_alignment = 1
 [connection signal="pressed" from="DebugPanel/DebugContainer/ExportProgressButton" to="." method="_on_export_progress_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/ImportProgressButton" to="." method="_on_import_progress_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/PopulateTestDataButton" to="." method="_on_populate_test_data_button_pressed"]
-[connection signal="pressed" from="DebugPanel/DebugContainer/CloseDebugButton" to="." method="_on_close_debug_button_pressed"]
-[connection signal="toggled" from="SettingsPanel/SettingsContainer/DisableIntroCheck" to="." method="_on_disable_intro_check_toggled"]
-[connection signal="item_selected" from="SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption" to="." method="_on_difficulty_mode_option_item_selected"]
-[connection signal="pressed" from="SettingsPanel/SettingsContainer/ResetProgressButton" to="." method="_on_reset_progress_button_pressed"]
-[connection signal="pressed" from="SettingsPanel/SettingsContainer/CloseSettingsButton" to="." method="_on_close_settings_button_pressed"]
+[connection signal="toggled" from="SettingsPanel/MarginContainer/SettingsContainer/InfinitePatienceCheck" to="." method="_on_infinite_patience_check_toggled"]
+[connection signal="toggled" from="SettingsPanel/MarginContainer/SettingsContainer/DisableIntroCheck" to="." method="_on_disable_intro_check_toggled"]
+[connection signal="item_selected" from="SettingsPanel/MarginContainer/SettingsContainer/DifficultyModeContainer/DifficultyModeOption" to="." method="_on_difficulty_mode_option_item_selected"]
+[connection signal="pressed" from="SettingsPanel/MarginContainer/SettingsContainer/ResetProgressButton" to="." method="_on_reset_progress_button_pressed"]
+[connection signal="pressed" from="SettingsPanel/MarginContainer/SettingsContainer/SendFeedbackButton" to="." method="_on_send_feedback_button_pressed"]
+[connection signal="pressed" from="SettingsPanel/MarginContainer/SettingsContainer/CloseSettingsButton" to="." method="_on_close_settings_button_pressed"]

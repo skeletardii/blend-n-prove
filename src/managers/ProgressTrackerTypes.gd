@@ -87,6 +87,7 @@ class PlayerStatistics:
 	var games_ended_by_time_out: int = 0
 	var games_ended_by_quit: int = 0
 	var average_time_remaining_on_quit: float = 0.0
+	var has_rated: bool = false # Track if user has rated/given feedback
 
 	func to_dict() -> Dictionary:
 		return {
@@ -112,7 +113,8 @@ class PlayerStatistics:
 			"longest_orders_combo_overall": longest_orders_combo_overall,
 			"games_ended_by_time_out": games_ended_by_time_out,
 			"games_ended_by_quit": games_ended_by_quit,
-			"average_time_remaining_on_quit": average_time_remaining_on_quit
+			"average_time_remaining_on_quit": average_time_remaining_on_quit,
+			"has_rated": has_rated
 		}
 
 	func from_dict(data: Dictionary) -> void:
@@ -142,6 +144,7 @@ class PlayerStatistics:
 		games_ended_by_time_out = data.get("games_ended_by_time_out", 0)
 		games_ended_by_quit = data.get("games_ended_by_quit", 0)
 		average_time_remaining_on_quit = data.get("average_time_remaining_on_quit", 0.0)
+		has_rated = data.get("has_rated", false)
 
 ## GradeCalculator - Static utility class for calculating session grades
 class GradeCalculator:

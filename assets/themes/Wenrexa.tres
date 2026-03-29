@@ -101,5 +101,6 @@ Label/colors/font_color = Color(0, 0, 0, 1)
 Label/fonts/font = ExtResource("4_61da5")
 Label/styles/normal = SubResource("StyleBoxTexture_7pq2t")
 Panel/styles/panel = SubResource("StyleBoxFlat_white_panel")
+PopupMenu/font_sizes/font_size = 36
 ProgressBar/styles/background = SubResource("StyleBoxTexture_xg0kf")
 ProgressBar/styles/fill = SubResource("StyleBoxTexture_sqtcl")

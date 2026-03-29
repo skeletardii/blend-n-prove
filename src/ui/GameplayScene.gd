@@ -213,7 +213,8 @@ func _ready() -> void:
 		call_deferred("start_first_time_tutorial")
 
 func _on_hint_skip_requested() -> void:
-	show_feedback_message("Skipping problem...", Color.YELLOW)
+	# Apply fuel penalty for skipping (20% current fuel)
+	apply_fuel_penalty(0.2, "Skipping Problem! Fuel Lost: -20%")
 	
 	# Skip to next customer immediately
 	generate_new_customer()
@@ -319,17 +320,23 @@ func add_fuel(amount: float) -> void:
 	fuel += amount
 	fuel = min(fuel, max_fuel)
 
-func apply_fuel_penalty(percentage: float) -> void:
+func apply_fuel_penalty(percentage: float, custom_message: String = "") -> void:
 	"""Remove a percentage of current fuel as penalty"""
 	if GameManager.infinite_patience:
-		show_feedback_message("Incorrect!", Color.RED)
+		var msg = custom_message if custom_message != "" else "Skipped!"
+		show_feedback_message(msg, Color.YELLOW)
 		reset_combo()
 		return
 		
 	var penalty_amount: float = fuel * percentage
 	fuel -= penalty_amount
 	fuel = max(0.0, fuel)
-	show_feedback_message("Fuel Lost: -" + str(int(percentage * 100)) + "%!", Color.RED)
+	
+	var msg = custom_message
+	if msg == "":
+		msg = "Fuel Lost: -" + str(int(percentage * 100)) + "%!"
+		
+	show_feedback_message(msg, Color.RED)
 	reset_combo()
 
 func add_speed_boost(boost_amount: float, show_message: bool = true) -> void:
@@ -682,12 +689,13 @@ func customer_leaves() -> void:
 		# Out of fuel = Game Over - play error sound ONCE
 		AudioManager.play_error()
 		AudioManager.play_game_over_fail_sound()
+		AudioManager.start_game_over_music() # Start music immediately for better atmosphere
 		show_feedback_message("Out of Fuel! Game Over!", Color.RED)
 
 		# Trigger failure effect if in Phase 2
 		if current_phase_instance and current_phase_instance.has_method("trigger_failure_effect"):
 			current_phase_instance.trigger_failure_effect()
-			
+
 		AudioManager.stop_rocket_engine()
 
 		# Create fade overlay if it doesn't exist
@@ -699,7 +707,7 @@ func customer_leaves() -> void:
 			intro_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
 			intro_flash.z_index = 100  # Ensure it covers ice border (z=90)
 			add_child(intro_flash)
-			
+
 			# Add randomized game over comment
 			var comment_label = Label.new()
 			comment_label.text = game_over_comments.pick_random()
@@ -720,14 +728,10 @@ func customer_leaves() -> void:
 		# Wait briefly, then fade to black
 		await get_tree().create_timer(2.0).timeout
 
-		# Stop music and all sounds before transition
-		AudioManager.stop_music()
-
-		# Fade to black
+		# Fade to black (music continues seamlessly)
 		var tween = create_tween()
 		tween.tween_property(intro_flash, "modulate:a", 1.0, 4.0)
 		await tween.finished
-
 		# Wait a moment in black, then transition
 		await get_tree().create_timer(3.0).timeout
 		
@@ -1032,6 +1036,10 @@ func _on_first_time_tutorial_completed() -> void:
 func _on_first_time_tutorial_skipped() -> void:
 	"""Handle tutorial skip - return to menu"""
 	print("Tutorial skipped")
+
+	# Stop tutorial music and rocket engine
+	AudioManager.stop_music()
+	AudioManager.stop_rocket_engine()
 
 	# Disable tutorial mode
 	GameManager.is_first_time_tutorial = false

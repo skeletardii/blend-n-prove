@@ -4,13 +4,14 @@ extends Control
 @onready var debug_blur_overlay: ColorRect = $DebugBlurOverlay
 @onready var difficulty_slider: HSlider = $DebugPanel/DebugContainer/DifficultyContainer/DifficultySlider
 @onready var difficulty_value_label: Label = $DebugPanel/DebugContainer/DifficultyContainer/DifficultyValue
-@onready var infinite_patience_check: CheckBox = $DebugPanel/DebugContainer/InfinitePatienceCheck
 @onready var settings_panel: Panel = $SettingsPanel
-@onready var music_slider: HSlider = $SettingsPanel/SettingsContainer/MusicVolumeContainer/MusicSlider
-@onready var sfx_slider: HSlider = $SettingsPanel/SettingsContainer/SFXVolumeContainer/SFXSlider
-@onready var mute_check: CheckBox = $SettingsPanel/SettingsContainer/MuteCheck
-@onready var disable_intro_check: CheckBox = $SettingsPanel/SettingsContainer/DisableIntroCheck
-@onready var difficulty_mode_option: OptionButton = $SettingsPanel/SettingsContainer/DifficultyModeContainer/DifficultyModeOption
+@onready var settings_blur_overlay: ColorRect = $SettingsBlurOverlay
+@onready var music_slider: HSlider = $SettingsPanel/MarginContainer/SettingsContainer/AudioGrid/MusicSlider
+@onready var sfx_slider: HSlider = $SettingsPanel/MarginContainer/SettingsContainer/AudioGrid/SFXSlider
+@onready var mute_check: CheckBox = $SettingsPanel/MarginContainer/SettingsContainer/MuteCheck
+@onready var disable_intro_check: CheckBox = $SettingsPanel/MarginContainer/SettingsContainer/DisableIntroCheck
+@onready var difficulty_mode_option: OptionButton = $SettingsPanel/MarginContainer/SettingsContainer/DifficultyModeContainer/DifficultyModeOption
+@onready var infinite_patience_check: CheckBox = $SettingsPanel/MarginContainer/SettingsContainer/InfinitePatienceCheck
 @onready var play_button: Button = $MenuContainer/PlayButton
 @onready var how_to_play_button: Button = $MenuContainer/HowToPlayButton
 @onready var progress_button: Button = $MenuContainer/ProgressButton
@@ -157,6 +158,7 @@ func _on_debug_button_pressed() -> void:
 func _on_settings_button_pressed() -> void:
 	AudioManager.play_button_click()
 	settings_panel.visible = !settings_panel.visible
+	settings_blur_overlay.visible = settings_panel.visible
 
 func _on_quit_button_pressed() -> void:
 	AudioManager.play_button_click()
@@ -271,6 +273,7 @@ func _on_difficulty_mode_option_item_selected(index: int) -> void:
 func _on_close_settings_button_pressed() -> void:
 	AudioManager.play_button_click()
 	settings_panel.visible = false
+	settings_blur_overlay.visible = false
 
 func setup_audio_settings() -> void:
 	# Initialize UI from AudioManager
@@ -377,6 +380,16 @@ func _on_reset_progress_button_pressed() -> void:
 	# Show confirmation dialog
 	reset_popup.visible = true
 
+func _on_send_feedback_button_pressed() -> void:
+	AudioManager.play_button_click()
+	var rating_scene = load("res://src/ui/RatingScreen.tscn")
+	if rating_scene:
+		var rating_instance = rating_scene.instantiate()
+		rating_instance.set_manual_mode(true)
+		add_child(rating_instance)
+	else:
+		print("Error: Could not load RatingScreen.tscn")
+
 func _on_reset_progress_confirmed() -> void:
 	AudioManager.play_button_click()
 	# Reset all progress
@@ -390,6 +403,7 @@ func _on_reset_progress_confirmed() -> void:
 
 	# Close settings panel and show feedback
 	settings_panel.visible = false
+	settings_blur_overlay.visible = false
 	show_feedback("All progress has been reset!", Color(0.9, 0.3, 0.3))
 
 func _on_reset_cancel_pressed() -> void:

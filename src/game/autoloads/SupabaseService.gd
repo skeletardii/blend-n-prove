@@ -168,6 +168,13 @@ func get_stats() -> void:
 	else:
 		stats_fetched.emit({})
 
+## Submit user feedback/rating
+func submit_feedback(rating: int, comment: String) -> void:
+	if _impl:
+		_impl.submit_feedback(rating, comment)
+	else:
+		print("Error: SupabaseService implementation not loaded")
+
 ## Helper to check if logged in (if impl exposes it)
 func is_logged_in() -> bool:
 	if _impl and "session_token" in _impl:
