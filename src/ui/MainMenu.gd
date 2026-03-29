@@ -22,6 +22,7 @@ extends Control
 @onready var games_played_quick: Label = $QuickStatsPanel/GamesPlayedQuick
 @onready var streak_quick: Label = $QuickStatsPanel/StreakQuick
 @onready var reset_popup: Control = $ResetPopup
+@onready var ineligible_popup: Control = $IneligiblePopup
 @onready var reset_confirm_btn: Button = $ResetPopup/Panel/VBoxContainer/ButtonContainer/ConfirmButton
 @onready var reset_cancel_btn: Button = $ResetPopup/Panel/VBoxContainer/ButtonContainer/CancelButton
 @onready var feedback_label: Label = $FeedbackLabel
@@ -171,6 +172,12 @@ func _on_difficulty_slider_value_changed(value: float) -> void:
 
 func _on_infinite_patience_check_toggled(button_pressed: bool) -> void:
 	GameManager.infinite_patience = button_pressed
+	if button_pressed:
+		ineligible_popup.visible = true
+
+func _on_ineligible_ok_button_pressed() -> void:
+	AudioManager.play_button_click()
+	ineligible_popup.visible = false
 
 func _on_force_game_over_button_pressed() -> void:
 	AudioManager.play_button_click()

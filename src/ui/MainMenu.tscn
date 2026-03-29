@@ -708,6 +708,82 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_red_btn")
 text = "Reset Everything"
 
+[node name="IneligiblePopup" type="Control" parent="."]
+visible = false
+z_index = 100
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BlurLayer" type="ColorRect" parent="IneligiblePopup"]
+material = SubResource("ShaderMaterial_reset_blur")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="IneligiblePopup"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_white_popup")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="IneligiblePopup/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="IneligiblePopup/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 40
+text = "Infinite Patience"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="IneligiblePopup/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 28
+text = "Enabling Infinite Patience makes you ineligible for the leaderboards.
+
+Your score will not be submitted until this is turned off."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="ButtonContainer" type="HBoxContainer" parent="IneligiblePopup/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="IneligibleOkButton" type="Button" parent="IneligiblePopup/Panel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Got it!"
+
 [node name="FeedbackLabel" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 7
@@ -731,7 +807,6 @@ vertical_alignment = 1
 [connection signal="pressed" from="MenuContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="MenuContainer/QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="value_changed" from="DebugPanel/DebugContainer/DifficultyContainer/DifficultySlider" to="." method="_on_difficulty_slider_value_changed"]
-[connection signal="toggled" from="SettingsPanel/SettingsContainer/InfinitePatienceCheck" to="." method="_on_infinite_patience_check_toggled"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/ForceGameOverButton" to="." method="_on_force_game_over_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/LogicTestButton" to="." method="_on_logic_test_button_pressed"]
 [connection signal="pressed" from="DebugPanel/DebugContainer/IntegrationTestButton" to="." method="_on_integration_test_button_pressed"]
@@ -747,3 +822,4 @@ vertical_alignment = 1
 [connection signal="pressed" from="SettingsPanel/MarginContainer/SettingsContainer/ResetProgressButton" to="." method="_on_reset_progress_button_pressed"]
 [connection signal="pressed" from="SettingsPanel/MarginContainer/SettingsContainer/SendFeedbackButton" to="." method="_on_send_feedback_button_pressed"]
 [connection signal="pressed" from="SettingsPanel/MarginContainer/SettingsContainer/CloseSettingsButton" to="." method="_on_close_settings_button_pressed"]
+[connection signal="pressed" from="IneligiblePopup/Panel/VBoxContainer/ButtonContainer/IneligibleOkButton" to="." method="_on_ineligible_ok_button_pressed"]

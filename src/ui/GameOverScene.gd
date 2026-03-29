@@ -172,10 +172,20 @@ func check_leaderboard_qualification() -> void:
 	var current_score = GameManager.current_score
 
 	# Always show progress context first
-	# If score is 0, skip leaderboard check
-	if current_score <= 0:
+	# If score is 0 or Infinite Patience is enabled, skip leaderboard check
+	if current_score <= 0 or GameManager.infinite_patience:
 		qualifies_for_leaderboard = false
 		add_progress_context()
+		
+		# Add ineligibility notice if Infinite Patience was on
+		if GameManager.infinite_patience and current_score > 0:
+			var game_over_container = $GameOverPanel/GameOverContainer
+			var ineligibility_label = Label.new()
+			ineligibility_label.text = "Ineligible for leaderboard (Infinite Patience)"
+			ineligibility_label.add_theme_font_size_override("font_size", 20)
+			ineligibility_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			ineligibility_label.modulate = Color(0.9, 0.3, 0.3, 1) # Reddish
+			game_over_container.add_child(ineligibility_label)
 		return
 
 	# Show progress context immediately (with grade)
